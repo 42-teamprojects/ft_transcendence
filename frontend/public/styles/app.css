@@ -16,8 +16,8 @@ body {
 	font-weight: 700;
 	display: inline-flex;
 	align-items: center;
-	font-size: 1.1rem;
-	padding: .75rem 1.5rem;
+	font-size: 1rem;
+	padding: .85rem 1.75rem;
 	color: var(--text-color);
 	border-radius: 1rem;
 	transform: translateY(0);

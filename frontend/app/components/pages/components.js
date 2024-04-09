@@ -10,11 +10,14 @@ export default class Components extends HTMLElement {
 
     render() {
         this.innerHTML = /*html*/`
-            <h1>components</h1>
-            <div class="buttons mt-6">
-                <button is="c-button" class="btn-primary">Get started</button>
-                <button is="c-button" class="btn-secondary">Get started</button>
-                <button is="c-button" class="btn-dark">Get started</button>
+            <div class="mx-8 my-4">
+                <h1 class="font-extrabold">Components</h1>
+                <div class="buttons my-8">
+                    <h2 class="pb-3">Buttons</h2>
+                    <button is="c-button" class="btn-primary">Button primary</button>
+                    <button is="c-button" class="btn-secondary">Button secondary</button>
+                    <button is="c-button" class="btn-dark">Button dark</button>
+                </div>
             </div>
         `;
     }
