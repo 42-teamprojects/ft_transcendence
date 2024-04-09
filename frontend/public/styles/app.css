@@ -2,3 +2,8 @@ html {
     font-family: "MPlusRounded", Arial, Helvetica, sans-serif;
 }
 
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
