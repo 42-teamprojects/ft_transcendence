@@ -1,24 +1,48 @@
 export default class Components extends HTMLElement {
-    constructor() {
-        super();
-        document.title = "Components";
-    }
+	constructor() {
+		super();
+		document.title = "Components";
+	}
 
-    connectedCallback() {
-        this.render();
-    }
+	connectedCallback() {
+		this.render();
+        const modal = this.querySelector('c-modal');
 
-    render() {
-        this.innerHTML = /*html*/`
+        modal.addEventListener('confirm', () => {
+            console.log('Confirmed...');
+        });
+
+        modal.addEventListener('cancel', () => {
+            console.log('Cancelled...');
+        });
+	}
+
+	render() {
+		this.innerHTML = /*html*/ `
             <div class="mx-8 my-4">
                 <h1 class="font-extrabold">Components</h1>
                 <div class="buttons my-8">
                     <h2 class="pb-3">Buttons</h2>
                     <button is="c-button" class="btn-primary">Button primary</button>
                     <button is="c-button" class="btn-secondary">Button secondary</button>
-                    <button is="c-button" class="btn-dark">Button dark</button>
+                    <button is="c-button" class="btn-default">Button dark</button>
+                </div>
+                <div class="inputs my-8">
+                    <h2 class="pb-3">Inputs</h2>
+                    <input type="text" class="input-field" placeholder="Username or email"/>
+                    <select class="select-field">
+                        <option value="" disabled selected>Select an option</option>
+                        <option value="1">Option 1</option>
+                        <option value="2">Option 2</option>
+                        <option value="3">Option 3</option>
+                    </select>
+                </div>
+                <div class="modal my-8">
+                    <h2 class="pb-3">Modal</h2>
+                    <c-modal title="Delete record" subtitle="Are you sure you want to accept?"></c-modal>
+                    <button class="btn-secondary" onclick="document.querySelector('c-modal').open()">Open modal</button>
                 </div>
             </div>
         `;
-    }
+	}
 }

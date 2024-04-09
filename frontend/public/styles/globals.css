@@ -2,9 +2,12 @@
     --red-color: #D7524C;
     --blue-color: #1CB0F6;
     --dark-color: #262F35;
-    --bg-color: #10181E;
+    --bg-color: #161D23;
     --stroke-color: #7F8F98;
+    --border-color: #313A42;
     --text-color: #FFFFFF;
+    --soft-text-color: #CDD7DF;
+    --highlight-color: #FFBE31;
 }
 
 .flex {
@@ -514,27 +517,27 @@
 
 /* Colors */
 .text-red {
-    color: var(--red-color);
+    color: var(--red-color) !important;
 }
 
 .text-blue {
-    color: var(--blue-color);
+    color: var(--blue-color) !important;
 }
 
 .text-dark {
-    color: var(--dark-color);
+    color: var(--dark-color) !important;
 }
 
 .text-bg {
-    color: var(--bg-color);
+    color: var(--bg-color) !important;
 }
 
 .text-stroke {
-    color: var(--stroke-color);
+    color: var(--stroke-color) !important;
 }
 
 .text-white {
-    color: var(--text-color);
+    color: var(--text-color) !important;
 }
 
 .text-black {
