@@ -54,7 +54,7 @@ export default class Router {
 		const matchedRoute = this.#findRoute(path);
 		if (!matchedRoute || !matchedRoute.component) {
 			console.error(`No route matched for ${path}`);
-			this.navigate("/");
+			this.navigate(this.routes[0].path);
 			return;
 		}
 
