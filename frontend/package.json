@@ -1,0 +1,28 @@
+{
+  "name": "veca",
+  "version": "1.1.0",
+  "description": "Vanilla Environment & Components Architecture",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "docker-compose up",
+    "dev": "live-server --entry-file=./public/index.html",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YusufLisawi/veca-init.git"
+  },
+  "keywords": [
+    "VECA",
+    "Web",
+    "Components",
+    "SPA",
+    "VanillaJS"
+  ],
+  "author": "Youssef El Aissaoui",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/YusufLisawi/veca-init/issues"
+  },
+  "homepage": "https://github.com/YusufLisawi/veca-init#readme"
+}
