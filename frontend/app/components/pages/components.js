@@ -3,9 +3,9 @@ export default class Components extends HTMLElement {
 		super();
 		document.title = "Components";
 	}
-
+    
 	connectedCallback() {
-		this.render();
+        this.render();
         const modal = this.querySelector('c-modal');
 
         modal.addEventListener('confirm', () => {
