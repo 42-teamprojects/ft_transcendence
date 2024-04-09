@@ -1,3 +1,4 @@
+import Button from "./components/button.js";
 import Home from "./components/pages/home.js";
 import Components from "./components/pages/components.js";
 import { routerComponents } from "./router/router.js";
@@ -12,4 +13,5 @@ export const components = [
   ...routerComponents, // IMPORTANT: Keep this line
 	{ tagName: 'c-components', component: Components },
 	{ tagName: 'c-home', component: Home },
+	{ tagName: 'c-button', component: Button, extends: 'button'},
 ];

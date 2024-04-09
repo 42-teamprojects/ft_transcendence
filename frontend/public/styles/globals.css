@@ -1,7 +1,7 @@
 :root {
-    --primary-red-color: #D7524C;
-    --primary-blue-color: #1CB0F6;
-    --secondary-color: #262F35;
+    --red-color: #D7524C;
+    --blue-color: #1CB0F6;
+    --dark-color: #262F35;
     --bg-color: #10181E;
     --stroke-color: #7F8F98;
     --text-color: #FFFFFF;
@@ -310,15 +310,15 @@
 
 /* Colors */
 .text-primary-red {
-    color: var(--primary-red-color);
+    color: var(--red-color);
 }
 
 .text-primary-blue {
-    color: var(--primary-blue-color);
+    color: var(--blue-color);
 }
 
 .text-secondary {
-    color: var(--secondary-color);
+    color: var(--dark-color);
 }
 
 .text-bg {
@@ -339,15 +339,15 @@
 
 /* Background */
 .bg-primary-red {
-    background-color: var(--primary-red-color);
+    background-color: var(--red-color);
 }
 
 .bg-primary-blue {
-    background-color: var(--primary-blue-color);
+    background-color: var(--blue-color);
 }
 
 .bg-secondary {
-    background-color: var(--secondary-color);
+    background-color: var(--dark-color);
 }
 
 .background {
