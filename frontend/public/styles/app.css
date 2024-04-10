@@ -73,6 +73,9 @@ body {
 	user-select: none;
 	letter-spacing: 0.8px;
 	text-transform: uppercase;
+	background-color: transparent;
+	border: 2px solid #00000044;
+	box-shadow: 0 3px #00000044;
 }
 
 .btn-primary {
@@ -98,13 +101,18 @@ body {
 .btn-secondary:focus,
 .btn-secondary:hover,
 .btn-default:focus,
-.btn-default:hover {
+.btn-default:hover,
+.btn:focus,
+.btn:hover
+{
 	opacity: 0.9;
 }
 
 .btn-primary:active,
 .btn-secondary:active,
-.btn-default:active {
+.btn-default:active,
+.btn:active
+{
 	transform: translateY(3px);
 	box-shadow: none;
 }

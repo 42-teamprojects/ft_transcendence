@@ -25,7 +25,8 @@ export default class Components extends HTMLElement {
                     <h2 class="pb-3">Buttons</h2>
                     <button is="c-button" class="btn-primary">Button primary</button>
                     <button is="c-button" class="btn-secondary">Button secondary</button>
-                    <button is="c-button" class="btn-default">Button dark</button>
+                    <button is="c-button" class="btn-default">Button default</button>
+                    <button is="c-button" class="btn">Button</button>
                 </div>
                 <div class="inputs my-8 flex-col gap-4" style="width: 500px">
                     <h2 class="pb-3">Inputs</h2>
