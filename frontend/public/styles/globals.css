@@ -520,6 +520,114 @@
     margin-bottom: 2rem !important;
 }
 
+/* Padding */
+.px-9 {
+    padding-left: 2.25rem !important;
+    padding-right: 2.25rem !important;
+}
+
+.py-9 {
+    padding-top: 2.25rem !important;
+    padding-bottom: 2.25rem !important;
+}
+
+/* Margin */
+.mt-9 {
+    margin-top: 2.25rem !important;
+}
+
+.mb-9 {
+    margin-bottom: 2.25rem !important;
+}
+
+.ml-9 {
+    margin-left: 2.25rem !important;
+}
+
+.mr-9 {
+    margin-right: 2.25rem !important;
+}
+
+.mb-12 {
+    margin-bottom: 4rem !important;
+}
+
+.mx-9 {
+    margin-left: 2.25rem !important;
+    margin-right: 2.25rem !important;
+}
+
+.my-9 {
+    margin-top: 2.25rem !important;
+    margin-bottom: 2.25rem !important;
+}
+
+/* Width */
+.w-9 {
+    width: 2.25rem !important;
+}
+
+.w-10 {
+    width: 2.5rem !important;
+}
+
+.w-11 {
+    width: 2.75rem !important;
+}
+
+.w-12 {
+    width: 3rem !important;
+}
+
+.w-75 {
+    height: 75% !important;
+}
+
+.w-90 {
+    height: 90% !important;
+}
+
+.vw-75 {
+    height: 75vh !important;
+}
+
+.vw-90 {
+    height: 90vh !important;
+}
+
+/* Height */
+.h-9 {
+    height: 2.25rem !important;
+}
+
+.h-10 {
+    height: 2.5rem !important;
+}
+
+.h-11 {
+    height: 2.75rem !important;
+}
+
+.h-12 {
+    height: 3rem !important;
+}
+
+.h-75 {
+    height: 75% !important;
+}
+
+.h-90 {
+    height: 90% !important;
+}
+
+.vh-75 {
+    height: 75vh !important;
+}
+
+.vh-90 {
+    height: 90vh !important;
+}
+
 .text-xs {
     font-size: 0.75rem !important;
 }
@@ -778,6 +886,14 @@
     width: 50% !important;
 }
 
+.vw-50 {
+    width: 50vw !important;
+}
+
+.vw-full {
+    width: 100vw !important;
+}
+
 .w-full {
     width: 100% !important;
 
@@ -813,6 +929,15 @@
 
 .h-8 {
     height: 2rem !important;
+}
+
+.vh-50 {
+    height: 50vh !important;
+}
+
+.vh-full {
+    height: 100vh !important;
+
 }
 
 .h-full {
@@ -915,4 +1040,22 @@
 /* Shadows */
 .shadow {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Line height */
+
+.line-1 {
+    line-height: 1.15;
+}
+
+.line-2 {
+    line-height: 1.25;
+}
+
+.line-3 {
+    line-height: 1.5;    
+}
+
+.line-4 {
+    line-height: 1.75;    
 }

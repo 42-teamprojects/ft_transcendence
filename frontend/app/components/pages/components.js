@@ -60,6 +60,10 @@ export default class Components extends HTMLElement {
                     <c-modal title="Delete record" subtitle="Are you sure you want to accept?"></c-modal>
                     <button class="btn-secondary" onclick="document.querySelector('c-modal').open()">Open modal</button>
                 </div>
+                <div class="toast my-8">
+                    <h2 class="pb-3">Toast</h2>
+                    <c-toast></c-toast>
+                </div>
             </div>
         `;
 	}
