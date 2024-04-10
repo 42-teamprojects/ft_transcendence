@@ -11,7 +11,7 @@ export const layoutComponents = [
 export const components = [
   ...layoutComponents, // IMPORTANT: Keep this line
   ...routerComponents, // IMPORTANT: Keep this line
-	{ tagName: 'c-components', component: Components },
+	{ tagName: 'p-components', component: Components },
 	{ tagName: 'c-button', component: Button},
 	{ tagName: 'c-modal', component: Modal },
 ];
