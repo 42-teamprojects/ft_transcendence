@@ -1,0 +1,95 @@
+import Router from "../../router/router.js";
+
+const styles = /*css*/`
+.btn,
+.btn-primary,
+.btn-secondary,
+.btn-default {
+	cursor: pointer;
+	font-weight: 700;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 1.5rem;
+	font-size: 1rem;
+	padding: .75rem 1.75rem;
+	color: var(--text-color);
+	border-radius: 1rem;
+	transform: translateY(0);
+	transition: all 0.1s ease-out;
+	user-select: none;
+	letter-spacing: 0.8px;
+	text-transform: uppercase;
+}
+
+.btn-primary {
+	background-color: var(--primary-color);
+	border: 2px solid #b5352f;
+	box-shadow: 0 3px #b5352f;
+}
+
+.btn-secondary {
+	background-color: var(--secondary-color);
+	border: 2px solid #2f80a6;
+	box-shadow: 0 3px #2f80a6;
+}
+
+.btn-default {
+	background-color: var(--dark-color);
+	border: 2px solid var(--border-color);
+	box-shadow: 0 3px var(--border-color);
+}
+
+.btn-primary:focus,
+.btn-primary:hover,
+.btn-secondary:focus,
+.btn-secondary:hover,
+.btn-default:focus,
+.btn-default:hover {
+	opacity: 0.9;
+}
+
+.btn-primary:active,
+.btn-secondary:active,
+.btn-default:active {
+	transform: translateY(3px);
+	box-shadow: none;
+}
+`
+
+export default class Button extends HTMLElement {
+	constructor() {
+		super();
+		this.attachShadow({ mode: 'open' });
+		// Get the button type attribute
+        const type = this.getAttribute('type') || 'default';
+		// Get the class attribute
+		const className = this.getAttribute('class') || '';
+        // Create a button element
+        const button = document.createElement('button');
+		// Add the class attribute to the button
+		button.classList.add(className);
+        if (type === 'primary') {
+          button.classList.add('btn-primary');
+        } else if (type === 'secondary') {
+          button.classList.add('btn-secondary');
+        } else {
+          button.classList.add('btn-default');
+        }
+        button.textContent = this.textContent;
+        // Append the button to the shadow DOM
+		this.shadowRoot.innerHTML = /*html*/`<style>${styles}</style>`;
+        this.shadowRoot.appendChild(button);
+	}
+
+
+	connectedCallback() {
+		const href = this.getAttribute("href");
+
+        if (href) {
+            this.addEventListener("click", () => {
+                Router.instance.navigate(href);
+            });
+        }
+	}
+}

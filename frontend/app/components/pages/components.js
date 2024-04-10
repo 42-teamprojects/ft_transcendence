@@ -27,15 +27,32 @@ export default class Components extends HTMLElement {
                     <button is="c-button" class="btn-secondary">Button secondary</button>
                     <button is="c-button" class="btn-default">Button dark</button>
                 </div>
-                <div class="inputs my-8">
+                <div class="inputs my-8 flex-col gap-4" style="width: 500px">
                     <h2 class="pb-3">Inputs</h2>
+                    
                     <input type="text" class="input-field" placeholder="Username or email"/>
+
+                    <div class="form-group">
+                        <label class="input-label">Input with label</label>
+                        <input type="text" class="input-field" placeholder="Username or email"/>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" class="input-field error" placeholder="Username or email"/>
+                        <span class="input-error ml-3 text-danger">This is the error</span>
+                    </div>
+
                     <select class="select-field">
                         <option value="" disabled selected>Select an option</option>
                         <option value="1">Option 1</option>
                         <option value="2">Option 2</option>
                         <option value="3">Option 3</option>
                     </select>
+
+                    <div class="form-group-inline">
+                        <input type="text" class="input-field" placeholder="Username or email"/>
+                        <input type="text" class="input-field" placeholder="Username or email"/>
+                    </div>
                 </div>
                 <div class="modal my-8">
                     <h2 class="pb-3">Modal</h2>

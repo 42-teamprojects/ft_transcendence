@@ -1,4 +1,4 @@
-import Router from "../router/router.js";
+import Router from "../../router/router.js";
 
 export default class Button extends HTMLButtonElement {
 	constructor() {

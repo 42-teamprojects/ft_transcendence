@@ -12,7 +12,7 @@ export default class Modal extends HTMLElement {
                 <main>
                 </main>
                 <section class="actions">
-                    <button is="c-button" id="cancel-btn" class="btn-default text-blue w-full">No, Cancel</button>
+                    <button is="c-button" id="cancel-btn" class="btn-default text-secondary w-full">No, Cancel</button>
                     <button id="confirm-btn" class="btn-primary w-full">Yes, Confirm</button>
                 </section>
             </div>
