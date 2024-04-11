@@ -64,14 +64,30 @@ export default class Components extends HTMLElement {
                             <input type="text" class="input-field" placeholder="Username or email"/>
                             <input type="text" class="input-field" placeholder="Username or email"/>
                         </div>
+
+                        <div class="form-group">
+                                <input id="s2d" type="checkbox" class="switch" checked>
+
+                            <span>
+                                <input id="c1" type="checkbox">
+                                <label for="c1">Checkbox</label>
+                            </span>
+
+                            <span>
+                                <input id="r1" type="radio" name="radio" value="1">
+                                <label for="r1">Radio</label>
+                                <input id="r2" type="radio" name="radio" value="2">
+                                <label for="r2">Radio</label>
+                            </span>
+                        </div>
                     </div>
                 </div>
                 <div class="modal my-8">
                     <h2 class="pb-3">Modal</h2>
                     <c-modal title="Delete record" subtitle="Are you sure you want to accept?"></c-modal>
                     <button class="btn-secondary" onclick="document.querySelector('c-modal').open()">Open modal</button>
-                    </div>
-                    <div class="toast-notification my-8">
+                </div>
+                <div class="toast-notification my-8">
                     <h2 class="pb-3">Toast</h2>
                     <button class="btn-secondary" id="notify">Notify</button>
                 </div>
