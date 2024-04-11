@@ -1,28 +1,25 @@
 {
-  "name": "veca",
-  "version": "1.1.0",
-  "description": "Vanilla Environment & Components Architecture",
-  "main": "src/app.js",
-  "scripts": {
-    "start": "docker-compose up",
-    "dev": "git pull && live-server --entry-file=./public/index.html",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/YusufLisawi/veca-init.git"
-  },
-  "keywords": [
-    "VECA",
-    "Web",
-    "Components",
-    "SPA",
-    "VanillaJS"
-  ],
-  "author": "Youssef El Aissaoui",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/YusufLisawi/veca-init/issues"
-  },
-  "homepage": "https://github.com/YusufLisawi/veca-init#readme"
+	"name": "blitzpong-frontend",
+	"version": "1.0.0",
+	"description": "Blitzpong frontend",
+	"main": "src/app.js",
+	"scripts": {
+		"start": "docker-compose up",
+		"dev": "git pull && live-server --entry-file=./public/index.html",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/42-teamprojects/ft_transcendence.git"
+	},
+	"authors": [
+		"Youssef El Aissaoui",
+		"Mouad Sodor",
+		"Hamza Talhaouia",
+		"Hassan Oigag"
+	],
+	"bugs": {
+		"url": "https://github.com/42-teamprojects/ft_transcendence/issues"
+	},
+	"homepage": "https://github.com/42-teamprojects/ft_transcendence#readme"
 }
