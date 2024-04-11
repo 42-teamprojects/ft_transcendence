@@ -1,20 +1,29 @@
+import Toast from "../comps/toast.js";
+
 export default class Components extends HTMLElement {
 	constructor() {
 		super();
 		document.title = "Components";
 	}
-    
+
 	connectedCallback() {
-        this.render();
-        const modal = this.querySelector('c-modal');
+		this.render();
+		const modal = this.querySelector("c-modal");
 
-        modal.addEventListener('confirm', () => {
-            console.log('Confirmed...');
-        });
+		modal.addEventListener("confirm", () => {
+			console.log("Confirmed...");
+		});
 
-        modal.addEventListener('cancel', () => {
-            console.log('Cancelled...');
-        });
+		modal.addEventListener("cancel", () => {
+			console.log("Cancelled...");
+		});
+
+		document.getElementById("notify").addEventListener("click", () => {
+			Toast.notify({ type: "success", message: "Your changes have been saved" });
+		});
+		document.getElementById("btn-test").addEventListener("click", () => {
+			Toast.notify({ type: "danger", message: "Aye" });
+		});
 	}
 
 	render() {
@@ -23,10 +32,11 @@ export default class Components extends HTMLElement {
                 <h1 class="font-extrabold">Components</h1>
                 <div class="buttons my-8">
                     <h2 class="pb-3">Buttons</h2>
-                    <button is="c-button" class="btn-primary">Button primary</button>
+                    <button is="c-button" class="btn-primary" id="btn-test">Button primary</button>
                     <button is="c-button" class="btn-secondary">Button secondary</button>
                     <button is="c-button" class="btn-default">Button default</button>
-                    <button is="c-button" class="btn">Button</button>
+                    <button is="c-button">Button</button>
+                    <button is="c-button" class="btn-secondary" disabled>Button disabled</button>
                 </div>
                 <div class="inputs my-8 " style="width: 500px">
                     <h2 class="pb-3">Inputs</h2>
@@ -60,10 +70,10 @@ export default class Components extends HTMLElement {
                     <h2 class="pb-3">Modal</h2>
                     <c-modal title="Delete record" subtitle="Are you sure you want to accept?"></c-modal>
                     <button class="btn-secondary" onclick="document.querySelector('c-modal').open()">Open modal</button>
-                </div>
-                <div class="toast-notification my-8">
+                    </div>
+                    <div class="toast-notification my-8">
                     <h2 class="pb-3">Toast</h2>
-                    <c-toast></c-toast>
+                    <button class="btn-secondary" id="notify">Notify</button>
                 </div>
             </div>
         `;
