@@ -30,7 +30,7 @@ export default class Toast extends HTMLElement {
             case 'success':
                 iconClass = 'fa-check';
                 break;
-            case 'danger':
+            case 'error':
                 iconClass = 'fa-times';
                 break;
             case 'warning':

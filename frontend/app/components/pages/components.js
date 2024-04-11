@@ -21,9 +21,16 @@ export default class Components extends HTMLElement {
 		document.getElementById("notify").addEventListener("click", () => {
 			Toast.notify({ type: "success", message: "Your changes have been saved" });
 		});
-		document.getElementById("btn-test").addEventListener("click", () => {
-			Toast.notify({ type: "danger", message: "Aye" });
+		document.getElementById("notify1").addEventListener("click", () => {
+			Toast.notify({ type: "error", message: "Some thing went wrong" });
 		});
+		document.getElementById("notify2").addEventListener("click", () => {
+			Toast.notify({ type: "warning", message: "Some thing went wrong" });
+		});
+		document.getElementById("notify3").addEventListener("click", () => {
+			Toast.notify({ type: "info", message: "Some thing went wrong" });
+		});
+
 	}
 
 	render() {
@@ -32,7 +39,7 @@ export default class Components extends HTMLElement {
                 <h1 class="font-extrabold">Components</h1>
                 <div class="buttons my-8">
                     <h2 class="pb-3">Buttons</h2>
-                    <button is="c-button" class="btn-primary" id="btn-test">Button primary</button>
+                    <button is="c-button" class="btn-primary">Button primary</button>
                     <button is="c-button" class="btn-secondary">Button secondary</button>
                     <button is="c-button" class="btn-default">Button default</button>
                     <button is="c-button">Button</button>
@@ -89,7 +96,10 @@ export default class Components extends HTMLElement {
                 </div>
                 <div class="toast-notification my-8">
                     <h2 class="pb-3">Toast</h2>
-                    <button class="btn-secondary" id="notify">Notify</button>
+                    <button class="btn-secondary" id="notify">Notify success</button>
+                    <button class="btn-secondary" id="notify1">Notify error</button>
+                    <button class="btn-secondary" id="notify2">Notify warning</button>
+                    <button class="btn-secondary" id="notify3">Notify info</button>
                 </div>
             </div>
         `;

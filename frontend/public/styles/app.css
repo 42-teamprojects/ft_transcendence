@@ -218,7 +218,7 @@ button:active:not([disabled])
 	align-items: center;
 }
 .toast-content .success,
-.toast-content .danger,
+.toast-content .error,
 .toast-content .warning,
 .toast-content .info {
 	display: flex;
@@ -234,7 +234,7 @@ button:active:not([disabled])
 .toast-content .success {
 	background-color: var(--success-color);
 }
-.toast-content .danger {
+.toast-content .error {
 	background-color: var(--danger-color);
 }
 .toast-content .warning {
@@ -296,7 +296,7 @@ button:active:not([disabled])
 	background: var(--success-color);
 }
 
-.toast .progress.danger:before {
+.toast .progress.error:before {
 	background: var(--danger-color);
 }
 
