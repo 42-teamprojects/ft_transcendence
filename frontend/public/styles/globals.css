@@ -2,7 +2,7 @@
     /* colors */
     --primary-color: #D7524C;
     --secondary-color: #1CB0F6;
-    --dark-color: #262F35;
+    --default-color: #262F35;
     --bg-color: #161D23;
     --stroke-color: #7F8F98;
     --border-color: #313A42;
@@ -664,6 +664,10 @@
     font-size: 3rem !important;
 }
 
+.text-full {
+    font-size: 245% !important;
+}
+
 /* Colors */
 .text-primary {
     color: var(--primary-color) !important;
@@ -673,8 +677,8 @@
     color: var(--secondary-color) !important;
 }
 
-.text-dark {
-    color: var(--dark-color) !important;
+.text-default {
+    color: var(--default-color) !important;
 }
 
 .text-bg {
@@ -722,8 +726,8 @@
     background-color: var(--secondary-color) !important;
 }
 
-.bg-dark {
-    background-color: var(--dark-color) !important;
+.bg-default {
+    background-color: var(--default-color) !important;
 }
 
 .background {
@@ -785,8 +789,8 @@
     border: 1px solid var(--secondary-color) !important;
 }
 
-.border-dark {
-    border: 1px solid var(--dark-color) !important;
+.border-default {
+    border: 1px solid var(--default-color) !important;
 }
 
 .border-white {
@@ -809,6 +813,19 @@
 .rounded-lg {
     border-radius: 0.5rem !important;
 }
+
+.rounded-xl {
+    border-radius: 1rem !important;
+}
+
+.rounded-2xl {
+    border-radius: 1.5rem !important;
+}
+
+.rounded-3xl {
+    border-radius: 2rem !important;
+}
+
 
 .rounded-full {
     border-radius: 9999px !important;
@@ -1059,3 +1076,26 @@
 .line-4 {
     line-height: 1.75;    
 }
+
+/* opacity */
+
+.opacity-0 {
+    opacity: 0;
+}
+
+.opacity-25 {
+    opacity: 0.25;
+}
+
+.opacity-50 {
+    opacity: 0.5;
+}
+
+.opacity-75 {
+    opacity: 0.75;
+}
+
+.opacity-100 {
+    opacity: 1;
+}
+
