@@ -1,4 +1,5 @@
 import Components from "./components/pages/components.js";
+import Gameplay from "./components/pages/gameplay.js";
 import Landing from "./components/pages/landing.js";
 import Local from "./components/pages/local.js";
 
@@ -15,5 +16,9 @@ export const routes = [
   {
     path: "/local",
     component: () => Promise.resolve(Local),
+  },
+  {
+    path: "/gameplay",
+    component: () => Promise.resolve(Gameplay),
   },
 ];

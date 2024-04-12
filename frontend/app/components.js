@@ -1,3 +1,5 @@
+import Gameplay from "./components/pages/gameplay.js";
+import Paddle from "./components/comps/paddle.js";
 import Card from "./components/comps/card.js";
 import Local from "./components/pages/local.js";
 import Toast from "./components/comps/toast.js";
@@ -24,4 +26,6 @@ export const components = [
 	{ tagName: 'c-toast', component: Toast },
 	{ tagName: 'p-local', component: Local },
 	{ tagName: 'c-card', component: Card },
+	{ tagName: 'c-paddle', component: Paddle },
+	{ tagName: 'p-gameplay', component: Gameplay },
 ];

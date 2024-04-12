@@ -3,3 +3,24 @@
         flex-direction: column;
     }
 }
+
+.paddle, 
+.paddle-basic,
+.paddle-ice,
+.paddle-fire {
+    width: 18px;
+    height: 110px;
+    border-radius: 10px;
+}
+
+.paddle-fire {
+    background: #EC7B3C;
+}
+
+.paddle-ice {
+    background: #2FB3EC;
+}
+
+.paddle-basic {
+    background: #D9D9D9;
+}
