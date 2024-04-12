@@ -97,7 +97,7 @@ button {
 }
 
 .btn-default {
-	background-color: var(--dark-color);
+	background-color: var(--default-color);
 	border: var(--btn-border-width) solid var(--border-color);
 	box-shadow: 0 var(--btn-shadow-length) var(--border-color);
 }
@@ -146,7 +146,7 @@ button:active:not([disabled])
 	width: 560px;
 	padding: 2rem;
 	z-index: 10000;
-	background: var(--dark-color);
+	background: var(--default-color);
 	border-radius: 1rem;
 	display: flex;
 	flex-direction: column;
@@ -178,7 +178,7 @@ button:active:not([disabled])
 .card {
 	padding: 2rem;
 	border-radius: 1rem;
-	background-color: var(--dark-color);
+	background-color: var(--default-color);
 }
 
 /* Toast */
@@ -203,7 +203,7 @@ button:active:not([disabled])
 
 .toast {
 	border-radius: 12px;
-	background: var(--dark-color);
+	background: var(--default-color);
 	padding: 20px 35px 20px 25px;
 	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
 	overflow: hidden;
@@ -329,7 +329,7 @@ button:active:not([disabled])
 	  --focus: none;
 	  --border: var(--border-color);
 	  --border-hover: var(--secondary-color);
-	  --background: var(--dark-color);
+	  --background: var(--default-color);
 	  --disabled: #f6f8ff;
 	  --disabled-inner: #e1e6f9;
 	  -webkit-appearance: none;

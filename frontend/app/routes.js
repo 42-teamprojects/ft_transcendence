@@ -1,5 +1,6 @@
 import Components from "./components/pages/components.js";
 import Landing from "./components/pages/landing.js";
+import Local from "./components/pages/local.js";
 
 // Define routes with all components as functions returning a promise
 export const routes = [
@@ -10,5 +11,9 @@ export const routes = [
   {
     path: "/components",
     component: () => Promise.resolve(Components),
+  },
+  {
+    path: "/local",
+    component: () => Promise.resolve(Local),
   },
 ];

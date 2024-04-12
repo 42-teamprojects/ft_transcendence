@@ -1,3 +1,5 @@
+import Card from "./components/comps/card.js";
+import Local from "./components/pages/local.js";
 import Toast from "./components/comps/toast.js";
 import Logo from "./components/comps/logo.js";
 import Landing from "./components/pages/landing.js";
@@ -15,9 +17,11 @@ export const components = [
   ...layoutComponents, // IMPORTANT: Keep this line
   ...routerComponents, // IMPORTANT: Keep this line
 	{ tagName: 'p-components', component: Components },
-	{ tagName: 'c-button', component: Button},
+	{ tagName: 'c-button', component: Button, extends: "button"},
 	{ tagName: 'c-modal', component: Modal },
 	{ tagName: 'p-landing', component: Landing },
 	{ tagName: 'c-logo', component: Logo },
 	{ tagName: 'c-toast', component: Toast },
+	{ tagName: 'p-local', component: Local },
+	{ tagName: 'c-card', component: Card },
 ];
