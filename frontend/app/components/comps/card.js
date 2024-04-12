@@ -17,7 +17,7 @@ export default class Card extends HTMLElement {
 
     render() {
         this.innerHTML = /*html*/`
-        <div class="bg-${this.typeAtt} rounded-xl flex-col-center" style="width:278px; height:189px">
+        <div class="bg-${this.typeAtt} rounded-xl flex-col-center hover" style="width:278px; height:189px">
             <span class="text-2xl font-medium opacity-75">${this.actionAtt}</span>
             <h1 class="text-full" >${this.titleAtt}</h1>
         </div>

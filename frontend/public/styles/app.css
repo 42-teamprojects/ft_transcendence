@@ -462,3 +462,11 @@ button:active:not([disabled])
 	  }
 	}
   }
+
+.hover {
+	transition: all 0.2s ease-out;
+}
+
+.hover:hover {
+	opacity: 0.8;
+}
