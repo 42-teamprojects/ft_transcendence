@@ -96,10 +96,10 @@ export default class Components extends HTMLElement {
                 </div>
                 <div class="toast-notification my-8">
                     <h2 class="pb-3">Toast</h2>
-                    <button class="btn-secondary" id="notify">Notify success</button>
-                    <button class="btn-secondary" id="notify1">Notify error</button>
-                    <button class="btn-secondary" id="notify2">Notify warning</button>
-                    <button class="btn-secondary" id="notify3">Notify info</button>
+                    <button class="btn-default" id="notify">Notify success</button>
+                    <button class="btn-default" id="notify1">Notify error</button>
+                    <button class="btn-default" id="notify2">Notify warning</button>
+                    <button class="btn-default" id="notify3">Notify info</button>
                 </div>
             </div>
         `;
