@@ -1,3 +1,4 @@
+import Playersetup from "./components/comps/player-setup.js";
 import Onevsone from "./components/pages/one-vs-one.js";
 import Tabletheme from "./components/comps/table-theme.js";
 import Paddlecard from "./components/comps/paddle-card.js";
@@ -34,4 +35,5 @@ export const components = [
 	{ tagName: 'c-paddle-card', component: Paddlecard },
 	{ tagName: 'c-table-theme', component: Tabletheme },
 	{ tagName: 'p-one-vs-one', component: Onevsone },
+	{ tagName: 'c-player-setup', component: Playersetup },
 ];

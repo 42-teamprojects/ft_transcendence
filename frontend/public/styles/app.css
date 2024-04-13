@@ -228,6 +228,8 @@ button:active:not([disabled]) {
 	display: flex;
 	align-items: center;
 }
+
+.icon-bg,
 .toast-content .success,
 .toast-content .error,
 .toast-content .warning,
@@ -241,16 +243,22 @@ button:active:not([disabled]) {
 	font-size: 20px;
 	border-radius: 50%;
 }
-
+.icon-bg-success,
 .toast-content .success {
 	background-color: var(--success-color);
 }
+
+.icon-bg-error,
 .toast-content .error {
 	background-color: var(--danger-color);
 }
+
+.icon-bg-warning,
 .toast-content .warning {
 	background-color: var(--warning-color);
 }
+
+.icon-bg-info,
 .toast-content .info {
 	background-color: var(--info-color);
 }
@@ -514,7 +522,7 @@ button:active:not([disabled]) {
 	text-overflow: ellipsis;
 	padding: .75rem;
 	border-radius: 8px;
-	font-size: 18px;
+	/* font-size: 18px; */
 	/* box-shadow: 0 1em 2em -0.5em rgba(0, 0, 0, 0.35); */
 	background: black;
 	color: #fff;
@@ -598,14 +606,14 @@ button:active:not([disabled]) {
 /* KEYFRAMES */
 @keyframes tooltips-vert {
 	to {
-		opacity: 0.9;
+		opacity: 1;
 		transform: translate(-50%, 0);
 	}
 }
 
 @keyframes tooltips-horz {
 	to {
-		opacity: 0.9;
+		opacity: 1;
 		transform: translate(0, -50%);
 	}
 }

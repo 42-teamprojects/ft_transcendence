@@ -16,7 +16,7 @@ export default class Local extends HTMLElement {
             <div class="flex gap-4 options">
 
             <a is="c-link" href="/one-vs-one">
-                <c-card action='Play' title='1 vs 1' type="primary"></c-card>
+                <c-card action='Play' title='1 v 1' type="primary"></c-card>
             </a>
             <a is="c-link" href="/tournament">
                 <c-card action='Play' title='Tournament' type="secondary"></c-card>

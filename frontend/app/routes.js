@@ -23,6 +23,10 @@ export const routes = [
     component: () => Promise.resolve(Gameplay),
   },
   {
+    path: "/game/1v1",
+    component: () => Promise.resolve(Gameplay),
+  },
+  {
     path: "/one-vs-one",
     component: () => Promise.resolve(Onevsone),
   },

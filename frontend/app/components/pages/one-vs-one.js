@@ -1,68 +1,86 @@
+import { useFormData } from "../../utils/useForm.js";
+import Toast from "../comps/toast.js";
+import Router from "../../router/router.js";
+
 export default class Onevsone extends HTMLElement {
     constructor() {
         super();
-        document.title = "One vs One";
+        document.title = "1 v 1 | Blitzpong.";
+        this.players = [];
+        this.player1;
+        this.player2;
+        this.game;
     }
 
     connectedCallback() {
         this.render();
+        this.player1 = this.querySelector('#player1');
+        this.player2 = this.querySelector('#player2');
+        this.game = this.querySelector('#game');
+
+        this.player1.addEventListener('player-ready', this.playerReadyHandler.bind(this));
+        this.player2.addEventListener('player-ready', this.playerReadyHandler.bind(this));
+
+        this.game.addEventListener('submit', this.startGameHandler.bind(this));
     }
 
-    disconnectedCallback() {}
+    playerReadyHandler = (e) => {
+        this.players.push({ ...e.detail });
+    };
+
+    startGameHandler(e) {
+        e.preventDefault();
+        const selectedTheme = useFormData(e.target).getObject()["theme-option"];
+        if (this.players.length < 2) {
+            Toast.notify({ type: "error", message: "Please make sure all the players are ready" });
+            return;
+        }
+        const params = new URLSearchParams({
+            theme: selectedTheme,
+            player1: this.players[0].alias,
+            player2: this.players[1].alias,
+            paddle1: this.players[0].paddle,
+            paddle2: this.players[1].paddle
+        });
+        
+        const queryString = params.toString();
+        Router.instance.navigate(`/game/1v1?${queryString}`);
+        Toast.notify({ type: "success", message: "Game is starting..." });
+    }
 
     render() {
         this.innerHTML = /*html*/`
-        <div class="flex-col-center vh-100 my-8 gap-8">
+        <div class="flex-col-center my-8 gap-9">
             <div>
-                <h1 class="text-center mb-2">1 vs 1 Pong Match</h1>
+                <h1 class="text-center mb-2">1 v 1 Pong Match</h1>
                 <h3 class="text-center font-medium text-stroke">Customize Your Game</h3>
             </div>
-            <div class="flex justify-between w-full" style="max-width: 1200px">
-                <div class="player-options player1 flex-col-center w-full">
-                    <h2 class="text-primary mb-6">Player 1</h2>
-                    <div style="width: 285px">
-                        <form id="player1Form" class="flex-col-center gap-5">
-                            <input type="text" name="player1-alias" class="input-field" placeholder="Alias/Name"/>
-                            <h3 class="font-medium">Choose a paddle</h3>
-                            <div class="flex w-full justify-between gap-2">
-                                <c-paddle-card type="fire" tooltip="Speed up your smashes" flow="up"></c-paddle-card>
-                                <c-paddle-card type="basic" tooltip="Enlarge your paddle for 5sec" flow="up" checked></c-paddle-card>
-                                <c-paddle-card type="ice" tooltip="Slow down your opponent" flow="up"></c-paddle-card>
-                            </div>
-                            <button type="submit" class="btn-primary w-full">Ready</button>
-                        </form>
-                    </div>
+            <div class="flex-col-center gap-4 w-full" style="max-width: 900px">
+                <div class="flex justify-between w-full">
+                    <c-player-setup id="player1" player-id="1"></c-player-setup>
+                    <div class="vertical-line"></div>
+                    <c-player-setup id="player2" player-id="2"></c-player-setup>
                 </div>
-                
-                <div class="vertical-line"></div>
-
-                <div class="player-options player2 flex-col-center w-full" style="width: 285px">
-                    <h2 class="text-secondary mb-6">Player 2</h2>
-                    <div style="width: 285px">
-                        <form id="player1Form" class="flex-col-center gap-5">
-                            <input type="text" name="player2-alias" class="input-field" placeholder="Alias/Name"/>
-                            <h3 class="font-medium">Choose a paddle</h3>
-                            <div class="flex w-full justify-between gap-2">
-                                <c-paddle-card type="fire" tooltip="Speed up your smashes" flow="up"></c-paddle-card>
-                                <c-paddle-card type="basic" tooltip="Enlarge your paddle for 5sec" flow="up" checked></c-paddle-card>
-                                <c-paddle-card type="ice" tooltip="Slow down your opponent" flow="up"></c-paddle-card>
-                            </div>
-                            <button type="submit" class="btn-secondary w-full">Ready</button>
-                        </form>
-                    </div>
-                </div>
-                </div>
-                <div class="tables mt-8 w-full" style="max-width: 900px">
-                    <h2 class="mb-6 text-center">Choose a table theme</h2>
-                    <form id="themesForm" class="flex-col-center gap-5">
+                <form id="game" class="w-full flex-col-center">
+                    <div class="tables mt-8 w-full">
+                        <h2 class="mb-6 text-center">Choose a table theme</h2>
                         <div class="flex w-full justify-between gap-2">
                             <c-table-theme type="classic"></c-table-theme>
                             <c-table-theme type="standard" checked></c-table-theme>
                             <c-table-theme type="football"></c-table-theme>
                         </div>
-                    </form>
-                </div>
-                <button is="c-button" href="/gameplay" class="btn-primary">Start game</button>
+                    </div>
+                    <button is="c-button" type="submit" class="btn-primary mt-6">Start game</button>
+                </form>
+            </div>
+        </div>
         `;
+    }
+
+    disconnectedCallback() {
+        this.players = [];
+        this.player1.removeEventListener('player-ready', this.playerReadyHandler);
+        this.player2.removeEventListener('player-ready', this.playerReadyHandler);
+        this.game.removeEventListener('submit', this.startGameHandler);
     }
 }
