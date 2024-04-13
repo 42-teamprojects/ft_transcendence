@@ -1,7 +1,7 @@
-import Paddlecard from "./components/comps/paddlecard.js";
+import Tabletheme from "./components/comps/table-theme.js";
+import Paddlecard from "./components/comps/paddle-card.js";
 import Table from "./components/comps/table.js";
 import Gameplay from "./components/pages/gameplay.js";
-import Paddle from "./components/comps/paddle.js";
 import Card from "./components/comps/card.js";
 import Local from "./components/pages/local.js";
 import Toast from "./components/comps/toast.js";
@@ -28,8 +28,8 @@ export const components = [
 	{ tagName: 'c-toast', component: Toast },
 	{ tagName: 'p-local', component: Local },
 	{ tagName: 'c-card', component: Card },
-	{ tagName: 'c-paddle', component: Paddle },
 	{ tagName: 'p-gameplay', component: Gameplay },
 	{ tagName: 'c-table', component: Table },
-	{ tagName: 'c-paddlecard', component: Paddlecard },
+	{ tagName: 'c-paddle-card', component: Paddlecard },
+	{ tagName: 'c-table-theme', component: Tabletheme },
 ];

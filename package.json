@@ -1,0 +1,24 @@
+{
+	"name": "blitzpong",
+	"version": "1.0.0",
+	"description": "Blitzpong",
+	"scripts": {
+		"start": "docker-compose up",
+		"frontend": "cd frontend && npm run dev",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/42-teamprojects/ft_transcendence.git"
+	},
+	"authors": [
+		"Youssef El Aissaoui",
+		"Mouad Sodor",
+		"Hamza Talhaouia",
+		"Hassan Oigag"
+	],
+	"bugs": {
+		"url": "https://github.com/42-teamprojects/ft_transcendence/issues"
+	},
+	"homepage": "https://github.com/42-teamprojects/ft_transcendence#readme"
+}

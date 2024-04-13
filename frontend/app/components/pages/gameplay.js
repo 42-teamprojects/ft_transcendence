@@ -11,7 +11,7 @@ export default class Gameplay extends HTMLElement {
 
     render() {
         this.innerHTML = /*html*/`
-        <c-paddlecard type="ice"></c-paddlecard>
+        <c-paddle-card type="ice"></c-paddle-card>
         <c-table id="table"></table>
         `;
     }
