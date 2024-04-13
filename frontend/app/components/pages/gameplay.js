@@ -1,6 +1,8 @@
 export default class Gameplay extends HTMLElement {
     constructor() {
         super();
+        const urlParams = new URLSearchParams(window.location.search);
+        this.params = Object.fromEntries(urlParams.entries());
     }
 
     connectedCallback() {
@@ -11,8 +13,13 @@ export default class Gameplay extends HTMLElement {
 
     render() {
         this.innerHTML = /*html*/`
-        <c-paddle-card type="ice"></c-paddle-card>
-        <c-table id="table"></table>
+            <pre>
+                ${this.params.player1}
+                ${this.params.paddle1}
+                ${this.params.player2}
+                ${this.params.paddle2}
+                ${this.params.theme}
+            </pre>
         `;
     }
 }
