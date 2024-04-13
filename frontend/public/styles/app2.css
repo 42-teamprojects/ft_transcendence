@@ -29,15 +29,19 @@
 .classic,
 .standard
 .football {
-    /* background-color: var(--bg-color); */
-    display: flex;
-    justify-self: center;
-    align-items: center;
-    background-color: var(--primary-color);
+    background-color: var(--bg-color);
     border: 5px solid #56646C;
     border-radius: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 100%;
+    height: auto;
     /* width: 80%;
     height: 80%; */
+    /* margin: auto; */
+    /* position: absolute; */
+    /* top: 0; left: 0; bottom: 0; right: 0; */
 }
 
 .paddlecard {
