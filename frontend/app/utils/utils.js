@@ -26,6 +26,10 @@ export function truncate(str, maxlength) {
   }
 
 export function isThere(haystack, needle, fallback) {
+    if (needle === null) {
+        return fallback;
+    }
+
     return haystack.includes(needle.toLowerCase())
         ? needle.toLowerCase()
         : fallback;

@@ -101,6 +101,11 @@ export default class Components extends HTMLElement {
                     <button class="btn-default" id="notify2">Notify warning</button>
                     <button class="btn-default" id="notify3">Notify info</button>
                 </div>
+                <div class="flex">
+                    <c-paddlecard type="fire"></c-paddlecard>
+                    <c-paddlecard type="basic"></c-paddlecard>
+                    <c-paddlecard type="ice"></c-paddlecard>
+                </div>
             </div>
         `;
 	}

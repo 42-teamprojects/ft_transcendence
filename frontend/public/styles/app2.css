@@ -8,8 +8,8 @@
 .paddle-basic,
 .paddle-ice,
 .paddle-fire {
-    width: 18px;
-    height: 110px;
+    width: 7px;
+    height: 47px;
     border-radius: 10px;
 }
 
@@ -40,6 +40,15 @@
     height: 80%; */
 }
 
-.classic {
+.paddlecard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--default-color);
+    border: 1px solid #56646C;
+    border-radius: 12px;
+    width: 88px;
+    height: 92px;
 
 }
