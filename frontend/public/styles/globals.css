@@ -40,6 +40,18 @@
     justify-content: center !important;
 }
 
+.items-center {
+    align-items: center !important;
+}
+
+.justify-center {
+    justify-content: center !important;
+}
+
+.justify-between {
+    justify-content: space-between !important;
+}
+
 .gap-1 {
     gap: 0.25rem !important;
 }

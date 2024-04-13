@@ -13,3 +13,9 @@
 input[name="theme-option"]:checked ~ .table-theme {
     background-color: var(--active-bg-color);
 }
+
+.vertical-line {
+    border: 1px solid var(--active-bg-color); /* Change color as needed */
+    height: 200px; /* Or any specific height */
+    width: 0;
+}
