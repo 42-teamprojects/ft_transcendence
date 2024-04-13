@@ -1,3 +1,4 @@
+import Table from "./components/comps/table.js";
 import Gameplay from "./components/pages/gameplay.js";
 import Paddle from "./components/comps/paddle.js";
 import Card from "./components/comps/card.js";
@@ -28,4 +29,5 @@ export const components = [
 	{ tagName: 'c-card', component: Card },
 	{ tagName: 'c-paddle', component: Paddle },
 	{ tagName: 'p-gameplay', component: Gameplay },
+	{ tagName: 'c-table', component: Table },
 ];

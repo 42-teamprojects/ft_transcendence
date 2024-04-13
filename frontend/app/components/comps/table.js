@@ -1,4 +1,4 @@
-export default class Gameplay extends HTMLElement {
+export default class Table extends HTMLElement {
     constructor() {
         super();
     }
@@ -11,8 +11,9 @@ export default class Gameplay extends HTMLElement {
 
     render() {
         this.innerHTML = /*html*/`
-        <c-paddle type="fire"></c-paddle>
-        <c-table id="table"></table>
+        <div class="flex-center">
+            <canvas class="table"></canvas>
+        </div>
         `;
     }
 }

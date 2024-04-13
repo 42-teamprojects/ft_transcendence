@@ -24,3 +24,22 @@
 .paddle-basic {
     background: #D9D9D9;
 }
+
+.table,
+.classic,
+.standard
+.football {
+    /* background-color: var(--bg-color); */
+    display: flex;
+    justify-self: center;
+    align-items: center;
+    background-color: var(--primary-color);
+    border: 5px solid #56646C;
+    border-radius: 25px;
+    /* width: 80%;
+    height: 80%; */
+}
+
+.classic {
+
+}
