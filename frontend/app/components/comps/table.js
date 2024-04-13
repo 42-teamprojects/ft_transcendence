@@ -34,12 +34,12 @@ export default class Table extends HTMLElement {
         this.ballHeight = 15;
         this.ballRadious = 7;
         this.ball = {
-            x : this.tableWidth /2,
-            y : this.tableHeight /2,
+            x : this.tableWidth / 2 - this.ballHeight/3,
+            y : this.tableHeight / 2 - this.ballHeight/3,
             width : this.ballWidth,
             height : this.ballHeight,
-            velocityX : 7,
-            velocityY : 4,
+            velocityX : 10,
+            velocityY : 1,
         }
     }
 
@@ -82,55 +82,66 @@ export default class Table extends HTMLElement {
         this.table.width = this.tableWidth;
         this.context = this.table.getContext("2d");
 
-        //draw paddle1
-
-        let paddle1Color = this.getPaddleColor("fire");
-
-        this.context.fillStyle = paddle1Color;
-        this.context.fillRect(this.paddle1.x, this.paddle1.y, this.paddle1.width, this.paddle1.height);
-        
-        //draw paddle2
-        
-        let paddle2Color = this.getPaddleColor("basic");
-        
-        this.context.fillStyle = paddle2Color;
-        this.context.fillRect(this.paddle2.x, this.paddle2.y, this.paddle2.width, this.paddle1.height);
-        
         requestAnimationFrame(this.update);
         document.addEventListener("keydown", this.movePlayer);
         document.addEventListener("keyup", this.stopPlayer);
+    }
+
+    drwaPaddle = (speciality, player, tableStyle) => {
+        let paddle = player === 1 ? this.paddle1 : this.paddle2;
+        let paddleColor = this.getPaddleColor(speciality);
+        this.context.beginPath();
+        this.context.rect(paddle.x, paddle.y + this.radious, paddle.width, paddle.height - 2 * this.radious);
+        this.context.fillStyle = paddleColor;
+        this.context.fill();
+        
+        if (tableStyle != "clasic"){
+            // Draw the top semi-circle of the paddle
+            this.context.beginPath();
+            this.context.arc(paddle.x + paddle.width / 2, paddle.y + this.radious, this.radious, Math.PI, 2 * Math.PI);
+            this.context.fillStyle = paddleColor;
+            this.context.fill();
+        
+            // Draw the bottom semi-circle of the paddle
+            this.context.beginPath();
+            this.context.arc(paddle.x + paddle.width / 2, paddle.y + paddle.height - this.radious, this.radious, 0, Math.PI);
+            this.context.fillStyle = paddleColor;
+            this.context.fill();
+        }
+    }
+    drwaBall = () => {
+        this.context.fillStyle = "white";
+        this.ball.x += this.ball.velocityX;
+        this.ball.y += this.ball.velocityY;
+
+        // squared
+        // this.context.fillRect(this.ball.x, this.ball.y, this.ballWidth, this.ballHeight)
+
+        // rounded
+        this.context.beginPath();
+        this.context.arc(this.ball.x + this.ballWidth / 2, this.ball.y + this.ballWidth / 2, this.ballRadious, 0, Math.PI*2, false);
+        this.context.fill();
+        this.context.closePath();
     }
     
     update = () => {
         requestAnimationFrame(this.update);
         this.context.clearRect(0, 0, this.table.width, this.table.height);
         //player 1
-        let paddle1Color = this.getPaddleColor("fire");
         let paddle1NextY = this.paddle1.y + this.paddle1.velocityY;
         if (!this.outOfBounds(paddle1NextY)){
             this.paddle1.y = paddle1NextY;
         }
-        this.context.fillStyle = paddle1Color;
-        this.context.fillRect(this.paddle1.x, this.paddle1.y, this.paddle1.width, this.paddle1.height);
+        this.drwaPaddle("ice", 1);
         
         //player2
-        let paddle2Color = this.getPaddleColor("basic");
         let paddle2NextY = this.paddle2.y + this.paddle2.velocityY;
         if (!this.outOfBounds(paddle2NextY)){
             this.paddle2.y = paddle2NextY;
         }
-        this.context.fillStyle = paddle2Color;
-        this.context.fillRect(this.paddle2.x, this.paddle2.y, this.paddle2.width, this.paddle1.height);
-
+        this.drwaPaddle("fire", 2, "clasic")
+        
         // ball
-        this.context.fillStyle = "white";
-        this.ball.x += this.ball.velocityX;
-        this.ball.y += this.ball.velocityY;
-        // this.context.beginPath();
-        // this.context.arc(this.ball.x, this.ball.y, this.ballRadious, 0, Math.PI*2, false);
-        // this.context.fill();
-        // this.context.closePath();
-        this.context.fillRect(this.ball.x, this.ball.y, this.ballWidth, this.ballHeight)
         if (this.ball.y <= 0 || (this.ball.y + this.ball.height) >= this.tableHeight){
             this.ball.velocityY *= -1;
         }
@@ -150,17 +161,16 @@ export default class Table extends HTMLElement {
         //check if scores
         if (this.ball.x < 0){
             this.player2score++;
-            this.resetGame(7);
+            this.resetGame(this.ball.velocityX);
         }
         if (this.ball.x + this.ballWidth > this.tableWidth){
             this.player1score++;
-            this.resetGame(-7);
+            this.resetGame(-this.ball.velocityX);
         }
         this.context.fillStyle = "#323A41";
         this.context.font = "130px MPlusRounded";
         
         let textWidth1 = this.context.measureText(this.player1score).width;
-        let textWidth2 = this.context.measureText(this.player2score).width;
         
         // Draw scores
         this.context.fillText(this.player1score, this.tableWidth/3 - textWidth1 - 10, 154);
@@ -170,16 +180,18 @@ export default class Table extends HTMLElement {
         this.context.font = "35px MPlusRounded"; // Adjust the size as needed
         
         // Draw player names above scores
-        this.context.fillText("Player 1", this.tableWidth/3 - textWidth1 - 10, 40); // Replace "Player 1" with the actual player name
-        this.context.fillText("Player 2", this.tableWidth/1.5 + 10, 40); // Replace "Player 2" with the actual player name
+        this.context.fillText("Player 1", this.tableWidth/3 - textWidth1 - 40, 40); // Replace "Player 1" with the actual player name
+        this.context.fillText("Player 2", this.tableWidth/1.5 - 10, 40); // Replace "Player 2" with the actual player name
         
         this.context.fillStyle = "#56646C";
         this.context.fillRect(this.tableWidth / 2, 0, 5, this.tableHeight)
-        }
-
+        this.drwaBall();
+    }
+    
     outOfBounds = (yPosition) => {
         return (yPosition < 0 || yPosition + this.paddleHeight > this.tableHeight);
     }
+
     detectCollision = (a, b) => {
         return  a.x < b.x + b.width && // a's top left corner doesn't reach b's top right corner
                 a.x + a.width > b.x && // a's top right corner doesn't reach b's top left corner
@@ -218,25 +230,7 @@ export default class Table extends HTMLElement {
             width : this.ballWidth,
             height : this.ballHeight,
             velocityX : direction,
-            velocityY : 4,
+            velocityY : this.ball.velocityY,
         }
     }
 }
-
-
-// this.context.beginPath();
-// this.context.rect(this.paddle1.x, this.paddle1.y + this.radious, this.paddle1.width, this.paddle1.height - 2 * this.radious);
-// this.context.fillStyle = paddle1Color;
-// this.context.fill();
-
-// // Draw the top semi-circle of the paddle
-// this.context.beginPath();
-// this.context.arc(this.paddle1.x + this.paddle1.width / 2, this.paddle1.y + this.radious, this.radious, Math.PI, 2 * Math.PI);
-// this.context.fillStyle = paddle1Color;
-// this.context.fill();
-
-// // Draw the bottom semi-circle of the paddle
-// this.context.beginPath();
-// this.context.arc(this.paddle1.x + this.paddle1.width / 2, this.paddle1.y + this.paddle1.height - this.radious, this.radious, 0, Math.PI);
-// this.context.fillStyle = paddle1Color;
-// this.context.fill();
