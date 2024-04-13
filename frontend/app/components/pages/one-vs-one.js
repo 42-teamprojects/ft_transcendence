@@ -51,8 +51,18 @@ export default class Onevsone extends HTMLElement {
                         </form>
                     </div>
                 </div>
-                
-            </div>
+                </div>
+                <div class="tables mt-8 w-full" style="max-width: 900px">
+                    <h2 class="mb-6 text-center">Choose a table theme</h2>
+                    <form id="themesForm" class="flex-col-center gap-5">
+                        <div class="flex w-full justify-between gap-2">
+                            <c-table-theme type="classic"></c-table-theme>
+                            <c-table-theme type="standard" checked></c-table-theme>
+                            <c-table-theme type="football"></c-table-theme>
+                        </div>
+                    </form>
+                </div>
+                <button is="c-button" href="/gameplay" class="btn-primary">Start game</button>
         `;
     }
 }
