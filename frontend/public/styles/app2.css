@@ -71,6 +71,7 @@ c-table {
 }
 
 .table-classic {
+    border-radius: 0 !important;
     background-color: black;
     border: 5px solid white;
 }
