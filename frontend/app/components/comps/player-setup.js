@@ -41,9 +41,8 @@ export default class Playersetup extends HTMLElement {
 		const formData = useFormData(e.target).getObject();
 		const alias = formData["alias"];
 		const paddle = formData["paddle-option"];
-
 		if (!this.checkAlias(alias, this.aliasInput)) return;
-
+		
 		if (this.isTournament === false) {
 			this.btnReady.textContent = "Waiting...";
 			this.btnReady.disabled = true;

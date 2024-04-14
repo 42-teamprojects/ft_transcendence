@@ -48,16 +48,14 @@ export default class Addplayers extends HTMLElement {
     
     #confirm() {
         const playerSetup = this.querySelector(`#player${this.currentPlayer}`);
-        playerSetup.addEventListener("player-ready", this.#playerReady.bind(this));
         playerSetup.submitForm();
     }
 
     #playerReady(e) {
         const playerSetup = this.querySelector(`#player${this.currentPlayer}`);
         playerSetup.classList.add('hidden');
-
         this.players.push(e.detail);
-        
+
         if (this.currentPlayer < this.playersNumber) {
             this.currentPlayer++;
             this.querySelector(`#player${this.currentPlayer}`).classList.remove('hidden');
@@ -105,6 +103,7 @@ export default class Addplayers extends HTMLElement {
         playerSetup.setAttribute('id', `player${playerId}`);
         playerSetup.setAttribute('player-id', playerId);
         playerSetup.setAttribute('tournament', 'true');
+        playerSetup.addEventListener("player-ready", this.#playerReady.bind(this));
         if (playerId !== this.currentPlayer)
             playerSetup.classList.add('hidden');
         this.querySelector('main').appendChild(playerSetup);
