@@ -3,3 +3,79 @@
         flex-direction: column;
     }
 }
+
+.paddle {
+    width: 7px;
+    height: 47px;
+    border-radius: 10px;
+}
+
+.paddle-fire {
+    background: #EC7B3C;
+}
+
+.paddle-ice {
+    background: #2FB3EC;
+}
+
+.paddle-basic {
+    background: #D9D9D9;
+} 
+
+.paddlecard {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: .75rem;
+    width: 88px;
+    height: 92px;
+}
+
+input[name="paddle-option"]:checked ~ .paddlecard {
+    border-color: var(--secondary-color);
+}
+
+p-gameplay {
+    width: 100%;
+}
+
+c-table {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+    max-width: 100%;
+}
+
+.table {
+    max-width: inherit;
+    height: auto;
+    border-radius: 1rem;
+}
+
+.table-football {
+    background-image: 
+    linear-gradient(to right, 
+    #006400 6.25%, #008000 6.25%, #008000 12.5%, #006400 12.5%, 
+    #006400 18.75%, #008000 18.75%, #008000 25%, #006400 25%, 
+    #006400 31.25%, #008000 31.25%, #008000 37.5%, #006400 37.5%, 
+    #006400 43.75%, #008000 43.75%, #008000 50%, #006400 50%, 
+    #006400 56.25%, #008000 56.25%, #008000 62.5%, #006400 62.5%, 
+    #006400 68.75%, #008000 68.75%, #008000 75%, #006400 75%, 
+    #006400 81.25%, #008000 81.25%, #008000 87.5%, #006400 87.5%, 
+    #006400 93.75%, #008000 93.75%, #008000 100%, #006400 100%);
+    border: 5px solid white;
+}
+
+.table-classic {
+    background-color: black;
+    border: 5px solid white;
+}
+
+.table-standard {
+    background-color: var(--background-color);
+    border: 5px solid #56646C;
+}
