@@ -137,6 +137,9 @@ export default class Components extends HTMLElement {
                         <span id="selected-theme"></span>
                     </form>
                 </div>
+                <div>
+                    <c-gameover-modal></c-gameover-modal>
+                </div>
 
             </div>
         `;

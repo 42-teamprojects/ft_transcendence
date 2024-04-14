@@ -14,6 +14,15 @@ export default class Gameplay extends HTMLElement {
 
     connectedCallback() {
         this.render();
+        this.querySelector('c-table').addEventListener('game-over', (e) => {
+            const { winner } = e.detail;
+            const modal = document.createElement('c-gameover-modal');
+            modal.setAttribute('player', winner);
+            this.appendChild(modal);
+            setTimeout(() => {
+                this.querySelector('c-gameover-modal').open();
+            }, 100);
+        });
     }
 
     disconnectedCallback() { }

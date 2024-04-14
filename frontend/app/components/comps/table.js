@@ -6,6 +6,7 @@ export default class Table extends HTMLElement {
         this.player2 = this.getAttribute("player2")
         this.paddle1color = this.getAttribute("paddle1")
         this.paddle2color = this.getAttribute("paddle2")
+        this.finalScore = 1;
         //table
         this.table = null;
         this.tableWidth = 1235;
@@ -96,23 +97,22 @@ export default class Table extends HTMLElement {
 
         let paddle = player === 1 ? this.paddle1 : this.paddle2;
         let paddleColor = this.getPaddleColor(speciality);
-        this.context.beginPath();
-        this.context.rect(paddle.x, paddle.y + this.radius, paddle.width, paddle.height - 2 * this.radius);
         this.context.fillStyle = paddleColor;
-        this.context.fill();
+        this.context.fillRect(paddle.x, paddle.y + this.radius, paddle.width, paddle.height - 2 * this.radius);
         
         if (this.theme !== "classic"){
             // Draw the top semi-circle of the paddle
             this.context.beginPath();
             this.context.arc(paddle.x + paddle.width / 2, paddle.y + this.radius, this.radius, Math.PI, 2 * Math.PI);
-            this.context.fillStyle = paddleColor;
             this.context.fill();
         
             // Draw the bottom semi-circle of the paddle
             this.context.beginPath();
             this.context.arc(paddle.x + paddle.width / 2, paddle.y + paddle.height - this.radius, this.radius, 0, Math.PI);
-            this.context.fillStyle = paddleColor;
             this.context.fill();
+        }
+        else {
+            this.context.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
         }
     }
 
@@ -135,7 +135,6 @@ export default class Table extends HTMLElement {
     }
     
     update = () => {
-        requestAnimationFrame(this.update);
         this.context.clearRect(0, 0, this.table.width, this.table.height);
         this.drawMiddle();
         //player 1
@@ -170,6 +169,7 @@ export default class Table extends HTMLElement {
             }
         }
         //check if scores
+        this.drawBall();
         if (this.ball.x < 0){
             this.player2score++;
             this.querySelector("c-scoreboard").setAttribute("score2", this.player2score)
@@ -180,7 +180,16 @@ export default class Table extends HTMLElement {
             this.querySelector("c-scoreboard").setAttribute("score1", this.player1score)
             this.resetGame(-this.ball.velocityX);
         }
-        this.drawBall();
+        if (this.isGameOver) {
+            this.dispatchEvent(new CustomEvent("game-over", 
+                { detail: 
+                    { winner: this.player1score === this.finalScore 
+                        ? this.player1 : this.player2 
+                    } 
+                }));
+            return;
+        }
+        requestAnimationFrame(this.update);
     }
     
     drawMiddle = () => {
@@ -267,5 +276,10 @@ export default class Table extends HTMLElement {
             velocityX : direction,
             velocityY : this.ball.velocityY,
         }
+    }
+
+    get isGameOver() {
+        return this.player1score === this.finalScore 
+            || this.player2score === this.finalScore
     }
 }
