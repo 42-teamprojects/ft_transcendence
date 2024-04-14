@@ -32,8 +32,9 @@ export default class Tournament extends HTMLElement {
 
         this.modal.addEventListener("confirm", (e) => {
             const { players } = e.detail;
-            this._players = 
+            this._players = players;
             Toast.notify({ type: "success", message: `${this._players.length} players added` });
+            console.log(players);
             this.modal.remove();
             this.addPlayersForm.querySelector(".btn-secondary").disabled = true;
             this.addPlayersForm.querySelector(".btn-secondary").textContent = "Players added";
