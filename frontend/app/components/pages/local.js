@@ -15,10 +15,10 @@ export default class Local extends HTMLElement {
             <h1 style="margin-bottom: 5rem" class="text-center">What do you want to play?</h1>
             <div class="flex gap-4 options">
 
-            <a is="c-link" href="/gameplay">
-                <c-card action='Play' title='1 vs 1' type="primary"></c-card>
+            <a is="c-link" href="/local/1v1">
+                <c-card action='Play' title='1 v 1' type="primary"></c-card>
             </a>
-            <a is="c-link" href="/tournament">
+            <a is="c-link" href="/local/tournament">
                 <c-card action='Play' title='Tournament' type="secondary"></c-card>
             </a>
             </div>
@@ -26,3 +26,5 @@ export default class Local extends HTMLElement {
         `;
     }
 }
+
+customElements.define('p-local', Local);

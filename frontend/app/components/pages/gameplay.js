@@ -1,6 +1,8 @@
 export default class Gameplay extends HTMLElement {
     constructor() {
         super();
+        const urlParams = new URLSearchParams(window.location.search);
+        this.params = Object.fromEntries(urlParams.entries());
     }
 
     connectedCallback() {
@@ -15,3 +17,5 @@ export default class Gameplay extends HTMLElement {
         `;
     }
 }
+
+customElements.define('p-gameplay', Gameplay);

@@ -1,7 +1,11 @@
-import Paddlecard from "./components/comps/paddlecard.js";
+import Addplayers from "./components/comps/add-players.js";
+import Tournament from "./components/pages/tournament.js";
+import Playersetup from "./components/comps/player-setup.js";
+import Onevsone from "./components/pages/one-vs-one.js";
+import Tabletheme from "./components/comps/table-theme.js";
+import Paddlecard from "./components/comps/paddle-card.js";
 import Table from "./components/comps/table.js";
 import Gameplay from "./components/pages/gameplay.js";
-import Paddle from "./components/comps/paddle.js";
 import Card from "./components/comps/card.js";
 import Local from "./components/pages/local.js";
 import Toast from "./components/comps/toast.js";
@@ -20,16 +24,20 @@ export const layoutComponents = [
 export const components = [
   ...layoutComponents, // IMPORTANT: Keep this line
   ...routerComponents, // IMPORTANT: Keep this line
-	{ tagName: 'p-components', component: Components },
+	// { tagName: 'p-components', component: Components },
 	{ tagName: 'c-button', component: Button, extends: "button"},
 	{ tagName: 'c-modal', component: Modal },
-	{ tagName: 'p-landing', component: Landing },
+	// { tagName: 'p-landing', component: Landing },
 	{ tagName: 'c-logo', component: Logo },
 	{ tagName: 'c-toast', component: Toast },
-	{ tagName: 'p-local', component: Local },
+	// { tagName: 'p-local', component: Local },
 	{ tagName: 'c-card', component: Card },
-	{ tagName: 'c-paddle', component: Paddle },
-	{ tagName: 'p-gameplay', component: Gameplay },
+	// { tagName: 'p-gameplay', component: Gameplay },
 	{ tagName: 'c-table', component: Table },
-	{ tagName: 'c-paddlecard', component: Paddlecard },
+	{ tagName: 'c-paddle-card', component: Paddlecard },
+	{ tagName: 'c-table-theme', component: Tabletheme },
+	// { tagName: 'p-one-vs-one', component: Onevsone },
+	{ tagName: 'c-player-setup', component: Playersetup },
+	// { tagName: 'p-tournament', component: Tournament },
+	{ tagName: 'c-add-players', component: Addplayers },
 ];
