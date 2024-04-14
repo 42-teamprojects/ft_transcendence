@@ -2,11 +2,12 @@ export default class Addplayers extends HTMLElement {
 	constructor() {
 		super();
 		this.isOpen = false;
-        this.playersNumber = parseInt(this.getAttribute("players-number")) || 4;
+        this.playersNumber;
         this.currentPlayer = 1;
 		this.backdrop;
 		this.cancelButton;
 		this.confirmButton;
+        this.players = [];
 	}
     
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -15,8 +16,8 @@ export default class Addplayers extends HTMLElement {
 		} else {
             this.isOpen = false;
 		}
-        if (this.hasAttribute("players-number")) {
-            this.playersNumber = parseInt(this.getAttribute("players-number"));
+        if (name === "players-number") {
+            this.playersNumber = parseInt(newValue);
         }
 	}
     
@@ -47,29 +48,41 @@ export default class Addplayers extends HTMLElement {
     
     #confirm() {
         const playerSetup = this.querySelector(`#player${this.currentPlayer}`);
-        playerSetup.submitForm();
         playerSetup.addEventListener("player-ready", this.#playerReady.bind(this));
+        playerSetup.submitForm();
     }
 
-    #playerReady() {
+    #playerReady(e) {
+        const playerSetup = this.querySelector(`#player${this.currentPlayer}`);
+        playerSetup.classList.add('hidden');
+
+        this.players.push(e.detail);
+        
         if (this.currentPlayer < this.playersNumber) {
             this.currentPlayer++;
-            this.renderPlayerSetup();
+            this.querySelector(`#player${this.currentPlayer}`).classList.remove('hidden');
             if (this.currentPlayer === this.playersNumber) {
-                this.confirmButton.textContent = 'Save and Confirm';
+                this.confirmButton.textContent = 'Save';
             }
+            this.querySelector("#subtitle").textContent = `Player ${this.currentPlayer} of ${this.playersNumber}`;
         } else {
             this.hide();
             this.reset();
             this.confirmButton.textContent = 'Save and Continue';
-            const confirmEvent = new Event("confirm");
+            const confirmEvent = new CustomEvent("confirm", {
+                bubbles: true,
+                composed: true,
+                detail: {
+                    players: this.players,
+                },
+            });
             this.dispatchEvent(confirmEvent);
         }
     }
 
     reset() {
         this.currentPlayer = 1;
-        this.renderPlayerSetup();
+        this.querySelector(`#player${this.currentPlayer}`).classList.remove('hidden');
     }
 
     connectedCallback() {
@@ -78,16 +91,23 @@ export default class Addplayers extends HTMLElement {
         this.cancelButton = this.querySelector("#cancel-btn");
         this.confirmButton = this.querySelector("#confirm-btn");
 
-        this.renderPlayerSetup();
+        for (let i = 1; i <= this.playersNumber; i++) {
+            this.renderPlayerSetup(i);
+        }
 
         this.backdrop.addEventListener("click", this.#cancel.bind(this));
         this.cancelButton.addEventListener("click", this.#cancel.bind(this));
         this.confirmButton.addEventListener("click", this.#confirm.bind(this));
     }
 
-    renderPlayerSetup() {
-        const main = this.querySelector('main');
-        main.innerHTML = `<c-player-setup id="player${this.currentPlayer}" player-id="${this.currentPlayer}" tournament="true"></c-player-setup>`;
+    renderPlayerSetup(playerId) {
+        const playerSetup = document.createElement('c-player-setup');
+        playerSetup.setAttribute('id', `player${playerId}`);
+        playerSetup.setAttribute('player-id', playerId);
+        playerSetup.setAttribute('tournament', 'true');
+        if (playerId !== this.currentPlayer)
+            playerSetup.classList.add('hidden');
+        this.querySelector('main').appendChild(playerSetup);
     }
 
     render() {
@@ -96,10 +116,9 @@ export default class Addplayers extends HTMLElement {
             <div class="modal">
                 <header class="text-center">
                     <h1 id="title" class="text-3xl font-bold mb-2">Add Players</h1>
-                    <h2 id="subtitle" class="text-xl font-normal text-stroke">Players can take turns</h2>
+                    <h2 id="subtitle" class="text-xl font-normal text-stroke">Player ${this.currentPlayer} of ${this.playersNumber}</h2>
                 </header>
                 <main class="w-full">
-                    <c-player-setup id="player1" player-id="1" tournament="true"></c-player-setup>
                 </main>
                 <section class="actions">
                     <button id="cancel-btn" class="btn-default text-secondary w-full" tooltip="All data will be deleted!" flow="up">Cancel</button>
