@@ -59,6 +59,10 @@ export default class Playersetup extends HTMLElement {
 			})
 		);
 		this.aliasInput.disabled = true;
+		this.querySelectorAll("c-paddle-card").forEach((paddleCard) => {
+			paddleCard.setAttribute("disabled", "true");
+			paddleCard.removeAttribute("tooltip");
+		});
 	}
 
 	aliasFieldHandler(e) {

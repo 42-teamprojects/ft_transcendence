@@ -68,14 +68,13 @@ a {
 	border-color: var(--secondary-color);
 }
 
-/* button */
-
-button:disabled,
-button[disabled] {
+*:disabled,
+*[disabled] {
 	cursor: not-allowed !important;
 	opacity: 0.5 !important;
 }
 
+/* button */
 button {
 	cursor: pointer;
 	font-weight: 700;

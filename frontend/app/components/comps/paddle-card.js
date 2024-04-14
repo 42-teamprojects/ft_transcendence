@@ -3,9 +3,22 @@ import { isThere, toCapital } from "../../utils/utils.js";
 export default class Paddlecard extends HTMLElement {
     constructor() {
         super();
-        this.typeAtt = isThere(["fire", "ice", "basic"], this.getAttribute("type"), "basic")
-        this.checkedAtt = isThere(["true", ""], this.getAttribute("checked"), false)
+        this.typeAtt = isThere(["fire", "ice", "basic"], this.getAttribute("type"), "basic");
+        this.checkedAtt = isThere(["true", ""], this.getAttribute("checked"), false);
+        this.isDisabled = isThere(["true", ""], this.getAttribute("disabled"), false);
     }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (name === "disabled") {
+            this.isDisabled = isThere(["true", ""], newValue, false);
+            if (this.isDisabled) this.removeEventListener('click', this.handleClick);
+            this.radio.disabled = this.isDisabled;
+        }
+	}
+    
+	static get observedAttributes() {
+        return ["disabled"];
+	}
     
     connectedCallback() {
         this.render();

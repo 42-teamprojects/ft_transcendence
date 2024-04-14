@@ -26,6 +26,9 @@ export default class Onevsone extends HTMLElement {
 
     playerReadyHandler = (e) => {
         this.players.push({ ...e.detail });
+        if (this.players.length === 2) {
+            Toast.notify({ type: "success", message: "Players are ready, Choose a theme and start the game" });
+        }
     };
 
     startGameHandler(e) {
@@ -45,7 +48,6 @@ export default class Onevsone extends HTMLElement {
         
         const queryString = params.toString();
         Router.instance.navigate(`/local/game/1v1?${queryString}`);
-        Toast.notify({ type: "success", message: "Game is starting..." });
     }
 
     render() {
