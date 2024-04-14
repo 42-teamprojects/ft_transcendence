@@ -1,17 +1,22 @@
+import Router from "../../router/router.js";
+import Toast from "../comps/toast.js";
+
 export default class Gameplay extends HTMLElement {
     constructor() {
         super();
         const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.size < 5) {
+            Toast.notify({ type: "warning", message: "Please setup your game" })
+            Router.instance.navigate('/local/1v1')
+        }
         this.params = Object.fromEntries(urlParams.entries());
-        
-        console.log(this.params);
     }
 
     connectedCallback() {
         this.render();
     }
 
-    disconnectedCallback() {}
+    disconnectedCallback() { }
 
     render() {
         this.innerHTML = /*html*/`

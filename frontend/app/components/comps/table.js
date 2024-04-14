@@ -58,6 +58,7 @@ export default class Table extends HTMLElement {
 
     render() {
         this.innerHTML = /*html*/`
+            <c-scoreboard class="mb-5" player1="${this.player1}" player2="${this.player2}" score1="${this.player1score}" score2="${this.player1score}"></c-scoreboard>
             <canvas id="table" class="table table-${this.theme}"></canvas>
         `;
     }
@@ -171,27 +172,14 @@ export default class Table extends HTMLElement {
         //check if scores
         if (this.ball.x < 0){
             this.player2score++;
+            this.querySelector("c-scoreboard").setAttribute("score2", this.player2score)
             this.resetGame(this.ball.velocityX);
         }
         if (this.ball.x + this.ballWidth > this.tableWidth){
             this.player1score++;
+            this.querySelector("c-scoreboard").setAttribute("score1", this.player1score)
             this.resetGame(-this.ball.velocityX);
         }
-        this.context.fillStyle = "#323A41";
-        this.context.font = "130px MPlusRounded";
-        
-        let textWidth1 = this.context.measureText(this.player1score).width;
-        
-        // Draw scores
-        this.context.fillText(this.player1score, this.tableWidth/3 - textWidth1 - 10, 154);
-        this.context.fillText(this.player2score, this.tableWidth/1.5 + 10, 154);
-        
-        // Change font size for player names
-        this.context.font = "35px MPlusRounded"; // Adjust the size as needed
-        
-        // Draw player names above scores
-        this.context.fillText(this.player1, this.tableWidth/3 - textWidth1 - 40, 40); // Replace "Player 1" with the actual player name
-        this.context.fillText(this.player2, this.tableWidth/1.5 - 10, 40); // Replace "Player 2" with the actual player name
         this.drawBall();
     }
     

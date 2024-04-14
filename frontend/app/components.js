@@ -1,3 +1,4 @@
+import Scoreboard from "./components/comps/scoreboard.js";
 import Addplayers from "./components/comps/add-players.js";
 import Playersetup from "./components/comps/player-setup.js";
 import Tabletheme from "./components/comps/table-theme.js";
@@ -28,4 +29,5 @@ export const components = [
 	{ tagName: 'c-table-theme', component: Tabletheme },
 	{ tagName: 'c-player-setup', component: Playersetup },
 	{ tagName: 'c-add-players', component: Addplayers },
+	{ tagName: 'c-scoreboard', component: Scoreboard },
 ];
