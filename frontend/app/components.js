@@ -24,20 +24,20 @@ export const layoutComponents = [
 export const components = [
   ...layoutComponents, // IMPORTANT: Keep this line
   ...routerComponents, // IMPORTANT: Keep this line
-	{ tagName: 'p-components', component: Components },
+	// { tagName: 'p-components', component: Components },
 	{ tagName: 'c-button', component: Button, extends: "button"},
 	{ tagName: 'c-modal', component: Modal },
-	{ tagName: 'p-landing', component: Landing },
+	// { tagName: 'p-landing', component: Landing },
 	{ tagName: 'c-logo', component: Logo },
 	{ tagName: 'c-toast', component: Toast },
-	{ tagName: 'p-local', component: Local },
+	// { tagName: 'p-local', component: Local },
 	{ tagName: 'c-card', component: Card },
-	{ tagName: 'p-gameplay', component: Gameplay },
+	// { tagName: 'p-gameplay', component: Gameplay },
 	{ tagName: 'c-table', component: Table },
 	{ tagName: 'c-paddle-card', component: Paddlecard },
 	{ tagName: 'c-table-theme', component: Tabletheme },
-	{ tagName: 'p-one-vs-one', component: Onevsone },
+	// { tagName: 'p-one-vs-one', component: Onevsone },
 	{ tagName: 'c-player-setup', component: Playersetup },
-	{ tagName: 'p-tournament', component: Tournament },
+	// { tagName: 'p-tournament', component: Tournament },
 	{ tagName: 'c-add-players', component: Addplayers },
 ];

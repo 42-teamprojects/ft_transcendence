@@ -70,7 +70,7 @@ export default class Onevsone extends HTMLElement {
                             <c-table-theme type="football"></c-table-theme>
                         </div>
                     </div>
-                    <button is="c-button" type="submit" class="btn-primary mt-6">Start game</button>
+                    <button is="c-button" type="submit" class="btn-primary mt-9">Start game</button>
                 </form>
             </div>
         </div>
@@ -84,3 +84,5 @@ export default class Onevsone extends HTMLElement {
         this.game.removeEventListener('submit', this.startGameHandler);
     }
 }
+
+customElements.define('p-one-vs-one', Onevsone);

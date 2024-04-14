@@ -50,3 +50,5 @@ export default class Tournament extends HTMLElement {
         `;
     }
 }
+
+customElements.define('p-tournament', Tournament);

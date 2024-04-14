@@ -142,3 +142,5 @@ export default class Components extends HTMLElement {
         `;
 	}
 }
+
+customElements.define("p-components", Components);

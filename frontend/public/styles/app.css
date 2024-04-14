@@ -510,6 +510,7 @@ button:active:not([disabled]) {
 
 	/* most of the rest of this is opinion */
 	font-family: inherit;
+	font-weight: normal !important;
 	text-align: center;
 
 	/* 

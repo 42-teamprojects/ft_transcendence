@@ -23,3 +23,5 @@ export default class Landing extends HTMLElement {
         `;
     }
 }
+
+customElements.define('p-landing', Landing);

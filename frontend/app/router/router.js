@@ -27,6 +27,9 @@ export default class Router {
 	}
 
 	#findRoute(path) {
+		if (path.length > 1)
+			path = path.replace(/\/$/, "");
+		
 		const url = new URL(window.location.href);
 		const queryParams = Object.fromEntries(url.searchParams.entries());
 		for (const route of this.routes) {

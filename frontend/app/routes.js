@@ -1,38 +1,32 @@
-import Components from "./components/pages/components.js";
-import Gameplay from "./components/pages/gameplay.js";
-import Landing from "./components/pages/landing.js";
-import Local from "./components/pages/local.js";
-import Onevsone from "./components/pages/one-vs-one.js";
-import Tournament from "./components/pages/tournament.js";
 
 // Define routes with all components as functions returning a promise
 export const routes = [
   {
     path: "/",
-    component: () => Promise.resolve(Landing),
+    component: () => import("./components/pages/landing.js"),
   },
   {
     path: "/components",
-    component: () => Promise.resolve(Components),
+    component: () => import("./components/pages/components.js"),
   },
   {
     path: "/local",
-    component: () => Promise.resolve(Local),
+    component: () => import("./components/pages/local.js"),
+  },
+  {
+    path: "/local/1v1",
+    component: () => import("./components/pages/one-vs-one.js"),
+  },
+  {
+    path: "/local/tournament",
+    component: () => import("./components/pages/tournament.js"),
+  },
+  {
+    path: "/local/game/1v1",
+    component: () => import("./components/pages/gameplay.js"),
   },
   {
     path: "/gameplay",
-    component: () => Promise.resolve(Gameplay),
-  },
-  {
-    path: "/game/1v1",
-    component: () => Promise.resolve(Gameplay),
-  },
-  {
-    path: "/1v1",
-    component: () => Promise.resolve(Onevsone),
-  },
-  {
-    path: "/tournament",
-    component: () => Promise.resolve(Tournament),
+    component: () => import("./components/pages/gameplay.js"),
   },
 ];

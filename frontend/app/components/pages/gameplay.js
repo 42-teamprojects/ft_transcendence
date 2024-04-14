@@ -23,3 +23,5 @@ export default class Gameplay extends HTMLElement {
         `;
     }
 }
+
+customElements.define('p-gameplay', Gameplay);
