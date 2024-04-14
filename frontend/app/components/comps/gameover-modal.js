@@ -13,7 +13,7 @@ export default class Gameovermodal extends HTMLElement {
         const cancelButton = this.querySelector('#cancel-btn');
         const confirmButton = this.querySelector('#confirm-btn');
         
-        backdrop.addEventListener('click', this.#cancel.bind(this));
+        backdrop.addEventListener('click', this.hide.bind(this));
         cancelButton.addEventListener('click', this.#cancel.bind(this));
         confirmButton.addEventListener('click', this.#confirm.bind(this));
     }

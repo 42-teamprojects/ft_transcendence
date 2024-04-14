@@ -7,7 +7,7 @@ export default class Addplayers extends HTMLElement {
 		this.backdrop;
 		this.cancelButton;
 		this.confirmButton;
-        this.players = [];
+        this._players = [];
 	}
     
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -54,7 +54,7 @@ export default class Addplayers extends HTMLElement {
     #playerReady(e) {
         const playerSetup = this.querySelector(`#player${this.currentPlayer}`);
         playerSetup.classList.add('hidden');
-        this.players.push(e.detail);
+        this._players.push(e.detail);
 
         if (this.currentPlayer < this.playersNumber) {
             this.currentPlayer++;
@@ -71,7 +71,7 @@ export default class Addplayers extends HTMLElement {
                 bubbles: true,
                 composed: true,
                 detail: {
-                    players: this.players,
+                    players: this._players,
                 },
             });
             this.dispatchEvent(confirmEvent);
@@ -131,5 +131,9 @@ export default class Addplayers extends HTMLElement {
         this.backdrop.removeEventListener("click", this.#cancel.bind(this));
         this.cancelButton.removeEventListener("click", this.#cancel.bind(this));
         this.confirmButton.removeEventListener("click", this.#confirm.bind(this));
+    }
+
+    get players() {
+        return this._players;
     }
 }
