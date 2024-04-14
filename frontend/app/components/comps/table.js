@@ -6,7 +6,7 @@ export default class Table extends HTMLElement {
         this.player2 = this.getAttribute("player2")
         this.paddle1color = this.getAttribute("paddle1")
         this.paddle2color = this.getAttribute("paddle2")
-        this.finalScore = 1;
+        this.finalScore = 7;
         //table
         this.table = null;
         this.tableWidth = 1235;
@@ -161,32 +161,34 @@ export default class Table extends HTMLElement {
                 //left side of the ball touches right side of paddle1
                 this.ball.velocityX *= -1;
             }
+
         }
         else if (this.detectCollision(this.ball, this.paddle2)){
             if (this.ball.x + this.paddle2.width >= this.paddle2.x){
                 //left side of the ball touches right side of paddle2
                 this.ball.velocityX *= -1;
             }
+            this.increaseSpeed();
         }
         //check if scores
         this.drawBall();
         if (this.ball.x < 0){
             this.player2score++;
             this.querySelector("c-scoreboard").setAttribute("score2", this.player2score)
-            this.resetGame(this.ball.velocityX);
+            this.resetGame();
         }
         if (this.ball.x + this.ballWidth > this.tableWidth){
             this.player1score++;
             this.querySelector("c-scoreboard").setAttribute("score1", this.player1score)
-            this.resetGame(-this.ball.velocityX);
+            this.resetGame();
         }
         if (this.isGameOver) {
             this.dispatchEvent(new CustomEvent("game-over", 
-                { detail: 
-                    { winner: this.player1score === this.finalScore 
-                        ? this.player1 : this.player2 
-                    } 
-                }));
+            { detail: 
+                { winner: this.player1score === this.finalScore 
+                    ? this.player1 : this.player2 
+                } 
+            }));
             return;
         }
         requestAnimationFrame(this.update);
@@ -267,19 +269,25 @@ export default class Table extends HTMLElement {
         }
     }
 
-    resetGame = (direction) => {
+    resetGame = () => {
         this.ball = {
-            x : this.tableWidth /2,
-            y : this.tableHeight /2,
+            x : this.tableWidth / 2,
+            y : this.tableHeight / 2,
             width : this.ballWidth,
             height : this.ballHeight,
-            velocityX : direction,
-            velocityY : this.ball.velocityY,
+            velocityX : [1, -1][Math.floor(Math.random()*2)] * 10,
+            velocityY : Math.floor(Math.random()*6),
         }
     }
 
     get isGameOver() {
         return this.player1score === this.finalScore 
             || this.player2score === this.finalScore
+    }
+
+    // increase ball speed after each round
+    increaseSpeed = () => {
+        this.ball.velocityX *= 1.1;
+        this.ball.velocityY *= 1.1;
     }
 }
