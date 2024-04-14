@@ -82,6 +82,12 @@ export default class Router {
 		}
 	}
 
+	// Spa reload
+	reload() {
+		this.#renderCurrentRoute();
+	}
+
+
 	init() {
 		this.#renderCurrentRoute();
 	}
