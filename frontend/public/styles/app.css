@@ -95,6 +95,8 @@ button {
 	background-color: transparent;
 	border: var(--btn-border-width) solid #00000044;
 	box-shadow: 0 var(--btn-shadow-length) #00000044;
+	white-space: nowrap; /* prevent text from wrapping */
+    text-align: center; /* center the text */
 }
 
 .btn-primary {
