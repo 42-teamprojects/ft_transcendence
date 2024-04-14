@@ -44,7 +44,7 @@ export default class Onevsone extends HTMLElement {
         });
         
         const queryString = params.toString();
-        Router.instance.navigate(`/game/1v1?${queryString}`);
+        Router.instance.navigate(`/local/game/1v1?${queryString}`);
         Toast.notify({ type: "success", message: "Game is starting..." });
     }
 

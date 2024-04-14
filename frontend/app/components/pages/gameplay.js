@@ -3,6 +3,8 @@ export default class Gameplay extends HTMLElement {
         super();
         const urlParams = new URLSearchParams(window.location.search);
         this.params = Object.fromEntries(urlParams.entries());
+        
+        console.log(this.params);
     }
 
     connectedCallback() {
@@ -13,7 +15,8 @@ export default class Gameplay extends HTMLElement {
 
     render() {
         this.innerHTML = /*html*/`
-        <c-table id="table"></table>
+        <c-table id="table"
+            theme="${this.params.theme}" player1="${this.params.player1}" player2="${this.params.player2}" paddle1="${this.params.paddle1}" paddle2="${this.params.paddle2}"></table>
         `;
     }
 }

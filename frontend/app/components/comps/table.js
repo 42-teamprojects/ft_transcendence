@@ -1,6 +1,11 @@
 export default class Table extends HTMLElement {
     constructor() {
         super();
+        this.theme = this.getAttribute("theme")
+        this.player1 = this.getAttribute("player1")
+        this.player2 = this.getAttribute("player2")
+        this.paddle1color = this.getAttribute("paddle1")
+        this.paddle2color = this.getAttribute("paddle2")
         //table
         this.table = null;
         this.tableWidth = 1235;
@@ -9,7 +14,7 @@ export default class Table extends HTMLElement {
         // paddle
         this.paddleWidth = 18;
         this.paddleHeight = 110;
-        this.radious = 9;
+        this.radius = 9;
         this.playeVelocityY = 0;
         //score
         this.player1score = 0;
@@ -32,7 +37,7 @@ export default class Table extends HTMLElement {
 
         this.ballWidth = 15;
         this.ballHeight = 15;
-        this.ballRadious = 7;
+        this.ballRadius = 10;
         this.ball = {
             x : this.tableWidth / 2 - this.ballHeight/3,
             y : this.tableHeight / 2 - this.ballHeight/3,
@@ -41,26 +46,25 @@ export default class Table extends HTMLElement {
             velocityX : 10,
             velocityY : 1,
         }
+        this.middleCirlceRadius = 70;
     }
 
     connectedCallback() {
         this.render();
+        this.gameplay();
     }
 
     disconnectedCallback() {}
 
     render() {
         this.innerHTML = /*html*/`
-        <div class="flex-center relative">
-            <canvas id="table" class="table"></canvas>
-        </div>
+            <canvas id="table" class="table table-${this.theme}"></canvas>
         `;
-        this.gameplay();
     }
 
-    getPaddleColor = (paddle1Type) => {
+    getPaddleColor = (speciality) => {
         let color;
-        switch(paddle1Type) {
+        switch(speciality) {
             case 'fire':
                 color = '#EC7B3C';
                 break;
@@ -87,59 +91,65 @@ export default class Table extends HTMLElement {
         document.addEventListener("keyup", this.stopPlayer);
     }
 
-    drwaPaddle = (speciality, player, tableStyle) => {
+    drawPaddle = (speciality, player) => {
+
         let paddle = player === 1 ? this.paddle1 : this.paddle2;
         let paddleColor = this.getPaddleColor(speciality);
         this.context.beginPath();
-        this.context.rect(paddle.x, paddle.y + this.radious, paddle.width, paddle.height - 2 * this.radious);
+        this.context.rect(paddle.x, paddle.y + this.radius, paddle.width, paddle.height - 2 * this.radius);
         this.context.fillStyle = paddleColor;
         this.context.fill();
         
-        if (tableStyle != "clasic"){
+        if (this.theme !== "classic"){
             // Draw the top semi-circle of the paddle
             this.context.beginPath();
-            this.context.arc(paddle.x + paddle.width / 2, paddle.y + this.radious, this.radious, Math.PI, 2 * Math.PI);
+            this.context.arc(paddle.x + paddle.width / 2, paddle.y + this.radius, this.radius, Math.PI, 2 * Math.PI);
             this.context.fillStyle = paddleColor;
             this.context.fill();
         
             // Draw the bottom semi-circle of the paddle
             this.context.beginPath();
-            this.context.arc(paddle.x + paddle.width / 2, paddle.y + paddle.height - this.radious, this.radious, 0, Math.PI);
+            this.context.arc(paddle.x + paddle.width / 2, paddle.y + paddle.height - this.radius, this.radius, 0, Math.PI);
             this.context.fillStyle = paddleColor;
             this.context.fill();
         }
     }
-    drwaBall = () => {
-        this.context.fillStyle = "white";
+
+    drawBall = () => {
+        this.context.fillStyle = this.theme === "football" ? "orange" : "white";
         this.ball.x += this.ball.velocityX;
         this.ball.y += this.ball.velocityY;
 
         // squared
-        // this.context.fillRect(this.ball.x, this.ball.y, this.ballWidth, this.ballHeight)
+        if (this.theme === "classic")
+            this.context.fillRect(this.ball.x, this.ball.y, this.ballWidth, this.ballHeight)
 
         // rounded
+        else {
         this.context.beginPath();
-        this.context.arc(this.ball.x + this.ballWidth / 2, this.ball.y + this.ballWidth / 2, this.ballRadious, 0, Math.PI*2, false);
+        this.context.arc(this.ball.x + this.ballWidth / 2, this.ball.y + this.ballWidth / 2, this.ballRadius, 0, Math.PI*2, false);
         this.context.fill();
         this.context.closePath();
+        }
     }
     
     update = () => {
         requestAnimationFrame(this.update);
         this.context.clearRect(0, 0, this.table.width, this.table.height);
+        this.drawMiddle();
         //player 1
         let paddle1NextY = this.paddle1.y + this.paddle1.velocityY;
         if (!this.outOfBounds(paddle1NextY)){
             this.paddle1.y = paddle1NextY;
         }
-        this.drwaPaddle("ice", 1);
+        this.drawPaddle(this.paddle1color, 1);
         
         //player2
         let paddle2NextY = this.paddle2.y + this.paddle2.velocityY;
         if (!this.outOfBounds(paddle2NextY)){
             this.paddle2.y = paddle2NextY;
         }
-        this.drwaPaddle("fire", 2, "clasic")
+        this.drawPaddle(this.paddle2color, 2)
         
         // ball
         if (this.ball.y <= 0 || (this.ball.y + this.ball.height) >= this.tableHeight){
@@ -180,12 +190,47 @@ export default class Table extends HTMLElement {
         this.context.font = "35px MPlusRounded"; // Adjust the size as needed
         
         // Draw player names above scores
-        this.context.fillText("Player 1", this.tableWidth/3 - textWidth1 - 40, 40); // Replace "Player 1" with the actual player name
-        this.context.fillText("Player 2", this.tableWidth/1.5 - 10, 40); // Replace "Player 2" with the actual player name
-        
-        this.context.fillStyle = "#56646C";
-        this.context.fillRect(this.tableWidth / 2, 0, 5, this.tableHeight)
-        this.drwaBall();
+        this.context.fillText(this.player1, this.tableWidth/3 - textWidth1 - 40, 40); // Replace "Player 1" with the actual player name
+        this.context.fillText(this.player2, this.tableWidth/1.5 - 10, 40); // Replace "Player 2" with the actual player name
+        this.drawBall();
+    }
+    
+    drawMiddle = () => {
+        if (this.theme !== "classic"){
+            this.context.fillStyle = this.theme === "standard" ? "#56646C" : "white";
+            this.context.fillRect(this.tableWidth / 2, 0, 5, this.tableHeight)
+            if (this.theme === "football") {
+                this.context.beginPath();
+                this.context.arc(this.tableWidth / 2, this.tableHeight / 2, 90, 0, 2 * Math.PI, false);
+                this.context.lineWidth = 5;
+                this.context.strokeStyle = 'white'; // Change this to the desired border color
+                this.context.stroke();
+
+                this.context.beginPath();
+                var rectWidth = 120; // Change this to the desired width
+                var rectHeight = 250; // Change this to the desired height
+                var rectX = 0; // This positions the rectangle on the left side of the canvas
+                var rectY = (this.tableHeight - rectHeight) / 2; // This positions the rectangle vertically in the middle
+
+                this.context.rect(rectX - 5, rectY, rectWidth, rectHeight);
+                this.context.lineWidth = 5;
+                this.context.strokeStyle = 'white'; // Change this to the desired border color
+                this.context.stroke();
+                this.context.rect(this.tableWidth - rectWidth + 5, rectY, rectWidth, rectHeight);
+                this.context.lineWidth = 5;
+                this.context.strokeStyle = 'white'; // Change this to the desired border color
+                this.context.stroke();
+            }
+        }
+        else {
+            this.context.setLineDash([10, 10]); // Set the dash style as [dashLength, spaceLength]
+            this.context.beginPath();
+            this.context.moveTo(this.tableWidth / 2, 0);
+            this.context.lineTo(this.tableWidth / 2, this.tableHeight);
+            this.context.lineWidth = 10;
+            this.context.strokeStyle = "white";
+            this.context.stroke();
+        }
     }
     
     outOfBounds = (yPosition) => {
@@ -215,6 +260,7 @@ export default class Table extends HTMLElement {
             this.paddle2.velocityY = velocity;
         }
     }
+
     stopPlayer = (ev) => {
         if (ev.code === "KeyW" || ev.code === "KeyS"){
             this.paddle1.velocityY = 0;
@@ -223,6 +269,7 @@ export default class Table extends HTMLElement {
             this.paddle2.velocityY = 0;
         }
     }
+
     resetGame = (direction) => {
         this.ball = {
             x : this.tableWidth /2,
