@@ -6,6 +6,7 @@
     --bg-color: #161D23;
     --stroke-color: #7F8F98;
     --border-color: #313A42;
+    --active-bg-color: #262F35;
     --text-color: #FFFFFF;
     --soft-text-color: #CDD7DF;
     --highlight-color: #FFBE31;
@@ -37,6 +38,18 @@
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
+}
+
+.items-center {
+    align-items: center !important;
+}
+
+.justify-center {
+    justify-content: center !important;
+}
+
+.justify-between {
+    justify-content: space-between !important;
 }
 
 .gap-1 {
@@ -520,6 +533,45 @@
     margin-bottom: 2rem !important;
 }
 
+.my-9 {
+    margin-top: 2.25rem !important;
+    margin-bottom: 2.25rem !important;
+}
+
+.my-10 {
+    margin-top: 2.5rem !important;
+    margin-bottom: 2.5rem !important;
+}
+
+.my-11 {
+    margin-top: 2.75rem !important;
+    margin-bottom: 2.75rem !important;
+}
+
+.my-12 {
+    margin-top: 3rem !important;
+    margin-bottom: 3rem !important;
+}
+
+.my-13 {
+    margin-top: 3.25rem !important;
+    margin-bottom: 3.25rem !important;
+}
+
+.my-14 {
+    margin-top: 3.5rem !important;
+    margin-bottom: 3.5rem !important;
+}
+
+.my-15 {
+    margin-top: 3.75rem !important;
+    margin-bottom: 3.75rem !important;
+}
+
+.my-16 {
+    margin-top: 4rem !important;
+    margin-bottom: 4rem !important;
+}
 /* Padding */
 .px-9 {
     padding-left: 2.25rem !important;

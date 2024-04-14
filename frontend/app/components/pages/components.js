@@ -1,3 +1,4 @@
+import { useFormData } from "../../utils/useForm.js";
 import Toast from "../comps/toast.js";
 
 export default class Components extends HTMLElement {
@@ -30,6 +31,17 @@ export default class Components extends HTMLElement {
 		document.getElementById("notify3").addEventListener("click", () => {
 			Toast.notify({ type: "info", message: "Some thing went wrong" });
 		});
+
+        this.querySelector("#paddlesForm").addEventListener("submit", (e) => {
+            e.preventDefault();
+            this.querySelector("#selected-paddle").innerText = `Selected paddle: ${useFormData(e.target).getObject()["paddle-option"]}`;
+        });
+        this.querySelector("#themesForm").addEventListener("submit", (e) => {
+            e.preventDefault();
+            this.querySelector("#selected-theme").innerText = `Selected theme: ${useFormData(e.target).getObject()["theme-option"]}`;
+        });
+
+
 
 	}
 
@@ -83,7 +95,7 @@ export default class Components extends HTMLElement {
                             <span>
                                 <input id="r1" type="radio" name="radio" value="1">
                                 <label for="r1">Radio</label>
-                                <input id="r2" type="radio" name="radio" value="2">
+                                <input id="r2" type="radio" name="radio" value="2" checked>
                                 <label for="r2">Radio</label>
                             </span>
                         </div>
@@ -96,11 +108,36 @@ export default class Components extends HTMLElement {
                 </div>
                 <div class="toast-notification my-8">
                     <h2 class="pb-3">Toast</h2>
-                    <button class="btn-default" id="notify">Notify success</button>
-                    <button class="btn-default" id="notify1">Notify error</button>
-                    <button class="btn-default" id="notify2">Notify warning</button>
-                    <button class="btn-default" id="notify3">Notify info</button>
+                    <button class="btn-default" id="notify">Success</button>
+                    <button class="btn-default" id="notify1">Error</button>
+                    <button class="btn-default" id="notify2">Warning</button>
+                    <button class="btn-default" id="notify3">Info</button>
                 </div>
+                <div class="paddles my-8">
+                    <h2 class="pb-3">Paddle Options</h2>
+                    <form id="paddlesForm">
+                        <div class="flex gap-2 mb-2">
+                            <c-paddle-card type="fire" tooltip="Speed up your smashes" flow="right"></c-paddle-card>
+                            <c-paddle-card type="basic" tooltip="Enlarge your paddle for 5sec" flow="up" checked></c-paddle-card>
+                            <c-paddle-card type="ice" tooltip="Slow down your opponent" flow="right"></c-paddle-card>
+                        </div>
+                        <button class="btn-secondary">Submit</button>
+                        <span id="selected-paddle"></span>
+                    </form>
+                </div>
+                <div class="tables my-8">
+                    <h2 class="pb-3">Table themes</h2>
+                    <form id="themesForm">
+                        <div class="flex gap-2 mb-2">
+                            <c-table-theme type="classic"></c-table-theme>
+                            <c-table-theme type="standard" checked></c-table-theme>
+                            <c-table-theme type="football"></c-table-theme>
+                        </div>
+                        <button class="btn-secondary">Submit</button>
+                        <span id="selected-theme"></span>
+                    </form>
+                </div>
+
             </div>
         `;
 	}

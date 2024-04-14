@@ -1,12 +1,11 @@
+import { isThere } from "../../utils/utils.js";
+
 export default class Card extends HTMLElement {
     constructor() {
         super();
-        let types = ["primary", "secondary", "default"]
         this.actionAtt = this.getAttribute('action') || 'none'
         this.titleAtt = this.getAttribute("title") || 'none'
-        this.typeAtt = types.includes(this.getAttribute("type")) 
-            ? this.getAttribute("type") 
-            : 'default'
+        this.typeAtt = isThere(["primary", "secondary", "default"], this.getAttribute("type"), 'default')
     }
 
     connectedCallback() {
