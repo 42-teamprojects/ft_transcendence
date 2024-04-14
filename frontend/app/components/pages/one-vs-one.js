@@ -50,19 +50,19 @@ export default class Onevsone extends HTMLElement {
 
     render() {
         this.innerHTML = /*html*/`
-        <div class="flex-col-center my-8 gap-9">
+        <div class="flex-col-center my-10 gap-9">
             <div>
-                <h1 class="text-center mb-2">1 v 1 Pong Match</h1>
+                <h1 class="text-center mb-4">1 v 1 Pong Match</h1>
                 <h3 class="text-center font-medium text-stroke">Customize Your Game</h3>
             </div>
-            <div class="flex-col-center gap-4 w-full" style="max-width: 900px">
+            <div class="flex-col-center gap-9 w-full" style="max-width: 900px">
                 <div class="flex justify-between w-full">
                     <c-player-setup id="player1" player-id="1"></c-player-setup>
                     <div class="vertical-line"></div>
                     <c-player-setup id="player2" player-id="2"></c-player-setup>
                 </div>
-                <form id="game" class="w-full flex-col-center">
-                    <div class="tables mt-8 w-full">
+                <form id="game" class="w-full flex-col-center mt-8">
+                    <div class="tables w-full">
                         <h2 class="mb-6 text-center">Choose a table theme</h2>
                         <div class="flex w-full justify-between gap-2">
                             <c-table-theme type="classic"></c-table-theme>

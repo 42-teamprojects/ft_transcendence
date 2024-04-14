@@ -139,17 +139,17 @@ button:active:not([disabled]) {
 }
 
 [opened] #backdrop,
-[opened] #modal {
+[opened] .modal {
 	opacity: 1;
 	pointer-events: all;
 }
 
-[opened] #modal {
-	top: 40%;
+[opened] .modal {
+	top: 45%;
 	transform: translate(-50%, -50%);
 }
 
-#modal {
+.modal {
 	position: fixed;
 	top: 30%;
 	left: 50%;
@@ -168,16 +168,16 @@ button:active:not([disabled]) {
 }
 
 @media screen and (max-width: 560px) {
-	#modal {
+	.modal {
 		width: 95%;
 	}
 }
 
-#modal main {
+.modal main {
 	padding: 1rem;
 }
 
-#modal .actions {
+.modal .actions {
 	display: flex;
 	align-items: center;
 	gap: 1rem;

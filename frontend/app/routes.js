@@ -3,6 +3,7 @@ import Gameplay from "./components/pages/gameplay.js";
 import Landing from "./components/pages/landing.js";
 import Local from "./components/pages/local.js";
 import Onevsone from "./components/pages/one-vs-one.js";
+import Tournament from "./components/pages/tournament.js";
 
 // Define routes with all components as functions returning a promise
 export const routes = [
@@ -27,7 +28,11 @@ export const routes = [
     component: () => Promise.resolve(Gameplay),
   },
   {
-    path: "/one-vs-one",
+    path: "/1v1",
     component: () => Promise.resolve(Onevsone),
+  },
+  {
+    path: "/tournament",
+    component: () => Promise.resolve(Tournament),
   },
 ];

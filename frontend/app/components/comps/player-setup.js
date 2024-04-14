@@ -1,38 +1,46 @@
 import { useFormData } from "../../utils/useForm.js";
+import { isThere } from "../../utils/utils.js";
 
 export default class Playersetup extends HTMLElement {
     constructor() {
         super();
         this.playerId = this.getAttribute("player-id") || null;
+        this.isTournament = isThere(["true", ""], this.getAttribute("tournament"), false);
         this.classStyle = this.playerId % 2 === 0 ? 'secondary' : 'primary';
         this.aliasInput;
+        this.btnReady;
     }
 
     connectedCallback() {
         this.render();
         this.aliasInput = this.querySelector('input[name=alias]');
+        this.btnReady = this.querySelector('.btn-ready');
         this.aliasInput.addEventListener('change', this.aliasFieldHandler.bind(this));
+        if (this.isTournament) this.btnReady.classList.add('hidden');
+        this.querySelector('form').addEventListener('submit', this.readyHandler.bind(this));
+    }
 
-        this.querySelector('form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const formData = useFormData(e.target).getObject();
-            const alias = formData['alias'];
-            const paddle = formData['paddle-option'];
+    readyHandler(e) {
+        e.preventDefault();
+        const formData = useFormData(e.target).getObject();
+        const alias = formData['alias'];
+        const paddle = formData['paddle-option'];
 
-            if (!this.checkAlias(alias, this.aliasInput)) return;
+        if (!this.checkAlias(alias, this.aliasInput)) return;
 
-            this.dispatchEvent(new CustomEvent('player-ready', {
-                detail: {
-                    playerId: this.playerId,
-                    alias,
-                    paddle
-                }
-            }));
-
-            this.querySelector('.btn-ready').disabled = true;
-            this.querySelector('.btn-ready').textContent = 'Waiting...';
-
-        });
+        if (this.isTournament === false) {
+            this.btnReady.textContent = 'Waiting...';
+            this.btnReady.disabled = true;
+        }
+        
+        this.dispatchEvent(new CustomEvent('player-ready', {
+            detail: {
+                playerId: this.playerId,
+                alias,
+                paddle
+            }
+        }));
+        this.aliasInput.disabled = true;
     }
 
     aliasFieldHandler(e) {
@@ -42,7 +50,7 @@ export default class Playersetup extends HTMLElement {
 
     render() {
         this.innerHTML = /*html*/`
-        <div class="player-setup player${this.playerId} flex-col px-4">
+        <div class="player-setup ${this.isTournament ? 'flex-col-center my-4' : 'flex-col'} px-4">
             <h2 class="text-${this.classStyle} mb-6 text-center">Player ${this.playerId}</h2>
             <div style="width: 285px">
                 <form class="flex-col-center gap-5">
@@ -63,7 +71,11 @@ export default class Playersetup extends HTMLElement {
         `;
     }
 
-    disconnectedCallback() {}
+    disconnectedCallback() {
+        this.aliasInput.removeEventListener('change', this.aliasFieldHandler);
+        if (!this.isTournament)
+            this.querySelector('form').removeEventListener('submit', this.readyHandler);
+    }
 
     checkAlias(alias, e) {
         const errorMsg = this.querySelector('.input-error');
@@ -76,5 +88,9 @@ export default class Playersetup extends HTMLElement {
             errorMsg.classList.add('hidden');
             return true;
         } 
+    }
+
+    submitForm() {
+        this.btnReady.click();
     }
 }
