@@ -38,6 +38,9 @@ export default class Onevsone extends HTMLElement {
             Toast.notify({ type: "error", message: "Please make sure all the players are ready" });
             return;
         }
+        // Sort players by player id
+        this.players.sort((a, b) => a.playerId - b.playerId);
+
         const params = new URLSearchParams({
             theme: selectedTheme,
             player1: this.players[0].alias,
