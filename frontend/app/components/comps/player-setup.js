@@ -6,12 +6,20 @@ export default class Playersetup extends HTMLElement {
 		super();
 		this.playerId = parseInt(this.getAttribute("player-id")) || null;
 		this.isTournament = isThere(["true", ""], this.getAttribute("tournament"), false);
+		this.isDisabled = this.hasAttribute("disabled");
+		this.isShowcase = this.hasAttribute("showcase");
 		this.classStyle;
 		this.aliasInput;
 		this.btnReady;
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
+		if (this.hasAttribute("disabled")) {
+			this.disableSetup();
+		}
+		if (this.hasAttribute("showcase")) {
+			this.readyForShowcase();
+		}
         if (name === "player-id") {
             this.playerId = parseInt(newValue);
 			this.classStyle = this.playerId % 2 === 0 ? "primary" : "secondary";
@@ -22,7 +30,7 @@ export default class Playersetup extends HTMLElement {
     }
 
 	static get observedAttributes() {
-		return ["player-id", "tournament"];
+		return ["player-id", "tournament", "disabled", "showcase"];
 	}
 
 	connectedCallback() {
@@ -57,11 +65,7 @@ export default class Playersetup extends HTMLElement {
 				},
 			})
 		);
-		this.aliasInput.disabled = true;
-		this.querySelectorAll("c-paddle-card").forEach((paddleCard) => {
-			paddleCard.setAttribute("disabled", "true");
-			paddleCard.removeAttribute("tooltip");
-		});
+		this.disableSetup();
 	}
 
 	aliasFieldHandler(e) {
@@ -72,18 +76,18 @@ export default class Playersetup extends HTMLElement {
 	render() {
 		this.innerHTML = /*html*/ `
         <div class="player-setup ${this.isTournament ? "flex-col-center my-4" : "flex-col"} px-4">
-            <h2 class="text-${this.classStyle} mb-6 text-center">Player ${this.playerId}</h2>
+            <h2 class="text-${this.classStyle} mb-6 text-center ${this.isShowcase && 'hidden'}">Player ${this.playerId}</h2>
             <div style="width: 285px">
                 <form class="flex-col-center gap-5">
                     <div class="form-group w-full">
                         <input type="text" name="alias" class="input-field" placeholder="Alias/Name"/>
                         <span class="input-error ml-3 text-danger hidden text-sm">Must be 3-20 characters</span>
                     </div>
-                    <h3 class="font-medium">Choose a paddle</h3>
+                    <h3 class="font-medium ${this.isShowcase && 'hidden'}">Choose a paddle</h3>
                     <div class="flex w-full justify-between gap-2">
-                        <c-paddle-card type="fire" tooltip="Speed up your smashes" flow="up"></c-paddle-card>
-                        <c-paddle-card type="basic" tooltip="Enlarge your paddle for 5sec" flow="up" checked></c-paddle-card>
-                        <c-paddle-card type="ice" tooltip="Slow down your opponent" flow="up"></c-paddle-card>
+                        <c-paddle-card type="fire" tooltip="Speed up your smashes" flow="up" ${this.isShowcase || this.isDisabled && 'disabled'}></c-paddle-card>
+                        <c-paddle-card type="basic" tooltip="Enlarge your paddle for 5sec" flow="up" ${this.isShowcase || this.isDisabled && 'disabled'} checked></c-paddle-card>
+                        <c-paddle-card type="ice" tooltip="Slow down your opponent" flow="up" ${this.isShowcase || this.isDisabled && 'disabled'}></c-paddle-card>
                     </div>
                     <button type="submit" class="btn-${this.classStyle} w-full btn-ready">Ready</button>
                 </form>
@@ -112,5 +116,19 @@ export default class Playersetup extends HTMLElement {
 
 	submitForm() {
 		this.btnReady.click();
+	}
+
+	disableSetup() {
+		this.aliasInput.disabled = true;
+		this.querySelectorAll("c-paddle-card").forEach((paddleCard) => {
+			paddleCard.setAttribute("disabled", "true");
+			paddleCard.removeAttribute("tooltip");
+		});
+	}
+
+	readyForShowcase() {
+		this.disableSetup();
+		this.querySelector("h2").classList.add("hidden");
+		this.querySelector("h3").classList.add("hidden");
 	}
 }

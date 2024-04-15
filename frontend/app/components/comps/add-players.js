@@ -8,6 +8,7 @@ export default class Addplayers extends HTMLElement {
 		this.cancelButton;
 		this.confirmButton;
         this._players = [];
+        this.playersSetups = [];
 	}
     
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -58,7 +59,9 @@ export default class Addplayers extends HTMLElement {
 
         if (this.currentPlayer < this.playersNumber) {
             this.currentPlayer++;
-            this.querySelector(`#player${this.currentPlayer}`).classList.remove('hidden');
+            const newPlayerSetup = this.querySelector(`#player${this.currentPlayer}`);
+            newPlayerSetup.classList.remove('hidden');
+            newPlayerSetup.querySelector('input[name="alias"]').focus();
             if (this.currentPlayer === this.playersNumber) {
                 this.confirmButton.textContent = 'Save';
             }
@@ -93,6 +96,9 @@ export default class Addplayers extends HTMLElement {
             this.renderPlayerSetup(i);
         }
 
+        if (this.playersSetups.length > 0)
+            this.playersSetups[0].querySelector('input[name="alias"]').focus();
+
         this.backdrop.addEventListener("click", this.#cancel.bind(this));
         this.cancelButton.addEventListener("click", this.#cancel.bind(this));
         this.confirmButton.addEventListener("click", this.#confirm.bind(this));
@@ -107,6 +113,7 @@ export default class Addplayers extends HTMLElement {
         if (playerId !== this.currentPlayer)
             playerSetup.classList.add('hidden');
         this.querySelector('main').appendChild(playerSetup);
+        this.playersSetups.push(playerSetup);
     }
 
     render() {
@@ -131,6 +138,9 @@ export default class Addplayers extends HTMLElement {
         this.backdrop.removeEventListener("click", this.#cancel.bind(this));
         this.cancelButton.removeEventListener("click", this.#cancel.bind(this));
         this.confirmButton.removeEventListener("click", this.#confirm.bind(this));
+        for (const playerSetup of this.playersSetups) {
+            playerSetup.removeEventListener("player-ready", this.#playerReady.bind(this));
+        }
     }
 
     get players() {

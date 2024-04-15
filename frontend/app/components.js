@@ -1,3 +1,4 @@
+import Showplayers from "./components/comps/show-players.js";
 import Gameovermodal from "./components/comps/gameover-modal.js";
 import Scoreboard from "./components/comps/scoreboard.js";
 import Addplayers from "./components/comps/add-players.js";
@@ -32,4 +33,5 @@ export const components = [
 	{ tagName: 'c-add-players', component: Addplayers },
 	{ tagName: 'c-scoreboard', component: Scoreboard },
 	{ tagName: 'c-gameover-modal', component: Gameovermodal },
+	{ tagName: 'c-show-players', component: Showplayers },
 ];

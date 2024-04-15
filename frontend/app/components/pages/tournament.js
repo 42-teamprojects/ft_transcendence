@@ -2,52 +2,87 @@ import { tournamentStore } from "../../state/tournamentStore.js";
 import { useFormData } from "../../utils/useForm.js";
 import Toast from "../comps/toast.js";
 
+/* Player:
+    - playerId
+    - alias
+    - paddle    
+*/
+
 export default class Tournament extends HTMLElement {
 	constructor() {
 		super();
 		document.title = "Tournament | Blitzpong.";
 		this.addPlayersForm;
-		this.modal;
+		this.addPlayersModal;
+		this.showPlayersModal;
         this._players = [];
 	}
 
 	connectedCallback() {
 		this.render();
 		this.addPlayersForm = this.querySelector("#add-players-form");
+        this.addPlayersForm.querySelector("#show-players").disabled = true;
         
-		this.addPlayersForm.addEventListener("submit", this.addPlayersHandler.bind(this));
+		this.addPlayersForm.addEventListener("submit", this.onSubmitHandler.bind(this));
 	}
 
-    addPlayersHandler(e) {
+    onSubmitHandler(e) {
         e.preventDefault();
-        
+        if (e.submitter.id === "add-players" && this._players.length === 0) {
+            this.addPlayersHandler(e);
+        }
+        else if (e.submitter.id === "show-players" && this._players.length > 0) {
+            this.showPlayersHandler(e);
+        }
+    }
+
+    addPlayersHandler(e) {        
         const { playersNumber } = useFormData(e.target).getObject();
         if (playersNumber === "" || playersNumber === null || playersNumber === undefined) {
             Toast.notify({ type: "error", message: "Please select the number of players" });
             return;
         }
-        this.modal = document.createElement("c-add-players");
-        this.modal.setAttribute("players-number", playersNumber);
-        this.appendChild(this.modal);
+        this.addPlayersModal = document.createElement("c-add-players");
+        this.addPlayersModal.setAttribute("players-number", playersNumber);
+        this.appendChild(this.addPlayersModal);
 
-        this.modal.addEventListener("confirm", (e) => {
+        this.addPlayersModal.addEventListener("confirm", (e) => {
             const { players } = e.detail;
             this._players = players;
             Toast.notify({ type: "success", message: `${this._players.length} players added` });
             console.log(players);
-            this.modal.remove();
-            this.addPlayersForm.querySelector(".btn-secondary").disabled = true;
-            this.addPlayersForm.querySelector(".btn-secondary").textContent = "Players added";
+            this.addPlayersModal.remove();
+            const addPlayersBtn = this.addPlayersForm.querySelector("#add-players");
+            const showPlayersBtn = this.addPlayersForm.querySelector("#show-players");
+            addPlayersBtn.disabled = true;
+            showPlayersBtn.disabled = false;
+            addPlayersBtn.textContent = "Players added";
         });
 
-        this.modal.addEventListener("cancel", () => {
-            this.modal.remove();
+        this.addPlayersModal.addEventListener("cancel", () => {
+            this.addPlayersModal.remove();
         });
 
         setTimeout(() => {
-            this.modal.open();
+            this.addPlayersModal.open();
         }, 100);
     }
+
+    showPlayersHandler(e) {
+        this.showPlayersModal = document.createElement("c-show-players");
+        this.showPlayersModal.setAttribute("players-number", this._players.length);
+        this.appendChild(this.showPlayersModal);
+
+        this.showPlayersModal.addEventListener("cancel", () => {
+            this.showPlayersModal.remove();
+        });
+
+        setTimeout(() => {
+            this.showPlayersModal.open();
+        }, 100);
+    
+    }
+
 
 	disconnectedCallback() {
         this.addPlayersForm.removeEventListener("submit", this.addPlayersHandler.bind(this));
@@ -72,8 +107,8 @@ export default class Tournament extends HTMLElement {
                         </select>
                     </div>
                     <div class="flex w-full gap-4">
-                        <button class="btn-default w-full text-secondary">Show players</button>
-                        <button type="submit" class="btn-secondary w-full">Add players</button>
+                        <button type="submit" id="show-players" class="btn-default w-full text-secondary">Show players</button>
+                        <button type="submit" id="add-players" class="btn-secondary w-full">Add players</button>
                     </div>
                 </form>
                 <form id="game" class="w-full flex-col-center mt-8">
