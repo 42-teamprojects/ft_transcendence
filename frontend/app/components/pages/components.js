@@ -140,9 +140,16 @@ export default class Components extends HTMLElement {
                 <div>
                     <c-gameover-modal></c-gameover-modal>
                 </div>
+                <div>
+                    <c-bracket8></c-bracket8>
+                    <c-bracket4></c-bracket4>
+                </div>
 
-            </div>
-        `;
+                <div>
+                </div>
+                
+                </div>
+                `;
 	}
 }
 

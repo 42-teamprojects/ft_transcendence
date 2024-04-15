@@ -29,4 +29,8 @@ export const routes = [
     path: "/gameplay",
     component: () => import("./components/pages/gameplay.js"),
   },
+  {
+    path : "/local/tournament/qualifications",
+    component: () => import("./components/pages/qualification.js"),
+  },
 ];
