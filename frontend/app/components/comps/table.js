@@ -59,8 +59,15 @@ export default class Table extends HTMLElement {
 
     render() {
         this.innerHTML = /*html*/`
-            <c-scoreboard class="mb-5" player1="${this.player1}" player2="${this.player2}" score1="${this.player1score}" score2="${this.player1score}"></c-scoreboard>
-            <canvas id="table" class="table table-${this.theme}"></canvas>
+            <div class="h-full w-full flex-col-center">
+                <c-scoreboard   class="mb-5"
+                                player1="${this.player1}" 
+                                player2="${this.player2}" 
+                                score1="${this.player1score}"
+                                score2="${this.player1score}">
+                </c-scoreboard>
+                <canvas id="table" class="table table-${this.theme}"></canvas>
+            </div>
         `;
     }
 

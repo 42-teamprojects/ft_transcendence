@@ -30,7 +30,12 @@ export default class Gameplay extends HTMLElement {
     render() {
         this.innerHTML = /*html*/`
         <c-table id="table"
-            theme="${this.params.theme}" player1="${this.params.player1}" player2="${this.params.player2}" paddle1="${this.params.paddle1}" paddle2="${this.params.paddle2}"></table>
+            theme="${this.params.theme}"
+            player1="${this.params.player1}"
+            player2="${this.params.player2}"
+            paddle1="${this.params.paddle1}"
+            paddle2="${this.params.paddle2}">
+        </c-table>
         `;
     }
 }
