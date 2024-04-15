@@ -276,7 +276,7 @@ export default class Table extends HTMLElement {
             width : this.ballWidth,
             height : this.ballHeight,
             velocityX : [1, -1][Math.floor(Math.random()*2)] * 10,
-            velocityY : Math.floor(Math.random()*6),
+            velocityY : [2,3,4,5,6][Math.floor(Math.random()*6)]
         }
     }
 
