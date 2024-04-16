@@ -1,22 +1,40 @@
-.sidebar-widget{
+.sidebar {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    height: 100vh;
+    width: 256px;
+    padding: 1.25rem;
+    background-color: var(--bg-color);
+    border-right: solid 1px;
+    border-color: var(--border-color);
+}
+
+.content {
+    margin-left: 256px;
+    overflow-y: auto;
+    width: calc(100% - 256px);
+    height: 100vh;
+}
+
+.sidebar-widget {
     display: flex;
     align-items: center;
-    width: 200px;
+    justify-content: start;
     gap: 20px;
-    padding: 10px;
-    border-radius: 0.75rem;
-}
-
-.sidebar-widget:hover{
-    background-color: var(--active-bg-color);
+    padding: 14px;
+    border-radius: 1rem;
     cursor: pointer;
-    border-color: var(--stroke-color);
-    color: var(--stroke-color);
-    border: solid 1px;
-}
+    transition: all 150ms ease-in-out;
 
-.sidebar-widget img{
-    width: 30px;
-    height: 30px;
-}
+    &:hover{
+        background-color: var(--active-bg-color);
+    }
 
+    &.active {
+        background-color: var(--active-bg-color);
+        box-shadow: 0 0 0 2px var(--secondary-color) inset;
+        color: var(--secondary-color);
+    }
+}

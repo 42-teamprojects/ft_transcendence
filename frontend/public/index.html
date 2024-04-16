@@ -15,8 +15,10 @@
     <link rel="stylesheet" href="public/styles/app5.css">
 </head>
 <body>
-
-    <router-outlet></router-outlet>
+    <c-sidebar></c-sidebar>
+    <div class="content">
+        <router-outlet></router-outlet>
+    </div>
     
     <div class="toasts-container"></div>
     <script src="app/app.js" type="module"></script>

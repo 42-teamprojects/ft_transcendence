@@ -1151,3 +1151,22 @@
     opacity: 1;
 }
 
+/* Tranform text */
+
+.uppercase {
+    text-transform: uppercase !important;
+}
+
+.lowercase {
+    text-transform: lowercase !important;
+}
+
+.capitalize {
+    text-transform: capitalize !important;
+}
+
+/* letter space */
+
+.spacing-1 {
+    letter-spacing: 0.8px;
+}
