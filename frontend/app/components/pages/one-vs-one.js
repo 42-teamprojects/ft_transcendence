@@ -25,7 +25,7 @@ export default class Onevsone extends HTMLElement {
     }
 
     playerReadyHandler = (e) => {
-        this.players.push({ ...e.detail });
+        this.players.push(e.detail.player);
         if (this.players.length === 2) {
             Toast.notify({ type: "success", message: "Players are ready, Choose a theme and start the game" });
         }

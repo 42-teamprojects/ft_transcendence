@@ -5,6 +5,7 @@ class TournamentStore extends Store {
 		super({
 			players: [],
 			theme: "",
+			matches: [],
 			playersNumber: 0,
 			tournamentStarted: false,
 			tournamentFinished: false,
@@ -34,6 +35,10 @@ class TournamentStore extends Store {
 
 	setPlayers(players) {
 		this.setState({ players: players });
+	}
+
+	setMatches(matches) {
+		this.setState({ matches });
 	}
 
 	reset() {

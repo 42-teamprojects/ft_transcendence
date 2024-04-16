@@ -1,3 +1,4 @@
+import LocalPlayer from "../../entities/LocalPlayer.js";
 import { useFormData } from "../../utils/useForm.js";
 import { isThere } from "../../utils/utils.js";
 
@@ -20,14 +21,14 @@ export default class Playersetup extends HTMLElement {
 		if (this.hasAttribute("showcase")) {
 			this.readyForShowcase();
 		}
-        if (name === "player-id") {
-            this.playerId = parseInt(newValue);
+		if (name === "player-id") {
+			this.playerId = parseInt(newValue);
 			this.classStyle = this.playerId % 2 === 0 ? "primary" : "secondary";
-        }
-        if (name === "tournament") {
-            this.isTournament = isThere(["true", ""], newValue, false);
-        }
-    }
+		}
+		if (name === "tournament") {
+			this.isTournament = isThere(["true", ""], newValue, false);
+		}
+	}
 
 	static get observedAttributes() {
 		return ["player-id", "tournament", "disabled", "showcase"];
@@ -50,19 +51,17 @@ export default class Playersetup extends HTMLElement {
 		const alias = formData["alias"];
 		const paddle = formData["paddle-option"];
 		if (!this.checkAlias(alias, this.aliasInput)) return;
-		
+
 		if (this.isTournament === false) {
 			this.btnReady.textContent = "Waiting...";
 			this.btnReady.disabled = true;
 		}
 
+		const player = new LocalPlayer(this.playerId, alias, paddle);
+
 		this.dispatchEvent(
 			new CustomEvent("player-ready", {
-				detail: {
-					playerId: this.playerId,
-					alias,
-					paddle,
-				},
+				detail: { player: player },
 			})
 		);
 		this.disableSetup();
@@ -76,18 +75,26 @@ export default class Playersetup extends HTMLElement {
 	render() {
 		this.innerHTML = /*html*/ `
         <div class="player-setup ${this.isTournament ? "flex-col-center my-4" : "flex-col"} px-4">
-            <h2 class="text-${this.classStyle} mb-6 text-center ${this.isShowcase && 'hidden'}">Player ${this.playerId}</h2>
+            <h2 class="text-${this.classStyle} mb-6 text-center ${this.isShowcase && "hidden"}">Player ${
+			this.playerId
+		}</h2>
             <div style="width: 285px">
                 <form class="flex-col-center gap-5">
                     <div class="form-group w-full">
                         <input type="text" name="alias" class="input-field" placeholder="Alias/Name"/>
                         <span class="input-error ml-3 text-danger hidden text-sm">Must be 3-20 characters</span>
                     </div>
-                    <h3 class="font-medium ${this.isShowcase && 'hidden'}">Choose a paddle</h3>
+                    <h3 class="font-medium ${this.isShowcase && "hidden"}">Choose a paddle</h3>
                     <div class="flex w-full justify-between gap-2">
-                        <c-paddle-card type="fire" tooltip="Speed up your smashes" flow="up" ${this.isShowcase || this.isDisabled && 'disabled'}></c-paddle-card>
-                        <c-paddle-card type="basic" tooltip="Enlarge your paddle for 5sec" flow="up" ${this.isShowcase || this.isDisabled && 'disabled'} checked></c-paddle-card>
-                        <c-paddle-card type="ice" tooltip="Slow down your opponent" flow="up" ${this.isShowcase || this.isDisabled && 'disabled'}></c-paddle-card>
+                        <c-paddle-card type="fire" tooltip="Speed up your smashes" flow="up" ${
+							this.isShowcase || (this.isDisabled && "disabled")
+						}></c-paddle-card>
+                        <c-paddle-card type="basic" tooltip="Enlarge your paddle for 5sec" flow="up" ${
+							this.isShowcase || (this.isDisabled && "disabled")
+						} checked></c-paddle-card>
+                        <c-paddle-card type="ice" tooltip="Slow down your opponent" flow="up" ${
+							this.isShowcase || (this.isDisabled && "disabled")
+						}></c-paddle-card>
                     </div>
                     <button type="submit" class="btn-${this.classStyle} w-full btn-ready">Ready</button>
                 </form>

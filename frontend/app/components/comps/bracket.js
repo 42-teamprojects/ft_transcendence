@@ -1,4 +1,6 @@
+import LocalMatch from "../../entities/LocalMatch.js";
 import { tournamentStore } from "../../state/tournamentStore.js";
+import { shuffleArray } from "../../utils/utils.js";
 
 export default class Bracket extends HTMLElement {
     constructor() {
@@ -7,23 +9,23 @@ export default class Bracket extends HTMLElement {
     }
 
     connectedCallback() {
-      this.tournamentDetails = tournamentStore.getState()
-      console.log(this.tournamentDetails)
+      const players = tournamentStore.getState().players;      
       
-      let players = this.tournamentDetails.players;
-      let pairs = this.getMatchPairs(players);
+      this.generateMatches(players);
 
-        this.render();
+      this.tournamentDetails = tournamentStore.getState();
+      console.log(this.tournamentDetails);
+
+      this.render();
 
         this.querySelector('.col:first-child').querySelectorAll('c-match').forEach((match, index) => {
-            match.setAttribute('player1-id', pairs[index][0].playerId);
-            match.setAttribute('player2-id', pairs[index][1].playerId);
+            match.setAttribute('match-id', this.tournamentDetails.matches[index].id);
         });
     }
 
     disconnectedCallback() {}
 
-render() {
+    render() {
     let rounds = Math.log2(this.tournamentDetails.playersNumber); // Number of rounds is log2 of number of players
     let html = '<div class="brackets">';
 
@@ -56,6 +58,18 @@ render() {
       }
       return pairs;
     }
+
+    generateMatches(players) {
+      shuffleArray(players);
+      const pairs = this.getMatchPairs(players);
+      let matches = [];
+      pairs.forEach((pair, index) => {
+          const match = new LocalMatch(index, pair[0], pair[1]);
+          matches.push(match);
+      });
+      tournamentStore.setMatches(matches);
+    }
+
 
 }
   // render() {

@@ -55,7 +55,7 @@ export default class Addplayers extends HTMLElement {
     #playerReady(e) {
         const playerSetup = this.querySelector(`#player${this.currentPlayer}`);
         playerSetup.classList.add('hidden');
-        this._players.push(e.detail);
+        this._players.push(e.detail.player);
 
         if (this.currentPlayer < this.playersNumber) {
             this.currentPlayer++;

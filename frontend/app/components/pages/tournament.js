@@ -39,8 +39,6 @@ export default class Tournament extends HTMLElement {
             Toast.notify({ type: "error", message: "Please make sure all the players are registred" });
             return;
         }
-        // Shuffle players
-        shuffleArray(this._players);
 
         tournamentStore.setPlayers(this._players);
         tournamentStore.setTheme(selectedTheme);
@@ -72,8 +70,7 @@ export default class Tournament extends HTMLElement {
         this.appendChild(this.addPlayersModal);
 
         this.addPlayersModal.addEventListener("confirm", (e) => {
-            const { players } = e.detail;
-            this._players = players;
+            this._players = e.detail.players;
             Toast.notify({ type: "success", message: `${this._players.length} players added` });
             
             this.addPlayersModal.remove();
