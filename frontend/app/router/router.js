@@ -91,6 +91,7 @@ export default class Router {
 	init() {
 		this.#renderCurrentRoute();
 	}
+
 }
 
 // IMPORTANT !!

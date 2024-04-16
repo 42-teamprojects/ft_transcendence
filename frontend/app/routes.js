@@ -30,7 +30,7 @@ export const routes = [
     component: () => import("./components/pages/qualifications.js"),
   },
   {
-    path : "/components/sidebar",
-    component: () => import("./components/pages/sidebar-page.js"),
+    path : "/dashboard",
+    component: () => import("./components/pages/dashboard.js"),
   },
 ];

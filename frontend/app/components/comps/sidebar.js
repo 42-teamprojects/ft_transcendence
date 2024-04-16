@@ -2,12 +2,18 @@ export default class Sidebar extends HTMLElement {
     constructor() {
         super();
     }
-
+    
     connectedCallback() {
-        this.render();
+        if (window.location.pathname.startsWith("/dashboard")) {
+            console.log("dashboard");
+            document.querySelector("router-outlet").parentElement.classList.add("content")
+            this.render();
+        }
     }
 
-    disconnectedCallback() {}
+    disconnectedCallback() {
+            document.querySelector("router-outlet").parentElement.classList.remove("content")
+    }
 
     render() {
         this.innerHTML = /*html*/`
@@ -22,5 +28,3 @@ export default class Sidebar extends HTMLElement {
         `;
     }
 }
-
-false
