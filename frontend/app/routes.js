@@ -33,4 +33,12 @@ export const routes = [
     path : "/dashboard",
     component: () => import("./components/pages/dashboard.js"),
   },
+  {
+    path : "/dashboard/home",
+    component: () => import("./components/pages/dashboard.js"),
+  },
+  {
+    path : "/dashboard/chat",
+    component: () => import("./components/pages/dashboard.js"),
+  },
 ];

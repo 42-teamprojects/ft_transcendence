@@ -5,6 +5,7 @@ export default class Sidebar extends HTMLElement {
         super();
         this.router = Router.instance;
         this.handleNavigation = this.handleNavigation.bind(this);
+        this.links = ["home", "chat", "rankings", "quests", "shop"]
     }
     
     connectedCallback() {
@@ -17,7 +18,7 @@ export default class Sidebar extends HTMLElement {
 
     handleNavigation() {
         const root = document.querySelector("#root");
-        if (this.router.isCurrentRoute('/dashboard')) {
+        if (window.location.pathname.startsWith('/dashboard')) {
             root.classList.add('content')
         }
         else {
@@ -27,17 +28,19 @@ export default class Sidebar extends HTMLElement {
     }
 
     render() {
-        const shouldRender = this.router.isCurrentRoute('/dashboard');
+        const shouldRender = window.location.pathname.startsWith('/dashboard');
+
+        const sidebarLinks = this.links.map(link => /*html*/`
+            <c-sidebar-link link="${link}" active="${this.router.isCurrentRoute('/dashboard/' + link)}">
+                ${link}
+            </c-sidebar-link>
+        `).join('');
         
         if (shouldRender) {
             this.innerHTML = /*html*/`
                 <nav class="sidebar">
                     <c-logo class='py-4 pl-1'></c-logo>
-                    <c-sidebar-link link="home" active>home</c-sidebar-link>
-                    <c-sidebar-link link="chat" >chat</c-sidebar-link>
-                    <c-sidebar-link link="rankings" >rankings</c-sidebar-link>
-                    <c-sidebar-link link="quests" >quests</c-sidebar-link>
-                    <c-sidebar-link link="shop" >shop</c-sidebar-link>
+                    ${sidebarLinks}
                 </nav>
             `;
         } else {

@@ -12,14 +12,14 @@ export default class SidebarLink extends HTMLElement {
           quests: "/public/assets/game/sidebar-icons/quest.svg",
           shop: "/public/assets/game/sidebar-icons/shop.svg",
       };
-      this.isActive = this.getAttribute("active");
+      this.isActive = isThere(["true", ""], this.getAttribute("active"), false);
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
       if (name === "active") {
         this.isActive = isThere(["true", ""], newValue, false);
         this.render();
-    }
+      }
     }
 
     static get observedAttributes() {
@@ -41,7 +41,7 @@ export default class SidebarLink extends HTMLElement {
 
     render() {
       this.innerHTML = /*html*/`
-        <div class="sidebar-link ${this.isActive !== null && 'active'}">
+        <div class="sidebar-link ${this.isActive && 'active'}">
           <img src="${this.icons[this.link]}" alt="${this.link}"/>
           <div class="font-bold uppercase spacing-1" style="font-size: 14px">${this.textContent}</div>
         </div>
