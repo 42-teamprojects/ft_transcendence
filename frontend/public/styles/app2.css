@@ -39,9 +39,22 @@ input[name="paddle-option"]:checked~.paddlecard {
 
 .table {
     max-width: 100%;
-    max-height: 100%;
+    /* max-height: 10%; */
     border-radius: 1rem;
 }
+
+@media only screen and (max-height: 820px) {
+    .table {
+        height: 80vh;
+
+    }
+}
+@media only screen and (max-width: 950px) {
+    .scoreboard {
+        width: 80vw;
+    }
+}
+  
 
 .table-football {
     background-image:
