@@ -21,8 +21,5 @@
 	"bugs": {
 		"url": "https://github.com/42-teamprojects/ft_transcendence/issues"
 	},
-	"homepage": "https://github.com/42-teamprojects/ft_transcendence#readme",
-	"dependencies": {
-		"veca": "^1.0.0"
-	}
+	"homepage": "https://github.com/42-teamprojects/ft_transcendence#readme"
 }
