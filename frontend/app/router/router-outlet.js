@@ -13,7 +13,8 @@ export default class RouterOutlet extends HTMLElement {
 
     connectedCallback() {
         var template = /*html*/`
-              <div id="router-outlet">Router outlet</div>
+              <div id="router-outlet">
+              </div>
         `;
         this.innerHTML = template;
     }

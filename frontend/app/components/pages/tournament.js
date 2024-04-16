@@ -1,5 +1,7 @@
+import Router from "../../router/router.js";
 import { tournamentStore } from "../../state/tournamentStore.js";
 import { useFormData } from "../../utils/useForm.js";
+import { shuffleArray } from "../../utils/utils.js";
 import Toast from "../comps/toast.js";
 
 /* Player:
@@ -12,9 +14,11 @@ export default class Tournament extends HTMLElement {
 	constructor() {
 		super();
 		document.title = "Tournament | Blitzpong.";
+        this.game;
 		this.addPlayersForm;
 		this.addPlayersModal;
 		this.showPlayersModal;
+        this.playersNumber;
         this._players = [];
 	}
 
@@ -22,17 +26,36 @@ export default class Tournament extends HTMLElement {
 		this.render();
 		this.addPlayersForm = this.querySelector("#add-players-form");
         this.addPlayersForm.querySelector("#show-players").disabled = true;
+        this.game = this.querySelector("#game");
         
-		this.addPlayersForm.addEventListener("submit", this.onSubmitHandler.bind(this));
-	}
+		this.addPlayersForm.addEventListener("submit", this.onAddPlayersSubmit.bind(this));
+        this.game.addEventListener('submit', this.startTournamentHandler.bind(this));
+    }
 
-    onSubmitHandler(e) {
+    startTournamentHandler(e) {
+        e.preventDefault();
+        const selectedTheme = useFormData(e.target).getObject()["theme-option"];
+        if (this._players.length < this.playersNumber) {
+            Toast.notify({ type: "error", message: "Please make sure all the players are registred" });
+            return;
+        }
+        // Shuffle players
+        shuffleArray(this._players);
+
+        tournamentStore.setPlayers(this._players);
+        tournamentStore.setTheme(selectedTheme);
+        tournamentStore.setPlayersNumber(this.playersNumber);
+        
+        Router.instance.navigate(`/local/tournament/qualifications`);
+    }
+
+    onAddPlayersSubmit(e) {
         e.preventDefault();
         if (e.submitter.id === "add-players" && this._players.length === 0) {
             this.addPlayersHandler(e);
         }
         else if (e.submitter.id === "show-players" && this._players.length > 0) {
-            this.showPlayersHandler(e);
+            // this.showPlayersHandler(e);
         }
     }
 
@@ -42,6 +65,8 @@ export default class Tournament extends HTMLElement {
             Toast.notify({ type: "error", message: "Please select the number of players" });
             return;
         }
+        this.playersNumber = playersNumber;
+
         this.addPlayersModal = document.createElement("c-add-players");
         this.addPlayersModal.setAttribute("players-number", playersNumber);
         this.appendChild(this.addPlayersModal);
@@ -50,8 +75,9 @@ export default class Tournament extends HTMLElement {
             const { players } = e.detail;
             this._players = players;
             Toast.notify({ type: "success", message: `${this._players.length} players added` });
-            console.log(players);
+            
             this.addPlayersModal.remove();
+
             const addPlayersBtn = this.addPlayersForm.querySelector("#add-players");
             const showPlayersBtn = this.addPlayersForm.querySelector("#show-players");
             addPlayersBtn.disabled = true;
@@ -77,9 +103,9 @@ export default class Tournament extends HTMLElement {
             this.showPlayersModal.remove();
         });
 
-        setTimeout(() => {
-            this.showPlayersModal.open();
-        }, 100);
+        // setTimeout(() => {
+        //     this.showPlayersModal.open();
+        // }, 100);
     
     }
 

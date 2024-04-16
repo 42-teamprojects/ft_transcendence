@@ -26,11 +26,7 @@ export const routes = [
     component: () => import("./components/pages/gameplay.js"),
   },
   {
-    path: "/gameplay",
-    component: () => import("./components/pages/gameplay.js"),
-  },
-  {
     path : "/local/tournament/qualifications",
-    component: () => import("./components/pages/qualification.js"),
+    component: () => import("./components/pages/qualifications.js"),
   },
 ];

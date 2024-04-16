@@ -1,6 +1,5 @@
-import Bracket8 from "./components/comps/bracket8.js";
-import Bracket4 from "./components/comps/bracket4.js";
-import Matchup from "./components/comps/matchup.js";
+import Match from "./components/comps/match.js";
+import Bracket from "./components/comps/bracket.js";
 import Showplayers from "./components/comps/show-players.js";
 import Gameovermodal from "./components/comps/gameover-modal.js";
 import Scoreboard from "./components/comps/scoreboard.js";
@@ -37,7 +36,6 @@ export const components = [
 	{ tagName: 'c-scoreboard', component: Scoreboard },
 	{ tagName: 'c-gameover-modal', component: Gameovermodal },
 	{ tagName: 'c-show-players', component: Showplayers },
-	{ tagName: 'c-matchup', component: Matchup },
-	{ tagName: 'c-bracket4', component: Bracket4 },
-	{ tagName: 'c-bracket8', component: Bracket8 },
+	{ tagName: 'c-bracket', component: Bracket },
+	{ tagName: 'c-match', component: Match },
 ];

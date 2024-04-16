@@ -1,122 +1,113 @@
-.bracket {
-    display: inline-block;
-    position: relative;
-    left: 50%;
-    top: 50%;
-    transform: translate(-60%);
+.winner {
+	font-weight: bold;
 }
 
-.bracket .round {
-      display: inline-block;
-      vertical-align: middle; 
+.lost {
+	font-weight: normal;
 }
 
-.bracket .round .winners > div {
-        display: inline-block;
-        vertical-align: middle; 
+.brackets {
+	display: flex;
 }
 
-/* .bracket .round .winners > .matchups .matchup:last-child {
-          margin-bottom: 0 !important; 
-} */
-
-.bracket .round .winners > .matchups c-matchup .participant {
-          border-radius: 0.25rem;
-          overflow: hidden; 
+.col {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	width: 25%;
+	padding: 0 15px;
+}
+.col:before,
+.col:after {
+	content: "";
+	flex-grow: 0.5;
 }
 
-.bracket .round .winners > .matchups .participant {
-            box-sizing: border-box;
-            color: var(--soft-text-color);
-            border-left: 0.25rem solid var(--soft-text-color);
-            background: var(--default-color);
-            width: 14rem;
-            height: 3rem;
-            box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.12); 
+.match-spacer {
+	flex-grow: 1;
+}
+.col:first-child .match-spacer {
+	min-height: 6px;
+}
+.col:not(:first-child) .match-spacer {
+	min-height: 24px;
 }
 
-.bracket .round .winners > .matchups .participant.winner {
-              color: var(--secondary-color);
-              border-color: var(--secondary-color);
-              font-weight: bold; 
+.group-spacer {
+	min-height: 24px;
+	flex-grow: 1;
 }
 
-.bracket .round .winners > .matchups .participant:not(:last-child) {
-              border-bottom: thin solid var(--border-color); 
+.match {
+	position: relative;
+	padding: 0px;
+	background-color: #262f35;
+	border-radius: 0.5rem;
 }
-            
-.bracket .round .winners > .matchups .participant span {
-              margin: 0 1.25rem;
-              line-height: 3;
-              font-size: 1.rem;
+.col .match:before,
+.col:not(:last-child) .match:after {
+	display: block;
+	content: "";
+	position: absolute;
+	background-color: var(--stroke-color);
+	z-index: -1;
+}
+.col .match:before {
+	top: 50%;
+	height: 1px;
+	margin-top: -1px;
+}
+.col:not(:last-child) .match:after {
+	width: 1px;
+	right: -15px;
+}
+.col:not(:last-child) .match:first-child:after,
+.col:not(:last-child) .group-spacer + .match:after {
+	top: 50%;
+	bottom: 0;
+}
+.col:not(:last-child) .pipe + .match:after {
+	top: 0;
+	bottom: 50%;
+}
+.col:not(:first-child) .match:before {
+	left: -15px;
+}
+.col:not(:last-child) .match:before {
+	right: -15px;
+}
+.col:first-child .match:before {
+	width: 100%;
+}
+.col:last-child .match:before {
+	width: 100%;
 }
 
-/* .bracket .round .winners > div.connector.filled .line, .bracket .round .winners > div.connector.filled.bottom .merger:after, .bracket .round .winners > div.connector.filled.top .merger:before {
-          border-color: var(--secondary-color);
-} */
-      
-.bracket .round .winners > div.connector .line, .bracket .round .winners > div.connector .merger {
-          box-sizing: border-box;
-          width: 2rem;
-          display: inline-block;
-          vertical-align: top;
+.pipe {
+	position: relative;
 }
-        
-.bracket .round .winners > div.connector .line {
-          border-bottom: thin solid var(--stroke-color);
-          height: 4rem; 
+.pipe:after {
+	display: block;
+	content: "";
+	position: absolute;
+	top: 0;
+	right: -15px;
+	bottom: 0;
+	width: 1px;
+	background-color: var(--stroke-color);
 }
-        
-.bracket .round .winners > div.connector .merger {
-          position: relative;
-          height: 8rem; 
+
+.player {
+	color: white;
+	display: flex;
+	justify-content: space-between;
+	padding: 0.95rem;
+	border-left: 5px solid var(--stroke-color);
 }
-          
-.bracket .round .winners > div.connector .merger:before, .bracket .round .winners > div.connector .merger:after {
-            content: "";
-            display: block;
-            box-sizing: border-box;
-            width: 100%;
-            height: 50%;
-            border: 0 solid;
-            border-color: var(--stroke-color); 
+.player:first-child {
+	border-bottom: thin solid var(--border-color);
 }
-          
-.bracket .round .winners > div.connector .merger:before {
-            border-right-width: thin;
-            border-top-width: thin; 
+.player.winner {
+	color: var(--secondary-color);
+	border-left: 5px solid var(--secondary-color);
 }
-          
-.bracket .round .winners > div.connector .merger:after {
-            border-right-width: thin;
-            border-bottom-width: thin; 
-}
-      
-.bracket .round.quarterfinals .winners:not(:last-child) {
-        margin-bottom: 2rem; 
-}
-      
-.bracket .round.quarterfinals .winners .matchups .matchup:not(:last-child) {
-        margin-bottom: 2rem; 
-}
-      
-.bracket .round.semifinals .winners .matchups .matchup:not(:last-child) {
-        margin-bottom: 10rem; 
-}
-      
-.bracket .round.semifinals .winners .connector .merger {
-        height: 16rem; 
-}
-      
-.bracket .round.semifinals .winners .connector .line {
-        height: 8rem; 
-}
-      
-.bracket .round.finals .winners .connector .merger {
-        height: 3rem; 
-}
-      
-.bracket .round.finals .winners .connector .line {
-        height: 1.5rem; 
-}
-  
