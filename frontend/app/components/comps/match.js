@@ -12,8 +12,7 @@ export default class Match extends HTMLElement {
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === "match-id") {
             this.matchId = parseInt(newValue);
-            this.findMatch();
-            this.render();
+            this.update();
         }
     }
 
@@ -47,6 +46,5 @@ export default class Match extends HTMLElement {
     findMatch() {
         const { matches } = tournamentStore.getState();
         this.match = matches.find(match => match.id === this.matchId);
-        console.log(this.match);
     }
 }
