@@ -4,54 +4,49 @@ export default class Match extends HTMLElement {
     constructor() {
         super();
         this.matchId = parseInt(this.getAttribute("match-id")) || undefined;
-        this.winnerId = parseInt(this.getAttribute("winner-id")) || undefined;
         this.match = null;
-        this.player1Name = "";
-        this.player2Name = "";
+        this.player1 = null;
+        this.player2 = null;
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === "match-id") {
             this.matchId = parseInt(newValue);
             this.findMatch();
-            this.findPlayersNames();
-            this.render();
-        }
-        if (name === "winner-id") {
-            this.winnerId = parseInt(newValue);
-            this.findPlayersNames();
             this.render();
         }
     }
 
     static get observedAttributes() {
-        return ["match-id", "winner-id"];
+        return ["match-id"];
     }
 
     connectedCallback() {
+        this.update();
+        this.unsubscribe = tournamentStore.subscribe(this.update.bind(this));
+    }
+    
+    disconnectedCallback() {
+        this.unsubscribe();
+    }
+    
+    update() {
+        this.findMatch();
         this.render();
     }
-
-    disconnectedCallback() {}
-
+    
     render() {
-        this.innerHTML = /*html*/`
-            <div class="player ${this.winnerId && this.winnerId === this.match.winner.id && 'winner'}">${this.player1Name}</div>
-            <div class="player ${this.winnerId && this.winnerId === this.player2Id && 'winner'}">${this.player2Name}</div>
-        `;
+        this.innerHTML = [this.match?.player1, this.match?.player2]
+            .map((player, i) => /*html*/`
+                <div class="player ${this.match?.winner?.equals(player) ? 'winner' : ''}">
+                    ${player?.alias || ""}
+                </div>
+            `).join('');
     }
-
-    findPlayersNames() {
-        if (this.match) {
-            this.player1Name = this.match.player1.alias ? this.match.player1.alias : 'Unknown Player';
-        }
-        if (this.match) {
-            this.player2Name = this.match.player2.alias ? this.match.player2.alias : 'Unknown Player';
-        }
-    }
-
+    
     findMatch() {
-        this.match = tournamentStore.getState().matches.find(match => match.id === this.matchId);
+        const { matches } = tournamentStore.getState();
+        this.match = matches.find(match => match.id === this.matchId);
         console.log(this.match);
     }
 }

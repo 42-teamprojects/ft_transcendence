@@ -41,6 +41,16 @@ class TournamentStore extends Store {
 		this.setState({ matches });
 	}
 
+	setMatchWinner(matchId, winner) {
+		const matches = this.state.matches.map((match) => {
+			if (match.id === matchId) {
+				match.winner = winner;
+			}
+			return match;
+		});
+		this.setState({ matches });
+	}
+
 	reset() {
 		this.setState({ players: [] });
 	}

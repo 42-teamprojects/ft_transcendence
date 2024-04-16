@@ -21,6 +21,8 @@ export default class Bracket extends HTMLElement {
         this.querySelector('.col:first-child').querySelectorAll('c-match').forEach((match, index) => {
             match.setAttribute('match-id', this.tournamentDetails.matches[index].id);
         });
+
+        tournamentStore.setMatchWinner(0, this.tournamentDetails.players[0]);
     }
 
     disconnectedCallback() {}
