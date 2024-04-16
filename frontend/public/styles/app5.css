@@ -1,0 +1,25 @@
+.sidebar-widget{
+    display: flex;
+    align-items: center;
+    width: 200px;
+    gap: 20px;
+    padding: 10px;
+    border-radius: 0.75rem;
+}
+
+.sidebar-widget:hover{
+    background-color: var(--active-bg-color);
+    cursor: pointer;
+    border-color: var(--stroke-color);
+    color: var(--stroke-color);
+    border: solid 1px;
+}
+
+.sidebar-widget img{
+    width: 30px;
+    height: 30px;
+}
+
+.logo{
+    height: auto;
+}
