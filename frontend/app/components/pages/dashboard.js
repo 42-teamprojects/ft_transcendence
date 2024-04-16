@@ -1,6 +1,7 @@
 export default class Dashboard extends HTMLElement {
     constructor() {
         super();
+        document.title = "Dashboard | Blitzpong.";
     }
 
     connectedCallback() {

@@ -21,4 +21,3 @@ new App(routes);
 if (!Authentication.instance.auth) {
   await Authentication.instance.testAuthentication();
 }
-

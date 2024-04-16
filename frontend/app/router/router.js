@@ -3,6 +3,8 @@ import Link from "./c-link.js";
 
 export default class Router {
 	static #instance = null;
+	#subscribers = [];
+
 
 	constructor(routes = []) {
 		if (Router.#instance) {
@@ -25,6 +27,22 @@ export default class Router {
 		history.pushState({}, "", path);
 		this.#renderCurrentRoute();
 	}
+
+    onNavigation(callback) {
+        this.#subscribers.push(callback);
+    }
+
+    offNavigation(callback) {
+        this.#subscribers = this.#subscribers.filter(subscriber => subscriber !== callback);
+    }
+
+	isCurrentRoute(path) {
+        return this.currentRoute === path;
+    }
+
+    get currentRoute() {
+        return window.location.pathname;
+    }
 
 	#findRoute(path) {
 		if (path.length > 1)
@@ -57,7 +75,7 @@ export default class Router {
 		const matchedRoute = this.#findRoute(path);
 		if (!matchedRoute || !matchedRoute.component) {
 			console.error(`No route matched for ${path}`);
-			this.navigate(this.routes[0].path);
+			this.back();
 			return;
 		}
 
@@ -77,6 +95,7 @@ export default class Router {
 
 			outlet.innerHTML = "";
 			outlet.appendChild(componentInstance);
+			this.#subscribers.forEach(callback => callback());
 		} catch (err) {
 			console.error(`Failed to load component for route ${path}:`, err);
 		}
@@ -87,6 +106,13 @@ export default class Router {
 		this.#renderCurrentRoute();
 	}
 
+	back() {
+		window.history.back();
+	}
+
+	forward() {
+		window.history.forward();
+	}
 
 	init() {
 		this.#renderCurrentRoute();

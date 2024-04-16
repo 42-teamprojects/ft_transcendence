@@ -1,5 +1,5 @@
 import Sidebar from "./components/comps/sidebar.js";
-import Sidebarwidget from "./components/comps/sidebar-widget.js";
+import Sidebarwidget from "./components/comps/sidebar-link.js";
 import Match from "./components/comps/match.js";
 import Bracket from "./components/comps/bracket.js";
 import Showplayers from "./components/comps/show-players.js";
@@ -40,6 +40,6 @@ export const components = [
 	{ tagName: 'c-show-players', component: Showplayers },
 	{ tagName: 'c-bracket', component: Bracket },
 	{ tagName: 'c-match', component: Match },
-	{ tagName: 'c-sidebar-widget', component: Sidebarwidget },
+	{ tagName: 'c-sidebar-link', component: Sidebarwidget },
 	{ tagName: 'c-sidebar', component: Sidebar },
 ];

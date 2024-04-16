@@ -1,13 +1,14 @@
+import Router from "../../router/router.js";
 import { isThere } from "../../utils/utils.js";
 
-export default class SidebarWidget extends HTMLElement {
+export default class SidebarLink extends HTMLElement {
     constructor() {
       super();
-      this.icon_select = this.getAttribute("icon");
-      this.icon = {
+      this.link = this.getAttribute("link");
+      this.icons = {
           home: "/public/assets/game/sidebar-icons/home.svg",
           chat: "/public/assets/game/sidebar-icons/chat.svg",
-          leaderboard: "/public/assets/game/sidebar-icons/leaderboard.svg",
+          rankings: "/public/assets/game/sidebar-icons/leaderboard.svg",
           quests: "/public/assets/game/sidebar-icons/quest.svg",
           shop: "/public/assets/game/sidebar-icons/shop.svg",
       };
@@ -27,14 +28,21 @@ export default class SidebarWidget extends HTMLElement {
   
     connectedCallback() {
       this.render();
+      this.querySelector(".sidebar-link").addEventListener("click", this.#handleNavigation.bind(this));
+    }
+
+    #handleNavigation() {
+        Router.instance.navigate("/dashboard/" + this.link);
+    }
+
+    disconnectedCallback() {
+      this.querySelector(".sidebar-link").removeEventListener("click", this.#handleNavigation);
     }
 
     render() {
       this.innerHTML = /*html*/`
-        <div class="sidebar-widget ${this.isActive !== null && 'active'}">
-          <div class="icon-theme">
-            <img src="${this.icon[this.icon_select]}" alt="${this.icon_select}"/>
-          </div>
+        <div class="sidebar-link ${this.isActive !== null && 'active'}">
+          <img src="${this.icons[this.link]}" alt="${this.link}"/>
           <div class="font-bold uppercase spacing-1" style="font-size: 14px">${this.textContent}</div>
         </div>
       `;
