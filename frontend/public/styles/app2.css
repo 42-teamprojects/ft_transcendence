@@ -46,15 +46,8 @@ input[name="paddle-option"]:checked~.paddlecard {
 @media only screen and (max-height: 820px) {
     .table {
         height: 80vh;
-
     }
 }
-@media only screen and (max-width: 950px) {
-    .scoreboard {
-        width: 80vw;
-    }
-}
-  
 
 .table-football {
     background-image:
@@ -94,7 +87,6 @@ input[name="paddle-option"]:checked~.paddlecard {
     width: 710px;
     height: 49px;
     position: relative;
-    max-width: 100%;
 
     & .leftBox,
     & .rightBox {
