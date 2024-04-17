@@ -244,10 +244,10 @@ export default class Table extends HTMLElement {
     }
 
     detectCollision = (ball, paddle) => {
-        return  ball.x + ball < paddle.x + paddle.width && // a's top left corner doesn't reach b's top right corner
-                ball.x + ball.width > paddle.x && // a's top right corner doesn't reach b's top left corner
-                ball.y < paddle.y + paddle.height && // a's top left corner doesn't reach b's top right corner
-                ball.y + ball.height > paddle.y; // a's top right corner doesn't reach b's top left corner
+        return  ball.x < paddle.x + paddle.width &&
+                ball.x + ball.width > paddle.x &&
+                ball.y < paddle.y + paddle.height &&
+                ball.y + ball.height > paddle.y;
     }
 
     movePlayer = (ev) => {
