@@ -1,3 +1,6 @@
+import Ball from "../../entities/Ball.js";
+import Paddle from "../../entities/Paddle.js";
+
 export default class Table extends HTMLElement {
     constructor() {
         super();
@@ -20,39 +23,29 @@ export default class Table extends HTMLElement {
         //score
         this.player1score = 0;
         this.player2score = 0;
-
-        this.paddle1 = {
-            x : 15,
-            y : this.tableHeight/2 - this.paddleHeight/2,
-            width : this.paddleWidth,
-            height : this.paddleHeight,
-            velocityY : this.playeVelocityY
-        }
-        this.paddle2 = {
-            x : this.tableWidth - this.paddleWidth - 15,
-            y : this.tableHeight/2 - this.paddleHeight/2,
-            width : this.paddleWidth,
-            height : this.paddleHeight,
-            velocityY : this.playeVelocityY
-        }
-
-        this.ballWidth = 15;
-        this.ballHeight = 15;
-        this.ballRadius = 10;
-        this.ball = {
-            x : this.tableWidth / 2 - this.ballHeight/3,
-            y : this.tableHeight / 2 - this.ballHeight/3,
-            width : this.ballWidth,
-            height : this.ballHeight,
-            velocityX : 10,
-            velocityY : 1,
-        }
+        
+        this.paddle1 = new Paddle(10, this.tableHeight / 2, this.playeVelocityY, 1, "fire");
+        this.paddle2 = new Paddle(this.tableWidth - 10 - this.paddleWidth, this.tableHeight / 2, this.playeVelocityY, 2, "ice");
+        console.log(this.paddle1)
+        this.ball = new Ball(this.tableWidth / 2, this.tableHeight / 2, 10, 1, this.theme);
         this.middleCirlceRadius = 70;
     }
 
     connectedCallback() {
         this.render();
         this.gameplay();
+        document.addEventListener("keydown", this.movePlayers.bind(this));
+        document.addEventListener("keyup", this.stopPlayers.bind(this));
+    }
+
+    movePlayers = (ev) => {
+        this.paddle1.directionChange(ev.code === "KeyW" ? "up" : (ev.code === "KeyS" ? "down" : ""));
+        this.paddle2.directionChange(ev.code === "ArrowUp" ? "up" : (ev.code === "ArrowDown" ? "down" : ""));
+    }
+
+    stopPlayers = (ev) => {
+        this.paddle1.stop(ev);
+        this.paddle2.stop(ev);
     }
 
     disconnectedCallback() {}
@@ -71,24 +64,6 @@ export default class Table extends HTMLElement {
         `;
     }
 
-    getPaddleColor = (speciality) => {
-        let color;
-        switch(speciality) {
-            case 'fire':
-                color = '#EC7B3C';
-                break;
-            case 'ice':
-                color = '#2FB3EC';
-                break;
-            case 'basic':
-                color = '#D9D9D9';
-                break;
-            default:
-                color = '#D9D9D9';
-        }
-        return color;
-    }
-
     gameplay() {
         this.table = this.querySelector("#table");
         this.table.height = this.tableHeight;
@@ -96,108 +71,64 @@ export default class Table extends HTMLElement {
         this.context = this.table.getContext("2d");
 
         requestAnimationFrame(this.update);
-        document.addEventListener("keydown", this.movePlayer);
-        document.addEventListener("keyup", this.stopPlayer);
     }
 
-    drawPaddle = (speciality, player) => {
 
-        let paddle = player === 1 ? this.paddle1 : this.paddle2;
-        let paddleColor = this.getPaddleColor(speciality);
-        this.context.fillStyle = paddleColor;
-        this.context.fillRect(paddle.x, paddle.y + this.radius, paddle.width, paddle.height - 2 * this.radius);
-        
-        if (this.theme !== "classic"){
-            // Draw the top semi-circle of the paddle
-            this.context.beginPath();
-            this.context.arc(paddle.x + paddle.width / 2, paddle.y + this.radius, this.radius, Math.PI, 2 * Math.PI);
-            this.context.fill();
-        
-            // Draw the bottom semi-circle of the paddle
-            this.context.beginPath();
-            this.context.arc(paddle.x + paddle.width / 2, paddle.y + paddle.height - this.radius, this.radius, 0, Math.PI);
-            this.context.fill();
-        }
-        else {
-            this.context.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
-        }
-    }
-
-    drawBall = () => {
-        this.context.fillStyle = this.theme === "football" ? "orange" : "white";
-        this.ball.x += this.ball.velocityX;
-        this.ball.y += this.ball.velocityY;
-
-        // squared
-        if (this.theme === "classic")
-            this.context.fillRect(this.ball.x, this.ball.y, this.ballWidth, this.ballHeight)
-
-        // rounded
-        else {
-        this.context.beginPath();
-        this.context.arc(this.ball.x + this.ballWidth / 2, this.ball.y + this.ballWidth / 2, this.ballRadius, 0, Math.PI*2, false);
-        this.context.fill();
-        this.context.closePath();
-        }
-    }
-    
     update = () => {
         this.context.clearRect(0, 0, this.table.width, this.table.height);
         this.drawMiddle();
-        //player 1
-        let paddle1NextY = this.paddle1.y + this.paddle1.velocityY;
-        if (!this.outOfBounds(paddle1NextY)){
-            this.paddle1.y = paddle1NextY;
-        }
-        this.drawPaddle(this.paddle1color, 1);
-        
-        //player2
-        let paddle2NextY = this.paddle2.y + this.paddle2.velocityY;
-        if (!this.outOfBounds(paddle2NextY)){
-            this.paddle2.y = paddle2NextY;
-        }
-        this.drawPaddle(this.paddle2color, 2)
-        
-        // ball
-        if (this.ball.y <= 0 || (this.ball.y + this.ball.height) >= this.tableHeight){
-            this.ball.velocityY *= -1;
-        }
-        //bounce ball from paddles
-        if (this.detectCollision(this.ball, this.paddle1)){
-            if (this.ball.x <= this.paddle1.x + this.paddle1.width){
-                //left side of the ball touches right side of paddle1
-                this.ball.velocityX *= -1;
-            }
+        //draw paddles
+        this.paddle1.update(this.tableHeight);
+        this.paddle2.update(this.tableHeight);
 
-        }
-        else if (this.detectCollision(this.ball, this.paddle2)){
-            if (this.ball.x + this.paddle2.width >= this.paddle2.x){
-                //left side of the ball touches right side of paddle2
-                this.ball.velocityX *= -1;
-            }
-            this.increaseSpeed();
-        }
-        //check if scores
-        this.drawBall();
-        if (this.ball.x < 0){
-            this.player2score++;
-            this.querySelector("c-scoreboard").setAttribute("score2", this.player2score)
-            this.resetGame();
-        }
-        if (this.ball.x + this.ballWidth > this.tableWidth){
-            this.player1score++;
-            this.querySelector("c-scoreboard").setAttribute("score1", this.player1score)
-            this.resetGame();
-        }
-        if (this.isGameOver) {
-            this.dispatchEvent(new CustomEvent("game-over", 
-            { detail: 
-                { winner: this.player1score === this.finalScore 
-                    ? this.player1 : this.player2 
-                } 
-            }));
-            return;
-        }
+        // update paddle position
+        this.paddle1.draw(this.context);
+        this.paddle2.draw(this.context);
+
+        this.ball.draw(this.context);
+        this.ball.hitPaddle(this.paddle1);
+        this.ball.hitPaddle(this.paddle2);
+        // this.ball.reset();
+        // // ball
+        // if (this.ball.y <= 0 || (this.ball.y + this.ball.height) >= this.tableHeight){
+        //     this.ball.velocityY *= -1;
+        // }
+        // //bounce ball from paddles
+        // if (this.detectCollision(this.ball, this.paddle1)){
+        //     if (this.ball.x <= this.paddle1.x + this.paddle1.width){
+        //         //left side of the ball touches right side of paddle1
+        //         this.ball.velocityX *= -1;
+        //     }
+
+        // }
+        // else if (this.detectCollision(this.ball, this.paddle2)){
+        //     if (this.ball.x + this.paddle2.width >= this.paddle2.x){
+        //         //left side of the ball touches right side of paddle2
+        //         this.ball.velocityX *= -1;
+        //     }
+        //     this.increaseSpeed();
+        // }
+        // //check if scores
+        // this.ball.draw(this.context);
+        // if (this.ball.x < 0){
+        //     this.player2score++;
+        //     this.querySelector("c-scoreboard").setAttribute("score2", this.player2score)
+        //     this.resetGame();
+        // }
+        // if (this.ball.x + this.ballWidth > this.tableWidth){
+        //     this.player1score++;
+        //     this.querySelector("c-scoreboard").setAttribute("score1", this.player1score)
+        //     this.resetGame();
+        // }
+        // if (this.isGameOver) {
+        //     this.dispatchEvent(new CustomEvent("game-over", 
+        //     { detail: 
+        //         { winner: this.player1score === this.finalScore 
+        //             ? this.player1 : this.player2 
+        //         } 
+        //     }));
+        //     return;
+        // }
         requestAnimationFrame(this.update);
     }
     
@@ -238,43 +169,7 @@ export default class Table extends HTMLElement {
             this.context.stroke();
         }
     }
-    
-    outOfBounds = (yPosition) => {
-        return (yPosition < 0 || yPosition + this.paddleHeight > this.tableHeight);
-    }
 
-    detectCollision = (ball, paddle) => {
-        return  ball.x < paddle.x + paddle.width &&
-                ball.x + ball.width > paddle.x &&
-                ball.y < paddle.y + paddle.height &&
-                ball.y + ball.height > paddle.y;
-    }
-
-    movePlayer = (ev) => {
-        // move player 1
-        let velocity = 7
-        if (ev.code === "KeyW"){
-            this.paddle1.velocityY = -velocity;
-        } else if (ev.code === "KeyS"){
-            this.paddle1.velocityY = velocity;
-        }
-        
-        // move player 2
-        if (ev.code === "ArrowUp"){
-            this.paddle2.velocityY = -velocity;
-        } else if (ev.code === "ArrowDown"){
-            this.paddle2.velocityY = velocity;
-        }
-    }
-
-    stopPlayer = (ev) => {
-        if (ev.code === "KeyW" || ev.code === "KeyS"){
-            this.paddle1.velocityY = 0;
-        }
-        if (ev.code === "ArrowUp" || ev.code === "ArrowDown"){
-            this.paddle2.velocityY = 0;
-        }
-    }
 
     resetGame = () => {
         this.ball = {

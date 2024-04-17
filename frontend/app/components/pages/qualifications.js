@@ -11,7 +11,8 @@ export default class Qualifications extends HTMLElement {
 
     connectedCallback() {
         this.tournamentDetails = tournamentStore.getState()
-        if (this.tournamentDetails.playersNumber === 0) {
+        if (!this.tournamentDetails.playersNumber
+            || this.tournamentDetails.playersNumber === 0) {
             Toast.notify({ type: "error", message: "Please make sure all the players are registred" });
             Router.instance.navigate('/local/tournament');
             return;
