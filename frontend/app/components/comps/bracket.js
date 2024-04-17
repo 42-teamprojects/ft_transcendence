@@ -27,7 +27,7 @@ export default class Bracket extends HTMLElement {
 
 	render() {
 		let rounds = this.tournamentDetails.rounds; // Number of rounds is log2 of number of players
-		let html = '<div class="brackets w-full">';
+		let html = '<div class="brackets">';
 
 		for (let i = 0; i < rounds; i++) {
 			let matches = Math.pow(2, rounds - i - 1); // Number of matches halves each round

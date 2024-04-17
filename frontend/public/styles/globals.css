@@ -88,6 +88,91 @@
     gap: 2.25rem !important;
 }
 
+.gap-10 {
+    gap: 2.5rem !important;
+}
+
+.gap-12 {
+    gap: 3rem !important;
+}
+
+.gap-14 {
+    gap: 3.5rem !important;
+}
+
+.gap-16 {
+    gap: 4rem !important;
+}
+
+.gap-18 {
+    gap: 4.5rem !important;
+}
+
+.gap-20 {
+    gap: 5rem !important;
+}
+
+.gap-22 {
+    gap: 5.5rem !important;
+}
+
+.gap-24 {
+    gap: 6rem !important;
+}
+
+.gap-26 {
+    gap: 6.5rem !important;
+}
+
+.gap-28 {
+    gap: 7rem !important;
+}
+
+.gap-30 {
+    gap: 7.5rem !important;
+}
+
+.gap-32 {
+    gap: 8rem !important;
+}
+
+.gap-34 {
+    gap: 8.5rem !important;
+}
+
+.gap-36 {
+    gap: 9rem !important;
+}
+
+.gap-38 {
+    gap: 9.5rem !important;
+}
+
+.gap-40 {
+    gap: 10rem !important;
+}
+
+.gap-42 {
+    gap: 10.5rem !important;
+}
+
+.gap-44 {
+    gap: 11rem !important;
+}
+
+.gap-46 {
+    gap: 11.5rem !important;
+}
+
+.gap-48 {
+    gap: 12rem !important;
+}
+
+.gap-50 {
+    gap: 12.5rem !important;
+}
+
+
 .grid {
     display: grid !important;
 }
