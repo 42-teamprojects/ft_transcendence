@@ -11,7 +11,6 @@ export default class Table extends HTMLElement {
         this.paddle2color = this.getAttribute("paddle2")
         this.finalScore = 7;
         //table
-        this.table = null;
         this.tableWidth = 1235;
         this.tableHeight = 740;
         this.context = null;
@@ -86,8 +85,9 @@ export default class Table extends HTMLElement {
         this.paddle2.draw(this.context);
 
         this.ball.draw(this.context);
-        this.ball.hitPaddle(this.paddle1);
-        this.ball.hitPaddle(this.paddle2);
+        this.ball.bounceOnPaddles(this.paddle1);
+        this.ball.bounceOnPaddles(this.paddle2);
+        this.ball.bounceOnWalls(this.tableHeight);
         // this.ball.reset();
         // // ball
         // if (this.ball.y <= 0 || (this.ball.y + this.ball.height) >= this.tableHeight){

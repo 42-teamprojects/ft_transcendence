@@ -20,20 +20,20 @@ export default class Paddle {
         ctx.fillStyle = this.colors[this.speciality];
         ctx.fillRect(this.x, this.y - this.height / 2, this.width, this.height);
 
-        // if (this.theme !== "classic"){
-        //     // Draw the top semi-circle of the paddle
-        //     ctx.beginPath();
-        //     ctx.arc(this.x + this.width / 2, this.y - this.height / 2, 9, Math.PI, 2 * Math.PI);
-        //     ctx.fill();
+        if (this.theme !== "classic"){
+            // Draw the top semi-circle of the paddle
+            ctx.beginPath();
+            ctx.arc(this.x + this.width / 2, this.y - this.height / 2, 9, Math.PI, 2 * Math.PI);
+            ctx.fill();
         
-        //     // Draw the bottom semi-circle of the paddle
-        //     ctx.beginPath();
-        //     ctx.arc(this.x + this.width / 2, this.y + this.height / 2, 9, 0, Math.PI);
-        //     ctx.fill();
-        // }
-        // else {
-        //     ctx.fillRect(this.x, this.y, this.width, this.height);
-        // }
+            // Draw the bottom semi-circle of the paddle
+            ctx.beginPath();
+            ctx.arc(this.x + this.width / 2, this.y + this.height / 2, 9, 0, Math.PI);
+            ctx.fill();
+        }
+        else {
+            ctx.fillRect(this.x, this.y, this.width, this.height);
+        }
     }
 
     directionChange = (direction) => {

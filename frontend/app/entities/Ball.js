@@ -32,19 +32,20 @@ export default class Ball {
 
     detectCollision = (paddle) => {
         return  this.x < paddle.x + paddle.width &&
-                this.x + this.width > paddle.x &&
+                this.x + this.size > paddle.x &&
                 this.y < paddle.y + paddle.height &&
-                this.y + this.height > paddle.y;
+                this.y + this.size > paddle.y;
     }
 
-    bounce = () => {
-        this.moveY = -this.moveY;
+    bounceOnPaddles= (paddle) => {
+        if (!this.detectCollision(paddle)){
+            this.moveX = -this.moveX;
+        }
     }
 
-    hitPaddle = (paddle) => {
-        if (this.detectCollision(paddle)){
-            this.bounce();
-            // this.increaseSpeed();
+    bounceOnWalls = (tableHeight) => {
+        if (this.y <= 0 || this.y + this.size >= tableHeight){
+            this.moveY *= -1;
         }
     }
 
