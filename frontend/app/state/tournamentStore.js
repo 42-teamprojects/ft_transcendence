@@ -1,11 +1,15 @@
+import LocalMatch from "../entities/LocalMatch.js";
+import { shuffleArray } from "../utils/utils.js";
 import Store from "./store.js";
 
 class TournamentStore extends Store {
 	constructor() {
 		super({
+			rounds: 0,
 			players: [],
 			theme: "",
 			matches: [],
+			currentMatch: null,
 			playersNumber: 0,
 			tournamentStarted: false,
 			tournamentFinished: false,
@@ -22,7 +26,7 @@ class TournamentStore extends Store {
 	}
 
 	setPlayersNumber(playersNumber) {
-		this.setState({ playersNumber });
+		this.setState({ playersNumber: parseInt(playersNumber) });
 	}
 
 	startTournament() {
@@ -51,8 +55,47 @@ class TournamentStore extends Store {
 		this.setState({ matches });
 	}
 
+	setRounds(rounds) {
+		this.setState({ rounds });
+	}
+
+	generateTournament() {
+		this.setRounds(Math.log2(this.state.playersNumber));
+		this.#generateMatches(this.state.players);
+	}
+
+	#getMatchPairs(players) {
+		let pairs = [];
+		for (let i = 0; i < players.length; i += 2) {
+			pairs.push([players[i], players[i + 1]]);
+		}
+		return pairs;
+	}
+
+	#generateMatches(players) {
+		shuffleArray(players);
+		const pairs = this.#getMatchPairs(players);
+		let matches = [];
+		pairs.forEach((pair, index) => {
+			const match = new LocalMatch(index, pair[0], pair[1]);
+			matches.push(match);
+		});
+		this.setMatches(matches);
+	}
+
+
 	reset() {
-		this.setState({ players: [] });
+		this.setState({
+			rounds: 0,
+			players: [],
+			theme: "",
+			matches: [],
+			currentMatch: null,
+			playersNumber: 0,
+			tournamentStarted: false,
+			tournamentFinished: false,
+			tournamentWinner: null,
+		 });
 	}
 }
 

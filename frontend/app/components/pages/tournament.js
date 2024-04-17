@@ -34,15 +34,15 @@ export default class Tournament extends HTMLElement {
 
     startTournamentHandler(e) {
         e.preventDefault();
-        const selectedTheme = useFormData(e.target).getObject()["theme-option"];
         if (this._players.length < this.playersNumber) {
             Toast.notify({ type: "error", message: "Please make sure all the players are registred" });
             return;
         }
 
         tournamentStore.setPlayers(this._players);
-        tournamentStore.setTheme(selectedTheme);
+        tournamentStore.setTheme(useFormData(e.target).getObject()["theme-option"]);
         tournamentStore.setPlayersNumber(this.playersNumber);
+        tournamentStore.generateTournament();
         
         Router.instance.navigate(`/local/tournament/qualifications`);
     }

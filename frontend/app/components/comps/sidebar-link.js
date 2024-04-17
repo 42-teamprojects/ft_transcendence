@@ -28,23 +28,17 @@ export default class SidebarLink extends HTMLElement {
   
     connectedCallback() {
       this.render();
-      this.querySelector(".sidebar-link").addEventListener("click", this.#handleNavigation.bind(this));
-    }
-
-    #handleNavigation() {
-        Router.instance.navigate("/dashboard/" + this.link);
     }
 
     disconnectedCallback() {
-      this.querySelector(".sidebar-link").removeEventListener("click", this.#handleNavigation);
     }
 
     render() {
       this.innerHTML = /*html*/`
-        <div class="sidebar-link ${this.isActive && 'active'}">
+        <a is="c-link" href="/dashboard/${this.link}" class="sidebar-link ${this.isActive && 'active'}">
           <img src="${this.icons[this.link]}" alt="${this.link}"/>
           <div class="font-bold uppercase spacing-1" style="font-size: 14px">${this.textContent}</div>
-        </div>
+        </a>
       `;
     }
   }
