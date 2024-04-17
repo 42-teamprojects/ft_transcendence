@@ -32,6 +32,7 @@ export const routes = [
   {
     path : "/dashboard",
     component: () => import("./components/pages/dashboard.js"),
+    redirectTo: "/dashboard/home",
   },
   {
     path : "/dashboard/home",
@@ -39,6 +40,18 @@ export const routes = [
   },
   {
     path : "/dashboard/chat",
+    component: () => import("./components/pages/dashboard.js"),
+  },
+  {
+    path : "/dashboard/rankings",
+    component: () => import("./components/pages/dashboard.js"),
+  },
+  {
+    path : "/dashboard/quests",
+    component: () => import("./components/pages/dashboard.js"),
+  },
+  {
+    path : "/dashboard/shop",
     component: () => import("./components/pages/dashboard.js"),
   },
 ];

@@ -23,8 +23,12 @@ export default class Router {
 		this.routes.push({ path, component });
 	}
 
-	navigate(path) {
-		history.pushState({}, "", path);
+	navigate(path, replace = false) {
+		if (replace) {
+			window.history.replaceState({}, "", path);
+		} else {
+			window.history.pushState({}, "", path);
+		}
 		this.#renderCurrentRoute();
 	}
 
@@ -76,6 +80,11 @@ export default class Router {
 		if (!matchedRoute || !matchedRoute.component) {
 			console.error(`No route matched for ${path}`);
 			this.back();
+			return;
+		}
+
+		if (matchedRoute.redirectTo) {
+			this.navigate(matchedRoute.redirectTo);
 			return;
 		}
 

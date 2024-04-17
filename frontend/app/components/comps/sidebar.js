@@ -39,7 +39,7 @@ export default class Sidebar extends HTMLElement {
         if (shouldRender) {
             this.innerHTML = /*html*/`
                 <nav class="sidebar">
-                    <c-logo class='py-4 pl-1'></c-logo>
+                    <c-logo class='py-4 pl-1' href="/"></c-logo>
                     ${sidebarLinks}
                 </nav>
             `;
