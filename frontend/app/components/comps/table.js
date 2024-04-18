@@ -9,7 +9,7 @@ export default class Table extends HTMLElement {
         this.player2 = this.getAttribute("player2")
         this.paddle1color = this.getAttribute("paddle1")
         this.paddle2color = this.getAttribute("paddle2")
-        this.finalScore = 7;
+        this.finalScore = 1;
         //table
         this.tableWidth = 1235;
         this.tableHeight = 740;
@@ -26,7 +26,7 @@ export default class Table extends HTMLElement {
         this.paddle1 = new Paddle(10, this.tableHeight / 2, this.playeVelocityY, 1, "fire");
         this.paddle2 = new Paddle(this.tableWidth - 10 - this.paddleWidth, this.tableHeight / 2, this.playeVelocityY, 2, "ice");
         console.log(this.paddle1)
-        this.ball = new Ball(this.tableWidth / 2, this.tableHeight / 2, 10, 1, this.theme);
+        this.ball = new Ball(this.tableWidth / 2, this.tableHeight / 2, 10, 1, this.theme, this);
         this.middleCirlceRadius = 70;
     }
 
@@ -74,6 +74,8 @@ export default class Table extends HTMLElement {
 
 
     update = () => {
+        // this.context.fillStyle = 'rgba(0, 0, 0, 0.25)';
+        // this.context.fillRect(0, 0, this.tableWidth, this.tableHeight);
         this.context.clearRect(0, 0, this.table.width, this.table.height);
         this.drawMiddle();
         //draw paddles
@@ -88,49 +90,41 @@ export default class Table extends HTMLElement {
         this.ball.bounceOnPaddles(this.paddle1);
         this.ball.bounceOnPaddles(this.paddle2);
         this.ball.bounceOnWalls(this.tableHeight);
+        this.scored();
         // this.ball.reset();
         // // ball
         // if (this.ball.y <= 0 || (this.ball.y + this.ball.height) >= this.tableHeight){
         //     this.ball.velocityY *= -1;
         // }
-        // //bounce ball from paddles
-        // if (this.detectCollision(this.ball, this.paddle1)){
-        //     if (this.ball.x <= this.paddle1.x + this.paddle1.width){
-        //         //left side of the ball touches right side of paddle1
-        //         this.ball.velocityX *= -1;
-        //     }
 
-        // }
-        // else if (this.detectCollision(this.ball, this.paddle2)){
-        //     if (this.ball.x + this.paddle2.width >= this.paddle2.x){
-        //         //left side of the ball touches right side of paddle2
-        //         this.ball.velocityX *= -1;
-        //     }
-        //     this.increaseSpeed();
-        // }
-        // //check if scores
-        // this.ball.draw(this.context);
-        // if (this.ball.x < 0){
-        //     this.player2score++;
-        //     this.querySelector("c-scoreboard").setAttribute("score2", this.player2score)
-        //     this.resetGame();
-        // }
-        // if (this.ball.x + this.ballWidth > this.tableWidth){
-        //     this.player1score++;
-        //     this.querySelector("c-scoreboard").setAttribute("score1", this.player1score)
-        //     this.resetGame();
-        // }
-        // if (this.isGameOver) {
-        //     this.dispatchEvent(new CustomEvent("game-over", 
-        //     { detail: 
-        //         { winner: this.player1score === this.finalScore 
-        //             ? this.player1 : this.player2 
-        //         } 
-        //     }));
-        //     return;
-        // }
+        //check if scores
+        if (this.isGameOver) {
+            this.dispatchEvent(new CustomEvent("game-over", 
+            { detail: 
+                { winner: this.player1score === this.finalScore 
+                    ? this.player1 : this.player2 
+                } 
+            }));
+            return;
+        }
         requestAnimationFrame(this.update);
     }
+
+    scored = () => {
+        if (this.ball.x < 0){
+            this.player2score++;
+            this.resetGame();
+        }
+        else if (this.ball.x + this.ball.size > this.tableWidth) {
+            console.log("player 2 scored")
+            this.player1score++;
+            this.resetGame();
+        }
+        this.querySelector("c-scoreboard").setAttribute("score1", this.player1score)
+        this.querySelector("c-scoreboard").setAttribute("score2", this.player2score)
+    }
+
+
     
     drawMiddle = () => {
         if (this.theme !== "classic"){
@@ -144,16 +138,16 @@ export default class Table extends HTMLElement {
                 this.context.stroke();
 
                 this.context.beginPath();
-                var rectWidth = 120; // Change this to the desired width
-                var rectHeight = 250; // Change this to the desired height
+                var strokeWidth = 120; // Change this to the desired width
+                var strokeHeight = 250; // Change this to the desired height
                 var rectX = 0; // This positions the rectangle on the left side of the canvas
-                var rectY = (this.tableHeight - rectHeight) / 2; // This positions the rectangle vertically in the middle
+                var rectY = (this.tableHeight - strokeHeight) / 2; // This positions the rectangle vertically in the middle
 
-                this.context.rect(rectX - 5, rectY, rectWidth, rectHeight);
+                this.context.rect(rectX - 5, rectY, strokeWidth, strokeHeight);
                 this.context.lineWidth = 5;
                 this.context.strokeStyle = 'white'; // Change this to the desired border color
                 this.context.stroke();
-                this.context.rect(this.tableWidth - rectWidth + 5, rectY, rectWidth, rectHeight);
+                this.context.rect(this.tableWidth - strokeWidth + 5, rectY, strokeWidth, strokeHeight);
                 this.context.lineWidth = 5;
                 this.context.strokeStyle = 'white'; // Change this to the desired border color
                 this.context.stroke();
@@ -172,14 +166,7 @@ export default class Table extends HTMLElement {
 
 
     resetGame = () => {
-        this.ball = {
-            x : this.tableWidth / 2,
-            y : this.tableHeight / 2,
-            width : this.ballWidth,
-            height : this.ballHeight,
-            velocityX : [1, -1][Math.floor(Math.random()*2)] * 10,
-            velocityY : [2,3,4,5,6][Math.floor(Math.random()*6)]
-        }
+        this.ball.reset(this);
     }
 
     get isGameOver() {
