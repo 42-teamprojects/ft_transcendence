@@ -1,12 +1,12 @@
 export default class LocalMatch {
     static autoId = 0;
-    constructor(player1, player2, winner = null, isStarted = false, isFinished = false) {
+    constructor(player1, player2) {
         this.id = LocalMatch.autoId++;
         this.player1 = player1;
         this.player2 = player2;
-        this.winner = winner;
-        this.isStarted = isStarted;
-        this.isFinished = isFinished;
+        this.winner = null;
+        this.isStarted = false;
+        this.isFinished = false;
         this.score1 = 0;
         this.score2 = 0;
     }

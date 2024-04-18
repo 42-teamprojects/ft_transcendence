@@ -11,7 +11,7 @@ export default class Bracket extends HTMLElement {
 	connectedCallback() {
 		this.update();
 		this.unsubscribe = tournamentStore.subscribe(this.update.bind(this));
-		// tournamentStore.finishMatch(0, this.tournamentDetails.rounds[0][0].player1.id);
+		// tournamentStore.finishMatch(0, 0);
 	}
 
 	update() {
@@ -20,11 +20,11 @@ export default class Bracket extends HTMLElement {
 
 		this.render();
 
-		this.tournamentDetails.rounds.forEach((round, roundIndex) => {
-			this.querySelectorAll(`.col:nth-child(${roundIndex + 1}) c-match`).forEach((matchElement, matchIndex) => {
-				matchElement.setAttribute("match-id", round[matchIndex].id);
-			});
-		});
+		// this.tournamentDetails.rounds.forEach((round, roundIndex) => {
+		// 	this.querySelectorAll(`.col:nth-child(${roundIndex + 1}) c-match`).forEach((matchElement, matchIndex) => {
+		// 		matchElement.setAttribute("match-id", round[matchIndex].id);
+		// 	});
+		// })
 	}
 
 	disconnectedCallback() {
