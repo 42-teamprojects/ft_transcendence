@@ -36,21 +36,12 @@ class TournamentStore extends Store {
 	}
 
 	finishTournament(winner) {
+		console.log("Tournament finished with winner: ", winner)
 		this.setState({ tournamentFinished: true, tournamentWinner: winner });
 	}
 
 	setPlayers(players) {
 		this.setState({ players: players });
-	}
-
-	setMatchWinner(matchId, winner) {
-		const matches = this.state.matches.map((match) => {
-			if (match.id === matchId) {
-				match.winner = winner;
-			}
-			return match;
-		});
-		this.setState({ matches });
 	}
 
 	setRoundsNumber(roundsNumber) {
@@ -67,7 +58,74 @@ class TournamentStore extends Store {
 
 	generateTournament() {
 		this.setRoundsNumber(Math.log2(this.state.playersNumber));
-		this.generateAllMatches(this.state.players);
+		this.#generateAllMatches(this.state.players);
+	}
+
+	finishMatch(playerId) {
+		if (this.state.tournamentFinished) {
+			return;
+		}
+		const rounds = [...this.state.rounds];
+		const currentRoundMatches = rounds[this.state.currentRound];
+		let matchFound = false;
+	
+		// Find the match with the given player id
+		for (let i = 0; i < currentRoundMatches.length; i++) {
+			for (let j = 0; j < currentRoundMatches[i].length; j++) {
+				const match = currentRoundMatches[i][j];
+				if (match.player1 && match.player1.id === playerId) {
+					match.winner = match.player1;
+					if (this.state.currentRound < rounds.length - 1) {
+						this.addWinnerToNextRound(match.winner, i, j);
+					}
+					match.isFinished = true;
+					matchFound = true;
+					break;
+				} else if (match.player2 && match.player2.id === playerId) {
+					match.winner = match.player2;
+					if (this.state.currentRound < rounds.length - 1) {
+						this.addWinnerToNextRound(match.winner, i, j);
+					}
+					match.isFinished = true;
+					matchFound = true;
+					break;
+				}
+			}
+			if (matchFound) {
+				break;
+			}
+		}
+	
+		if (!matchFound) {
+			console.log(`Player with id ${playerId} is not in any match in the current round.`);
+		}
+	
+		// when every matched is finished let move to the next round
+		if (currentRoundMatches.flat().every(match => match.isFinished)) {
+			this.setState({ currentRound: this.state.currentRound + 1 });
+		}
+		
+		this.setState({ rounds })
+		
+		if (this.state.currentRound === this.state.roundsNumber) {
+			this.finishTournament(currentRoundMatches[0][0].winner);
+		};
+	}
+	
+	addWinnerToNextRound(winner, groupIndex, matchIndex) {
+		let rounds = [...this.state.rounds];
+		let nextRound = rounds[this.state.currentRound + 1];
+		let nextGroupIndex = Math.floor(groupIndex / 2);
+		let nextMatchIndex = groupIndex % 2; // Use the group index to determine the match index in the next round
+	
+		if (matchIndex === 0) {
+			nextRound[nextGroupIndex][nextMatchIndex].player1 = winner;
+		}
+		else if (matchIndex === 1) {
+			nextRound[nextGroupIndex][nextMatchIndex].player2 = winner;
+		}
+	
+		this.setState({ rounds });
 	}
 
 	#getMatchPairs(players) {
@@ -78,7 +136,7 @@ class TournamentStore extends Store {
 		return pairs;
 	}
 
-	generateAllMatches(players) {
+	#generateAllMatches(players) {
 		shuffleArray(players);
 		const pairs = this.#getMatchPairs(players);
 		let rounds = [];
@@ -108,43 +166,6 @@ class TournamentStore extends Store {
 		}
 
 		this.setRounds(rounds);
-	}
-
-	finishMatch(matchId, winnerId) {
-		let rounds = [...this.state.rounds];
-		let currentRoundMatches = rounds[this.state.currentRound];
-		let groupIndex, matchIndex;
-		for (let i = 0; i < currentRoundMatches.length; i++) {
-			for (let j = 0; j < currentRoundMatches[i].length; j++) {
-				if (currentRoundMatches[i][j].id === matchId) {
-					groupIndex = i;
-					matchIndex = j;
-					break;
-				}
-			}
-		}
-		let match = currentRoundMatches[groupIndex][matchIndex];
-		if (match) {
-			match.winner = match.player1.id === winnerId ? match.player1 : match.player2;
-			this.addWinnerToNextRound(match.winner, groupIndex, matchIndex);
-		}
-	}
-	
-	addWinnerToNextRound(winner, groupIndex, matchIndex) {
-		let rounds = [...this.state.rounds];
-		let nextRound = rounds[this.state.currentRound + 1];
-		let nextGroupIndex = Math.floor(groupIndex / 2);
-		let nextMatchIndex = 0; // Always add the winners to the same match in the next round
-	
-		if (matchIndex === 0) {
-			// If matchIndex is 0, add the winner to player1
-			nextRound[nextGroupIndex][nextMatchIndex].player1 = winner;
-		} else {
-			// If matchIndex is 1, add the winner to player2
-			nextRound[nextGroupIndex][nextMatchIndex].player2 = winner;
-		}
-	
-		this.setState({ rounds });
 	}
 
 	reset() {
@@ -179,11 +200,48 @@ tournamentStore.setState({
 
 tournamentStore.generateTournament();
 
-// console.log(tournamentStore.getState().rounds[0][1][1])
-tournamentStore.finishMatch(0, tournamentStore.getState().rounds[0][0][0].player1.id);
-tournamentStore.finishMatch(1, tournamentStore.getState().rounds[0][1][0].player1.id);
+const p1 = tournamentStore.getState().rounds[0][0][0].player2.id
+const p2 = tournamentStore.getState().rounds[0][0][1].player1.id
+const p3 = tournamentStore.getState().rounds[0][1][0].player2.id
+const p4 = tournamentStore.getState().rounds[0][1][1].player1.id
 
-console.log(tournamentStore.getState().rounds);
+// round 1
+tournamentStore.finishMatch(p1);
+tournamentStore.finishMatch(p2);
+tournamentStore.finishMatch(p3);
+tournamentStore.finishMatch(p4);
+
+// round 2
+tournamentStore.finishMatch(p1);
+tournamentStore.finishMatch(p3);
+
+// round 3
+tournamentStore.finishMatch(p1);
 
 // rounds[round][group][match]
 export { tournamentStore };
+
+/* 
+[
+
+  [  # Round 1
+
+    [ match1, match2 ],  # Group 1 in Round 1
+
+    [ match3, match4 ]   # Group 2 in Round 1
+
+  ],
+
+  [  # Round 2
+
+    [ match5, match6 ]  # Only one group in Round 2 because there are only 2 groups in Round 1 and always one group holds two matches, so the winner of the two matches in the same group will play against each other in the next round.
+  
+  ],
+
+  [ # Round 3
+      
+      [ match7 ]  # Only one group in Round 3 because there is only one group in Round 2, and only one match in that group, so the winner of that match will be the winner of the tournament.
+  ]
+
+]
+*/
