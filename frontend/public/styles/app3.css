@@ -19,11 +19,3 @@ input[name="theme-option"]:checked ~ .table-theme {
     height: 200px; /* Or any specific height */
     width: 0;
 }
-
-.qualifications {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin: 1rem;
-}

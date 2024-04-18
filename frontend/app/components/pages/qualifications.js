@@ -20,14 +20,14 @@ export default class Qualifications extends HTMLElement {
         this.render();
     }
 
-    disconnectedCallback() { }
+    disconnectedCallback() {}
 
     render() {
         this.innerHTML = /*html*/`
-        <div class="flex-col-center my-10 gap-16 w-full">
+        <div class="flex-col-center my-10 gap-14 w-full">
             <div class="">
                 <h1 class="text-center mb-4">Tournament brackets</h1>
-                <h3 class="text-center font-medium text-stroke">1st Round</h3>
+                <h3 class="text-center font-medium text-stroke">Round 1</h3>
             </div>
             <div class="w-full">
                 <c-bracket class=full></c-bracket>

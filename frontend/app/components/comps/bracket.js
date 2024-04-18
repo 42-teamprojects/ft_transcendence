@@ -9,24 +9,30 @@ export default class Bracket extends HTMLElement {
 	}
 
 	connectedCallback() {
+		this.update();
+		this.unsubscribe = tournamentStore.subscribe(this.update.bind(this));
+		// tournamentStore.finishMatch(0, this.tournamentDetails.rounds[0][0].player1.id);
+	}
+
+	update() {
 		this.tournamentDetails = tournamentStore.getState();
 		console.log(this.tournamentDetails);
 
 		this.render();
 
-		this.querySelector(".col:first-child")
-			.querySelectorAll("c-match")
-			.forEach((match, index) => {
-				match.setAttribute("match-id", this.tournamentDetails.matches[index].id);
+		this.tournamentDetails.rounds.forEach((round, roundIndex) => {
+			this.querySelectorAll(`.col:nth-child(${roundIndex + 1}) c-match`).forEach((matchElement, matchIndex) => {
+				matchElement.setAttribute("match-id", round[matchIndex].id);
 			});
-
-		tournamentStore.setMatchWinner(0, this.tournamentDetails.players[0]);
+		});
 	}
 
-	disconnectedCallback() {}
+	disconnectedCallback() {
+		// this.unsubscribe();
+	}
 
 	render() {
-		let rounds = this.tournamentDetails.rounds; // Number of rounds is log2 of number of players
+		let rounds = tournamentStore.getState().roundsNumber; // Number of rounds is log2 of number of players
 		let html = '<div class="brackets">';
 
 		for (let i = 0; i < rounds; i++) {
@@ -34,8 +40,7 @@ export default class Bracket extends HTMLElement {
 			html += '<div class="col">';
 			for (let j = 0; j < matches; j++) {
 				html += `
-                <c-match class="match"></c-match>
-            `;
+                <c-match class="match"></c-match>`;
 				if (j % 2 === 0 && j < matches - 1) {
 					// Only add match spacer if it's not the last match in the round
 					html += '<div class="match-spacer pipe"></div>';

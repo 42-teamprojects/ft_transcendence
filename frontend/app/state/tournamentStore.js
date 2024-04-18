@@ -5,10 +5,11 @@ import Store from "./store.js";
 class TournamentStore extends Store {
 	constructor() {
 		super({
-			rounds: 0,
+			roundsNumber: 0,
 			players: [],
 			theme: "",
-			matches: [],
+			rounds: [],
+			currentRound: 0, 
 			currentMatch: null,
 			playersNumber: 0,
 			tournamentStarted: false,
@@ -41,10 +42,6 @@ class TournamentStore extends Store {
 		this.setState({ players: players });
 	}
 
-	setMatches(matches) {
-		this.setState({ matches });
-	}
-
 	setMatchWinner(matchId, winner) {
 		const matches = this.state.matches.map((match) => {
 			if (match.id === matchId) {
@@ -55,13 +52,21 @@ class TournamentStore extends Store {
 		this.setState({ matches });
 	}
 
+	setRoundsNumber(roundsNumber) {
+		this.setState({ roundsNumber });
+	}
+
+	setCurrentMatch(match) {
+		this.setState({ currentMatch: match });
+	}
+
 	setRounds(rounds) {
 		this.setState({ rounds });
 	}
 
 	generateTournament() {
-		this.setRounds(Math.log2(this.state.playersNumber));
-		this.#generateMatches(this.state.players);
+		this.setRoundsNumber(Math.log2(this.state.playersNumber));
+		this.#generateFirstRoundMatches(this.state.players);
 	}
 
 	#getMatchPairs(players) {
@@ -72,24 +77,56 @@ class TournamentStore extends Store {
 		return pairs;
 	}
 
-	#generateMatches(players) {
+	#generateFirstRoundMatches(players) {
 		shuffleArray(players);
 		const pairs = this.#getMatchPairs(players);
 		let matches = [];
-		pairs.forEach((pair, index) => {
-			const match = new LocalMatch(index, pair[0], pair[1]);
+		pairs.forEach((pair) => {
+			const match = new LocalMatch(pair[0], pair[1]);
 			matches.push(match);
 		});
-		this.setMatches(matches);
+		this.setRounds([matches]);
 	}
 
+	finishMatch(matchId, winnerId) {
+        let rounds = [...this.state.rounds];
+        let currentRoundMatches = rounds[this.state.currentRound];
+        let match = currentRoundMatches.find(match => match.id === matchId);
+        if (match) {
+			match.winner = match.player1.id === winnerId ? match.player1 : match.player2;
+            this.addWinnerToNextRound(match.winner);
+        }
+    }
+
+    addWinnerToNextRound(winner) {
+		let rounds = [...this.state.rounds];
+		if (!rounds[this.state.currentRound + 1]) {
+			rounds.push([]);
+		}
+		let nextRoundMatches = rounds[this.state.currentRound + 1];
+		let match = nextRoundMatches.find(match => !match.player2);
+		if (match) {
+			match.player2 = winner;
+		} else {
+			nextRoundMatches.push(new LocalMatch(winner, null));
+		}
+		this.setState({rounds});
+	
+		// Check if all matches in the current round have a winner
+		let currentRoundMatches = rounds[this.state.currentRound];
+		if (currentRoundMatches.every(match => match.winner)) {
+			// If all matches have a winner, increment currentRound
+			this.setState({ currentRound: this.state.currentRound + 1 });
+		}
+	}
 
 	reset() {
 		this.setState({
-			rounds: 0,
+			roundsNumber: 0,
 			players: [],
 			theme: "",
-			matches: [],
+			rounds: [],
+			currentRound: 0, 
 			currentMatch: null,
 			playersNumber: 0,
 			tournamentStarted: false,
