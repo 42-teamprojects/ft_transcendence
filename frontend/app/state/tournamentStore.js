@@ -1,4 +1,5 @@
 import LocalMatch from "../entities/LocalMatch.js";
+import LocalPlayer from "../entities/LocalPlayer.js";
 import { shuffleArray } from "../utils/utils.js";
 import Store from "./store.js";
 
@@ -9,7 +10,7 @@ class TournamentStore extends Store {
 			players: [],
 			theme: "",
 			rounds: [],
-			currentRound: 0, 
+			currentRound: 0,
 			currentMatch: null,
 			playersNumber: 0,
 			tournamentStarted: false,
@@ -35,21 +36,12 @@ class TournamentStore extends Store {
 	}
 
 	finishTournament(winner) {
+		console.log("Tournament finished with winner: ", winner)
 		this.setState({ tournamentFinished: true, tournamentWinner: winner });
 	}
 
 	setPlayers(players) {
 		this.setState({ players: players });
-	}
-
-	setMatchWinner(matchId, winner) {
-		const matches = this.state.matches.map((match) => {
-			if (match.id === matchId) {
-				match.winner = winner;
-			}
-			return match;
-		});
-		this.setState({ matches });
 	}
 
 	setRoundsNumber(roundsNumber) {
@@ -66,7 +58,74 @@ class TournamentStore extends Store {
 
 	generateTournament() {
 		this.setRoundsNumber(Math.log2(this.state.playersNumber));
-		this.#generateFirstRoundMatches(this.state.players);
+		this.#generateAllMatches(this.state.players);
+	}
+
+	finishMatch(playerId) {
+		if (this.state.tournamentFinished) {
+			return;
+		}
+		const rounds = [...this.state.rounds];
+		const currentRoundMatches = rounds[this.state.currentRound];
+		let matchFound = false;
+	
+		// Find the match with the given player id
+		for (let i = 0; i < currentRoundMatches.length; i++) {
+			for (let j = 0; j < currentRoundMatches[i].length; j++) {
+				const match = currentRoundMatches[i][j];
+				if (match.player1 && match.player1.id === playerId) {
+					match.winner = match.player1;
+					if (this.state.currentRound < rounds.length - 1) {
+						this.addWinnerToNextRound(match.winner, i, j);
+					}
+					match.isFinished = true;
+					matchFound = true;
+					break;
+				} else if (match.player2 && match.player2.id === playerId) {
+					match.winner = match.player2;
+					if (this.state.currentRound < rounds.length - 1) {
+						this.addWinnerToNextRound(match.winner, i, j);
+					}
+					match.isFinished = true;
+					matchFound = true;
+					break;
+				}
+			}
+			if (matchFound) {
+				break;
+			}
+		}
+	
+		if (!matchFound) {
+			console.log(`Player with id ${playerId} is not in any match in the current round.`);
+		}
+	
+		// when every matched is finished let move to the next round
+		if (currentRoundMatches.flat().every(match => match.isFinished)) {
+			this.setState({ currentRound: this.state.currentRound + 1 });
+		}
+		
+		this.setState({ rounds })
+		
+		if (this.state.currentRound === this.state.roundsNumber) {
+			this.finishTournament(currentRoundMatches[0][0].winner);
+		};
+	}
+	
+	addWinnerToNextRound(winner, groupIndex, matchIndex) {
+		let rounds = [...this.state.rounds];
+		let nextRound = rounds[this.state.currentRound + 1];
+		let nextGroupIndex = Math.floor(groupIndex / 2);
+		let nextMatchIndex = groupIndex % 2; // Use the group index to determine the match index in the next round
+	
+		if (matchIndex === 0) {
+			nextRound[nextGroupIndex][nextMatchIndex].player1 = winner;
+		}
+		else if (matchIndex === 1) {
+			nextRound[nextGroupIndex][nextMatchIndex].player2 = winner;
+		}
+	
+		this.setState({ rounds });
 	}
 
 	#getMatchPairs(players) {
@@ -77,47 +136,36 @@ class TournamentStore extends Store {
 		return pairs;
 	}
 
-	#generateFirstRoundMatches(players) {
+	#generateAllMatches(players) {
 		shuffleArray(players);
 		const pairs = this.#getMatchPairs(players);
-		let matches = [];
-		pairs.forEach((pair) => {
-			const match = new LocalMatch(pair[0], pair[1]);
-			matches.push(match);
-		});
-		this.setRounds([matches]);
-	}
+		let rounds = [];
+		let totalRounds = this.state.roundsNumber;
 
-	finishMatch(matchId, winnerId) {
-        let rounds = [...this.state.rounds];
-        let currentRoundMatches = rounds[this.state.currentRound];
-        let match = currentRoundMatches.find(match => match.id === matchId);
-        if (match) {
-			match.winner = match.player1.id === winnerId ? match.player1 : match.player2;
-            this.addWinnerToNextRound(match.winner);
-        }
-    }
+		// Generate all matches and groups
+		for (let i = 0; i < totalRounds; i++) {
+			let matches = [];
+			let group = [];
+			let totalMatches = Math.pow(2, totalRounds - i - 1);
+			for (let j = 0; j < totalMatches; j++) {
+				let match;
+				if (i === 0) {
+					// For the first round, fill the matches with players
+					match = new LocalMatch(pairs[j][0], pairs[j][1]);
+				} else {
+					// For the next rounds, create matches without players
+					match = new LocalMatch(null, null);
+				}
+				group.push(match);
+				if (group.length === 2 || j === totalMatches - 1) {
+					matches.push(group);
+					group = [];
+				}
+			}
+			rounds.push(matches);
+		}
 
-    addWinnerToNextRound(winner) {
-		let rounds = [...this.state.rounds];
-		if (!rounds[this.state.currentRound + 1]) {
-			rounds.push([]);
-		}
-		let nextRoundMatches = rounds[this.state.currentRound + 1];
-		let match = nextRoundMatches.find(match => !match.player2);
-		if (match) {
-			match.player2 = winner;
-		} else {
-			nextRoundMatches.push(new LocalMatch(winner, null));
-		}
-		this.setState({rounds});
-	
-		// Check if all matches in the current round have a winner
-		let currentRoundMatches = rounds[this.state.currentRound];
-		if (currentRoundMatches.every(match => match.winner)) {
-			// If all matches have a winner, increment currentRound
-			this.setState({ currentRound: this.state.currentRound + 1 });
-		}
+		this.setRounds(rounds);
 	}
 
 	reset() {
@@ -126,14 +174,74 @@ class TournamentStore extends Store {
 			players: [],
 			theme: "",
 			rounds: [],
-			currentRound: 0, 
+			currentRound: 0,
 			currentMatch: null,
 			playersNumber: 0,
 			tournamentStarted: false,
 			tournamentFinished: false,
 			tournamentWinner: null,
-		 });
+		});
 	}
 }
 
-export const tournamentStore = new TournamentStore();
+const tournamentStore = new TournamentStore();
+
+const players = [];
+
+for (let i = 0; i < 8; i++) {
+	players.push(new LocalPlayer(i, `Player ${i + 1}`, "basic"));
+}
+
+tournamentStore.setState({
+	players: players,
+	theme: "football",
+	playersNumber: players.length,
+});
+
+tournamentStore.generateTournament();
+
+const p1 = tournamentStore.getState().rounds[0][0][0].player2.id
+const p2 = tournamentStore.getState().rounds[0][0][1].player1.id
+const p3 = tournamentStore.getState().rounds[0][1][0].player2.id
+const p4 = tournamentStore.getState().rounds[0][1][1].player1.id
+
+// round 1
+tournamentStore.finishMatch(p1);
+tournamentStore.finishMatch(p2);
+tournamentStore.finishMatch(p3);
+tournamentStore.finishMatch(p4);
+
+// round 2
+tournamentStore.finishMatch(p1);
+tournamentStore.finishMatch(p3);
+
+// round 3
+tournamentStore.finishMatch(p1);
+
+// rounds[round][group][match]
+export { tournamentStore };
+
+/* 
+[
+
+  [  # Round 1
+
+    [ match1, match2 ],  # Group 1 in Round 1
+
+    [ match3, match4 ]   # Group 2 in Round 1
+
+  ],
+
+  [  # Round 2
+
+    [ match5, match6 ]  # Only one group in Round 2 because there are only 2 groups in Round 1 and always one group holds two matches, so the winner of the two matches in the same group will play against each other in the next round.
+  
+  ],
+
+  [ # Round 3
+      
+      [ match7 ]  # Only one group in Round 3 because there is only one group in Round 2, and only one match in that group, so the winner of that match will be the winner of the tournament.
+  ]
+
+]
+*/
