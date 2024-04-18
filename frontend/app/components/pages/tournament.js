@@ -39,6 +39,7 @@ export default class Tournament extends HTMLElement {
             return;
         }
 
+        tournamentStore.reset();
         tournamentStore.setPlayers(this._players);
         tournamentStore.setTheme(useFormData(e.target).getObject()["theme-option"]);
         tournamentStore.setPlayersNumber(this.playersNumber);
