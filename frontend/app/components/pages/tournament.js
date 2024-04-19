@@ -23,6 +23,7 @@ export default class Tournament extends HTMLElement {
 	}
 
 	connectedCallback() {
+        tournamentStore.reset();
 		this.render();
 		this.addPlayersForm = this.querySelector("#add-players-form");
         this.addPlayersForm.querySelector("#show-players").disabled = true;
@@ -39,7 +40,6 @@ export default class Tournament extends HTMLElement {
             return;
         }
 
-        tournamentStore.reset();
         tournamentStore.setPlayers(this._players);
         tournamentStore.setTheme(useFormData(e.target).getObject()["theme-option"]);
         tournamentStore.setPlayersNumber(this.playersNumber);
@@ -54,7 +54,7 @@ export default class Tournament extends HTMLElement {
             this.addPlayersHandler(e);
         }
         else if (e.submitter.id === "show-players" && this._players.length > 0) {
-            // this.showPlayersHandler(e);
+            this.showPlayersHandler(e);
         }
     }
 
@@ -101,9 +101,9 @@ export default class Tournament extends HTMLElement {
             this.showPlayersModal.remove();
         });
 
-        // setTimeout(() => {
-        //     this.showPlayersModal.open();
-        // }, 100);
+        setTimeout(() => {
+            this.showPlayersModal.open();
+        }, 100);
     
     }
 
