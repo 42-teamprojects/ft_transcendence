@@ -33,17 +33,23 @@ export default class Qualifications extends HTMLElement {
 	disconnectedCallback() {}
 
 	render() {
+                
+		let formButton = `<button is="c-button" type="submit" id="start-match" class="btn-primary mt-9">Start Match ${this.tournamentDetails.currentMatch.id + 1}</button>`
+		if (this.tournamentDetails.currentRound >= this.tournamentDetails.rounds.length) {
+			formButton = `<button is="c-button" type="submit" id="end-tournament" class="btn-primary mt-9">End Tournament</button>`
+		}
+
 		this.innerHTML = /*html*/ `
         <div class="flex-col-center my-10 gap-14 w-full">
             <div class="">
                 <h1 class="text-center mb-4">Tournament brackets</h1>
-                <h3 class="text-center font-medium text-stroke spacing-1">${this.getQualificationName()}</h3>
+                <h3 class="text-center font-medium text-stroke spacing-">${this.getQualificationName()}</h3>
             </div>
-            <div class="w-full">
-                <c-bracket class=full></c-bracket>
+            <div class="w-full" style="max-width: 1300px">
+                <c-bracket class="w-full"></c-bracket>
             </div>
             <form id="game" class="w-full flex-col-center">
-                <button is="c-button" type="submit" class="btn-primary mt-9">Start 1st Game</button>
+				${formButton}
             </form>
         </div>
         `;

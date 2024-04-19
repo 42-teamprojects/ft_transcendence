@@ -41,6 +41,9 @@ export default class Match extends HTMLElement {
                     ${player?.alias || ""}
                 </div>
             `).join('');
+        
+        this.innerHTML += /*html*/`<span class="match-id">${this.matchId + 1}</span>`
+
     }
     
     findMatch() {
