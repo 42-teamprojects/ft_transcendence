@@ -17,10 +17,10 @@ export default class Bracket extends HTMLElement {
 
 		this.render(this.tournamentDetails);
 
-		let flattenedMatches = this.tournamentDetails.rounds.flat(2);
+		let matches = this.tournamentDetails.matches;
 		let matchElements = this.querySelectorAll(`.col c-match`);
 
-		flattenedMatches.forEach((match, index) => {
+		matches.forEach((match, index) => {
 			matchElements[index].setAttribute("match-id", match.id);
 		});
 	}

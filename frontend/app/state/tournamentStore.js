@@ -9,6 +9,7 @@ class TournamentStore extends Store {
 			roundsNumber: 0,
 			players: [],
 			theme: "",
+			matches: [],
 			rounds: [],
 			currentRound: 0,
 			currentMatch: null,
@@ -59,6 +60,7 @@ class TournamentStore extends Store {
 	generateTournament() {
 		this.setRoundsNumber(Math.log2(this.state.playersNumber));
 		this.#generateAllMatches(this.state.players);
+
 	}
 
 	finishMatch(playerId) {
@@ -166,6 +168,7 @@ class TournamentStore extends Store {
 		}
 
 		this.setRounds(rounds);
+		this.setState({ matches: rounds.flat(2) });
 	}
 
 	reset() {
