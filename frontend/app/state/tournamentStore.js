@@ -37,7 +37,7 @@ class TournamentStore extends Store {
 	}
 
 	finishTournament(winner) {
-		console.log("Tournament finished with winner: ", winner)
+		console.log("Tournament finished with winner: ", winner);
 		this.setState({ tournamentFinished: true, tournamentWinner: winner });
 	}
 
@@ -50,6 +50,7 @@ class TournamentStore extends Store {
 	}
 
 	setCurrentMatch(match) {
+		match.isStarted = true;
 		this.setState({ currentMatch: match });
 	}
 
@@ -60,7 +61,7 @@ class TournamentStore extends Store {
 	generateTournament() {
 		this.setRoundsNumber(Math.log2(this.state.playersNumber));
 		this.#generateAllMatches(this.state.players);
-
+		this.setState({ tournamentStarted: true });
 	}
 
 	finishMatch(playerId) {
@@ -70,7 +71,7 @@ class TournamentStore extends Store {
 		const rounds = [...this.state.rounds];
 		const currentRoundMatches = rounds[this.state.currentRound];
 		let matchFound = false;
-	
+
 		// Find the match with the given player id
 		for (let i = 0; i < currentRoundMatches.length; i++) {
 			for (let j = 0; j < currentRoundMatches[i].length; j++) {
@@ -97,36 +98,35 @@ class TournamentStore extends Store {
 				break;
 			}
 		}
-	
+
 		if (!matchFound) {
 			console.log(`Player with id ${playerId} is not in any match in the current round.`);
 		}
-	
+
 		// when every matched is finished let move to the next round
-		if (currentRoundMatches.flat().every(match => match.isFinished)) {
+		if (currentRoundMatches.flat().every((match) => match.isFinished)) {
 			this.setState({ currentRound: this.state.currentRound + 1 });
 		}
-		
-		this.setState({ rounds })
-		
+
+		this.setState({ rounds });
+
 		if (this.state.currentRound === this.state.roundsNumber) {
 			this.finishTournament(currentRoundMatches[0][0].winner);
-		};
+		}
 	}
-	
+
 	addWinnerToNextRound(winner, groupIndex, matchIndex) {
 		let rounds = [...this.state.rounds];
 		let nextRound = rounds[this.state.currentRound + 1];
 		let nextGroupIndex = Math.floor(groupIndex / 2);
 		let nextMatchIndex = groupIndex % 2; // Use the group index to determine the match index in the next round
-	
+
 		if (matchIndex === 0) {
 			nextRound[nextGroupIndex][nextMatchIndex].player1 = winner;
-		}
-		else if (matchIndex === 1) {
+		} else if (matchIndex === 1) {
 			nextRound[nextGroupIndex][nextMatchIndex].player2 = winner;
 		}
-	
+
 		this.setState({ rounds });
 	}
 
@@ -171,9 +171,30 @@ class TournamentStore extends Store {
 		this.setState({ matches: rounds.flat(2) });
 	}
 
+	startNextMatch() {
+		if (this.state.tournamentFinished) {
+			return null;
+		}
+		const rounds = [...this.state.rounds];
+		const currentRoundMatches = rounds[this.state.currentRound];
+
+		for (let group of currentRoundMatches) {
+			for (let match of group) {
+				if (!match.isStarted && !match.isFinished) {
+					this.setCurrentMatch(match);
+					return match;
+				}
+			}
+		}
+
+		console.warn("No match found to start.");
+		return null;
+	}
+
 	reset() {
 		this.setState({
 			roundsNumber: 0,
+			matches: [],
 			players: [],
 			theme: "",
 			rounds: [],
@@ -203,23 +224,28 @@ tournamentStore.setState({
 
 tournamentStore.generateTournament();
 
-const p1 = tournamentStore.getState().rounds[0][0][0].player2.id
-const p2 = tournamentStore.getState().rounds[0][0][1].player1.id
-const p3 = tournamentStore.getState().rounds[0][1][0].player2.id
-const p4 = tournamentStore.getState().rounds[0][1][1].player1.id
+let currentMatch;
 
-// round 1
-tournamentStore.finishMatch(p1);
-tournamentStore.finishMatch(p2);
-tournamentStore.finishMatch(p3);
-tournamentStore.finishMatch(p4);
+while (!tournamentStore.state.tournamentFinished) {
+	currentMatch = tournamentStore.startNextMatch();
+	tournamentStore.finishMatch(currentMatch.player1.id);
+}
 
-// round 2
-tournamentStore.finishMatch(p1);
-tournamentStore.finishMatch(p3);
-
-// round 3
-tournamentStore.finishMatch(p1);
+// currentMatch = tournamentStore.startNextMatch();
+// tournamentStore.finishMatch(currentMatch.player1.id);
+// currentMatch = tournamentStore.startNextMatch();
+// tournamentStore.finishMatch(currentMatch.player2.id);
+// currentMatch = tournamentStore.startNextMatch();
+// tournamentStore.finishMatch(currentMatch.player1.id);
+// currentMatch = tournamentStore.startNextMatch();
+// tournamentStore.finishMatch(currentMatch.player2.id);
+// currentMatch = tournamentStore.startNextMatch();
+// tournamentStore.finishMatch(currentMatch.player1.id);
+// currentMatch = tournamentStore.startNextMatch();
+// tournamentStore.finishMatch(currentMatch.player1.id);
+// currentMatch = tournamentStore.startNextMatch();
+// tournamentStore.finishMatch(currentMatch.player2.id);
+// currentMatch = tournamentStore.startNextMatch();
 
 // rounds[round][group][match]
 export { tournamentStore };
