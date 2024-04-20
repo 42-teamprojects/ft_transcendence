@@ -1,11 +1,13 @@
+const semiCircleDiameter = 9 * 2; // Diameter is twice the radius
+
 export default class Paddle {
-    constructor(x, y, moveY, playerIndex, speciality) {
-        this.x = x;
-        this.y = y;
+    constructor(playerIndex, speed, speciality, table) {
+        this.playerIndex = playerIndex;
         this.width = 18;
         this.height = 110;
-        this.moveY = moveY;
-        this.playerIndex = playerIndex;
+        this.x = this.playerIndex === 1 ? 10 : table.tableWidth - 10 - this.width;
+        this.y = table.tableHeight / 2 - this.height / 2;
+        this.speed = speed;
         this.speciality = speciality;
         this.nextY;
     }
@@ -18,45 +20,49 @@ export default class Paddle {
 
     draw = (ctx) => {
         ctx.fillStyle = this.colors[this.speciality];
-        ctx.fillRect(this.x, this.y - this.height / 2, this.width, this.height);
-
-        if (this.theme !== "classic"){
+    
+        if (table.theme !== "classic"){
+            // Draw the rectangle for the paddle
+            ctx.fillRect(this.x, this.y + semiCircleDiameter / 2, this.width, this.height - semiCircleDiameter);
+    
             // Draw the top semi-circle of the paddle
             ctx.beginPath();
-            ctx.arc(this.x + this.width / 2, this.y - this.height / 2, 9, Math.PI, 2 * Math.PI);
+            ctx.arc(this.x + this.width / 2, this.y + semiCircleDiameter / 2, 9, Math.PI, 2 * Math.PI);
             ctx.fill();
         
             // Draw the bottom semi-circle of the paddle
             ctx.beginPath();
-            ctx.arc(this.x + this.width / 2, this.y + this.height / 2, 9, 0, Math.PI);
+            ctx.arc(this.x + this.width / 2, this.y + this.height - (semiCircleDiameter / 2), 9, 0, Math.PI);
             ctx.fill();
         }
         else {
-            ctx.fillRect(this.x, this.y, this.width, this.height);
+            // Draw the rectangle for the paddle
+            ctx.fillRect(this.x, this.y - this.height / 2, this.width, this.height);
         }
     }
+    
 
     directionChange = (direction) => {
         if (direction === "up") {
-            this.moveY = -7;
+            this.speed = -7;
         } else if (direction === "down") {
-            this.moveY = 7;
+            this.speed = 7;
         }
     }
 
     outOfBounds = (tableHeight) => {
 
-        return (this.nextY - (this.height / 2) < 0 || this.nextY + (this.height / 2) > tableHeight);
+        return (this.nextY + semiCircleDiameter / 3 < 0 || this.nextY + this.height > tableHeight);
     }
 
     update = (tableHeight) => {
-        this.nextY = this.y + this.moveY;
+        this.nextY = this.y + this.speed;
         if (!this.outOfBounds(tableHeight)) {
-            this.y += this.moveY;
+            this.y += this.speed;
         }
     }
 
     stop = () => {
-        this.moveY = 0;
+        this.speed = 0;
     }
 }

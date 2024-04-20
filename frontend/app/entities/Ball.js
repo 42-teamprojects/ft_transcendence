@@ -1,32 +1,35 @@
+const COLORS = {
+    football: "orange",
+    classic: "white"
+};
+
+const SPEED_INCREASE_FACTOR = 1.1;
+
 export default class Ball {
     constructor(x, y, moveX, moveY, theme, table) {
-        this.x = x;
-        this.y = y;
         this.moveX = moveX;
         this.moveY = moveY;
         this.theme = theme;
-        this.size;
+        this.size = this.theme === "classic" ? 15 : 10;
+        this.halfSize = this.size / 2;
+        this.thirdSize = this.size / 3;
+        this.x = x - this.thirdSize;
+        this.y = y - this.thirdSize;
         this.pas = [];
         this.table = table;
     }
 
-    draw = (ctx) =>{
-        // define this size and color depending on the theme
-        this.size = this.theme === "classic" ? 15 : 10;
-        ctx.fillStyle = this.theme === "football" ? "orange" : "white";
+    draw = (ctx) => {
+        ctx.fillStyle = COLORS[this.theme];
 
-        // move this
         this.x += this.moveX;
         this.y += this.moveY;
 
-        // squared
-        if (this.theme === "classic")
-            ctx.fillRect(this.x, this.y, this.size, this.size)
-
-        // rounded
-        else {
+        if (this.theme === "classic") {
+            ctx.fillRect(this.x, this.y, this.size, this.size);
+        } else {
             ctx.beginPath();
-            ctx.arc(this.x + this.size / 2, this.y + this.size / 2, this.size, 0, Math.PI*2, false);
+            ctx.arc(this.x + this.halfSize, this.y + this.halfSize, this.size, 0, Math.PI*2, false);
             ctx.fill();
             ctx.closePath();
         }
@@ -77,35 +80,29 @@ export default class Ball {
     detectCollision = (paddle) => {
         return  this.x < paddle.x + paddle.width &&
                 this.x + this.size > paddle.x &&
-                this.y < paddle.y + paddle.height  / 2&&
-                this.y + this.size > paddle.y   - paddle.height / 2;
+                this.y < paddle.y + paddle.height &&
+                this.y + this.size > paddle.y;
     }
-
+    
     bounceOnPaddles= (paddle) => {
         if (!this.detectCollision(paddle)){
             this.moveX = -this.moveX;
-            // this.moveX = 0;
-            // this.moveY = 0;
         }
     }
-
+    
     bounceOnWalls = (tableHeight) => {
         if (this.y <= 0 || this.y + this.size >= tableHeight){
             this.moveY *= -1;
         }
     }
-
+    
     increaseSpeed = () => {
-        this.moveX *= 1.1;
-        this.moveY *= 1.1;
+        this.moveX *= SPEED_INCREASE_FACTOR;
+        this.moveY *= SPEED_INCREASE_FACTOR;
     }
-
+    
     reset = (table) => {
         this.x = table.tableWidth / 2;
         this.y = table.tableHeight / 2;
-        this.moveX = this.moveX;
-        this.moveY = this.moveY;
-        this.size = this.size;
-        this.theme = this.theme;
     }
 }

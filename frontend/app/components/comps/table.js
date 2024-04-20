@@ -9,7 +9,7 @@ export default class Table extends HTMLElement {
         this.player2 = this.getAttribute("player2")
         this.paddle1color = this.getAttribute("paddle1")
         this.paddle2color = this.getAttribute("paddle2")
-        this.finalScore = 1;
+        this.finalScore = 7;
         //table
         this.tableWidth = 1235;
         this.tableHeight = 740;
@@ -17,16 +17,14 @@ export default class Table extends HTMLElement {
         // paddle
         this.paddleWidth = 18;
         this.paddleHeight = 110;
-        this.radius = 9;
-        this.playeVelocityY = 0;
+        this.paddleMove = 0;
         //score
         this.player1score = 0;
         this.player2score = 0;
         
-        this.paddle1 = new Paddle(10, this.tableHeight / 2, this.playeVelocityY, 1, "fire");
-        this.paddle2 = new Paddle(this.tableWidth - 10 - this.paddleWidth, this.tableHeight / 2, this.playeVelocityY, 2, "ice");
-        console.log(this.paddle1)
-        this.ball = new Ball(this.tableWidth / 2, this.tableHeight / 2, 10, 1, this.theme, this);
+        this.paddle1 = new Paddle(1, this.paddleMove,"fire", this);
+        this.paddle2 = new Paddle(2, this.paddleMove,"ice", this);
+        this.ball = new Ball(this.tableWidth / 2 , this.tableHeight / 2, 10, 1, this.theme, this);
         this.middleCirlceRadius = 70;
     }
 
@@ -91,11 +89,6 @@ export default class Table extends HTMLElement {
         this.ball.bounceOnPaddles(this.paddle2);
         this.ball.bounceOnWalls(this.tableHeight);
         this.scored();
-        // this.ball.reset();
-        // // ball
-        // if (this.ball.y <= 0 || (this.ball.y + this.ball.height) >= this.tableHeight){
-        //     this.ball.velocityY *= -1;
-        // }
 
         //check if scores
         if (this.isGameOver) {
