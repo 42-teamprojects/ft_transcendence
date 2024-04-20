@@ -167,9 +167,4 @@ export default class Table extends HTMLElement {
             || this.player2score === this.finalScore
     }
 
-    // increase ball speed after each round
-    increaseSpeed = () => {
-        this.ball.velocityX *= 1.1;
-        this.ball.velocityY *= 1.1;
-    }
 }
