@@ -12,18 +12,16 @@ export default class Ball {
         this.moveY = moveY;
         this.theme = theme;
         this.size = this.theme === "classic" ? 15 : 10;
-        this.halfSize = this.size / 2;
-        this.thirdSize = this.size / 3;
-        this.x = x - this.thirdSize;
-        this.y = y - this.thirdSize;
+        this.x = x;
+        this.y = y;
         this.pas = [];
         this.table = table;
     }
     draw = (ctx) => {
         ctx.fillStyle = COLORS[this.theme];
     
-        this.x += this.moveX;
-        this.y += 0;
+        this.x += 0;
+        this.y += this.moveY;
     
         if (this.theme === "classic") {
             ctx.fillRect(this.x, this.y, this.size, this.size);
@@ -87,7 +85,7 @@ export default class Ball {
     }
     
     bounceOnWalls = (tableHeight) => {
-        if (this.y - this.size/3 < 0 || this.y + this.size * 1.5 > tableHeight){
+        if (this.y - this.size < 0 || this.y + this.size > tableHeight){
             this.moveY *= -1;
         }
     }

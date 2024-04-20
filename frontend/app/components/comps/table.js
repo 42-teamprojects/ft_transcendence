@@ -120,29 +120,29 @@ export default class Table extends HTMLElement {
 
     
     drawMiddle = () => {
+        const STROKE_WIDTH = 120;
+        const STROKE_HEIGHT = 250;
+        const RECT_X = 0;
+        const STROKE_COLOR = 'white';
+        const LINE_WIDTH = 5;
+    
+        this.context.lineWidth = LINE_WIDTH;
+        this.context.strokeStyle = STROKE_COLOR;
+    
         if (this.theme !== "classic"){
             this.context.fillStyle = this.theme === "standard" ? "#56646C" : "white";
-            this.context.fillRect(this.tableWidth / 2, 0, 5, this.tableHeight)
+            this.context.fillRect(this.tableWidth / 2 - LINE_WIDTH / 2, 0, LINE_WIDTH, this.tableHeight)
             if (this.theme === "football") {
                 this.context.beginPath();
                 this.context.arc(this.tableWidth / 2, this.tableHeight / 2, 90, 0, 2 * Math.PI, false);
-                this.context.lineWidth = 5;
-                this.context.strokeStyle = 'white'; // Change this to the desired border color
                 this.context.stroke();
-
+    
                 this.context.beginPath();
-                var strokeWidth = 120; // Change this to the desired width
-                var strokeHeight = 250; // Change this to the desired height
-                var rectX = 0; // This positions the rectangle on the left side of the canvas
-                var rectY = (this.tableHeight - strokeHeight) / 2; // This positions the rectangle vertically in the middle
-
-                this.context.rect(rectX - 5, rectY, strokeWidth, strokeHeight);
-                this.context.lineWidth = 5;
-                this.context.strokeStyle = 'white'; // Change this to the desired border color
+                var rectY = (this.tableHeight - STROKE_HEIGHT) / 2; // This positions the rectangle vertically in the middle
+    
+                this.context.rect(RECT_X - LINE_WIDTH, rectY, STROKE_WIDTH, STROKE_HEIGHT);
                 this.context.stroke();
-                this.context.rect(this.tableWidth - strokeWidth + 5, rectY, strokeWidth, strokeHeight);
-                this.context.lineWidth = 5;
-                this.context.strokeStyle = 'white'; // Change this to the desired border color
+                this.context.rect(this.tableWidth - STROKE_WIDTH + LINE_WIDTH, rectY, STROKE_WIDTH, STROKE_HEIGHT);
                 this.context.stroke();
             }
         }
@@ -152,7 +152,6 @@ export default class Table extends HTMLElement {
             this.context.moveTo(this.tableWidth / 2, 0);
             this.context.lineTo(this.tableWidth / 2, this.tableHeight);
             this.context.lineWidth = 10;
-            this.context.strokeStyle = "white";
             this.context.stroke();
         }
     }

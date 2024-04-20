@@ -10,6 +10,7 @@ export default class Paddle {
         this.speed = speed;
         this.speciality = speciality;
         this.nextY;
+        this.table = table;
     }
 
     colors = {
@@ -21,7 +22,7 @@ export default class Paddle {
     draw = (ctx) => {
         ctx.fillStyle = this.colors[this.speciality];
     
-        if (table.theme !== "classic"){
+        if (this.table.theme !== "classic"){
             // Draw the rectangle for the paddle
             ctx.fillRect(this.x, this.y + semiCircleDiameter / 2, this.width, this.height - semiCircleDiameter);
     
