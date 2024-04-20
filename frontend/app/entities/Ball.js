@@ -20,7 +20,7 @@ export default class Ball {
     draw = (ctx) => {
         ctx.fillStyle = COLORS[this.theme];
     
-        this.x += 0;
+        this.x += this.moveX;
         this.y += this.moveY;
     
         if (this.theme === "classic") {
