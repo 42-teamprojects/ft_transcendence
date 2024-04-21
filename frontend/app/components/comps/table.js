@@ -9,7 +9,8 @@ export default class Table extends HTMLElement {
         this.player2 = this.getAttribute("player2")
         this.paddle1color = this.getAttribute("paddle1")
         this.paddle2color = this.getAttribute("paddle2")
-        this.finalScore = 7;
+        this.finalScore = 7
+        ;
         //table
         this.tableWidth = 1235;
         this.tableHeight = 740;
@@ -24,7 +25,7 @@ export default class Table extends HTMLElement {
         
         this.paddle1 = new Paddle(1, this.paddleMove,"fire", this);
         this.paddle2 = new Paddle(2, this.paddleMove,"ice", this);
-        this.ball = new Ball(this.tableWidth / 2 , this.tableHeight / 2, 10, 1, this.theme, this);
+        this.ball = new Ball(this.tableWidth / 2 , this.tableHeight / 2, 7, 1, this.theme, this);
         this.middleCirlceRadius = 70;
     }
 
