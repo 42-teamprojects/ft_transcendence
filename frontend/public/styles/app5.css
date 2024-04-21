@@ -11,6 +11,14 @@
     border-color: var(--border-color);
 }
 
+.content {
+    margin-left: 256px;
+    overflow-y: auto;
+    width: calc(100% - 256px);
+    height: 100vh;
+}
+
+
 @media screen and (max-width: 768px) {
     .sidebar {
         c-logo .logo {
@@ -26,14 +34,14 @@
             }
         }
     }
-    
-}
 
-.content {
-    margin-left: 256px;
-    overflow-y: auto;
-    width: calc(100% - 256px);
-    height: 100vh;
+    .content {
+        margin-left: 97px;
+        overflow-y: auto;
+        width: calc(100% - 97px);
+        height: 100vh;
+    }
+    
 }
 
 .sidebar-link {
