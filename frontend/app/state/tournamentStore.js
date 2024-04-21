@@ -1,5 +1,4 @@
 import LocalMatch from "../entities/LocalMatch.js";
-import LocalPlayer from "../entities/LocalPlayer.js";
 import { shuffleArray } from "../utils/utils.js";
 import Store from "./store.js";
 
@@ -20,20 +19,12 @@ class TournamentStore extends Store {
 		});
 	}
 
-	addPlayer(player) {
-		this.setState({ players: [...this.state.players, player] });
-	}
-
 	setTheme(theme) {
 		this.setState({ theme });
 	}
 
 	setPlayersNumber(playersNumber) {
 		this.setState({ playersNumber: parseInt(playersNumber) });
-	}
-
-	startTournament() {
-		this.setState({ tournamentStarted: true });
 	}
 
 	finishTournament(winner) {
@@ -192,6 +183,7 @@ class TournamentStore extends Store {
 	}
 
 	reset() {
+		LocalMatch.autoId = 0;
 		this.setState({
 			roundsNumber: 0,
 			matches: [],
@@ -230,22 +222,6 @@ const tournamentStore = new TournamentStore();
 // 	currentMatch = tournamentStore.startNextMatch();
 // 	tournamentStore.finishMatch(currentMatch.player1.id);
 // }
-
-// currentMatch = tournamentStore.startNextMatch();
-// tournamentStore.finishMatch(currentMatch.player1.id);
-// currentMatch = tournamentStore.startNextMatch();
-// tournamentStore.finishMatch(currentMatch.player2.id);
-// currentMatch = tournamentStore.startNextMatch();
-// tournamentStore.finishMatch(currentMatch.player1.id);
-// currentMatch = tournamentStore.startNextMatch();
-// tournamentStore.finishMatch(currentMatch.player2.id);
-// currentMatch = tournamentStore.startNextMatch();
-// tournamentStore.finishMatch(currentMatch.player1.id);
-// currentMatch = tournamentStore.startNextMatch();
-// tournamentStore.finishMatch(currentMatch.player1.id);
-// currentMatch = tournamentStore.startNextMatch();
-// tournamentStore.finishMatch(currentMatch.player2.id);
-// currentMatch = tournamentStore.startNextMatch();
 
 // rounds[round][group][match]
 export { tournamentStore };

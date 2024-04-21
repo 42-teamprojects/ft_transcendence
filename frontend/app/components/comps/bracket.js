@@ -7,15 +7,9 @@ export default class Bracket extends HTMLElement {
 	}
 
 	connectedCallback() {
-		this.update();
-		this.unsubscribe = tournamentStore.subscribe(this.update.bind(this));
-	}
-
-	update() {
 		this.tournamentDetails = tournamentStore.getState();
-		console.log(this.tournamentDetails);
 
-		this.render(this.tournamentDetails);
+		this.render();
 
 		let matches = this.tournamentDetails.matches;
 		let matchElements = this.querySelectorAll(`.col c-match`);
@@ -25,12 +19,10 @@ export default class Bracket extends HTMLElement {
 		});
 	}
 
-	disconnectedCallback() {
-		this.unsubscribe();
-	}
+	disconnectedCallback() {}
 
-	render(tournamentDetails) {
-		let rounds = tournamentDetails.roundsNumber; // Number of rounds is log2 of number of players
+	render() {
+		let rounds = this.tournamentDetails.roundsNumber; // Number of rounds is log2 of number of players
 		let html = '<div class="brackets">';
 
 		for (let i = 0; i < rounds; i++) {

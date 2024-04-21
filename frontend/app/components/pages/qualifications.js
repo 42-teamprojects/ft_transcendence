@@ -23,23 +23,35 @@ export default class Qualifications extends HTMLElement {
 			Router.instance.navigate("/local/tournament");
 			return;
 		}
-		this.render();
+		this.update();
 		this.unsubscribe = tournamentStore.subscribe(() => {
 			this.tournamentDetails = tournamentStore.getState();
-			this.render();
+			this.update();
 		});
+	}
+
+	update() {
+		this.render();
+		const form = this.querySelector("#game");
+		form.addEventListener("submit", (e) => {
+			e.preventDefault();
+			if (e.submitter.id === "start-match") {
+				const currentMatch = tournamentStore.startNextMatch();
+				tournamentStore.finishMatch([currentMatch.player1.id, currentMatch.player2.id][Math.floor(Math.random() * 2)]);
+			}
+			else if (e.submitter.id === "end-tournament") {
+				tournamentStore.reset();
+				Router.instance.navigate("/local/tournament");
+			}
+		});
+		
 	}
 
 	disconnectedCallback() {}
 
 	render() {
 		const currentMatch = this.tournamentDetails.currentMatch;
-		let formButton;
-		if (currentMatch)
-			formButton = `<button is="c-button" type="submit" id="start-match" class="btn-primary mt-9">Start Match ${currentMatch.id + 1}</button>`
-		else
-			formButton = `<button is="c-button" type="submit" id="start-match" class="btn-primary mt-9">Start First Match</button>`
-
+		let formButton = `<button is="c-button" type="submit" id="start-match" class="btn-primary mt-9">Start Match ${currentMatch ? currentMatch.id + 2 : 1}</button>`
 		if (this.tournamentDetails.currentRound >= this.tournamentDetails.rounds.length) {
 			formButton = `<button is="c-button" type="submit" id="end-tournament" class="btn-primary mt-9">End Tournament</button>`
 		}
@@ -54,7 +66,7 @@ export default class Qualifications extends HTMLElement {
                 <c-bracket class="w-full"></c-bracket>
             </div>
             <form id="game" class="w-full flex-col-center">
-				${formButton}
+			    ${formButton}
             </form>
         </div>
         `;
