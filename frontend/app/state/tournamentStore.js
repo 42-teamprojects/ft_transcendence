@@ -210,26 +210,26 @@ class TournamentStore extends Store {
 
 const tournamentStore = new TournamentStore();
 
-const players = [];
+// const players = [];
 
-for (let i = 0; i < 8; i++) {
-	players.push(new LocalPlayer(i, `Player ${i + 1}`, "basic"));
-}
+// for (let i = 0; i < 8; i++) {
+// 	players.push(new LocalPlayer(i, `Player ${i + 1}`, "basic"));
+// }
 
-tournamentStore.setState({
-	players: players,
-	theme: "football",
-	playersNumber: players.length,
-});
+// tournamentStore.setState({
+// 	players: players,
+// 	theme: "football",
+// 	playersNumber: players.length,
+// });
 
-tournamentStore.generateTournament();
+// tournamentStore.generateTournament();
 
-let currentMatch;
+// let currentMatch;
 
-while (!tournamentStore.state.tournamentFinished) {
-	currentMatch = tournamentStore.startNextMatch();
-	tournamentStore.finishMatch(currentMatch.player1.id);
-}
+// while (!tournamentStore.state.tournamentFinished) {
+// 	currentMatch = tournamentStore.startNextMatch();
+// 	tournamentStore.finishMatch(currentMatch.player1.id);
+// }
 
 // currentMatch = tournamentStore.startNextMatch();
 // tournamentStore.finishMatch(currentMatch.player1.id);

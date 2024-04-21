@@ -5,6 +5,10 @@ html {
 	--btn-shadow-length: 3px;
 }
 
+c-logo .logo {
+	content: url("../assets/icons/logo.svg");
+}
+
 body {
 	background-color: var(--bg-color);
 	color: var(--text-color);

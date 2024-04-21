@@ -18,6 +18,32 @@
     height: 100vh;
 }
 
+
+@media screen and (max-width: 768px) {
+    .sidebar {
+        c-logo .logo {
+            content: url("../assets/icons/bp.svg");
+        }
+        width: 97px;
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            .font-bold {
+                display: none;
+            }
+        }
+    }
+
+    .content {
+        margin-left: 97px;
+        overflow-y: auto;
+        width: calc(100% - 97px);
+        height: 100vh;
+    }
+    
+}
+
 .sidebar-link {
     display: flex;
     align-items: center;
