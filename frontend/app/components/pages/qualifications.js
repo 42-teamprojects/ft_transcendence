@@ -33,8 +33,13 @@ export default class Qualifications extends HTMLElement {
 	disconnectedCallback() {}
 
 	render() {
-                
-		let formButton = `<button is="c-button" type="submit" id="start-match" class="btn-primary mt-9">Start Match ${this.tournamentDetails.currentMatch.id + 1}</button>`
+		const currentMatch = this.tournamentDetails.currentMatch;
+		let formButton;
+		if (currentMatch)
+			formButton = `<button is="c-button" type="submit" id="start-match" class="btn-primary mt-9">Start Match ${currentMatch.id + 1}</button>`
+		else
+			formButton = `<button is="c-button" type="submit" id="start-match" class="btn-primary mt-9">Start First Match</button>`
+
 		if (this.tournamentDetails.currentRound >= this.tournamentDetails.rounds.length) {
 			formButton = `<button is="c-button" type="submit" id="end-tournament" class="btn-primary mt-9">End Tournament</button>`
 		}

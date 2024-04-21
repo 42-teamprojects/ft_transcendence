@@ -1,6 +1,7 @@
 export default class Local extends HTMLElement {
     constructor() {
         super();
+        document.title = "Local | Blitzpong.";
     }
 
     connectedCallback() {

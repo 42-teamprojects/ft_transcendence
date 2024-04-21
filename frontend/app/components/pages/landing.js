@@ -1,6 +1,7 @@
 export default class Landing extends HTMLElement {
     constructor() {
         super();
+        document.title = "Blitzpong.";
     }
 
     connectedCallback() {
