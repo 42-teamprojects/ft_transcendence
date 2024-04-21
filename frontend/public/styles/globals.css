@@ -16,6 +16,10 @@
     --info-color: #00B3FF;
 }
 
+.white-space {
+    white-space: nowrap;
+}
+
 .flex {
     display: flex !important;
     align-items: center !important;

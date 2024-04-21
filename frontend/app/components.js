@@ -1,3 +1,5 @@
+import Friendscard from "./components/comps/friendscard.js";
+import Usercard from "./components/comps/usercard.js";
 import Sidebar from "./components/comps/sidebar.js";
 import Sidebarwidget from "./components/comps/sidebar-link.js";
 import Match from "./components/comps/match.js";
@@ -42,4 +44,6 @@ export const components = [
 	{ tagName: 'c-match', component: Match },
 	{ tagName: 'c-sidebar-link', component: Sidebarwidget },
 	{ tagName: 'c-sidebar', component: Sidebar },
+	{ tagName: 'c-usercard', component: Usercard },
+	{ tagName: 'c-friendscard', component: Friendscard },
 ];
