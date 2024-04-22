@@ -14,7 +14,7 @@ export default class Friendscard extends HTMLElement {
             <div class="container flex-col gap-4">
                 <div class="title-bar flex justify-between items-center">
                     <h1>Friends</h1>
-                    <a is="c-link" href="google.com" class="uppercase">view all</a>
+                    <a is="c-link" href="google.com" class="uppercase text-xs font-extrabold spacing-1">view all</a>
                 </div>
                 <div class="grid grid-cols-4 grid-center gap-5">
                     <c-usercard username="Hassan" status="offline" img="https://api.dicebear.com/8.x/avataaars/svg?seed=Baby"></c-usercard>

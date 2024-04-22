@@ -56,3 +56,17 @@ c-friendscard .container .title-bar h1
 {
     font-size: 26px;
 }
+
+c-friendscard .container .title-bar a
+{
+    font-size: 18px;
+    color: var(--secondary-color);
+}
+
+p-dashboard .home-content
+{
+    border: 1px solid blue;
+    display: flex;
+    justify-content: space-between;
+    align-items: self-start;
+}
