@@ -1,3 +1,5 @@
+import Playerresources from "./components/comps/playerresources.js";
+import Dailyquestscard from "./components/comps/dailyquestscard.js";
 import Friendscard from "./components/comps/friendscard.js";
 import Usercard from "./components/comps/usercard.js";
 import Sidebar from "./components/comps/sidebar.js";
@@ -46,4 +48,6 @@ export const components = [
 	{ tagName: 'c-sidebar', component: Sidebar },
 	{ tagName: 'c-usercard', component: Usercard },
 	{ tagName: 'c-friendscard', component: Friendscard },
+	{ tagName: 'c-dailyquestscard', component: Dailyquestscard },
+	{ tagName: 'c-playerresources', component: Playerresources },
 ];

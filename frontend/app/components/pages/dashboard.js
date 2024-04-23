@@ -17,7 +17,11 @@ export default class Dashboard extends HTMLElement {
                 <c-card action='Play' title='Local Match' type="primary"></c-card>  
                 <c-card action='Play' title='Online Match' type="secondary"></c-card>
             </div>
-            <c-friendscard></c-friendscard>
+            <div class="flex-col-center gap-5">
+                <c-playerresources></c-playerresources>
+                <c-friendscard></c-friendscard>
+                <c-dailyquestscard></c-dailyquestscard>
+            </div>
         </div>
         `;
     }

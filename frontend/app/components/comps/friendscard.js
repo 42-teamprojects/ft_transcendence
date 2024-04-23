@@ -11,7 +11,7 @@ export default class Friendscard extends HTMLElement {
 
     render() {
         this.innerHTML = /*html*/`
-            <div class="container flex-col gap-4">
+            <div class="container card-border flex-col gap-4">
                 <div class="title-bar flex justify-between items-center">
                     <h1>Friends</h1>
                     <a is="c-link" href="google.com" class="uppercase text-xs font-extrabold spacing-1">view all</a>
