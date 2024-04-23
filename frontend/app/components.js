@@ -1,3 +1,4 @@
+import Taskcard from "./components/comps/taskcard.js";
 import Playerresources from "./components/comps/playerresources.js";
 import Dailyquestscard from "./components/comps/dailyquestscard.js";
 import Friendscard from "./components/comps/friendscard.js";
@@ -50,4 +51,5 @@ export const components = [
 	{ tagName: 'c-friendscard', component: Friendscard },
 	{ tagName: 'c-dailyquestscard', component: Dailyquestscard },
 	{ tagName: 'c-playerresources', component: Playerresources },
+	{ tagName: 'c-taskcard', component: Taskcard },
 ];

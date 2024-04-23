@@ -83,3 +83,21 @@ c-playerresources .resource-count
     width: 75px;
     height: 30px;
 }
+
+c-dailyquestscard .container
+{
+    width: 381px;
+    height: 259px;
+    padding: 20px 26px 26px 26px;
+}
+
+c-dailyquestscard .container .title-bar h1
+{
+    font-size: 26px;
+}
+
+c-dailyquestscard .container .title-bar a
+{
+    font-size: 18px;
+    color: var(--secondary-color);
+}
