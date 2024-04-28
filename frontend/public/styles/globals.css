@@ -16,6 +16,10 @@
     --info-color: #00B3FF;
 }
 
+.white-space {
+    white-space: nowrap;
+}
+
 .flex {
     display: flex !important;
     align-items: center !important;
@@ -48,8 +52,14 @@
     justify-content: center !important;
 }
 
+
+
 .justify-between {
     justify-content: space-between !important;
+}
+
+.justify-around {
+    justify-content: space-around !important;
 }
 
 .gap-1 {
@@ -1275,4 +1285,10 @@
 }
 .scale-5 {
     transform: scale(1);
+}
+
+.card-border
+{
+    border: 2px solid #262F35;
+    border-radius: 24px;
 }

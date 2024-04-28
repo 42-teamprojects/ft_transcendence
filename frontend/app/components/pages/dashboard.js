@@ -11,8 +11,18 @@ export default class Dashboard extends HTMLElement {
     disconnectedCallback() {}
 
     render() {
-        this.innerHTML = /*html*/`
-        <h1>dashboard</h1>
+        this.innerHTML = /*html*/`  
+        <div class="home-content">
+            <div class="flex-center gap-6" >
+                <c-card action='Play' title='Local Match' type="primary"></c-card>  
+                <c-card action='Play' title='Online Match' type="secondary"></c-card>
+            </div>
+            <div class="flex-col-center gap-5">
+                <c-playerresources></c-playerresources>
+                <c-friendscard></c-friendscard>
+                <c-dailyquestscard></c-dailyquestscard>
+            </div>
+        </div>
         `;
     }
 }
