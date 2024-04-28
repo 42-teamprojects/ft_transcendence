@@ -53,12 +53,12 @@ c-friendscard .container
 
 c-friendscard .container .title-bar h1
 {
-    font-size: 26px;
+    font-size: 22px;
 }
 
 c-friendscard .container .title-bar a
 {
-    font-size: 18px;
+    font-size: 15px;
     color: var(--secondary-color);
 }
 
@@ -93,11 +93,11 @@ c-dailyquestscard .container
 
 c-dailyquestscard .container .title-bar h1
 {
-    font-size: 26px;
+    font-size: 22px;
 }
 
 c-dailyquestscard .container .title-bar a
 {
-    font-size: 18px;
+    font-size: 15px;
     color: var(--secondary-color);
 }
