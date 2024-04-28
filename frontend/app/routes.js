@@ -54,4 +54,8 @@ export const routes = [
     path : "/dashboard/shop",
     component: () => import("./components/pages/dashboard.js"),
   },
+  {
+    path : "/login",
+    component: () => import("./components/pages/login.js"),
+  },
 ];
