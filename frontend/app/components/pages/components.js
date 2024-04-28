@@ -32,17 +32,18 @@ export default class Components extends HTMLElement {
 			Toast.notify({ type: "info", message: "Some thing went wrong" });
 		});
 
-        this.querySelector("#paddlesForm").addEventListener("submit", (e) => {
-            e.preventDefault();
-            this.querySelector("#selected-paddle").innerText = `Selected paddle: ${useFormData(e.target).getObject()["paddle-option"]}`;
-        });
-        this.querySelector("#themesForm").addEventListener("submit", (e) => {
-            e.preventDefault();
-            this.querySelector("#selected-theme").innerText = `Selected theme: ${useFormData(e.target).getObject()["theme-option"]}`;
-        });
-
-
-
+		this.querySelector("#paddlesForm").addEventListener("submit", (e) => {
+			e.preventDefault();
+			this.querySelector("#selected-paddle").innerText = `Selected paddle: ${
+				useFormData(e.target).getObject()["paddle-option"]
+			}`;
+		});
+		this.querySelector("#themesForm").addEventListener("submit", (e) => {
+			e.preventDefault();
+			this.querySelector("#selected-theme").innerText = `Selected theme: ${
+				useFormData(e.target).getObject()["theme-option"]
+			}`;
+		});
 	}
 
 	render() {
@@ -52,7 +53,7 @@ export default class Components extends HTMLElement {
                 <div class="buttons my-8">
                     <h2 class="pb-3">Buttons</h2>
                     <button is="c-button" class="btn-primary">Button primary</button>
-                    <button is="c-button" class="btn-secondary">Button secondary</button>
+                    <button is="c-button" class="btn-secondary ">Button secondary</button>
                     <button is="c-button" class="btn-default">Button default</button>
                     <button is="c-button">Button</button>
                     <button is="c-button" class="btn-secondary" disabled>Button disabled</button>
@@ -137,7 +138,7 @@ export default class Components extends HTMLElement {
                         <span id="selected-theme"></span>
                     </form>
                 </div>
-                </div>
+
                 `;
 	}
 }
