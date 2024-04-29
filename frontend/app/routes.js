@@ -59,7 +59,7 @@ export const routes = [
     component: () => import("./components/pages/login.js"),
   },
   {
-    path : "/sign-up",
+    path : "/register",
     component: () => import("./components/pages/sign-up.js"),
   },
 ];
