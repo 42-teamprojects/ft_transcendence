@@ -1,0 +1,39 @@
+export default class Signup extends HTMLElement {
+    constructor() {
+        super();
+    }
+
+    connectedCallback() {
+        this.render();
+    }
+
+    disconnectedCallback() {}
+
+    render() {
+        this.innerHTML = /*html*/`
+        <div class="container">
+            <h1>Sign up</h1>
+            <div>
+                <input type="text" class="input-field" placeholder="Full name"/>
+                <input type="text" class="input-field" placeholder="Username"/>
+                <input type="email" class="input-field" placeholder="Email"/>
+                <input type="password" class="input-field" placeholder="Password" /> 
+                <input type="password" class="input-field" placeholder="Confirm password" />
+                <button is="c-button" class="btn-secondary ">Sign up</button>
+            </div>
+            <p>Already signed up? <a href="/login">Log in here.</a></p>
+            <div class="hr">
+                <hr> <span> OR </span> <hr>
+            </div>
+            <div class="social-login">
+                <button is="c-button" class="btn-default"> <img src="/public/assets/icons/42.svg" alt="42"/> INTRA </button>
+                <button is="c-button" class="btn-default"> <img src="/public/assets/icons/google.svg" alt="google"/> GOOGLE </button>
+            </div>
+
+        </div>
+
+        `;
+    }
+}
+
+customElements.define('p-signup', Signup);

@@ -58,4 +58,8 @@ export const routes = [
     path : "/login",
     component: () => import("./components/pages/login.js"),
   },
+  {
+    path : "/sign-up",
+    component: () => import("./components/pages/sign-up.js"),
+  },
 ];
