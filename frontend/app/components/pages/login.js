@@ -19,7 +19,7 @@ export default class Login extends HTMLElement {
                 <a class="small" href="/password/forgot">FORGOT?</a>
                 <button is="c-button" class="btn-secondary ">Login</button>
             </div>
-            <p>Don't have an account? <a href="/register">Sign up here.</a></p>
+            <p>Don't have an account? <a href="/sign-up">Sign up here.</a></p>
             <div class="hr">
                 <hr> <span> OR </span> <hr>
             </div>
