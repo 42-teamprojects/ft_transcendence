@@ -18,7 +18,7 @@ export default class Landing extends HTMLElement {
 
                 <div style="width: 350px">
                     <button is="c-button" class="btn-primary w-full mb-4" href="/local" >Play local</button>
-                    <button is="c-button" class="btn-secondary w-full" href="/dashboard">Log in and play online</button>
+                    <button is="c-button" class="btn-secondary w-full" href="/login">Log in and play online</button>
                 </div>
             </div>
         `;

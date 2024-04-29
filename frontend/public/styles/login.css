@@ -1,76 +1,76 @@
-p-login{
+p-login, p-signup {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-}
 
-.container {
-    display: flex;
-    flex-direction: column;
-    width: 340px;
-    height: 323px;
-    justify-content: center;
-    gap: 1.5rem;
-    align-items: center;
-}
-
-.container input {
-    margin-bottom: 14px;
-
-}
-
-.container button{
-    width: 100%;
-}
-
-.hr{
-    display: flex;
-    gap: 1.5rem;
-    align-items: center;
-    width: 100%;
-}
-
-.small{
-    position: absolute;
-    color: #1CB0F6;
-    margin-left: -5rem;
-    margin-top: 0.7rem;
-    padding: 0.5rem;
-    font-size: 0.8rem;
-    font-weight: bold;
-    cursor: pointer;
-    background-color: var(--default-color);
-    transition: 0.3s;
-    border-radius: 1px 5px;
-}
-
-.small:hover{
-    color: white
+    .container {
+        display: flex;
+        flex-direction: column;
+        width: 340px;
+        height: 323px;
+        justify-content: center;
+        gap: 1.5rem;
+        align-items: center;
+    }
     
+    .container input {
+        margin-bottom: 14px;
+    
+    }
+    
+    .container button{
+        width: 100%;
+    }
+    
+    .hr{
+        display: flex;
+        gap: 1.5rem;
+        align-items: center;
+        width: 100%;
+    }
+    
+    .small{
+        position: absolute;
+        color: #1CB0F6;
+        margin-left: -5rem;
+        margin-top: 0.7rem;
+        padding: 0.5rem;
+        font-size: 0.8rem;
+        font-weight: bold;
+        cursor: pointer;
+        background-color: var(--input-bg-color);
+        transition: 0.3s;
+        border-radius: 1px 5px;
+    }
+    
+    .small:hover{
+        color: white
+    }
+    
+    .hr hr{
+        width: 100%;
+    }
+    
+    .hr span{
+        font-size: 0.8rem;
+        color: #8e8e8e;
+    }
+    
+    p{
+        font-size: 0.8rem;
+    }
+    
+    p a{
+        color: #1CB0F6;
+    }
+    
+    .social-login{
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        align-items: center;
+    
+    }    
 }
 
-.hr hr{
-    width: 100%;
-}
-
-.hr span{
-    font-size: 0.8rem;
-    color: #8e8e8e;
-}
-
-p{
-    font-size: 0.8rem;
-}
-
-p a{
-    color: #1CB0F6;
-}
-
-.social-login{
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    align-items: center;
-
-}
