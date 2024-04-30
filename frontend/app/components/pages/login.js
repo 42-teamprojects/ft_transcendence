@@ -11,14 +11,20 @@ export default class Login extends HTMLElement {
 
 	render() {
 		this.innerHTML = /*html*/ `
-        <div class="container">
+        <div class="form-container">
             <h1>Log in</h1>
-            <div>
-                <input type="text" class="input-field" placeholder="Username or email"/>
-                <input type="password" class="input-field" placeholder="Password" /> 
-                <a is="c-link" class="small" href="/password/forgot">FORGOT?</a>
+            <form>
+                <div class="form-group">
+                    <input type="text" class="input-field" placeholder="Username or email"/>
+                </div>
+                <div class="form-group">
+                    <input type="password" class="input-field" placeholder="Password" />
+                    <span class="text-xs mr-1 text-right">
+                        <a is="c-link" href="/password/forgot">Forgot password?</a>
+                    </span>
+                </div>
                 <button is="c-button" class="btn-secondary ">Login</button>
-            </div>
+            </form>
             <p>Don't have an account? <a is="c-link" href="/register">Register here.</a></p>
             <div class="hr uppercase font-bold">
                 <hr> <span> or </span> <hr>
@@ -28,8 +34,6 @@ export default class Login extends HTMLElement {
                 <button is="c-button" class="btn-default"> <img src="/public/assets/icons/google.svg" alt="google"/> google </button>
             </div>
         </div>
-
-
         `;
 	}
 }
