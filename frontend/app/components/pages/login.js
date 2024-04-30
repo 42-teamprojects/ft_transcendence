@@ -15,10 +15,10 @@ export default class Login extends HTMLElement {
             <h1>Log in</h1>
             <form>
                 <div class="form-group">
-                    <input type="text" class="input-field" placeholder="Username or email"/>
+                    <input type="text" name="username" class="input-field" placeholder="Username or email"/>
                 </div>
                 <div class="form-group">
-                    <input type="password" class="input-field" placeholder="Password" />
+                    <input type="password" name="password" class="input-field" placeholder="Password" />
                     <span class="text-xs mr-1 text-right">
                         <a is="c-link" href="/password/forgot">Forgot password?</a>
                     </span>

@@ -19,7 +19,7 @@
 }
 
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 1278px) {
     .sidebar {
         c-logo .logo {
             content: url("../assets/icons/bp.svg");
