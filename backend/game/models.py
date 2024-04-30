@@ -2,4 +2,4 @@ from django.db import models
 
 # Create your models here.
 
-class GameSession
+# class GameSession
