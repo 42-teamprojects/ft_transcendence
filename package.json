@@ -5,6 +5,7 @@
 	"scripts": {
 		"start": "docker-compose up",
 		"frontend": "cd frontend && npm run dev",
+		"backend": "cd backend && docker-compose up -d && source ./.venv/bin/activate && python manage.py runserver",
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"setup": "chmod +x setup.sh && ./setup.sh; npm i -g live-server veca-cli"
 	},

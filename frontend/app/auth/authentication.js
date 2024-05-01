@@ -51,6 +51,27 @@ export default class Authentication {
         }
     }
 
+    async register(user) {
+        try {
+            const response = await fetch(config.rest_url + 'auth/register/', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(user)
+            });
+            const data = await response.json();
+            if (!response.ok) {
+                throw data;
+            }
+            return data;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+
     logout() {
         this.auth = null;
         this._callbacks.forEach(callback => callback(null));
