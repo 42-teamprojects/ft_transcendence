@@ -40,7 +40,7 @@ export default class Authentication {
             });
             const data = await response.json();
             if (!response.ok) {
-                throw new Error(data.message);
+                throw new Error(data.detail);
             }
             this.auth = data;
             this._callbacks.forEach(callback => callback(data));
@@ -61,7 +61,7 @@ export default class Authentication {
             await this.login('yusufisawi', 'anyayusuf0011');
             console.log('Current authentication status:', Authentication.instance.auth);
         } catch (error) {
-            console.error('Authentication error:', error);
+            console.error(error);
         }
     }
 }
