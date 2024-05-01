@@ -1,4 +1,4 @@
-import Authentication from "./auth/Authentication.js";
+import Authentication from "./auth/authentication.js";
 import { Core } from "./core/core.js";
 import Http from "./http/http.js";
 import Router from "./router/router.js";

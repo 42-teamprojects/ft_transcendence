@@ -27,10 +27,10 @@ export default class Authentication {
         this._callbacks.push(callback);
     }
 
-    async doAuthentication(username, password) {
+    async login(username, password) {
         const user = { username, password };
         try {
-            const response = await fetch(config.rest_url + 'auth/login', {
+            const response = await fetch(config.rest_url + 'auth/login/', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json, text/plain, */*',
@@ -58,7 +58,7 @@ export default class Authentication {
 
     async testAuthentication() {
         try {
-            await this.doAuthentication('kminchelle', '0lelplR');
+            await this.login('yusufisawi', 'anyayusuf0011');
             console.log('Current authentication status:', Authentication.instance.auth);
         } catch (error) {
             console.error('Authentication error:', error);
