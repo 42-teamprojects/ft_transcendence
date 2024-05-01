@@ -40,13 +40,13 @@ export default class Authentication {
             });
             const data = await response.json();
             if (!response.ok) {
-                throw new Error(data.detail);
+                throw data;
             }
             this.auth = data;
             this._callbacks.forEach(callback => callback(data));
             return data;
         } catch (error) {
-            console.error('Error during authentication:', error);
+            console.error(error);
             throw error;
         }
     }

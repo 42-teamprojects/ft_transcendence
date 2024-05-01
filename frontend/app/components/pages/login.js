@@ -1,10 +1,55 @@
+import Authentication from "../../auth/authentication.js";
+import Router from "../../router/router.js";
+import Toast from "../comps/toast.js";
+
 export default class Login extends HTMLElement {
 	constructor() {
 		super();
 	}
 
 	connectedCallback() {
+        if (Authentication.instance.auth) {
+            Router.instance.navigate("/dashboard/home");
+            return;
+        }
 		this.render();
+
+        const form = this.querySelector("form");
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const data = {
+                username: formData.get("username"),
+                password: formData.get("password"),
+            };
+            
+            try {
+                await Authentication.instance.login(data.username, data.password);
+                Router.instance.navigate("/dashboard/home");
+            } catch (error) {
+                if (error.detail) {
+                    Toast.notify({type: "error", message: error.detail });
+                    return;
+                }
+                if (error["username"]) {
+                    const usernameInput = this.querySelector("input[name='username']");
+                    usernameInput.classList.add("error");
+                    const errorSpan = document.createElement("span");
+                    errorSpan.classList.add("input-error", "text-xs", "ml-3", "text-danger");
+                    errorSpan.textContent = error["username"];
+                    usernameInput.insertAdjacentElement("afterend", errorSpan);
+                }
+                if (error["password"]) {
+                    const passwordInput = this.querySelector("input[name='password']");
+                    passwordInput.classList.add("error");
+                    const errorSpan = document.createElement("span");
+                    errorSpan.classList.add("input-error", "text-xs", "ml-3", "text-danger");
+                    errorSpan.textContent = error["password"];
+                    passwordInput.insertAdjacentElement("afterend", errorSpan);
+                }
+            }
+        });
 	}
 
 	disconnectedCallback() {}
@@ -15,7 +60,7 @@ export default class Login extends HTMLElement {
             <h1>Log in</h1>
             <form>
                 <div class="form-group">
-                    <input type="text" name="username" class="input-field" placeholder="Username or email"/>
+                    <input type="text" name="username" class="input-field" placeholder="Username"/>
                 </div>
                 <div class="form-group">
                     <input type="password" name="password" class="input-field" placeholder="Password" />
