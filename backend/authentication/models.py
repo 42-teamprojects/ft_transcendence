@@ -1,8 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.utils.translation import gettext_lazy as _
-
 from .managers import UserManager
+
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class UserStatus(models.TextChoices):
@@ -16,16 +17,15 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_('Email Address'), unique=True, max_length=255)
     full_name = models.CharField(_('Full Name'), max_length=100)
     status = models.CharField(_('Status'), max_length=2, choices=UserStatus.choices, default=UserStatus.OFFLINE)
+    # avatar = models.ImageField(_('Avatar'), upload_to='avatars/', null=True, blank=True)
     is_active = models.BooleanField(_('Is Active'), default=True)
     is_staff = models.BooleanField(_('Is Staff'), default=False)
     is_superuser = models.BooleanField(_('Is Superuser'), default=False)
     is_verified = models.BooleanField(_('Is Verified'), default=False)
     date_joined = models.DateTimeField(_('Date Joined'), auto_now_add=True)
     
-    USERNAME_FIELD = 'email'
-    USERNAME_FIELDS = ['username']
-    
-    REQUIRED_FIELDS = ['full_name', 'username']
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['full_name', 'email']
     
     objects = UserManager()
     
@@ -41,7 +41,12 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.username
     
     def tokens(self):
-        pass
+        refresh = RefreshToken.for_user(self)
+        
+        return {
+            'refresh': str(refresh),
+            'access': str(refresh.access_token)
+        }
     
 
 class OneTimePassword(models.Model):

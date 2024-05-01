@@ -5,7 +5,6 @@ export default class Button extends HTMLButtonElement {
 		super();
 	}
 
-
 	connectedCallback() {
 		const href = this.getAttribute("href");
 		const text = this.getAttribute("text") || this.innerHTML;
