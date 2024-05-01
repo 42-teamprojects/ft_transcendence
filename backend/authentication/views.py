@@ -1,4 +1,4 @@
-from django.shortcuts import render
+# from django.shortcuts import render
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
@@ -20,7 +20,7 @@ class UserRegisterView(GenericAPIView):
 
         serializer.save()
         user = serializer.data
-        send_otp_email(user['email'])
+        # send_otp_email(user['email'])
 
         return Response({
             'user': user,
