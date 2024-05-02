@@ -59,6 +59,7 @@ export function handleInputError(fieldName, errorMessage) {
     const inputField = this.querySelector(`input[name='${fieldName}']`);
     inputField.classList.remove("error");
 
+
     // Add new error message
     if (errorMessage) {
         inputField.classList.add("error");
@@ -67,4 +68,13 @@ export function handleInputError(fieldName, errorMessage) {
         errorSpan.textContent = errorMessage;
         inputField.insertAdjacentElement("afterend", errorSpan);
     }
+}
+
+export function removeErrors(fieldName) {
+    const existingErrorSpan = this.querySelector(`span.input-error.${fieldName}`);
+    if (existingErrorSpan) {
+        existingErrorSpan.remove();
+    }
+    const inputField = this.querySelector(`input[name='${fieldName}']`);
+    inputField.classList.remove("error");
 }

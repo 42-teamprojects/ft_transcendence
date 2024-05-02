@@ -1,6 +1,8 @@
 import Authentication from "../../auth/authentication.js";
 import Router from "../../router/router.js";
-import { handleInputError } from "../../utils/utils.js";
+import { useFormData } from "../../utils/useForm.js";
+import { handleInputError, removeErrors } from "../../utils/utils.js";
+import { validateRequire } from "../../utils/validations.js";
 import Toast from "../comps/toast.js";
 
 export default class Login extends HTMLElement {
@@ -19,14 +21,21 @@ export default class Login extends HTMLElement {
 
 		form.addEventListener("submit", async (e) => {
 			e.preventDefault();
-			const formData = new FormData(form);
-			const data = {
-				username: formData.get("username"),
-				password: formData.get("password"),
-			};
+			e.target.querySelectorAll("input").forEach((input) => removeErrors.call(this, input.name));
+
+			const user = useFormData(form).getObject();
+
+			const errors = validateRequire(user);
+
+			if (Object.keys(errors).length > 0) {
+				Object.keys(errors).forEach((key) => {
+					handleInputError.call(this, key, errors[key]);
+				});
+				return;
+			}
 
 			try {
-				await Authentication.instance.login(data.username, data.password);
+				await Authentication.instance.login(user.username, user.password);
 				Router.instance.navigate("/dashboard/home");
 			} catch (error) {
 				if (error.detail) {

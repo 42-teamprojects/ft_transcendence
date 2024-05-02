@@ -1,6 +1,8 @@
 import Authentication from "../../auth/authentication.js";
 import Router from "../../router/router.js";
-import { handleInputError } from "../../utils/utils.js";
+import { useFormData } from "../../utils/useForm.js";
+import { handleInputError, removeErrors } from "../../utils/utils.js";
+import { validateRegister } from "../../utils/validations.js";
 import Toast from "../comps/toast.js";
 
 export default class SignUp extends HTMLElement {
@@ -19,23 +21,22 @@ export default class SignUp extends HTMLElement {
 
 		form.addEventListener("submit", async (e) => {
 			e.preventDefault();
-			const formData = new FormData(form);
+			
+			e.target.querySelectorAll("input").forEach((input) => removeErrors.call(this, input.name));
 
-			const data = {
-				full_name: formData.get("full_name"),
-				username: formData.get("username"),
-				email: formData.get("email"),
-				password: formData.get("password"),
-				password2: formData.get("password2"),
-			};
+			const user = useFormData(form).getObject();
 
-			if (data.password !== data.password2) {
-				Toast.notify({ type: "error", message: "Passwords do not match." });
+			const errors = validateRegister(user);
+
+			if (Object.keys(errors).length > 0) {
+				Object.keys(errors).forEach((key) => {
+					handleInputError.call(this, key, errors[key]);
+				});
 				return;
 			}
 
 			try {
-				await Authentication.instance.register(data);
+				await Authentication.instance.register(user);
 				Router.instance.navigate("/login");
 			} catch (error) {
 				if (error.detail) {
@@ -70,7 +71,7 @@ export default class SignUp extends HTMLElement {
                     <input type="password" name="password" class="input-field" placeholder="Password" />
                 </div>
                 <div class="form-group">
-                    <input type="password" name="password2" class="input-field" placeholder="Confirm password" />
+                    <input type="password" name="confirm_password" class="input-field" placeholder="Confirm password" />
                 </div>
                 <button is="c-button" class="btn-secondary ">Sign up</button>
             </form>
