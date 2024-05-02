@@ -77,6 +77,10 @@ export default class Authentication {
         this._callbacks.forEach(callback => callback(null));
     }
 
+    isAuthenticated() {
+        return !!this.auth;
+    }
+
     async testAuthentication() {
         try {
             await this.login('yusufisawi', 'anyayusuf0011');

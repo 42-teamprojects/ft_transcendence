@@ -82,10 +82,18 @@ export default class Router {
 			this.back();
 			return;
 		}
-
+		
 		if (matchedRoute.redirectTo) {
 			this.navigate(matchedRoute.redirectTo);
 			return;
+		}
+
+		console.log(matchedRoute);
+		if (matchedRoute.canActivate) {
+			const guards = matchedRoute.canActivate;
+			for (const guard of guards) {
+				if (!guard.canActivate()) return;
+			}
 		}
 
 		const outlet = document.querySelector("router-outlet");
