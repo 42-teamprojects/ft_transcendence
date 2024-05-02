@@ -85,11 +85,16 @@ export default class Ball {
     }
     
     reset = (table) => {
+        // let direction = Math.random() >  0.5 ? -1 : 1;
         this.x = table.tableWidth / 2;
-        this.y = table.tableHeight / 2;
+        this.y = getRandomInt(this.size, table.tableHeight - this.size);
     }
 }
-
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
     // newParticals() {
     //     var pasCount = Math.ceil(Math.pow(this.size, 2) * Math.PI);
     

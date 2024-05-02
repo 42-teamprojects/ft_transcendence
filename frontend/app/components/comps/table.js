@@ -1,6 +1,13 @@
 import Ball from "../../entities/Ball.js";
 import Paddle from "../../entities/Paddle.js";
 // let mouse = {x: 0, y: 0};
+const pressedKeys = {
+    KeyW: false,
+    KeyS: false,
+    ArrowUp: false,
+    ArrowDown: false
+};
+
 function getRandomInt(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -43,27 +50,42 @@ export default class Table extends HTMLElement {
   connectedCallback() {
     this.render();
     this.gameplay();
-    document.addEventListener("keydown", (event) => {
-        if (event.code === "KeyW")
+document.addEventListener("keydown", (event) => {
+    pressedKeys[event.code] = true;
+    switch (event.code) {
+        case "KeyW":
             this.paddle1.directionChange("up");
-        else if (event.code === "KeyS")
+            break;
+        case "KeyS":
             this.paddle1.directionChange("down");
-            
-        else if (event.code === "ArrowUp")
+            break;
+        case "ArrowUp":
             this.paddle2.directionChange("up");
-        else if (event.code === "ArrowDown")
+            break;
+        case "ArrowDown":
             this.paddle2.directionChange("down");
-    });
-    document.addEventListener("keyup", (event) => {
-        if (event.code === "KeyW" || event.code === "KeyS") {
-            this.paddle1.speed = 0;
-        }
-        else if (event.code === "ArrowUp" || event.code === "ArrowDown")
-        {
-            this.paddle2.speed = 0;
-        }
+            break;
+    }
+});
 
-    });
+document.addEventListener("keyup", (event) => {
+    pressedKeys[event.code] = false;
+    // check if there is still a key pressed
+    if (Object.values(pressedKeys).every((value) => !value)) {
+        console.log("no key pressed");
+        switch (event.code) {
+            case "KeyW":
+            case "KeyS":
+                this.paddle1.speed = 0;
+                break;
+            case "ArrowUp":
+            case "ArrowDown":
+                this.paddle2.speed = 0;
+                break;
+        }
+    }
+});
+
     // document.addEventListener("keydown", this.movePlayers.bind(this));
     // document.addEventListener("keyup", this.stopPlayers.bind(this));
   }
@@ -137,7 +159,7 @@ export default class Table extends HTMLElement {
     this.ball.bounceOnPaddles(this.paddle1);
     this.ball.bounceOnPaddles(this.paddle2);
     this.ball.bounceOnWalls(this.tableHeight);
-    this.scored();
+    // this.scored();
 
     //check if scores
     if (this.isGameOver) {
