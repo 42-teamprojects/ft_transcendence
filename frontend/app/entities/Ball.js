@@ -7,7 +7,7 @@ const COLORS = {
 const SPEED_INCREASE_FACTOR = 1.05;
 
 export default class Ball {
-    constructor(x, y, moveX, moveY, theme, table) {
+    constructor(x, y, moveX, moveY, theme) {
         this.moveX = moveX;
         this.moveY = moveY;
         this.theme = theme;
@@ -15,7 +15,6 @@ export default class Ball {
         this.x = x;
         this.y = y;
         this.pas = [];
-        this.table = table;
     }
     draw = (ctx) => {
         ctx.fillStyle = COLORS[this.theme];

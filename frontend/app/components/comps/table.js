@@ -1,12 +1,21 @@
 import Ball from "../../entities/Ball.js";
 import Paddle from "../../entities/Paddle.js";
 // let mouse = {x: 0, y: 0};
-const pressedKeys = {
+const player1PressedKeys = {
     KeyW: false,
-    KeyS: false,
+    KeyS: false
+};
+
+const player2PressedKeys = {
     ArrowUp: false,
     ArrowDown: false
 };
+// const pressedKeys = {
+//     KeyW: false,
+//     KeyS: false,
+//     ArrowUp: false,
+//     ArrowDown: false
+// };
 
 function getRandomInt(min, max) {
   min = Math.ceil(min);
@@ -21,7 +30,7 @@ export default class Table extends HTMLElement {
     this.player2 = this.getAttribute("player2");
     this.paddle1color = this.getAttribute("paddle1");
     this.paddle2color = this.getAttribute("paddle2");
-    this.finalScore = 7;
+    this.finalScore = 100;
     //table
     this.tableWidth = 1235;
     this.tableHeight = 740;
@@ -41,8 +50,7 @@ export default class Table extends HTMLElement {
       this.tableHeight / 2,
       getRandomInt(1, 10),
       getRandomInt(1, 5),
-      this.theme,
-      this
+      this.theme
     );
     this.middleCirlceRadius = 70;
   }
@@ -50,40 +58,44 @@ export default class Table extends HTMLElement {
   connectedCallback() {
     this.render();
     this.gameplay();
-document.addEventListener("keydown", (event) => {
-    pressedKeys[event.code] = true;
-    switch (event.code) {
-        case "KeyW":
-            this.paddle1.directionChange("up");
-            break;
-        case "KeyS":
-            this.paddle1.directionChange("down");
-            break;
-        case "ArrowUp":
-            this.paddle2.directionChange("up");
-            break;
-        case "ArrowDown":
-            this.paddle2.directionChange("down");
-            break;
-    }
-});
+    document.addEventListener("keydown", (event) => {
+      if (event.code === "KeyW" || event.code === "KeyS") {
+          // pressedKeys[event.code] = true;
+            player1PressedKeys[event.code] = true;
+            this.paddle1.directionChange(
+                event.code === "KeyW" ? "up" : event.code === "KeyS" ? "down" : ""
+            );
+        }
+        if (event.code === "ArrowUp" || event.code === "ArrowDown") {
+            player2PressedKeys[event.code] = true;
+            this.paddle2.directionChange(
+                event.code === "ArrowUp" ? "up" : event.code === "ArrowDown" ? "down" : ""
+            );
+        }
+    });
 
 document.addEventListener("keyup", (event) => {
-    pressedKeys[event.code] = false;
-    // check if there is still a key pressed
-    if (Object.values(pressedKeys).every((value) => !value)) {
-        console.log("no key pressed");
-        switch (event.code) {
-            case "KeyW":
-            case "KeyS":
-                this.paddle1.speed = 0;
-                break;
-            case "ArrowUp":
-            case "ArrowDown":
-                this.paddle2.speed = 0;
-                break;
-        }
+    // pressedKeys[event.code] = false;
+    if (event.code === "KeyW" || event.code === "KeyS") {
+        player1PressedKeys[event.code] = false;
     }
+    if (event.code === "ArrowUp" || event.code === "ArrowDown") {
+        player2PressedKeys[event.code] = false;
+    }
+    // console.log(pressedKeys);
+    // check if there is still a key pressed
+    if (Object.values(player1PressedKeys).every((value) => !value)) {
+        console.log("player one no key pressed");
+        // if (event.code === "KeyW" || event.code === "KeyS") {
+            this.paddle1.stop(event);
+        // }
+        // if (event.code === "ArrowUp" || event.code === "ArrowDown") {
+          // }
+        }
+      if (Object.values(player2PressedKeys).every((value) => !value)) {
+          console.log("player 2 no key pressed");
+          this.paddle2.stop(event);
+      }
 });
 
     // document.addEventListener("keydown", this.movePlayers.bind(this));
@@ -91,16 +103,12 @@ document.addEventListener("keyup", (event) => {
   }
 
   movePlayers = (ev) => {
-    // setTimeout(() => {
       this.paddle1.directionChange(
         ev.code === "KeyW" ? "up" : ev.code === "KeyS" ? "down" : ""
       );
-    // }, 100);
-    // setTimeout(() => {
       this.paddle2.directionChange(
         ev.code === "ArrowUp" ? "up" : ev.code === "ArrowDown" ? "down" : ""
       );
-    // }, 100);
   };
 
   stopPlayers = (ev) => {
@@ -159,7 +167,7 @@ document.addEventListener("keyup", (event) => {
     this.ball.bounceOnPaddles(this.paddle1);
     this.ball.bounceOnPaddles(this.paddle2);
     this.ball.bounceOnWalls(this.tableHeight);
-    // this.scored();
+    this.scored();
 
     //check if scores
     if (this.isGameOver) {
