@@ -1,5 +1,6 @@
 import Authentication from "../../auth/authentication.js";
 import Router from "../../router/router.js";
+import { handleInputError } from "../../utils/utils.js";
 import Toast from "../comps/toast.js";
 
 export default class Login extends HTMLElement {
@@ -32,22 +33,8 @@ export default class Login extends HTMLElement {
                     Toast.notify({type: "error", message: error.detail });
                     return;
                 }
-                if (error["username"]) {
-                    const usernameInput = this.querySelector("input[name='username']");
-                    usernameInput.classList.add("error");
-                    const errorSpan = document.createElement("span");
-                    errorSpan.classList.add("input-error", "text-xs", "ml-3", "text-danger");
-                    errorSpan.textContent = error["username"];
-                    usernameInput.insertAdjacentElement("afterend", errorSpan);
-                }
-                if (error["password"]) {
-                    const passwordInput = this.querySelector("input[name='password']");
-                    passwordInput.classList.add("error");
-                    const errorSpan = document.createElement("span");
-                    errorSpan.classList.add("input-error", "text-xs", "ml-3", "text-danger");
-                    errorSpan.textContent = error["password"];
-                    passwordInput.insertAdjacentElement("afterend", errorSpan);
-                }
+                handleInputError.call(this, 'username', error['username']);
+                handleInputError.call(this, 'password', error['password']);
             }
         });
 	}
