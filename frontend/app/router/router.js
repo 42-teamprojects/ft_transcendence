@@ -88,14 +88,6 @@ export default class Router {
 			return;
 		}
 
-		console.log(matchedRoute);
-		if (matchedRoute.canActivate) {
-			const guards = matchedRoute.canActivate;
-			for (const guard of guards) {
-				if (!guard.canActivate()) return;
-			}
-		}
-
 		const outlet = document.querySelector("router-outlet");
 		if (!outlet) {
 			console.error("<router-outlet> element not found in the document.");
