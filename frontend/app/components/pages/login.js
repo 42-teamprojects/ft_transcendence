@@ -9,34 +9,35 @@ export default class Login extends HTMLElement {
 	}
 
 	connectedCallback() {
-        if (Authentication.instance.auth) {
-            Router.instance.navigate("/dashboard/home");
-            return;
-        }
+		if (Authentication.instance.auth) {
+			Router.instance.navigate("/dashboard/home");
+			return;
+		}
 		this.render();
 
-        const form = this.querySelector("form");
+		const form = this.querySelector("form");
 
-        form.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const formData = new FormData(form);
-            const data = {
-                username: formData.get("username"),
-                password: formData.get("password"),
-            };
-            
-            try {
-                await Authentication.instance.login(data.username, data.password);
-                Router.instance.navigate("/dashboard/home");
-            } catch (error) {
-                if (error.detail) {
-                    Toast.notify({type: "error", message: error.detail });
-                    return;
-                }
-                handleInputError.call(this, 'username', error['username']);
-                handleInputError.call(this, 'password', error['password']);
-            }
-        });
+		form.addEventListener("submit", async (e) => {
+			e.preventDefault();
+			const formData = new FormData(form);
+			const data = {
+				username: formData.get("username"),
+				password: formData.get("password"),
+			};
+
+			try {
+				await Authentication.instance.login(data.username, data.password);
+				Router.instance.navigate("/dashboard/home");
+			} catch (error) {
+				if (error.detail) {
+					Toast.notify({ type: "error", message: error.detail });
+					return;
+				}
+				e.target
+					.querySelectorAll("input")
+					.forEach((input) => handleInputError.call(this, input.name, error[input.name]));
+			}
+		});
 	}
 
 	disconnectedCallback() {}
