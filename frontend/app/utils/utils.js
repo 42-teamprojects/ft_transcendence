@@ -49,3 +49,32 @@ export function shuffleArray(array) {
 export function findNeedle(haystack, needle) {
     return haystack.find((item) => item === needle);
 }
+
+export function handleInputError(fieldName, errorMessage) {
+    // Remove existing error message
+    const existingErrorSpan = this.querySelector(`span.input-error.${fieldName}`);
+    if (existingErrorSpan) {
+        existingErrorSpan.remove();
+    }
+    const inputField = this.querySelector(`input[name='${fieldName}']`);
+    inputField.classList.remove("error");
+
+
+    // Add new error message
+    if (errorMessage) {
+        inputField.classList.add("error");
+        const errorSpan = document.createElement("span");
+        errorSpan.classList.add("input-error", fieldName, "text-xs", "ml-3", "text-danger");
+        errorSpan.textContent = errorMessage;
+        inputField.insertAdjacentElement("afterend", errorSpan);
+    }
+}
+
+export function removeErrors(fieldName) {
+    const existingErrorSpan = this.querySelector(`span.input-error.${fieldName}`);
+    if (existingErrorSpan) {
+        existingErrorSpan.remove();
+    }
+    const inputField = this.querySelector(`input[name='${fieldName}']`);
+    inputField.classList.remove("error");
+}

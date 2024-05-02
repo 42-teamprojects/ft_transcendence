@@ -82,7 +82,7 @@ export default class Router {
 			this.back();
 			return;
 		}
-
+		
 		if (matchedRoute.redirectTo) {
 			this.navigate(matchedRoute.redirectTo);
 			return;
