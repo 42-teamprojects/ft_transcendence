@@ -30,10 +30,8 @@ export const routes = [
 		path: "/local/tournament/qualifications",
 		component: () => import("./components/pages/qualifications.js"),
 	},
-	/* 
 	{
 		path: "/dashboard",
-		component: () => import("./components/pages/dashboard.js"),
 		redirectTo: "/dashboard/home",
 		children: [
 			{
@@ -58,7 +56,7 @@ export const routes = [
 				component: () => import("./components/pages/dashboard.js"),
 			},
 		],
-	}, */
+	},
 	{
 		path: "/dashboard/home",
 		component: () => import("./components/pages/dashboard.js"),
