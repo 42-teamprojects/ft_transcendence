@@ -7,7 +7,7 @@
     width: 256px;
     padding: 1.25rem;
     background-color: var(--bg-color);
-    border-right: solid 1px;
+    border-right: solid 2px;
     border-color: var(--border-color);
 }
 

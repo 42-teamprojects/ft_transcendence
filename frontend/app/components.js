@@ -1,3 +1,4 @@
+import Sidebarmenu from "./components/comps/sidebar-menu.js";
 import Taskcard from "./components/comps/taskcard.js";
 import Playerresources from "./components/comps/playerresources.js";
 import Dailyquestscard from "./components/comps/dailyquestscard.js";
@@ -52,4 +53,5 @@ export const components = [
 	{ tagName: 'c-dailyquestscard', component: Dailyquestscard },
 	{ tagName: 'c-playerresources', component: Playerresources },
 	{ tagName: 'c-taskcard', component: Taskcard },
+	{ tagName: 'c-sidebar-menu', component: Sidebarmenu },
 ];

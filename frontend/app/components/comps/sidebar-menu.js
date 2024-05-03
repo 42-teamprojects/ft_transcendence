@@ -1,16 +1,10 @@
 import Router from "../../router/router.js";
 import { isThere } from "../../utils/utils.js";
 
-export default class SidebarLink extends HTMLElement {
+export default class Sidebarmenu extends HTMLElement {
     constructor() {
       super();
-      this.link = this.getAttribute("link");
       this.icons = {
-          home: "/public/assets/game/sidebar-icons/home.svg",
-          chat: "/public/assets/game/sidebar-icons/chat.svg",
-          rankings: "/public/assets/game/sidebar-icons/leaderboard.svg",
-          quests: "/public/assets/game/sidebar-icons/quest.svg",
-          shop: "/public/assets/game/sidebar-icons/shop.svg",
           more: "/public/assets/game/sidebar-icons/more.svg",
       };
       this.isActive = isThere(["true", ""], this.getAttribute("active"), false);
@@ -36,10 +30,10 @@ export default class SidebarLink extends HTMLElement {
 
     render() {
       this.innerHTML = /*html*/`
-        <a is="c-link" href="/dashboard/${this.link}" class="sidebar-link ${this.isActive && 'active'}">
+        <span class="sidebar-link ${this.isActive && 'active'}">
           <img src="${this.icons[this.link]}" alt="${this.link}"/>
           <div class="font-bold uppercase spacing-1" style="font-size: 14px">${this.textContent}</div>
-        </a>
+        </span>
       `;
     }
   }

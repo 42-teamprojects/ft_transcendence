@@ -74,21 +74,8 @@ export default class Router {
 		return params;
 	}
 
-	#isChildren(path) {
-		for (const route of this.routes) {
-			console.log(path, route)
-			if (path.startsWith(route.path)) {
-				console.log(route.path)
-				return true;
-			}
-		}
-		return false;
-	}
-
 	async #renderCurrentRoute() {
 		const path = window.location.pathname;
-		const isChild = this.#isChildren(path);
-		console.log(isChild)
 		const matchedRoute = this.#findRoute(path);
 		if (!matchedRoute || !matchedRoute.component) {
 			console.error(`No route matched for ${path}`);
