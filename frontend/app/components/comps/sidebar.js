@@ -1,3 +1,4 @@
+import Authentication from "../../auth/authentication.js";
 import Router from "../../router/router.js";
 
 export default class Sidebar extends HTMLElement {
@@ -39,11 +40,13 @@ export default class Sidebar extends HTMLElement {
         if (shouldRender) {
             this.innerHTML = /*html*/`
                 <nav class="sidebar">
-                    <c-logo class='py-4 pl-1' href="/"></c-logo>
-                    ${sidebarLinks}
-                    <c-sidebar-menu link="more">
-                        More
-                    </c-sidebar-menu>
+                    <div class="sidebar-top">
+                        <c-logo class='py-4 pl-1' href="/"></c-logo>
+                        ${sidebarLinks}
+                    </div>
+                    <div class="sidebar-bottom">
+                       <c-logout></c-logout>
+                    </div>
                 </nav>
             `;
         } else {

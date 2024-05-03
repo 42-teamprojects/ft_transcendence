@@ -11,7 +11,6 @@ export default class SidebarLink extends HTMLElement {
           rankings: "/public/assets/game/sidebar-icons/leaderboard.svg",
           quests: "/public/assets/game/sidebar-icons/quest.svg",
           shop: "/public/assets/game/sidebar-icons/shop.svg",
-          more: "/public/assets/game/sidebar-icons/more.svg",
       };
       this.isActive = isThere(["true", ""], this.getAttribute("active"), false);
     }
@@ -38,7 +37,7 @@ export default class SidebarLink extends HTMLElement {
       this.innerHTML = /*html*/`
         <a is="c-link" href="/dashboard/${this.link}" class="sidebar-link ${this.isActive && 'active'}">
           <img src="${this.icons[this.link]}" alt="${this.link}"/>
-          <div class="font-bold uppercase spacing-1" style="font-size: 14px">${this.textContent}</div>
+          <div class="font-bold uppercase spacing-1">${this.textContent}</div>
         </a>
       `;
     }
