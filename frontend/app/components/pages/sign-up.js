@@ -17,9 +17,9 @@ export default class SignUp extends HTMLElement {
 		}
 		this.render();
 
-		const form = this.querySelector("form");
+		this.form = this.querySelector("form");
 
-		form.addEventListener("submit", this.handleSubmit.bind(this));
+		this.form.addEventListener("submit", this.handleSubmit.bind(this));
 	}
 	
 	async handleSubmit(e) {
@@ -27,7 +27,7 @@ export default class SignUp extends HTMLElement {
 		
 		e.target.querySelectorAll("input").forEach((input) => removeErrors.call(this, input.name));
 	
-		const user = useFormData(form).getObject();
+		const user = useFormData(this.form).getObject();
 	
 		const errors = validateRegister(user);
 	

@@ -84,7 +84,7 @@ export default class Authentication {
 
     async testAuthentication() {
         try {
-            await this.login('yusufisawi', 'anyayusuf0011');
+            await this.login('yusufisawi', 'password');
             console.log('Current authentication status:', Authentication.instance.auth);
         } catch (error) {
             console.error(error);
