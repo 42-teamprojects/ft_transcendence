@@ -48,22 +48,42 @@ export default class Router {
         return window.location.pathname;
     }
 
-	#findRoute(path) {
+	#findRoute(path, routes = this.routes) {
 		if (path.length > 1)
 			path = path.replace(/\/$/, "");
-		
+	
 		const url = new URL(window.location.href);
 		const queryParams = Object.fromEntries(url.searchParams.entries());
-		for (const route of this.routes) {
-			const regex = `^${route.path.replace(/:[^\s/]+/g, "([^\\s/]+)")}$`;
-			const match = path.match(new RegExp(regex));
-			if (match) {
-				const params = this.#extractParams(match, route.path);
-				return { ...route, params: { ...params, ...queryParams } };
+	
+		const segments = path.split('/').filter(Boolean).map((s) => '/' + s); // Split path into segments
+		if (segments.length === 0) segments.push('/'); // If path is just '/', add it as a segment
+		// Helper function to recursively search for a route
+		const findMatchingRoute = (segmentIndex, currentRoutes) => {
+			for (const route of currentRoutes) {
+				const regex = `^${route.path.replace(/:[^\s/]+/g, "([^\\s/]+)")}$`;
+				const match = segments[segmentIndex].match(new RegExp(regex));
+	
+				if (match) {
+					const params = this.#extractParams(match, route.path);
+					let matchedRoute = { ...route, params: { ...params, ...queryParams } };
+	
+					// If the route has children and there are remaining segments, recursively search for a match
+					if (route.children && segmentIndex < segments.length - 1) {
+						const childMatchedRoute = findMatchingRoute(segmentIndex + 1, route.children);
+						if (childMatchedRoute) {
+							matchedRoute = { ...childMatchedRoute, parent: route };
+						}
+					}
+	
+					return matchedRoute;
+				}
 			}
-		}
-		return null;
+			return null;
+		};
+	
+		return findMatchingRoute(0, routes);
 	}
+	
 
 	#extractParams(match, routePath) {
 		const keys = routePath.match(/:[^\s/]+/g) || [];
@@ -76,10 +96,10 @@ export default class Router {
 
 	async #renderCurrentRoute() {
 		const path = window.location.pathname;
-		const matchedRoute = this.#findRoute(path);
+		const matchedRoute = this.#findRoute(path, this.routes);
+
 		if (!matchedRoute || !matchedRoute.component) {
-			console.error(`No route matched for ${path}`);
-			this.back();
+			this.navigate("/404");
 			return;
 		}
 		
