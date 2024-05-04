@@ -115,6 +115,7 @@ export default class Tournament extends HTMLElement {
 	render() {
 		this.innerHTML = /*html*/ `
         <div class="flex-col-center my-10 gap-9">
+            <c-logo href="/"></c-logo>
             <div class="mb-8">
                 <h1 class="text-center mb-4">Organize Local Tournament</h1>
                 <h3 class="text-center font-medium text-stroke">Customize Your Tournament</h3>
