@@ -7,10 +7,6 @@ export default class Notfound extends HTMLElement {
 
     connectedCallback() {
         this.render();
-
-        this.querySelector("button").addEventListener("click", () => {
-            Router.instance.back();
-        });
     }
 
     disconnectedCallback() {}
@@ -22,7 +18,7 @@ export default class Notfound extends HTMLElement {
                 <h1 class="text-5xl">404</h1>
                 <h2>Page not found</h2>
                 <p class="text-stroke">Sorry, the page you are looking for does not exist.</p>
-                <button class="btn-default mt-8">Go back</button>
+                <button is="c-button" class="btn-default mt-8" href="/">Go back</button>
             </div>
         `;
     }
