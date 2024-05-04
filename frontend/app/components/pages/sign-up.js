@@ -18,41 +18,45 @@ export default class SignUp extends HTMLElement {
 		this.render();
 
 		this.form = this.querySelector("form");
+		this.inputs = Array.from(this.querySelectorAll('input'));
 
 		this.form.addEventListener("submit", this.handleSubmit.bind(this));
 	}
-	
+
 	async handleSubmit(e) {
 		e.preventDefault();
-		
-		e.target.querySelectorAll("input").forEach((input) => removeErrors.call(this, input.name));
-	
+
+		this.inputs.forEach((input) => removeErrors.call(this, input.name));
+
 		const user = useFormData(this.form).getObject();
-	
+
 		const errors = validateRegister(user);
-	
+
 		if (Object.keys(errors).length > 0) {
 			Object.keys(errors).forEach((key) => {
 				handleInputError.call(this, key, errors[key]);
 			});
 			return;
 		}
-	
+
 		try {
 			await Authentication.instance.register(user);
 			Router.instance.navigate("/login");
-			Toast.notify({ type: "success", message: "Account created successfuly, Please verify your email. check spam" });
-		} catch (error) {
-			if (error.detail) {
-				Toast.notify({ type: "error", message: error.detail });
+			Toast.notify({
+				type: "success",
+				message: "Account created successfuly, Please verify your email. check spam",
+			});
+		} catch (errors) {
+			const errorsKeys = Object.keys(errors);
+			if (errorsKeys.includes("detail")) {
+				Toast.notify({ type: "error", message: errors.detail });
 				return;
+			} else if (this.inputs.some((input) => errorsKeys.includes(input.name))) {
+				this.inputs.forEach((input) => handleInputError.call(this, input.name, errors[input.name]));
+			} else {
+				Toast.notify({ type: "error", message: "An error occurred, please try again later" });
 			}
-	
-			e.target
-				.querySelectorAll("input")
-				.forEach((input) => handleInputError.call(this, input.name, error[input.name]));
 		}
-		
 	}
 
 	disconnectedCallback() {
