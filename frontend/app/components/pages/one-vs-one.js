@@ -50,7 +50,7 @@ export default class Onevsone extends HTMLElement {
         });
         
         const queryString = params.toString();
-        Router.instance.navigate(`/local/game/1v1?${queryString}`);
+        Router.instance.navigate(`/local/1v1/game?${queryString}`);
     }
 
     render() {
