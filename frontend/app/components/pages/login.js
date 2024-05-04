@@ -17,36 +17,42 @@ export default class Login extends HTMLElement {
 		}
 		this.render();
 
-		const form = this.querySelector("form");
+		this.form = this.querySelector("form");
+		this.inputs = Array.from(this.querySelectorAll('input'));
 
-		form.addEventListener("submit", async (e) => {
-			e.preventDefault();
-			e.target.querySelectorAll("input").forEach((input) => removeErrors.call(this, input.name));
+		this.form.addEventListener("submit", this.handleSubmit.bind(this));
+	}
 
-			const user = useFormData(form).getObject();
+	async handleSubmit(e) {
+		e.preventDefault();
 
-			const errors = validateRequire(user);
+		this.inputs.forEach((input) => removeErrors.call(this, input.name));
 
-			if (Object.keys(errors).length > 0) {
-				Object.keys(errors).forEach((key) => {
-					handleInputError.call(this, key, errors[key]);
-				});
+		const user = useFormData(this.form).getObject();
+
+		const errors = validateRequire(user, ["username", "password"]);
+
+		if (Object.keys(errors).length > 0) {
+			Object.keys(errors).forEach((key) => {
+				handleInputError.call(this, key, errors[key]);
+			});
+			return;
+		}
+
+		try {
+			await Authentication.instance.login(user.username, user.password);
+			Router.instance.navigate("/dashboard/home");
+		} catch (errors) {
+			const errorsKeys = Object.keys(errors);
+			if (errorsKeys.includes("detail")) {
+				Toast.notify({ type: "error", message: errors.detail });
 				return;
+			} else if (this.inputs.some((input) => errorsKeys.includes(input.name))) {
+				this.inputs.forEach((input) => handleInputError.call(this, input.name, errors[input.name]));
+			} else {
+				Toast.notify({ type: "error", message: "An error occurred, please try again later" });
 			}
-
-			try {
-				await Authentication.instance.login(user.username, user.password);
-				Router.instance.navigate("/dashboard/home");
-			} catch (error) {
-				if (error.detail) {
-					Toast.notify({ type: "error", message: error.detail });
-					return;
-				}
-				e.target
-					.querySelectorAll("input")
-					.forEach((input) => handleInputError.call(this, input.name, error[input.name]));
-			}
-		});
+		}
 	}
 
 	disconnectedCallback() {}
