@@ -1,4 +1,4 @@
-import authGuard from "./guards/authGuard.js";
+import AuthGuard from "./guards/authGuard.js";
 
 const errorsRoutes = [
 	{
@@ -46,6 +46,7 @@ export const routes = [
 	},
 	{
 		path: "/dashboard",
+		canActivate: [AuthGuard],
 		children: [
 			{
 				path: "/home",

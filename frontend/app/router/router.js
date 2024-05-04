@@ -5,10 +5,9 @@ export default class Router {
 	static #instance = null;
 	#subscribers = [];
 
-
 	constructor(routes = []) {
 		if (Router.#instance) {
-			throw new Error('Use instance');
+			throw new Error("Use instance");
 		}
 		window.addEventListener("popstate", this.#renderCurrentRoute.bind(this));
 		this.routes = routes;
@@ -32,41 +31,43 @@ export default class Router {
 		this.#renderCurrentRoute();
 	}
 
-    onNavigation(callback) {
-        this.#subscribers.push(callback);
-    }
+	onNavigation(callback) {
+		this.#subscribers.push(callback);
+	}
 
-    offNavigation(callback) {
-        this.#subscribers = this.#subscribers.filter(subscriber => subscriber !== callback);
-    }
+	offNavigation(callback) {
+		this.#subscribers = this.#subscribers.filter((subscriber) => subscriber !== callback);
+	}
 
 	isCurrentRoute(path) {
-        return this.currentRoute === path;
-    }
+		return this.currentRoute === path;
+	}
 
-    get currentRoute() {
-        return window.location.pathname;
-    }
+	get currentRoute() {
+		return window.location.pathname;
+	}
 
 	#findRoute(path, routes = this.routes) {
-		if (path.length > 1)
-			path = path.replace(/\/$/, "");
-	
+		if (path.length > 1) path = path.replace(/\/$/, "");
+
 		const url = new URL(window.location.href);
 		const queryParams = Object.fromEntries(url.searchParams.entries());
-	
-		const segments = path.split('/').filter(Boolean).map((s) => '/' + s); // Split path into segments
-		if (segments.length === 0) segments.push('/'); // If path is just '/', add it as a segment
+
+		const segments = path
+			.split("/")
+			.filter(Boolean)
+			.map((s) => "/" + s); // Split path into segments
+		if (segments.length === 0) segments.push("/"); // If path is just '/', add it as a segment
 		// Helper function to recursively search for a route
 		const findMatchingRoute = (segmentIndex, currentRoutes) => {
 			for (const route of currentRoutes) {
 				const regex = `^${route.path.replace(/:[^\s/]+/g, "([^\\s/]+)")}$`;
 				const match = segments[segmentIndex].match(new RegExp(regex));
-	
+
 				if (match) {
 					const params = this.#extractParams(match, route.path);
 					let matchedRoute = { ...route, params: { ...params, ...queryParams } };
-	
+
 					// If the route has children and there are remaining segments, recursively search for a match
 					if (route.children && segmentIndex < segments.length - 1) {
 						const childMatchedRoute = findMatchingRoute(segmentIndex + 1, route.children);
@@ -74,16 +75,15 @@ export default class Router {
 							matchedRoute = { ...childMatchedRoute, parent: route };
 						}
 					}
-	
+
 					return matchedRoute;
 				}
 			}
 			return null;
 		};
-	
+
 		return findMatchingRoute(0, routes);
 	}
-	
 
 	#extractParams(match, routePath) {
 		const keys = routePath.match(/:[^\s/]+/g) || [];
@@ -102,10 +102,29 @@ export default class Router {
 			this.navigate("/404");
 			return;
 		}
-		
+
 		if (matchedRoute.redirectTo) {
 			this.navigate(matchedRoute.redirectTo);
 			return;
+		}
+
+		// Check if canActivate guards are defined for the route
+		const guards =
+			matchedRoute.parent && matchedRoute.parent.canActivate
+				? matchedRoute.parent.canActivate
+				: matchedRoute.canActivate || false;
+		if (guards) {
+			const canActivateResults = await Promise.all(
+				guards.map((guard) => {
+					const guardObj = new guard();
+					return guardObj.canActivate();
+				})
+			);
+			const guardsResults = canActivateResults.every((result) => result === true);
+			if (!guardsResults) {
+				console.warn("Access denied. You do not have permission to access this page.");
+				return;
+			}
 		}
 
 		const outlet = document.querySelector("router-outlet");
@@ -124,7 +143,7 @@ export default class Router {
 
 			outlet.innerHTML = "";
 			outlet.appendChild(componentInstance);
-			this.#subscribers.forEach(callback => callback());
+			this.#subscribers.forEach((callback) => callback());
 		} catch (err) {
 			console.error(`Failed to load component for route ${path}:`, err);
 		}
@@ -146,7 +165,6 @@ export default class Router {
 	init() {
 		this.#renderCurrentRoute();
 	}
-
 }
 
 // IMPORTANT !!
