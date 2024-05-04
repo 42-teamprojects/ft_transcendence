@@ -78,3 +78,7 @@ export function removeErrors(fieldName) {
     const inputField = this.querySelector(`input[name='${fieldName}']`);
     inputField.classList.remove("error");
 }
+
+export function getWindowWidth() {
+    return window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+}
