@@ -3,22 +3,18 @@ import Toast from "../components/comps/toast.js";
 import Router from "../router/router.js";
 import CanActivate from "./canActivate.js";
 
-class AuthGuard extends CanActivate {
+export default class AuthGuard extends CanActivate {
     constructor() {
         super();
     }
     
-	canAcitvate() {
+	canActivate() {
 		if (!!Authentication.instance.isAuthenticated()) {
-			return true; // Allow access if the user is authenticated
+			return true;
 		} else {
 			Router.instance.navigate(["/login"]);
             Toast.notify({ type: "warning", message: "You need to login to access this page" });
-			return false; // Prevent access to the route
+			return false;
 		}
 	}
 }
-
-const authGuard = new AuthGuard();
-
-export default authGuard;
