@@ -17,41 +17,47 @@ export default class SignUp extends HTMLElement {
 		}
 		this.render();
 
-		const form = this.querySelector("form");
+		this.form = this.querySelector("form");
 
-		form.addEventListener("submit", async (e) => {
-			e.preventDefault();
-			
-			e.target.querySelectorAll("input").forEach((input) => removeErrors.call(this, input.name));
-
-			const user = useFormData(form).getObject();
-
-			const errors = validateRegister(user);
-
-			if (Object.keys(errors).length > 0) {
-				Object.keys(errors).forEach((key) => {
-					handleInputError.call(this, key, errors[key]);
-				});
+		this.form.addEventListener("submit", this.handleSubmit.bind(this));
+	}
+	
+	async handleSubmit(e) {
+		e.preventDefault();
+		
+		e.target.querySelectorAll("input").forEach((input) => removeErrors.call(this, input.name));
+	
+		const user = useFormData(this.form).getObject();
+	
+		const errors = validateRegister(user);
+	
+		if (Object.keys(errors).length > 0) {
+			Object.keys(errors).forEach((key) => {
+				handleInputError.call(this, key, errors[key]);
+			});
+			return;
+		}
+	
+		try {
+			await Authentication.instance.register(user);
+			Router.instance.navigate("/login");
+			Toast.notify({ type: "success", message: "Account created successfuly, Please verify your email. check spam" });
+		} catch (error) {
+			if (error.detail) {
+				Toast.notify({ type: "error", message: error.detail });
 				return;
 			}
-
-			try {
-				await Authentication.instance.register(user);
-				Router.instance.navigate("/login");
-			} catch (error) {
-				if (error.detail) {
-					Toast.notify({ type: "error", message: error.detail });
-					return;
-				}
-
-				e.target
-					.querySelectorAll("input")
-					.forEach((input) => handleInputError.call(this, input.name, error[input.name]));
-			}
-		});
+	
+			e.target
+				.querySelectorAll("input")
+				.forEach((input) => handleInputError.call(this, input.name, error[input.name]));
+		}
+		
 	}
 
-	disconnectedCallback() {}
+	disconnectedCallback() {
+		this.querySelector("form").removeEventListener("submit", this.handleSubmit);
+	}
 
 	render() {
 		this.innerHTML = /*html*/ `

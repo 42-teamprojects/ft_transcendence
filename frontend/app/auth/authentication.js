@@ -43,7 +43,7 @@ export default class Authentication {
                 throw data;
             }
             this.auth = data;
-            this._callbacks.forEach(callback => callback(data));
+            // this._callbacks.forEach(callback => callback(data));
             return data;
         } catch (error) {
             console.error(error);
@@ -74,7 +74,8 @@ export default class Authentication {
 
     logout() {
         this.auth = null;
-        this._callbacks.forEach(callback => callback(null));
+        localStorage.removeItem('auth');
+        // this._callbacks.forEach(callback => callback(null));
     }
 
     isAuthenticated() {
@@ -83,7 +84,7 @@ export default class Authentication {
 
     async testAuthentication() {
         try {
-            await this.login('yusufisawi', 'anyayusuf0011');
+            await this.login('yusufisawi', 'password');
             console.log('Current authentication status:', Authentication.instance.auth);
         } catch (error) {
             console.error(error);

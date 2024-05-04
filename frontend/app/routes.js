@@ -30,35 +30,6 @@ export const routes = [
 		path: "/local/tournament/qualifications",
 		component: () => import("./components/pages/qualifications.js"),
 	},
-	/* 
-	{
-		path: "/dashboard",
-		component: () => import("./components/pages/dashboard.js"),
-		redirectTo: "/dashboard/home",
-		children: [
-			{
-				path: "/home",
-				component: () => import("./components/pages/dashboard.js"),
-				canActivate: [authGuard],
-			},
-			{
-				path: "/chat",
-				component: () => import("./components/pages/dashboard.js"),
-			},
-			{
-				path: "/rankings",
-				component: () => import("./components/pages/dashboard.js"),
-			},
-			{
-				path: "/quests",
-				component: () => import("./components/pages/dashboard.js"),
-			},
-			{
-				path: "/shop",
-				component: () => import("./components/pages/dashboard.js"),
-			},
-		],
-	}, */
 	{
 		path: "/dashboard/home",
 		component: () => import("./components/pages/dashboard.js"),
