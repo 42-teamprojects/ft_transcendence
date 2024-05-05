@@ -8,7 +8,7 @@ export default class SidebarLink extends HTMLElement {
       this.icons = {
           home: "/public/assets/game/sidebar-icons/home.svg",
           chat: "/public/assets/game/sidebar-icons/chat.svg",
-          rankings: "/public/assets/game/sidebar-icons/leaderboard.svg",
+          tournaments: "/public/assets/game/sidebar-icons/leaderboard.svg",
           quests: "/public/assets/game/sidebar-icons/quest.svg",
           shop: "/public/assets/game/sidebar-icons/shop.svg",
       };

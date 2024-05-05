@@ -61,7 +61,7 @@ export const routes = [
 				component: () => import("./components/pages/dashboard.js"),
 			},
 			{
-				path: "/rankings",
+				path: "/tournaments",
 				component: () => import("./components/pages/dashboard.js"),
 			},
 			{

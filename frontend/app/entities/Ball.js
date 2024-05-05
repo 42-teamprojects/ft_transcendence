@@ -57,6 +57,8 @@ export default class Ball {
             else if (ballLeft <= paddleRight && paddle.playerIndex === 2) {
                 this.x = paddleRight - this.size - paddle.width;
             }
+            this.moveX *= SPEED_INCREASE_FACTOR;
+            this.moveY *= SPEED_INCREASE_FACTOR;
             return true;
         }
         return false;
@@ -87,6 +89,8 @@ export default class Ball {
         // let direction = Math.random() >  0.5 ? -1 : 1;
         this.x = table.tableWidth / 2;
         this.y = getRandomInt(this.size, table.tableHeight - this.size);
+        this.moveX = getRandomInt(5, 10);
+        this.moveY = getRandomInt(1, 5);
     }
 }
 function getRandomInt(min, max) {

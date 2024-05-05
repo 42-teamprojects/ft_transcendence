@@ -1,3 +1,4 @@
+import { config } from "../../config.js";
 import Ball from "../../entities/Ball.js";
 import Paddle from "../../entities/Paddle.js";
 import { matchService } from "../../state/matchService.js";
@@ -32,7 +33,7 @@ export default class Table extends HTMLElement {
 		this.match = matchService.getState().match;
 		this.theme = this.match.theme;
 
-		this.finalScore = 1;
+		this.finalScore = config.finalScore;
 
 		//table
 		this.tableWidth = 1235;

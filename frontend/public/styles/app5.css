@@ -1,147 +1,69 @@
-/* .sidebar {
-    position: fixed;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100vh;
-    width: 256px;
-    padding: 1.25rem;
-    background-color: var(--bg-color);
-    border-right: solid 2px;
-    border-color: var(--border-color);
-}
-
-.sidebar-top {
-    display: flex;
-    flex-direction: column;
-    gap: .5rem;
-}
-
-.content {
-    margin-left: 256px;
-    overflow-y: auto;
-    width: calc(100% - 256px);
-    height: 100vh;
-}
-
-.sidebar-link {
-    display: flex;
-    align-items: center;
-    justify-content: start;
-    gap: 20px;
-    padding: 14px;
-    border-radius: 1rem;
-    cursor: pointer;
-    transition: all 150ms ease-in-out;
-    font-size: 14px !important;
-
-    &:hover{
-        background-color: var(--active-bg-color);
-    }
-
-    &.active {
-        background-color: var(--active-bg-color);
-        box-shadow: 0 0 0 2px var(--secondary-color) inset;
-        color: var(--secondary-color);
-    }
-}
-
-@media screen and (max-width: 1280px) {
-    .sidebar {
-        width: 97px;
-        c-logo .logo {
-            content: url("../assets/icons/bp.svg");
-        }
-        .sidebar-link {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            .font-bold {
-                display: none;
-            }
-        }
-    }
-
-    .content {
-        margin-left: 97px;
-        overflow-y: auto;
-        width: calc(100% - 97px);
-        height: 100vh;
-    }
-    
-} */
-
-
-
 body.content {
-    display: grid;
-    grid-template-columns: 256px 1fr;
-    grid-template-rows: 100vh;
-    grid-template-areas: 
-        "side body";
+	display: grid;
+	grid-template-columns: 256px 1fr;
+	grid-template-rows: 100vh;
+	grid-template-areas: "side body";
 }
 
 .sidebar {
-    grid-area: side;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100vh;
-    padding: 1.25rem;
-    background-color: var(--bg-color);
-    border-right: solid 2px;
-    border-color: var(--border-color);
+	grid-area: side;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	height: 100vh;
+	padding: 1.25rem;
+	background-color: var(--bg-color);
+	border-right: solid 2px;
+	border-color: var(--border-color);
 }
 
 .sidebar-top {
-    display: flex;
-    flex-direction: column;
-    gap: .5rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
 }
 
-.content {
-    grid-area: body;
-    overflow-y: auto;
-    overflow-x: auto;
+p-dashboard {
+	grid-area: body;
+	overflow: auto !important;
 }
 
 .sidebar-link {
-    display: flex;
-    align-items: center;
-    justify-content: start;
-    gap: 20px;
-    padding: 14px;
-    border-radius: 1rem;
-    cursor: pointer;
-    transition: all 150ms ease-in-out;
-    font-size: 14px !important;
+	display: flex;
+	align-items: center;
+	justify-content: start;
+	gap: 20px;
+	padding: 14px;
+	border-radius: 1rem;
+	cursor: pointer;
+	transition: all 150ms ease-in-out;
+	font-size: 14px !important;
 
-    &:hover{
-        background-color: var(--active-bg-color);
-    }
+	&:hover {
+		background-color: var(--active-bg-color);
+	}
 
-    &.active {
-        background-color: var(--active-bg-color);
-        box-shadow: 0 0 0 2px var(--secondary-color) inset;
-        color: var(--secondary-color);
-    }
+	&.active {
+		background-color: var(--active-bg-color);
+		box-shadow: 0 0 0 2px var(--secondary-color) inset;
+		color: var(--secondary-color);
+	}
 }
 
 @media screen and (max-width: 1280px) {
-    .sidebar {
-        c-logo .logo {
-            content: url("../assets/icons/bp.svg");
-        }
-        .sidebar-link {
-            justify-content: center;
-            .font-bold {
-                display: none;
-            }
-        }
-    }
+	.sidebar {
+		c-logo .logo {
+			content: url("../assets/icons/bp.svg");
+		}
+		.sidebar-link {
+			justify-content: center;
+			.font-bold {
+				display: none;
+			}
+		}
+	}
 
-    body.content {
-        grid-template-columns: 97px 1fr;
-    }
-    
+	body.content {
+		grid-template-columns: 97px 1fr;
+	}
 }

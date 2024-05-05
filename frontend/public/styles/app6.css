@@ -70,7 +70,6 @@ c-friendscard, c-dailyquestscard
 
 p-dashboard .home-content
 {
-    /* border: 1px solid blue; */
     display: flex;
     justify-content: center;
     align-items: self-start;
