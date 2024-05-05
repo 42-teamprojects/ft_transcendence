@@ -1,6 +1,8 @@
 import { useFormData } from "../../utils/useForm.js";
 import Toast from "../comps/toast.js";
 import Router from "../../router/router.js";
+import { matchService } from "../../state/matchService.js";
+import LocalMatch from "../../entities/LocalMatch.js";
 
 export default class Onevsone extends HTMLElement {
     constructor() {
@@ -41,16 +43,15 @@ export default class Onevsone extends HTMLElement {
         // Sort players by player id
         this.players.sort((a, b) => a.playerId - b.playerId);
 
-        const params = new URLSearchParams({
-            theme: selectedTheme,
-            player1: this.players[0].alias,
-            player2: this.players[1].alias,
-            paddle1: this.players[0].paddle,
-            paddle2: this.players[1].paddle
-        });
+        const p1 = this.players[0];
+        const p2 = this.players[1];
         
-        const queryString = params.toString();
-        Router.instance.navigate(`/local/1v1/game?${queryString}`);
+        const localMatch = new LocalMatch(p1, p2);
+        localMatch.setTheme(selectedTheme);
+
+        matchService.setMatch(localMatch);
+
+        Router.instance.navigate(`/local/1v1/game`);
     }
 
     render() {

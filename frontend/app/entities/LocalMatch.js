@@ -9,10 +9,15 @@ export default class LocalMatch {
         this.isFinished = false;
         this.score1 = 0;
         this.score2 = 0;
+        this.theme = "";
     }
 
     static fromJson(json) {
         return new LocalMatch(json.id, json.player1, json.player2, json.winner, json.isStarted, json.isFinished);
+    }
+
+    setTheme(theme) {
+        this.theme = theme;
     }
 
     toJson() {
@@ -41,6 +46,11 @@ export default class LocalMatch {
     finishMatch(winner) {
         this.winner = winner;
         this.isFinished = true;
+    }
+
+    resetScore() {
+        this.score1 = 0;
+        this.score2 = 0;
     }
 
     resetMatch() {

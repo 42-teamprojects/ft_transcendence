@@ -1,7 +1,7 @@
 import Http from "../http/http.js";
-import Store from "./store.js";
+import Service from "./service.js";
 
-class PostStore extends Store {
+class PostService extends Service {
 	constructor() {
 		super({ posts: [], loading: true, errors: null }); // Add 'errors' state
 	}

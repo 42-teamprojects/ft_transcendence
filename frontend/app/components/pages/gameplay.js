@@ -1,41 +1,47 @@
 import Router from "../../router/router.js";
+import { matchService } from "../../state/matchService.js";
 import Toast from "../comps/toast.js";
 
 export default class Gameplay extends HTMLElement {
     constructor() {
         super();
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.size < 5) {
+        document.title = "Gameplay | Blitzpong.";
+
+        this.match = matchService.getState().match
+        if (this.match === null) {
             Toast.notify({ type: "warning", message: "Please setup your game" })
             Router.instance.navigate('/local/1v1')
+            return;
         }
-        this.params = Object.fromEntries(urlParams.entries());
+        console.log(this.match)
     }
 
     connectedCallback() {
+        if (this.match === null) return;
+        
         this.render();
-        this.querySelector('c-table').addEventListener('game-over', (e) => {
-            const { winner } = e.detail;
-            const modal = document.createElement('c-gameover-modal');
-            modal.setAttribute('player', winner);
-            this.appendChild(modal);
-            setTimeout(() => {
-                this.querySelector('c-gameover-modal').open();
-            }, 100);
-        });
+        this.cTable = this.querySelector('c-table');
+        this.cTable.addEventListener('game-over', this.handleGameOver.bind(this));
     }
 
-    disconnectedCallback() { }
+    handleGameOver(e) {
+        const { winner } = e.detail;
+        matchService.setWinner(winner);
+        const modal = document.createElement('c-gameover-modal');
+        modal.setAttribute('player', winner.alias);
+        this.appendChild(modal);
+        setTimeout(() => {
+            this.querySelector('c-gameover-modal').open();
+        }, 100);
+    }
+
+    disconnectedCallback() {
+        // this.cTable.removeEventListener('game-over', this.handleGameOver.bind(this));
+    }
 
     render() {
         this.innerHTML = /*html*/`
-        <c-table id="table"
-            theme="${this.params.theme}"
-            player1="${this.params.player1}"
-            player2="${this.params.player2}"
-            paddle1="${this.params.paddle1}"
-            paddle2="${this.params.paddle2}">
-        </c-table>
+            <c-table id="table"></c-table>
         `;
     }
 }

@@ -1,4 +1,4 @@
-import { tournamentStore } from "../../state/tournamentStore.js";
+import { tournamentService } from "../../state/tournamentService.js";
 
 export default class Match extends HTMLElement {
     constructor() {
@@ -22,7 +22,7 @@ export default class Match extends HTMLElement {
 
     connectedCallback() {
         this.update();
-        this.unsubscribe = tournamentStore.subscribe(this.update.bind(this));
+        this.unsubscribe = tournamentService.subscribe(this.update.bind(this));
     }
     
     disconnectedCallback() {
@@ -47,7 +47,7 @@ export default class Match extends HTMLElement {
     }
     
     findMatch() {
-        const { matches } = tournamentStore.getState();
+        const { matches } = tournamentService.getState();
         const match = matches.find(match => match.id === this.matchId);
         this.match = match;
     }

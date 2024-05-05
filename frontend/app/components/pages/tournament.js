@@ -1,5 +1,5 @@
 import Router from "../../router/router.js";
-import { tournamentStore } from "../../state/tournamentStore.js";
+import { tournamentService } from "../../state/tournamentService.js";
 import { useFormData } from "../../utils/useForm.js";
 import { shuffleArray } from "../../utils/utils.js";
 import Toast from "../comps/toast.js";
@@ -23,7 +23,7 @@ export default class Tournament extends HTMLElement {
 	}
 
 	connectedCallback() {
-        tournamentStore.reset();
+        tournamentService.reset();
 		this.render();
 		this.addPlayersForm = this.querySelector("#add-players-form");
         this.addPlayersForm.querySelector("#show-players").disabled = true;
@@ -40,10 +40,10 @@ export default class Tournament extends HTMLElement {
             return;
         }
 
-        tournamentStore.setPlayers(this._players);
-        tournamentStore.setTheme(useFormData(e.target).getObject()["theme-option"]);
-        tournamentStore.setPlayersNumber(this.playersNumber);
-        tournamentStore.generateTournament();
+        tournamentService.setPlayers(this._players);
+        tournamentService.setTheme(useFormData(e.target).getObject()["theme-option"]);
+        tournamentService.setPlayersNumber(this.playersNumber);
+        tournamentService.generateTournament();
         
         Router.instance.navigate(`/local/tournament/qualifications`);
     }

@@ -1,4 +1,5 @@
 import Router from '../../router/router.js';
+import { matchService } from '../../state/matchService.js';
 
 export default class Gameovermodal extends HTMLElement {
     constructor() {
@@ -51,11 +52,13 @@ export default class Gameovermodal extends HTMLElement {
 
     #cancel(event) {
         this.hide();
+        matchService.reset();
         Router.instance.navigate('/local');
     }
 
     #confirm() {
         this.hide();
+        matchService.getState().match.resetScore();
         Router.instance.reload();
     }
 
@@ -71,7 +74,7 @@ export default class Gameovermodal extends HTMLElement {
             </main>
             <section class="actions">
                 <button id="cancel-btn" class="btn-default text-secondary w-full">Back to home</button>
-                <button id="confirm-btn" class="btn-secondary w-full">Play another match</button>
+                <button id="confirm-btn" class="btn-secondary w-full">Rematch</button>
             </section>
         </div>
         `;

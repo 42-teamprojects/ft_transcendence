@@ -1,4 +1,4 @@
-import { tournamentStore } from "../../state/tournamentStore.js";
+import { tournamentService } from "../../state/tournamentService.js";
 
 export default class Bracket extends HTMLElement {
 	constructor() {
@@ -7,7 +7,7 @@ export default class Bracket extends HTMLElement {
 	}
 
 	connectedCallback() {
-		this.tournamentDetails = tournamentStore.getState();
+		this.tournamentDetails = tournamentService.getState();
 
 		this.render();
 

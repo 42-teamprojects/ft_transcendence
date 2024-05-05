@@ -1,5 +1,5 @@
 import Router from "../../router/router.js";
-import { tournamentStore } from "../../state/tournamentStore.js";
+import { tournamentService } from "../../state/tournamentService.js";
 import Toast from "../comps/toast.js";
 
 export default class Qualifications extends HTMLElement {
@@ -17,15 +17,15 @@ export default class Qualifications extends HTMLElement {
 	}
 
 	connectedCallback() {
-		this.tournamentDetails = tournamentStore.getState();
+		this.tournamentDetails = tournamentService.getState();
 		if (!this.tournamentDetails.playersNumber || this.tournamentDetails.playersNumber === 0) {
 			Toast.notify({ type: "error", message: "Please make sure all the players are registred" });
 			Router.instance.navigate("/local/tournament");
 			return;
 		}
 		this.update();
-		this.unsubscribe = tournamentStore.subscribe(() => {
-			this.tournamentDetails = tournamentStore.getState();
+		this.unsubscribe = tournamentService.subscribe(() => {
+			this.tournamentDetails = tournamentService.getState();
 			this.update();
 		});
 	}
@@ -36,11 +36,11 @@ export default class Qualifications extends HTMLElement {
 		form.addEventListener("submit", (e) => {
 			e.preventDefault();
 			if (e.submitter.id === "start-match") {
-				const currentMatch = tournamentStore.startNextMatch();
-				tournamentStore.finishMatch([currentMatch.player1.id, currentMatch.player2.id][Math.floor(Math.random() * 2)]);
+				const currentMatch = tournamentService.startNextMatch();
+				tournamentService.finishMatch([currentMatch.player1.id, currentMatch.player2.id][Math.floor(Math.random() * 2)]);
 			}
 			else if (e.submitter.id === "end-tournament") {
-				tournamentStore.reset();
+				tournamentService.reset();
 				Router.instance.navigate("/local/tournament");
 			}
 		});
