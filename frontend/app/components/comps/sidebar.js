@@ -19,12 +19,12 @@ export default class Sidebar extends HTMLElement {
     }
 
     handleNavigation() {
-        const root = document.querySelector("#root");
+        const body = document.querySelector("body");
         if (window.location.pathname.startsWith('/dashboard')) {
-            root.classList.add('content')
+            body.classList.add('content')
         }
         else {
-            root.classList.remove('content')
+            body.classList.remove('content')
         }
         this.render();
         window.addEventListener('resize', () => this.render());

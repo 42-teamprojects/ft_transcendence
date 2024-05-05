@@ -1,4 +1,4 @@
-.sidebar {
+/* .sidebar {
     position: fixed;
     display: flex;
     flex-direction: column;
@@ -69,11 +69,11 @@
         height: 100vh;
     }
     
-}
+} */
 
-/* 
 
-body {
+
+body.content {
     display: grid;
     grid-template-columns: 256px 1fr;
     grid-template-rows: 100vh;
@@ -140,8 +140,8 @@ body {
         }
     }
 
-    body {
+    body.content {
         grid-template-columns: 97px 1fr;
     }
     
-}*/
+}
