@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+  db:
+    image: postgres:13-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: blitzpong
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+  pg-admin:
+    image: dpage/pgadmin4:6
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: yusufisawi@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: root
+      PGADMIN_LISTEN_PORT: 8080
+    ports:
+      - "8081:8080"
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+
+
+volumes:
+  pgadmin:
+  postgres:

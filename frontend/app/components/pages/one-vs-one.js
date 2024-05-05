@@ -50,12 +50,13 @@ export default class Onevsone extends HTMLElement {
         });
         
         const queryString = params.toString();
-        Router.instance.navigate(`/local/game/1v1?${queryString}`);
+        Router.instance.navigate(`/local/1v1/game?${queryString}`);
     }
 
     render() {
         this.innerHTML = /*html*/`
         <div class="flex-col-center my-10 gap-9">
+            <c-logo href="/"></c-logo>
             <div>
                 <h1 class="text-center mb-4">1 v 1 Pong Match</h1>
                 <h3 class="text-center font-medium text-stroke">Customize Your Game</h3>

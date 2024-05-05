@@ -57,7 +57,8 @@ export default class Qualifications extends HTMLElement {
 		}
 
 		this.innerHTML = /*html*/ `
-        <div class="flex-col-center my-10 gap-14 w-full">
+		<div class="flex-col-center my-10 gap-10 w-full">
+			<c-logo href="/"></c-logo>
             <div class="">
                 <h1 class="text-center mb-4">Tournament brackets</h1>
                 <h3 class="text-center font-medium text-stroke spacing-">${this.getQualificationName()}</h3>

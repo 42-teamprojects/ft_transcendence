@@ -1,4 +1,6 @@
+import Authentication from "../../auth/authentication.js";
 import Router from "../../router/router.js";
+import { getWindowWidth, toCapital } from "../../utils/utils.js";
 
 export default class Sidebar extends HTMLElement {
     constructor() {
@@ -25,13 +27,18 @@ export default class Sidebar extends HTMLElement {
             root.classList.remove('content')
         }
         this.render();
+        window.addEventListener('resize', () => this.render());
+    }
+
+    addTooltip(link) {
+        return getWindowWidth() <= 1280 ? `tooltip="${toCapital(link)}" flow="right"` : '';
     }
 
     render() {
         const shouldRender = window.location.pathname.startsWith('/dashboard');
 
         const sidebarLinks = this.links.map(link => /*html*/`
-            <c-sidebar-link link="${link}" active="${this.router.isCurrentRoute('/dashboard/' + link)}">
+            <c-sidebar-link link="${link}" active="${this.router.isCurrentRoute('/dashboard/' + link)}" ${this.addTooltip(link)}>
                 ${link}
             </c-sidebar-link>
         `).join('');
@@ -39,8 +46,13 @@ export default class Sidebar extends HTMLElement {
         if (shouldRender) {
             this.innerHTML = /*html*/`
                 <nav class="sidebar">
-                    <c-logo class='py-4 pl-1' href="/"></c-logo>
-                    ${sidebarLinks}
+                    <div class="sidebar-top">
+                        <c-logo class='py-4 pl-1' href="/"></c-logo>
+                        ${sidebarLinks}
+                    </div>
+                    <div class="sidebar-bottom">
+                       <c-logout></c-logout>
+                    </div>
                 </nav>
             `;
         } else {

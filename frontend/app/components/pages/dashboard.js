@@ -20,10 +20,10 @@ export default class Dashboard extends HTMLElement {
             <div class="flex-col-center gap-5">
                 <c-playerresources></c-playerresources>
                 <c-friendscard></c-friendscard>
-                <c-dailyquestscard></c-dailyquestscard>
             </div>
         </div>
         `;
+        // <c-dailyquestscard></c-dailyquestscard>
     }
 }
 

@@ -1,3 +1,3 @@
 export const config = {
-    rest_url: 'https://dummyjson.com/'
+    rest_url: 'http://localhost:8000/api/'
 };
