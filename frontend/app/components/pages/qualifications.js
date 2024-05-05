@@ -1,4 +1,5 @@
 import Router from "../../router/router.js";
+import { matchService } from "../../state/matchService.js";
 import { tournamentService } from "../../state/tournamentService.js";
 import Toast from "../comps/toast.js";
 
@@ -37,7 +38,8 @@ export default class Qualifications extends HTMLElement {
 			e.preventDefault();
 			if (e.submitter.id === "start-match") {
 				const currentMatch = tournamentService.startNextMatch();
-				tournamentService.finishMatch([currentMatch.player1.id, currentMatch.player2.id][Math.floor(Math.random() * 2)]);
+				matchService.setMatch(currentMatch);
+				Router.instance.navigate("/local/tournament/game");
 			}
 			else if (e.submitter.id === "end-tournament") {
 				tournamentService.reset();

@@ -37,6 +37,10 @@ export const routes = [
 				component: () => import("./components/pages/tournament.js"),
 				children: [
 					{
+						path: "/game",
+						component: () => import("./components/pages/tournament-game.js"),
+					},
+					{
 						path: "/qualifications",
 						component: () => import("./components/pages/qualifications.js"),
 					},

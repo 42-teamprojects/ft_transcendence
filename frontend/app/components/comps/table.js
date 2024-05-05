@@ -26,6 +26,9 @@ function getRandomInt(min, max) {
 export default class Table extends HTMLElement {
 	constructor() {
 		super();
+		this.handleKeyDownF = this.handleKeyDown.bind(this);
+		this.handleKeyUpF = this.handleKeyUp.bind(this);
+
 		this.match = matchService.getState().match;
 		this.theme = this.match.theme;
 
@@ -55,9 +58,8 @@ export default class Table extends HTMLElement {
 	connectedCallback() {
 		this.render();
 		this.gameplay();
-		document.addEventListener("keydown", this.handleKeyDown.bind(this));
-
-		document.addEventListener("keyup", this.handleKeyUp.bind(this));
+		document.addEventListener("keydown", this.handleKeyDownF);
+		document.addEventListener("keyup", this.handleKeyUpF);
 
 		// document.addEventListener("keydown", this.movePlayers.bind(this));
 		// document.addEventListener("keyup", this.stopPlayers.bind(this));
@@ -75,29 +77,29 @@ export default class Table extends HTMLElement {
 		}
 	};
 
-  handleKeyUp = (event) => {
-    // pressedKeys[event.code] = false;
-    if (event.code === "KeyW" || event.code === "KeyS") {
-      player1PressedKeys[event.code] = false;
-    }
-    if (event.code === "ArrowUp" || event.code === "ArrowDown") {
-      player2PressedKeys[event.code] = false;
-    }
-    // console.log(pressedKeys);
-    // check if there is still a key pressed
-    if (Object.values(player1PressedKeys).every((value) => !value)) {
-      console.log("player one no key pressed");
-      // if (event.code === "KeyW" || event.code === "KeyS") {
-      this.paddle1.stop(event);
-      // }
-      // if (event.code === "ArrowUp" || event.code === "ArrowDown") {
-      // }
-    }
-    if (Object.values(player2PressedKeys).every((value) => !value)) {
-      console.log("player 2 no key pressed");
-      this.paddle2.stop(event);
-    }
-  }
+	handleKeyUp = (event) => {
+		// pressedKeys[event.code] = false;
+		if (event.code === "KeyW" || event.code === "KeyS") {
+			player1PressedKeys[event.code] = false;
+		}
+		if (event.code === "ArrowUp" || event.code === "ArrowDown") {
+			player2PressedKeys[event.code] = false;
+		}
+		// console.log(pressedKeys);
+		// check if there is still a key pressed
+		if (Object.values(player1PressedKeys).every((value) => !value)) {
+			console.log("player one no key pressed");
+			// if (event.code === "KeyW" || event.code === "KeyS") {
+			this.paddle1.stop(event);
+			// }
+			// if (event.code === "ArrowUp" || event.code === "ArrowDown") {
+			// }
+		}
+		if (Object.values(player2PressedKeys).every((value) => !value)) {
+			console.log("player 2 no key pressed");
+			this.paddle2.stop(event);
+		}
+	};
 
 	movePlayers = (ev) => {
 		this.paddle1.directionChange(ev.code === "KeyW" ? "up" : ev.code === "KeyS" ? "down" : "");
@@ -114,18 +116,18 @@ export default class Table extends HTMLElement {
 	};
 
 	disconnectedCallback() {
-    document.removeEventListener("keydown", this.handleKeyDown.bind(this));
-    document.removeEventListener("keyup", this.handleKeyUp.bind(this));
-  }
+		document.removeEventListener("keydown", this.handleKeyDownF);
+		document.removeEventListener("keyup", this.handleKeyUpF);
+	}
 
 	render() {
 		this.innerHTML = /*html*/ `
             <div class="vh-full w-full flex-col-center">
-                <c-scoreboard   class="mb-5"
-                                player1="${this.match.player1.alias}" 
-                                player2="${this.match.player2.alias}" 
-                                score1="${this.match.score1}"
-                                score2="${this.match.score2}">
+                <c-scoreboard class="mb-5"
+                              player1="${this.match.player1.alias}" 
+                              player2="${this.match.player2.alias}" 
+                              score1="${this.match.score1}"
+                              score2="${this.match.score2}">
                 </c-scoreboard>
                 <canvas id="table" class="table table-${this.theme}"></canvas>
             </div>

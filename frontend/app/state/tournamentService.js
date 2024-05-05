@@ -149,6 +149,7 @@ class TournamentService extends Service {
 					// For the next rounds, create matches without players
 					match = new LocalMatch(null, null);
 				}
+				match.setTheme(this.state.theme);
 				group.push(match);
 				if (group.length === 2 || j === totalMatches - 1) {
 					matches.push(group);
