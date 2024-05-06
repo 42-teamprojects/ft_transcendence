@@ -137,7 +137,11 @@ export default class Components extends HTMLElement {
                         <span id="selected-theme"></span>
                     </form>
                 </div>
-
+                <div class="tournaments-card flex gap-3">
+                    <c-tournament-card></c-tournament-card>
+                    <c-tournament-card></c-tournament-card>
+                    <c-tournament-card></c-tournament-card>
+                </div>
                 `;
 	}
 }
