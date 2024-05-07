@@ -36,33 +36,46 @@ export default class Tournamentcard extends HTMLElement {
                 </div>
             </div>
             <div class="tournament-card-footer">
-                <p class="tournament-card-footer-text">2 Left to join</p>
-                <button is="c-button" class="tournament-card-join-btn btn-primary">Join</button>
+                ${this.getFooterContent('join')}
             </div>
         </div>
         `;
     }
 
-    getFooterContent() {
-        const footerJoin = /*html*/`
-            <p class="tournament-card-footer-text">2 Left to join</p>
-            <button is="c-button" class="tournament-card-join-btn btn-primary">Join</button>
-        `
+    getFooterContent(footer) {
+        let footerContent;
+        switch (footer) {
+            case 'join':
+            footerContent = /*html*/`
+                <p class="tournament-card-footer-text">2 Left to join</p>
+                <button is="c-button" class="tournament-card-join-btn btn-primary">Join</button>
+            `;
+            break;
+            case 'waiting':
+            footerContent = /*html*/`
+                <p class="tournament-card-footer-text">Waiting for organizer to start</p>
+            `;
+            break;
+            case 'start':
+            footerContent = /*html*/`
+                <p class="tournament-card-footer-text">Starting in 5 minutes</p>
+            `;
+            break;
+            case 'inProgress':
+            footerContent = /*html*/`
+                <p class="tournament-card-footer-text">In progress</p>
+            `;
+            break;
+            case 'ended':
+            footerContent = /*html*/`
+                <p class="tournament-card-footer-text">Ended</p>
+            `;
+            break;
+            default:
+            footerContent = '';
+            break;
+        }
 
-        const footerWaiting = /*html*/`
-            <p class="tournament-card-footer-text">Waiting for organizer to start</p>
-        `
-
-        const footerStart = /*html*/`
-            <p class="tournament-card-footer-text">Starting in 5 minutes</p>
-        `
-
-        const footerInProgress = /*html*/`
-            <p class="tournament-card-footer-text">In progress</p>
-        `
-
-        const footerEnded = /*html*/`
-            <p class="tournament-card-footer-text">Ended</p>
-        `
+        return footerContent;
     }
 }
