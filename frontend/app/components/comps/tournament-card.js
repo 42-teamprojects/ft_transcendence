@@ -66,9 +66,10 @@ export default class Tournamentcard extends HTMLElement {
                 <p class="tournament-card-footer-text">In progress</p>
             `;
             break;
-            case 'ended':
+            case 'notStarted':
             footerContent = /*html*/`
-                <p class="tournament-card-footer-text">Ended</p>
+                <p class="tournament-card-footer-text">Not Started</p>
+                <button is="c-button" class="tournament-card-join-btn btn-secondary">Create</button> 
             `;
             break;
             default:
@@ -78,4 +79,20 @@ export default class Tournamentcard extends HTMLElement {
 
         return footerContent;
     }
+
+    getSubtitleContent(subtitle) {
+        let subtitleContent;
+        switch (subtitle) {
+            case 'waiting':
+            subtitleContent = "Waiting for players to join";
+            break;
+            case 'start':
+            subtitleContent = "All players joined, starting soon";
+            break;
+            case 'inProgress':
+            subtitleContent = "In progress";
+            break;
+        }                
+    }
+
 }
