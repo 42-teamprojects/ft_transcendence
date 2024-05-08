@@ -63,6 +63,10 @@ export default class Paddle {
         }
     }
 
+    reset = () => {
+        this.y = this.table.tableHeight / 2 - this.height / 2;
+    }
+
     stop = () => {
         this.speed = 0;
     }

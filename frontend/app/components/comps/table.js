@@ -2,7 +2,7 @@ import { config } from "../../config.js";
 import Ball from "../../entities/Ball.js";
 import Paddle from "../../entities/Paddle.js";
 import { matchService } from "../../state/matchService.js";
-// let mouse = {x: 0, y: 0};
+
 const player1PressedKeys = {
 	KeyW: false,
 	KeyS: false,
@@ -12,18 +12,13 @@ const player2PressedKeys = {
 	ArrowUp: false,
 	ArrowDown: false,
 };
-// const pressedKeys = {
-//     KeyW: false,
-//     KeyS: false,
-//     ArrowUp: false,
-//     ArrowDown: false
-// };
 
 function getRandomInt(min, max) {
 	min = Math.ceil(min);
 	max = Math.floor(max);
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
 export default class Table extends HTMLElement {
 	constructor() {
 		super();
@@ -61,14 +56,10 @@ export default class Table extends HTMLElement {
 		this.gameplay();
 		document.addEventListener("keydown", this.handleKeyDownF);
 		document.addEventListener("keyup", this.handleKeyUpF);
-
-		// document.addEventListener("keydown", this.movePlayers.bind(this));
-		// document.addEventListener("keyup", this.stopPlayers.bind(this));
 	}
 
 	handleKeyDown = (event) => {
 		if (event.code === "KeyW" || event.code === "KeyS") {
-			// pressedKeys[event.code] = true;
 			player1PressedKeys[event.code] = true;
 			this.paddle1.directionChange(event.code === "KeyW" ? "up" : event.code === "KeyS" ? "down" : "");
 		}
@@ -79,25 +70,16 @@ export default class Table extends HTMLElement {
 	};
 
 	handleKeyUp = (event) => {
-		// pressedKeys[event.code] = false;
 		if (event.code === "KeyW" || event.code === "KeyS") {
 			player1PressedKeys[event.code] = false;
 		}
 		if (event.code === "ArrowUp" || event.code === "ArrowDown") {
 			player2PressedKeys[event.code] = false;
 		}
-		// console.log(pressedKeys);
-		// check if there is still a key pressed
 		if (Object.values(player1PressedKeys).every((value) => !value)) {
-			console.log("player one no key pressed");
-			// if (event.code === "KeyW" || event.code === "KeyS") {
 			this.paddle1.stop(event);
-			// }
-			// if (event.code === "ArrowUp" || event.code === "ArrowDown") {
-			// }
 		}
 		if (Object.values(player2PressedKeys).every((value) => !value)) {
-			console.log("player 2 no key pressed");
 			this.paddle2.stop(event);
 		}
 	};
@@ -137,10 +119,6 @@ export default class Table extends HTMLElement {
 
 	gameplay() {
 		this.table = this.querySelector("#table");
-		// this.table.addEventListener("mousemove", (ev) => {
-		//     mouse.x = ev.clientX - this.table.getBoundingClientRect().left;
-		//     mouse.y = ev.clientY - this.table.getBoundingClientRect().top;
-		// });
 		this.table.height = this.tableHeight;
 		this.table.width = this.tableWidth;
 		this.context = this.table.getContext("2d");
@@ -149,9 +127,6 @@ export default class Table extends HTMLElement {
 	}
 
 	update = () => {
-		// console.log(mouse)
-		// this.context.fillStyle = 'rgba(0, 0, 0, 0.25)';
-		// this.context.fillRect(0, 0, this.tableWidth, this.tableHeight);
 		this.context.clearRect(0, 0, this.table.width, this.table.height);
 		this.drawMiddle();
 		//draw paddles
@@ -166,8 +141,10 @@ export default class Table extends HTMLElement {
 		this.ball.bounceOnPaddles(this.paddle1);
 		this.ball.bounceOnPaddles(this.paddle2);
 		this.ball.bounceOnWalls(this.tableHeight);
-		this.scored();
 
+		if (this.scored()) {
+			return;
+		}
 		//check if scores
 		if (this.isGameOver) {
 			this.dispatchEvent(
@@ -176,22 +153,30 @@ export default class Table extends HTMLElement {
 						winner: this.match.score1 === this.finalScore ? this.match.player1 : this.match.player2,
 					},
 				})
-			);
-			return;
-		}
-		requestAnimationFrame(this.update);
+				);
+				return;
+			}
+			requestAnimationFrame(this.update);
 	};
-
+		
 	scored = () => {
+		let scored = false;
 		if (this.ball.x - this.ball.size <= 0) {
 			this.match.score2++;
-			this.resetGame();
+			scored = true;
 		} else if (this.ball.x + this.ball.size >= this.tableWidth) {
 			this.match.score1++;
-			this.resetGame();
+			scored = true;
 		}
-		this.querySelector("c-scoreboard").setAttribute("score1", this.match.score1);
-		this.querySelector("c-scoreboard").setAttribute("score2", this.match.score2);
+		
+		if (scored) {
+			this.resetGame();
+			this.querySelector("c-scoreboard").setAttribute("score1", this.match.score1);
+			this.querySelector("c-scoreboard").setAttribute("score2", this.match.score2);
+			this.newScene();
+			return true;
+		}
+		return false;
 	};
 
 	drawMiddle = () => {
@@ -230,8 +215,16 @@ export default class Table extends HTMLElement {
 		}
 	};
 
+	newScene = () => {
+		setTimeout(() => {
+			requestAnimationFrame(this.update);
+		}, 3000);
+	};
+
 	resetGame = () => {
 		this.ball.reset(this);
+		this.paddle1.reset();
+		this.paddle2.reset();
 	};
 
 	get isGameOver() {
