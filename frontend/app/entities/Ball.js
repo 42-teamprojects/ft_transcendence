@@ -16,11 +16,16 @@ export default class Ball {
         this.y = y;
         this.pas = [];
     }
-    draw = (ctx) => {
-        ctx.fillStyle = COLORS[this.theme];
-    
+
+    update = () => {
         this.x += this.moveX;
         this.y += this.moveY;
+    }
+
+    draw = (ctx) => {
+        ctx.fillStyle = COLORS[this.theme];
+
+        // this.update();
 
         if (this.theme === "classic") {
             ctx.fillRect(this.x, this.y, this.size, this.size);
