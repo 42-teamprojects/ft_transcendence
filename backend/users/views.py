@@ -46,34 +46,38 @@ class LoginView(GenericAPIView):
         except ValidationError as e:
             return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
         
-        response = Response()
+        # create response object with cookies
         
         user = serializer.data
-        
+
+        tokens = {
+            'refresh': user['refresh_token'],
+            'access': user['access_token']
+        }
+        user.pop('access_token')
+        user.pop('refresh_token') 
+
+        response = Response(data=user, status=status.HTTP_200_OK)
         response.set_cookie(
                 'access',
-                user['access_token'],
+                tokens['access'],
                 max_age=settings.AUTH_COOKIE_MAX_AGE,
                 path=settings.AUTH_COOKIE_PATH,
-                secure=settings.AUTH_COOKIE_SECURE,
+                # secure=settings.AUTH_COOKIE_SECURE,
                 httponly=settings.AUTH_COOKIE_HTTP_ONLY,
                 samesite=settings.AUTH_COOKIE_SAMESITE
             )
         response.set_cookie(
                 'refresh',
-                user['refresh_token'],
+                tokens['refresh'],
                 max_age=settings.AUTH_COOKIE_MAX_AGE,
                 path=settings.AUTH_COOKIE_PATH,
-                secure=settings.AUTH_COOKIE_SECURE,
+                # secure=settings.AUTH_COOKIE_SECURE,
                 httponly=settings.AUTH_COOKIE_HTTP_ONLY,
                 samesite=settings.AUTH_COOKIE_SAMESITE
             )
         
-        # get all without access and refresh token
-        user.pop('access_token')
-        user.pop('refresh_token')
-        
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return response
 
 
 # class CustomProviderAuthView(ProviderAuthView):
