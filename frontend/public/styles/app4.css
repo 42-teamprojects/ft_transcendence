@@ -200,6 +200,7 @@ c-match .match-id {
 
 /* Table */
 .table {
+	border-collapse: collapse;
 	width: 100%;
 	text-align: left;
 }
@@ -211,6 +212,8 @@ c-match .match-id {
 
 .table-header {
 	padding: 0.75rem;
+	border-bottom: 1px solid var(--border-color);
+	color: var(--stroke-color);
 }
 
 .table-row {
