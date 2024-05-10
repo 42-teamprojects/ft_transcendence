@@ -1,4 +1,5 @@
 import Authentication from "../../auth/authentication.js";
+import AuthGuard from "../../guards/authGuard.js";
 import Router from "../../router/router.js";
 import { useFormData } from "../../utils/useForm.js";
 import { handleInputError, removeErrors } from "../../utils/utils.js";
@@ -11,7 +12,7 @@ export default class SignUp extends HTMLElement {
 	}
 
 	connectedCallback() {
-		if (Authentication.instance.auth) {
+		if ((new AuthGuard()).canActivate()) {
 			Router.instance.navigate("/dashboard/home");
 			return;
 		}

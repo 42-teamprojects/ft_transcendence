@@ -1,4 +1,5 @@
 import Authentication from "../../auth/authentication.js";
+import AuthGuard from "../../guards/authGuard.js";
 import Router from "../../router/router.js";
 import { useFormData } from "../../utils/useForm.js";
 import { handleInputError, removeErrors } from "../../utils/utils.js";
@@ -11,10 +12,10 @@ export default class Login extends HTMLElement {
 	}
 
 	connectedCallback() {
-		if (Authentication.instance.auth) {
-			Router.instance.navigate("/dashboard/home");
-			return;
-		}
+		// if ((new AuthGuard()).canActivate()) {
+		// 	Router.instance.navigate("/dashboard/home");
+		// 	return;
+		// }
 		this.render();
 
 		this.form = this.querySelector("form");
