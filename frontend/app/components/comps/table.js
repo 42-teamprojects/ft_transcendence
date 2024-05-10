@@ -3,6 +3,8 @@ import Ball from "../../entities/Ball.js";
 import Paddle from "../../entities/Paddle.js";
 import { matchService } from "../../state/matchService.js";
 
+// const mouse = {x: 0, y: 0};
+
 const player1PressedKeys = {
 	KeyW: false,
 	KeyS: false,
@@ -145,15 +147,21 @@ export default class Table extends HTMLElement {
 	}
 
 	gameplay() {
+
+
 		this.table = this.querySelector("#table");
 		this.table.height = this.tableHeight;
 		this.table.width = this.tableWidth;
 		this.context = this.table.getContext("2d");
-
+		// this.table.addEventListener("mousemove", (e) => {
+		// 	mouse.x = e.clientX - this.table.getBoundingClientRect().left;
+		// 	mouse.y = e.clientY - this.table.getBoundingClientRect().top;
+		// });
 		requestAnimationFrame(this.update);
 	}
 
 	update = () => {
+		// console.log(mouse);
 		//draw paddles
 		this.frameCount++;
 		// update paddle position

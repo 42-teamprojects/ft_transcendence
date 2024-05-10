@@ -18,13 +18,16 @@ export default class Ball {
     }
 
     update = () => {
-        this.x += this.moveX;
-        this.y += this.moveY;
+        // this.x += this.moveX;
+        // this.y += this.moveY;
+        this.x += 2;
+        this.y += 0;
     }
 
     draw = (ctx) => {
         ctx.fillStyle = COLORS[this.theme];
-
+        // this.x = mouse.x
+        // this.y = mouse.y
         // this.update();
 
         if (this.theme === "classic") {
@@ -51,15 +54,17 @@ export default class Ball {
         let ballBottom = this.y + this.size;
         let ballLeft = this.theme === "classic" ? this.x : this.x - this.size;
         let ballRight = this.x + this.size;
-    
+
         // Check for collision on each side
         if (ballRight >= paddleLeft && ballLeft <= paddleRight && ballBottom >= paddleTop && ballTop <= paddleBottom) {
             // Ball is colliding from the left
             if (ballRight >= paddleLeft && paddle.playerIndex === 1) {
+                if (this.theme === "classic") { this.x = paddleLeft - this.size; }
                 this.x = paddleLeft + paddle.width + this.size;
             }
             // Ball is colliding from the right
             else if (ballLeft <= paddleRight && paddle.playerIndex === 2) {
+                if (this.theme === "classic") { this.x = paddleRight; }
                 this.x = paddleRight - this.size - paddle.width;
             }
             this.moveX *= SPEED_INCREASE_FACTOR;
@@ -79,7 +84,9 @@ export default class Ball {
     }
     
     bounceOnWalls = (tableHeight) => {
-        if (this.y - this.size <= 0 || this.y + this.size >= tableHeight){
+        let ballTop = this.theme === "classic" ? this.y : this.y - this.size;
+        let ballBottom = this.y + this.size;
+        if (ballTop <= 0 || ballBottom >= tableHeight){
             console.log("bounce on wall")
             this.moveY *= -1;
         }
