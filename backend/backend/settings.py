@@ -29,24 +29,23 @@ ALLOWED_HOSTS = [
     '*'
 ]
 
-AUTH_USER_MODEL = 'authentication.User'
+AUTH_USER_MODEL = 'users.User'
+
+AUTHENTICATION_BACKENDS = [
+    # 'social_core.backends.google.GoogleOAuth2',
+    # 'social_core.backends.facebook.FacebookOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'users.authentication.CustomJWTAuthentication',
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        # 'rest_framework.permissions.IsAuthenticated',
+    ]
 }
-
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-    "AUTH_HEADER_TYPES": ("Bearer",),
-}
-
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8080",
-    "http://127.0.0.1:8080",
-]
 
 # Application definition
 
@@ -59,8 +58,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
+    'djoser',
     # Apps
-    'authentication',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -151,7 +151,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
+# Email
 DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -161,6 +161,38 @@ EMAIL_HOST_USER = env('MAILTRAP_USERNAME')
 EMAIL_HOST_PASSWORD = env('MAILTRAP_PASSWORD')
 EMAIL_USE_TLS = True
 
+# JWT
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
+    "AUTH_HEADER_TYPES": ("Bearer", "JWT",),
+}
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8080",
+    "http://127.0.0.1:8080",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+AUTH_COOKIE = 'access'
+AUTH_COOKIE_MAX_AGE = 60 * 60 * 24
+AUTH_COOKIE_SECURE = False
+AUTH_COOKIE_HTTP_ONLY = True
+AUTH_COOKIE_PATH = '/'
+AUTH_COOKIE_SAMESITE = 'None'
+
+DJOSER = {
+    'PASSWORD_RESET_CONFIRM_URL': 'password-reset/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': True,
+    'ACTIVATION_URL': 'activation/{uid}/{token}',
+    'USER_CREATE_PASSWORD_RETYPE': True,
+    'PASSWORD_RESET_CONFIRM_RETYPE': True,
+    'TOKEN_MODEL': None,
+    # 'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS': env('REDIRECT_URLS').split(',')
+}
+# Google Oauth2
 GOOGLE_CLIENT_ID = env('GOOGLE_CLIENT_ID')
 GOOGLE_CLIENT_SECRET = env('GOOGLE_CLIENT_SECRET')
+

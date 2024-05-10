@@ -48,13 +48,3 @@ class User(AbstractBaseUser, PermissionsMixin):
             'access': str(refresh.access_token)
         }
     
-
-class OneTimePassword(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    otp = models.CharField(max_length=6, unique=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    
-    def __str__(self):
-        return self.otp
-        
-    

@@ -15,18 +15,6 @@ export default class Authentication {
         return Authentication.#instance || new Authentication();
     }
 
-    get auth() {
-        return JSON.parse(localStorage.getItem('auth'));
-    }
-
-    set auth(value) {
-        localStorage.setItem('auth', JSON.stringify(value));
-    }
-
-    onAuthenticate(callback) {
-        this._callbacks.push(callback);
-    }
-
     async login(username, password) {
         const user = { username, password };
         try {
@@ -39,11 +27,10 @@ export default class Authentication {
                 body: JSON.stringify(user)
             });
             const data = await response.json();
+            console.log(data)
             if (!response.ok) {
                 throw data;
             }
-            this.auth = data;
-            // this._callbacks.forEach(callback => callback(data));
             return data;
         } catch (error) {
             console.error(error);
@@ -72,20 +59,79 @@ export default class Authentication {
         }
     }
 
-    logout() {
-        this.auth = null;
-        localStorage.removeItem('auth');
-        // this._callbacks.forEach(callback => callback(null));
+    async logout() {
+        try {
+            const response = await fetch(config.rest_url + 'auth/logout/', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include'
+            });
+            if (!response.ok) {
+                throw response.json();
+            }
+        }
+        catch (error) {
+            console.error(error);
+            throw error;
+        }
     }
 
-    isAuthenticated() {
-        return !!this.auth;
+    async isAuthenticated() {
+        try {
+            const response = await fetch(config.rest_url + 'auth/jwt/verify/', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include'
+            });
+            const data = await response.json();
+            if (!response.ok) {
+                throw data;
+            }
+        }
+        catch (error) {
+            if (error.status === 401) {
+                // Unauthorized, try refreshing token
+                try {
+                    await this.refreshToken();
+                }
+                catch (error) {
+                    throw error;
+                }
+            }
+            throw error;
+        } 
+    }
+
+    async refreshToken() {
+        try {
+            const response = await fetch(config.rest_url + 'auth/jwt/refresh/', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include'
+            });
+            const data = await response.json();
+            if (!response.ok) {
+                throw data;
+            }
+        }
+        catch (error) {
+            console.error(error);
+            throw error;
+        }
     }
 
     async testAuthentication() {
         try {
             await this.login('yusufisawi', 'password');
-            console.log('Current authentication status:', Authentication.instance.auth);
         } catch (error) {
             console.error(error);
         }

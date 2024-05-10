@@ -8,10 +8,14 @@ export default class AuthGuard extends CanActivate {
         super();
     }
     
-	canActivate() {
-		if (!!Authentication.instance.isAuthenticated()) {
+	async canActivate() {
+		try {
+			await Authentication.instance.isAuthenticated();
+			console.log("Authenticated")	
 			return true;
-		} else {
+		}
+		catch (error) {
+			console.error(error)
 			Router.instance.navigate(["/login"]);
             Toast.notify({ type: "warning", message: "You need to login to access this page" });
 			return false;
