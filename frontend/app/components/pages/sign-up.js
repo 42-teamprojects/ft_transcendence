@@ -12,10 +12,10 @@ export default class SignUp extends HTMLElement {
 	}
 
 	connectedCallback() {
-		if ((new AuthGuard()).canActivate()) {
-			Router.instance.navigate("/dashboard/home");
-			return;
-		}
+		// if ((new AuthGuard()).canActivate()) {
+		// 	Router.instance.navigate("/dashboard/home");
+		// 	return;
+		// }
 		this.render();
 
 		this.form = this.querySelector("form");

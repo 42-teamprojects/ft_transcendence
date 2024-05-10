@@ -172,7 +172,10 @@ SIMPLE_JWT = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:8080",
+    "https://localhost",
+    "https://127.0.0.1",
 ]
+
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -196,3 +199,19 @@ DJOSER = {
 GOOGLE_CLIENT_ID = env('GOOGLE_CLIENT_ID')
 GOOGLE_CLIENT_SECRET = env('GOOGLE_CLIENT_SECRET')
 
+# SSL
+# Set the paths to your generated SSL certificate and key
+SSL_CERTIFICATE = '../certs/yelaissa.crt'
+SSL_KEY = '../certs/yelaissa.key'
+
+# Update the Django development server options
+if SSL_CERTIFICATE and SSL_KEY:
+    INSTALLED_APPS += ['sslserver']
+    # Use the provided SSL server in development
+    # Make sure you've installed django-sslserver (`pip install django-sslserver`)
+    # Make sure DEBUG is True and ALLOWED_HOSTS is properly configured
+    # SSL must be enabled only for development, not production
+    # Use localhost for development
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+    # The SSL options
+    SSLPORT = 8443  # Choose any available port you prefer
