@@ -4,6 +4,7 @@ import Link from "./c-link.js";
 export default class Router {
 	static #instance = null;
 	#subscribers = [];
+	prevPath = null;
 
 	constructor(routes = []) {
 		if (Router.#instance) {
@@ -99,9 +100,12 @@ export default class Router {
 		const matchedRoute = this.#findRoute(path, this.routes);
 
 		if (!matchedRoute || !matchedRoute.component) {
+			window.history.replaceState({}, "", this.prevPath || "/");
 			this.navigate("/404");
 			return;
 		}
+
+		this.prevPath = window.location.pathname;
 
 		if (matchedRoute.redirectTo) {
 			this.navigate(matchedRoute.redirectTo);
