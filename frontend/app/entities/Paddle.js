@@ -38,7 +38,7 @@ export default class Paddle {
         }
         else {
             // Draw the rectangle for the paddle
-            ctx.fillRect(this.x, this.y - this.height / 2, this.width, this.height);
+            ctx.fillRect(this.x, this.y, this.width, this.height);
         }
     }
     
