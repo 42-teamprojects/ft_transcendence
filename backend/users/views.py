@@ -40,4 +40,8 @@ class LoginView(GenericAPIView):
         except ValidationError as e:
             return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
         
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        response = Response(serializer.data)
+        response.set_cookie('access_token', serializer.data.get('access_token'), httponly=True)
+        response.set_cookie('refresh_token', serializer.data.get('refresh_token'), httponly=True)
+        
+        return response
