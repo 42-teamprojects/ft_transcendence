@@ -207,13 +207,17 @@ SIMPLE_JWT = {
     'AUTH_COOKIE_PATH': '/',        # The path of the auth cookie.
     # Whether to set the flag restricting cookie leaks on cross-site requests. This can be 'Lax', 'Strict', or None to disable the flag.
     'AUTH_COOKIE_SAMESITE': "None", # TODO: Modify to Lax
+    'COOKIE_EXPIRE': 60 * 60 * 24, # 1 day
 }
 
+# CORS
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:8080",   
 ]
 CORS_ALLOW_CREDENTIALS = True
+
+# CSRF
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTP_ONLY = True
 CSRF_TRUSTED_ORIGINS = [

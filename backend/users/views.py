@@ -135,7 +135,6 @@ class CustomTokenRefreshView(TokenRefreshView):
 class CustomTokenVerifyView(TokenVerifyView):
     def post(self, request, *args, **kwargs):
         access_token = request.COOKIES.get('access')
-        print("waaaa->", access_token)
 
         if access_token:
             request.data['token'] = access_token
