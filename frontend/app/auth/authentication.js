@@ -24,10 +24,10 @@ export default class Authentication {
                     'Accept': 'application/json, text/plain, */*',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(user)
+                body: JSON.stringify(user),
+                credentials: 'include',
             });
             const data = await response.json();
-            console.log(data)
             if (!response.ok) {
                 throw data;
             }
@@ -46,7 +46,8 @@ export default class Authentication {
                     'Accept': 'application/json, text/plain, */*',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(user)
+                body: JSON.stringify(user),
+                credentials: 'include'
             });
             const data = await response.json();
             if (!response.ok) {

@@ -1,4 +1,4 @@
 export const config = {
-    rest_url: 'https://localhost:8443/api/',
+    rest_url: 'http://localhost:8000/api/',
     finalScore: 7
 };
