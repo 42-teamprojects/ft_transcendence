@@ -29,7 +29,7 @@ ALLOWED_HOSTS = [
     '*'
 ]
 
-AUTH_USER_MODEL = 'authentication.User'
+AUTH_USER_MODEL = 'users.User'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -59,8 +59,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
+    'djoser',
     # Apps
-    'authentication',
+    'users',
 ]
 
 MIDDLEWARE = [
