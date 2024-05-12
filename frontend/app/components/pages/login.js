@@ -17,7 +17,7 @@ export default class Login extends HTMLElement {
 		// 	return;
 		// }
 		this.render();
-
+		this.loginBtn = this.querySelector("#login");
 		this.form = this.querySelector("form");
 		this.inputs = Array.from(this.querySelectorAll('input'));
 
@@ -41,9 +41,12 @@ export default class Login extends HTMLElement {
 		}
 
 		try {
+			this.loginBtn.setAttribute("processing", "true");
 			await Authentication.instance.login(user.username, user.password);
+			this.loginBtn.setAttribute("processing", "false");
 			Router.instance.navigate("/dashboard/home");
 		} catch (errors) {
+			this.loginBtn.setAttribute("processing", "false");
 			const errorsKeys = Object.keys(errors);
 			if (errorsKeys.includes("detail")) {
 				Toast.notify({ type: "error", message: errors.detail });
@@ -72,7 +75,7 @@ export default class Login extends HTMLElement {
                         <a is="c-link" href="/password/forgot">Forgot password?</a>
                     </span>
                 </div>
-                <button is="c-button" class="btn-secondary ">Login</button>
+                <button is="c-button" id="login" class="btn-secondary">Login</button>
             </form>
             <p>Don't have an account? <a is="c-link" href="/register">Register here.</a></p>
             <div class="hr uppercase font-bold">
