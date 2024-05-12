@@ -17,7 +17,7 @@ export default class SignUp extends HTMLElement {
 		// 	return;
 		// }
 		this.render();
-
+		this.registerBtn = this.querySelector("button.btn-secondary");
 		this.form = this.querySelector("form");
 		this.inputs = Array.from(this.querySelectorAll('input'));
 
@@ -41,13 +41,16 @@ export default class SignUp extends HTMLElement {
 		}
 
 		try {
+			this.registerBtn.setAttribute("processing", "true");
 			await Authentication.instance.register(user);
+			this.registerBtn.setAttribute("processing", "false");
 			Router.instance.navigate("/login");
 			Toast.notify({
 				type: "success",
 				message: "Account created successfuly, Please verify your email. check spam",
 			});
 		} catch (errors) {
+			this.registerBtn.setAttribute("processing", "false");
 			const errorsKeys = Object.keys(errors);
 			if (errorsKeys.includes("detail")) {
 				Toast.notify({ type: "error", message: errors.detail });
