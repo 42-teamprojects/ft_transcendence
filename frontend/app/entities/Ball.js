@@ -101,11 +101,14 @@ export default class Ball {
     }
     
     reset = (table) => {
-        // let direction = Math.random() >  0.5 ? -1 : 1;
+        let xdirection = Math.random() >  0.5 ? -1 : 1;
+        let ydirection = Math.random() >  0.5 ? -1 : 1;
+        console.log("xdirection: ", xdirection)
+        console.log("ydirection: ", ydirection)
         this.x = table.tableWidth / 2;
-        this.y = getRandomInt(this.size, table.tableHeight - this.size);
-        this.moveX = getRandomInt(5, 10);
-        this.moveY = getRandomInt(1, 5);
+        this.y = table.tableHeight / 2;
+        this.moveX = getRandomInt(5, 10)  * xdirection;
+        this.moveY = getRandomInt(5, 10) * ydirection;
     }
 }
 function getRandomInt(min, max) {
