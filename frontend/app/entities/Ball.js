@@ -4,7 +4,7 @@ const COLORS = {
     classic: "white"
 };
 
-const SPEED_INCREASE_FACTOR = 1.05;
+const SPEED_INCREASE_FACTOR = 0.001;
 
 export default class Ball {
     constructor(x, y, moveX, moveY, theme) {
@@ -14,14 +14,14 @@ export default class Ball {
         this.size = this.theme === "classic" ? 15 : 10;
         this.x = x;
         this.y = y;
-        this.pas = [];
+
     }
 
     update = () => {
         // this.x += this.moveX;
-        // this.y += this.moveY;
+        this.y += this.moveY;
         this.x += this.moveX;
-        this.y += 0;
+        // this.y += 0;
     }
 
     draw = (ctx) => {
@@ -67,8 +67,8 @@ export default class Ball {
                 if (this.theme === "classic") { this.x = paddleRight; }
                 this.x = paddleRight - this.size - paddle.width;
             }
-            this.moveX *= SPEED_INCREASE_FACTOR;
-            this.moveY *= SPEED_INCREASE_FACTOR;
+            // this.moveX *= SPEED_INCREASE_FACTOR;
+            // this.moveY *= SPEED_INCREASE_FACTOR;
             return true;
         }
         return false;
@@ -77,9 +77,10 @@ export default class Ball {
 
     bounceOnPaddles= (paddle) => {
         if (this.detectCollision(paddle)){
+   
             console.log("bounce on paddle")
-            this.moveX = -this.moveX;
-            this.moveY *= SPEED_INCREASE_FACTOR;
+            this.moveX *= -1;
+            this.moveY += this.moveY * SPEED_INCREASE_FACTOR;
         }
     }
     
@@ -93,8 +94,10 @@ export default class Ball {
     }
     
     increaseSpeed = () => {
-        this.moveX *= SPEED_INCREASE_FACTOR;
-        this.moveY *= SPEED_INCREASE_FACTOR;
+        this.moveX += SPEED_INCREASE_FACTOR;
+        this.moveY += SPEED_INCREASE_FACTOR;
+
+        console.log("increase speed ", this.moveX, this.moveY)
     }
     
     reset = (table) => {
