@@ -61,10 +61,10 @@ class LoginView(GenericAPIView):
         response.set_cookie(
             key=settings.SIMPLE_JWT['AUTH_COOKIE'],
             value=tokens["access"],
-            expires=settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'],
+            expires=settings.SIMPLE_JWT['AUTH_COOKIE_LIFETIME'],
             secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],
             httponly=settings.SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
-            samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
+            samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE'],
         )
 
         response.set_cookie(
@@ -73,7 +73,7 @@ class LoginView(GenericAPIView):
             expires=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'],
             secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],
             httponly=settings.SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
-            samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
+            samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE'],
         )
         
         return response
@@ -90,7 +90,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             response.set_cookie(
                 key=settings.SIMPLE_JWT['AUTH_COOKIE'],
                 value=access_token,
-                expires=settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'],
+                expires=settings.SIMPLE_JWT['AUTH_COOKIE_LIFETIME'],
                 secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],
                 httponly=settings.SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
                 samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
@@ -123,7 +123,7 @@ class CustomTokenRefreshView(TokenRefreshView):
             response.set_cookie(
                 key=settings.SIMPLE_JWT['AUTH_COOKIE'],
                 value=access_token,
-                expires=settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'],
+                expires=settings.SIMPLE_JWT['AUTH_COOKIE_LIFETIME'],
                 secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],
                 httponly=settings.SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
                 samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
@@ -161,7 +161,7 @@ class CustomProviderAuthView(ProviderAuthView):
             response.set_cookie(
                 key=settings.SIMPLE_JWT['AUTH_COOKIE'],
                 value=access_token,
-                expires=settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'],
+                expires=settings.SIMPLE_JWT['AUTH_COOKIE_LIFETIME'],
                 secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],
                 httponly=settings.SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
                 samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
