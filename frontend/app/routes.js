@@ -1,4 +1,5 @@
 import AuthGuard from "./guards/authGuard.js";
+import LoginGuard from "./guards/loginGuard.js";
 
 const errorsRoutes = [
 	{
@@ -76,10 +77,12 @@ export const routes = [
 	},
 	{
 		path: "/login",
+		canActivate: [LoginGuard],
 		component: () => import("./components/pages/login.js"),
 	},
 	{
 		path: "/register",
+		canActivate: [LoginGuard],
 		component: () => import("./components/pages/sign-up.js"),
 	},
 ];
