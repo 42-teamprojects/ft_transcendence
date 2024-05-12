@@ -141,7 +141,7 @@ export default class Table extends HTMLElement {
                               score1="${this.match.score1}"
                               score2="${this.match.score2}">
                 </c-scoreboard>
-                <canvas id="table" class="table table-${this.theme}"></canvas>
+                <canvas id="table" class="pong-table pong-table-${this.theme}"></canvas>
             </div>
         `;
 	}

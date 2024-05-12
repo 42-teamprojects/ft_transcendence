@@ -37,19 +37,19 @@ input[name="paddle-option"]:checked~.paddlecard {
     border-color: var(--secondary-color);
 }
 
-.table {
+.pong-table {
     max-width: 100%;
     /* max-height: 10%; */
     border-radius: 1rem;
 }
 
 @media only screen and (max-height: 820px) {
-    .table {
+    .pong-table {
         height: 80vh;
     }
 }
 
-.table-football {
+.pong-table-football {
     background-image:
         linear-gradient(to right,
             #006400 6.25%, #008000 6.25%, #008000 12.5%, #006400 12.5%,
@@ -63,13 +63,13 @@ input[name="paddle-option"]:checked~.paddlecard {
     border: 5px solid white;
 }
 
-.table-classic {
+.pong-table-classic {
     border-radius: 0 !important;
     background-color: black;
     border: 5px solid white;
 }
 
-.table-standard {
+.pong-table-standard {
     background-color: var(--background-color);
     border: 5px solid #56646C;
 }

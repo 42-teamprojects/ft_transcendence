@@ -20,7 +20,7 @@ export default class Ball {
     update = () => {
         // this.x += this.moveX;
         // this.y += this.moveY;
-        this.x += 2;
+        this.x += this.moveX;
         this.y += 0;
     }
 
