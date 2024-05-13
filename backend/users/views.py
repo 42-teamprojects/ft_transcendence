@@ -55,7 +55,7 @@ class LoginView(TokenObtainPairView):
             response.set_cookie(
                 key=settings.SIMPLE_JWT['AUTH_COOKIE_REFRESH'],
                 value=refresh_token,
-                expires=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'],
+                expires=settings.SIMPLE_JWT['AUTH_COOKIE_LIFETIME'],
                 secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],
                 httponly=settings.SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
                 samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']

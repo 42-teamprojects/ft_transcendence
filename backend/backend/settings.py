@@ -1,10 +1,12 @@
 from math import e
+import os
 from re import A
 import environ
 from pathlib import Path
 
 from datetime import timedelta
 
+PROJECT_NAME = "Blitzpong"
 
 env = environ.Env(
     DEBUG=(bool, False)
@@ -62,6 +64,7 @@ INSTALLED_APPS = [
     'djoser',
     # Apps
     'users',
+    'security'
 ]
 
 MIDDLEWARE = [
@@ -201,7 +204,7 @@ SIMPLE_JWT = {
     # A string like "example.com", or None for standard domain cookie.
     'AUTH_COOKIE_DOMAIN': None,
     # Whether the auth cookies should be secure (https:// only).
-    'AUTH_COOKIE_SECURE': True, 
+    'AUTH_COOKIE_SECURE': False, 
     # Http only cookie flag.It's not fetch by javascript.
     'AUTH_COOKIE_HTTP_ONLY': True,
     'AUTH_COOKIE_PATH': '/',        # The path of the auth cookie.
@@ -220,10 +223,7 @@ CORS_ALLOW_CREDENTIALS = True
 # CSRF
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTP_ONLY = True
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:8080",
-    "http://127.0.0.1:8080",
-]
+CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
 # CORS_EXPOSE_HEADERS = ["Content-Type", "X-CSRFToken"]
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SAMESITE = "None"
@@ -258,3 +258,9 @@ if SSL_CERTIFICATE and SSL_KEY:
     ALLOWED_HOSTS = ['localhost', '127.0.0.1']
     # The SSL options
     SSLPORT = 8443  # Choose any available port you prefer
+
+# Base url to serve media files  
+MEDIA_URL = '/storage/'  
+    
+# Path where media is stored  
+MEDIA_ROOT = os.path.join(BASE_DIR, 'storage/')

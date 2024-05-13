@@ -22,6 +22,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(_('Is Staff'), default=False)
     is_superuser = models.BooleanField(_('Is Superuser'), default=False)
     is_verified = models.BooleanField(_('Is Verified'), default=False)
+    secret_key = models.CharField(_('Secret Key'), max_length=100, blank=True, null=True)
     date_joined = models.DateTimeField(_('Date Joined'), auto_now_add=True)
     
     USERNAME_FIELD = 'username'
