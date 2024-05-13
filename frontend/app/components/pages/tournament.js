@@ -1,7 +1,6 @@
 import Router from "../../router/router.js";
 import { tournamentService } from "../../state/tournamentService.js";
 import { useFormData } from "../../utils/useForm.js";
-import { shuffleArray } from "../../utils/utils.js";
 import Toast from "../comps/toast.js";
 
 /* Player:

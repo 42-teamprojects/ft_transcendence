@@ -12,10 +12,6 @@ export default class Login extends HTMLElement {
 	}
 
 	connectedCallback() {
-		// if ((new AuthGuard()).canActivate()) {
-		// 	Router.instance.navigate("/dashboard/home");
-		// 	return;
-		// }
 		this.render();
 		this.loginBtn = this.querySelector("#login");
 		this.form = this.querySelector("form");

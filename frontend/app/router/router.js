@@ -64,7 +64,7 @@ export default class Router {
 			for (const route of currentRoutes) {
 				const regex = `^${route.path.replace(/:[^\s/]+/g, "([^\\s/]+)")}$`;
 				const match = segments[segmentIndex].match(new RegExp(regex));
-
+				
 				if (match) {
 					const params = this.#extractParams(match, route.path);
 					let matchedRoute = { ...route, params: { ...params, ...queryParams } };
@@ -76,7 +76,6 @@ export default class Router {
 							matchedRoute = { ...childMatchedRoute, parent: route };
 						}
 					}
-
 					return matchedRoute;
 				}
 			}
