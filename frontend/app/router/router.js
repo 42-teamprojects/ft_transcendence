@@ -59,6 +59,7 @@ export default class Router {
 			.filter(Boolean)
 			.map((s) => "/" + s); // Split path into segments
 		if (segments.length === 0) segments.push("/"); // If path is just '/', add it as a segment
+
 		// Helper function to recursively search for a route
 		const findMatchingRoute = (segmentIndex, currentRoutes) => {
 			for (const route of currentRoutes) {
@@ -68,12 +69,15 @@ export default class Router {
 				if (match) {
 					const params = this.#extractParams(match, route.path);
 					let matchedRoute = { ...route, params: { ...params, ...queryParams } };
-
+					
 					// If the route has children and there are remaining segments, recursively search for a match
 					if (route.children && segmentIndex < segments.length - 1) {
 						const childMatchedRoute = findMatchingRoute(segmentIndex + 1, route.children);
 						if (childMatchedRoute) {
 							matchedRoute = { ...childMatchedRoute, parent: route };
+						}
+						else {
+							return null;
 						}
 					}
 					return matchedRoute;

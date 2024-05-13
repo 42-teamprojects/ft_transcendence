@@ -47,4 +47,4 @@ class VerifyTwoFactorAuthView(APIView):
             user.save()
             return Response({'message': 'Two-factor authentication enabled successfully'}, status=status.HTTP_200_OK)
         else:
-            return Response({'message': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'Invalid OTP'}, status=status.HTTP_401_UNAUTHORIZED)
