@@ -60,6 +60,7 @@ export default class Table extends HTMLElement {
 			getRandomInt(5, 7),
 			this.theme
 		);
+		console.log(this.paddle1);
 		this.middleCirlceRadius = 70;
 
 		this.scene = true;
@@ -167,7 +168,6 @@ export default class Table extends HTMLElement {
 		// update paddle position
 		if (this.scene) {
 			this.drawScene();
-
 		}
 		else
 			this.drawForGame();
