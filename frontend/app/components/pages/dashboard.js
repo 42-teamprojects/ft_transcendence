@@ -14,7 +14,7 @@ export default class Dashboard extends HTMLElement {
         this.innerHTML = /*html*/`  
         <div class="home-content">
             <div class="flex-center gap-6" >
-                <a is="c-link" href="/local/1v1/">
+                <a is="c-link" href="/local/">
                     <c-card action='Play' title='Local Match' type="primary"></c-card>
                 </a>
                 <c-card action='Play' title='Online Match' type="secondary"></c-card>
