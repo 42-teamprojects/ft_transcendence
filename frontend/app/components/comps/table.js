@@ -2,7 +2,9 @@ import { config } from "../../config.js";
 import Ball from "../../entities/Ball.js";
 import Paddle from "../../entities/Paddle.js";
 import { matchService } from "../../state/matchService.js";
-// let mouse = {x: 0, y: 0};
+
+// const mouse = {x: 0, y: 0};
+
 const player1PressedKeys = {
 	KeyW: false,
 	KeyS: false,
@@ -12,18 +14,13 @@ const player2PressedKeys = {
 	ArrowUp: false,
 	ArrowDown: false,
 };
-// const pressedKeys = {
-//     KeyW: false,
-//     KeyS: false,
-//     ArrowUp: false,
-//     ArrowDown: false
-// };
 
 function getRandomInt(min, max) {
 	min = Math.ceil(min);
 	max = Math.floor(max);
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
 export default class Table extends HTMLElement {
 	constructor() {
 		super();
@@ -44,8 +41,18 @@ export default class Table extends HTMLElement {
 		this.paddleHeight = 110;
 		this.paddleMove = 0;
 
-		this.paddle1 = new Paddle(1, this.paddleMove, this.match.player1.paddle, this);
-		this.paddle2 = new Paddle(2, this.paddleMove, this.match.player2.paddle, this);
+		this.paddle1 = new Paddle(
+			1,
+			this.paddleMove,
+			this.match.player1.paddle,
+			this
+		);
+		this.paddle2 = new Paddle(
+			2,
+			this.paddleMove,
+			this.match.player2.paddle,
+			this
+		);
 		this.ball = new Ball(
 			this.tableWidth / 2,
 			this.tableHeight / 2,
@@ -53,7 +60,12 @@ export default class Table extends HTMLElement {
 			getRandomInt(5, 7),
 			this.theme
 		);
+		console.log(this.paddle1);
 		this.middleCirlceRadius = 70;
+
+		this.scene = true;
+		this.counter = 3;
+		this.frameCount = 0;
 	}
 
 	connectedCallback() {
@@ -61,50 +73,50 @@ export default class Table extends HTMLElement {
 		this.gameplay();
 		document.addEventListener("keydown", this.handleKeyDownF);
 		document.addEventListener("keyup", this.handleKeyUpF);
-
-		// document.addEventListener("keydown", this.movePlayers.bind(this));
-		// document.addEventListener("keyup", this.stopPlayers.bind(this));
 	}
 
 	handleKeyDown = (event) => {
 		if (event.code === "KeyW" || event.code === "KeyS") {
-			// pressedKeys[event.code] = true;
 			player1PressedKeys[event.code] = true;
-			this.paddle1.directionChange(event.code === "KeyW" ? "up" : event.code === "KeyS" ? "down" : "");
+			this.paddle1.directionChange(
+				event.code === "KeyW" ? "up" : event.code === "KeyS" ? "down" : ""
+			);
 		}
+
 		if (event.code === "ArrowUp" || event.code === "ArrowDown") {
 			player2PressedKeys[event.code] = true;
-			this.paddle2.directionChange(event.code === "ArrowUp" ? "up" : event.code === "ArrowDown" ? "down" : "");
+			this.paddle2.directionChange(
+				event.code === "ArrowUp"
+					? "up"
+					: event.code === "ArrowDown"
+						? "down"
+						: ""
+			);
 		}
 	};
 
 	handleKeyUp = (event) => {
-		// pressedKeys[event.code] = false;
 		if (event.code === "KeyW" || event.code === "KeyS") {
 			player1PressedKeys[event.code] = false;
 		}
 		if (event.code === "ArrowUp" || event.code === "ArrowDown") {
 			player2PressedKeys[event.code] = false;
 		}
-		// console.log(pressedKeys);
-		// check if there is still a key pressed
 		if (Object.values(player1PressedKeys).every((value) => !value)) {
-			console.log("player one no key pressed");
-			// if (event.code === "KeyW" || event.code === "KeyS") {
 			this.paddle1.stop(event);
-			// }
-			// if (event.code === "ArrowUp" || event.code === "ArrowDown") {
-			// }
 		}
 		if (Object.values(player2PressedKeys).every((value) => !value)) {
-			console.log("player 2 no key pressed");
 			this.paddle2.stop(event);
 		}
 	};
 
 	movePlayers = (ev) => {
-		this.paddle1.directionChange(ev.code === "KeyW" ? "up" : ev.code === "KeyS" ? "down" : "");
-		this.paddle2.directionChange(ev.code === "ArrowUp" ? "up" : ev.code === "ArrowDown" ? "down" : "");
+		this.paddle1.directionChange(
+			ev.code === "KeyW" ? "up" : ev.code === "KeyS" ? "down" : ""
+		);
+		this.paddle2.directionChange(
+			ev.code === "ArrowUp" ? "up" : ev.code === "ArrowDown" ? "down" : ""
+		);
 	};
 
 	stopPlayers = (ev) => {
@@ -130,51 +142,51 @@ export default class Table extends HTMLElement {
                               score1="${this.match.score1}"
                               score2="${this.match.score2}">
                 </c-scoreboard>
-                <canvas id="table" class="table table-${this.theme}"></canvas>
+                <canvas id="table" class="pong-table pong-table-${this.theme}"></canvas>
             </div>
         `;
 	}
 
 	gameplay() {
+
+
 		this.table = this.querySelector("#table");
-		// this.table.addEventListener("mousemove", (ev) => {
-		//     mouse.x = ev.clientX - this.table.getBoundingClientRect().left;
-		//     mouse.y = ev.clientY - this.table.getBoundingClientRect().top;
-		// });
 		this.table.height = this.tableHeight;
 		this.table.width = this.tableWidth;
 		this.context = this.table.getContext("2d");
-
+		// this.table.addEventListener("mousemove", (e) => {
+		// 	mouse.x = e.clientX - this.table.getBoundingClientRect().left;
+		// 	mouse.y = e.clientY - this.table.getBoundingClientRect().top;
+		// });
 		requestAnimationFrame(this.update);
 	}
 
 	update = () => {
-		// console.log(mouse)
-		// this.context.fillStyle = 'rgba(0, 0, 0, 0.25)';
-		// this.context.fillRect(0, 0, this.tableWidth, this.tableHeight);
-		this.context.clearRect(0, 0, this.table.width, this.table.height);
-		this.drawMiddle();
+		// console.log(mouse);
 		//draw paddles
-		this.paddle1.update(this.tableHeight);
-		this.paddle2.update(this.tableHeight);
-
+		this.frameCount++;
 		// update paddle position
-		this.paddle1.draw(this.context);
-		this.paddle2.draw(this.context);
-
-		this.ball.draw(this.context);
+		if (this.scene) {
+			this.drawScene();
+		}
+		else
+			this.drawForGame();
+		// this.drawScene();
 		this.ball.bounceOnPaddles(this.paddle1);
 		this.ball.bounceOnPaddles(this.paddle2);
 		this.ball.bounceOnWalls(this.tableHeight);
-		this.scored();
 
+		if (this.scored()) {
+			this.scene = true;
+		}
 		//check if scores
 		if (this.isGameOver) {
 			this.dispatchEvent(
 				new CustomEvent("game-over", {
 					detail: {
-						winner: this.match.score1 === this.finalScore ? this.match.player1 : this.match.player2,
-					},
+						winner: this.match.score1 === this.finalScore
+								? this.match.player1
+								: this.match.player2,},
 				})
 			);
 			return;
@@ -182,16 +194,60 @@ export default class Table extends HTMLElement {
 		requestAnimationFrame(this.update);
 	};
 
+	draw = () => {
+		this.context.clearRect(0, 0, this.table.width, this.table.height);
+		this.drawMiddle();
+		this.paddle1.draw(this.context);
+		this.paddle2.draw(this.context);
+		this.ball.draw(this.context);
+	};
+
+	drawForGame = () => {
+		this.paddle1.update(this.tableHeight);
+		this.paddle2.update(this.tableHeight);
+		this.ball.update();
+		this.draw();
+		console.log(this.counter);
+	};
+
+	drawScene = () => {
+		this.draw();
+		this.context.fillStyle = "black";
+		this.context.globalAlpha = 0.7;
+		this.context.fillRect(0, 0, this.tableWidth, this.tableHeight);
+		this.context.globalAlpha = 1;
+		this.context.fillStyle = "white";
+		this.context.font = "30px MPlusRounded";
+		this.context.fillText('Round starts in', this.tableWidth / 2 - 120, this.tableHeight / 3);
+		this.context.font = "100px MPlusRounded";
+		const textWidth = this.context.measureText(this.counter).width;
+		this.context.fillText(this.counter, this.tableWidth / 2 - textWidth / 2, this.tableHeight / 2);
+
+		if (this.frameCount % 60 === 0) {
+			this.counter--;
+		}
+		if (this.counter === 0) {
+			this.scene = false;
+			this.counter = 3;
+		}
+	};
+
 	scored = () => {
+		let scored = false;
 		if (this.ball.x - this.ball.size <= 0) {
 			this.match.score2++;
-			this.resetGame();
+			scored = true;
 		} else if (this.ball.x + this.ball.size >= this.tableWidth) {
 			this.match.score1++;
-			this.resetGame();
+			scored = true;
 		}
-		this.querySelector("c-scoreboard").setAttribute("score1", this.match.score1);
-		this.querySelector("c-scoreboard").setAttribute("score2", this.match.score2);
+
+		if (scored) {
+			this.resetGame();
+			this.querySelector("c-scoreboard").setAttribute("score1", this.match.score1);
+			this.querySelector("c-scoreboard").setAttribute("score2", this.match.score2);
+			this.scene = true;
+		}
 	};
 
 	drawMiddle = () => {
@@ -206,7 +262,12 @@ export default class Table extends HTMLElement {
 
 		if (this.theme !== "classic") {
 			this.context.fillStyle = this.theme === "standard" ? "#56646C" : "white";
-			this.context.fillRect(this.tableWidth / 2 - LINE_WIDTH / 2, 0, LINE_WIDTH, this.tableHeight);
+			this.context.fillRect(
+				this.tableWidth / 2 - LINE_WIDTH / 2,
+				0,
+				LINE_WIDTH,
+				this.tableHeight
+			);
 			if (this.theme === "football") {
 				this.context.beginPath();
 				this.context.arc(this.tableWidth / 2, this.tableHeight / 2, 90, 0, 2 * Math.PI, false);
@@ -215,9 +276,19 @@ export default class Table extends HTMLElement {
 				this.context.beginPath();
 				var rectY = (this.tableHeight - STROKE_HEIGHT) / 2; // This positions the rectangle vertically in the middle
 
-				this.context.rect(RECT_X - LINE_WIDTH, rectY, STROKE_WIDTH, STROKE_HEIGHT);
+				this.context.rect(
+					RECT_X - LINE_WIDTH,
+					rectY,
+					STROKE_WIDTH,
+					STROKE_HEIGHT
+				);
 				this.context.stroke();
-				this.context.rect(this.tableWidth - STROKE_WIDTH + LINE_WIDTH, rectY, STROKE_WIDTH, STROKE_HEIGHT);
+				this.context.rect(
+					this.tableWidth - STROKE_WIDTH + LINE_WIDTH,
+					rectY,
+					STROKE_WIDTH,
+					STROKE_HEIGHT
+				);
 				this.context.stroke();
 			}
 		} else {
@@ -232,9 +303,14 @@ export default class Table extends HTMLElement {
 
 	resetGame = () => {
 		this.ball.reset(this);
+		this.paddle1.reset();
+		this.paddle2.reset();
 	};
 
 	get isGameOver() {
-		return this.match.score1 === this.finalScore || this.match.score2 === this.finalScore;
+		return (
+			this.match.score1 === this.finalScore ||
+			this.match.score2 === this.finalScore
+		);
 	}
 }
