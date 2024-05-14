@@ -43,8 +43,8 @@ export default class Onevsone extends HTMLElement {
         // Sort players by player id
         this.players.sort((a, b) => a.playerId - b.playerId);
 
-        const p1 = this.players[0];
-        const p2 = this.players[1];
+        const p1 = this.players.find(p => p.id === 1);
+        const p2 = this.players.find(p => p.id === 2);
         
         const localMatch = new LocalMatch(p1, p2);
         localMatch.setTheme(selectedTheme);

@@ -4,7 +4,7 @@ const COLORS = {
     classic: "white"
 };
 
-const SPEED_INCREASE_FACTOR = 1.05;
+const SPEED_INCREASE_FACTOR = 0.001;
 
 export default class Ball {
     constructor(x, y, moveX, moveY, theme) {
@@ -14,13 +14,21 @@ export default class Ball {
         this.size = this.theme === "classic" ? 15 : 10;
         this.x = x;
         this.y = y;
-        this.pas = [];
+
     }
+
+    update = () => {
+        // this.x += this.moveX;
+        this.y += this.moveY;
+        this.x += this.moveX;
+        // this.y += 0;
+    }
+
     draw = (ctx) => {
         ctx.fillStyle = COLORS[this.theme];
-    
-        this.x += this.moveX;
-        this.y += this.moveY;
+        // this.x = mouse.x
+        // this.y = mouse.y
+        // this.update();
 
         if (this.theme === "classic") {
             ctx.fillRect(this.x, this.y, this.size, this.size);
@@ -46,19 +54,21 @@ export default class Ball {
         let ballBottom = this.y + this.size;
         let ballLeft = this.theme === "classic" ? this.x : this.x - this.size;
         let ballRight = this.x + this.size;
-    
+
         // Check for collision on each side
         if (ballRight >= paddleLeft && ballLeft <= paddleRight && ballBottom >= paddleTop && ballTop <= paddleBottom) {
             // Ball is colliding from the left
             if (ballRight >= paddleLeft && paddle.playerIndex === 1) {
+                if (this.theme === "classic") { this.x = paddleLeft - this.size; }
                 this.x = paddleLeft + paddle.width + this.size;
             }
             // Ball is colliding from the right
             else if (ballLeft <= paddleRight && paddle.playerIndex === 2) {
+                if (this.theme === "classic") { this.x = paddleRight; }
                 this.x = paddleRight - this.size - paddle.width;
             }
-            this.moveX *= SPEED_INCREASE_FACTOR;
-            this.moveY *= SPEED_INCREASE_FACTOR;
+            // this.moveX *= SPEED_INCREASE_FACTOR;
+            // this.moveY *= SPEED_INCREASE_FACTOR;
             return true;
         }
         return false;
@@ -67,30 +77,38 @@ export default class Ball {
 
     bounceOnPaddles= (paddle) => {
         if (this.detectCollision(paddle)){
+   
             console.log("bounce on paddle")
-            this.moveX = -this.moveX;
-            this.moveY *= SPEED_INCREASE_FACTOR;
+            this.moveX *= -1;
+            this.moveY += this.moveY * SPEED_INCREASE_FACTOR;
         }
     }
     
     bounceOnWalls = (tableHeight) => {
-        if (this.y - this.size <= 0 || this.y + this.size >= tableHeight){
+        let ballTop = this.theme === "classic" ? this.y : this.y - this.size;
+        let ballBottom = this.y + this.size;
+        if (ballTop <= 0 || ballBottom >= tableHeight){
             console.log("bounce on wall")
             this.moveY *= -1;
         }
     }
     
     increaseSpeed = () => {
-        this.moveX *= SPEED_INCREASE_FACTOR;
-        this.moveY *= SPEED_INCREASE_FACTOR;
+        this.moveX += SPEED_INCREASE_FACTOR;
+        this.moveY += SPEED_INCREASE_FACTOR;
+
+        console.log("increase speed ", this.moveX, this.moveY)
     }
     
     reset = (table) => {
-        // let direction = Math.random() >  0.5 ? -1 : 1;
+        let xdirection = Math.random() >  0.5 ? -1 : 1;
+        let ydirection = Math.random() >  0.5 ? -1 : 1;
+        console.log("xdirection: ", xdirection)
+        console.log("ydirection: ", ydirection)
         this.x = table.tableWidth / 2;
-        this.y = getRandomInt(this.size, table.tableHeight - this.size);
-        this.moveX = getRandomInt(5, 10);
-        this.moveY = getRandomInt(1, 5);
+        this.y = table.tableHeight / 2;
+        this.moveX = getRandomInt(5, 10)  * xdirection;
+        this.moveY = getRandomInt(5, 10) * ydirection;
     }
 }
 function getRandomInt(min, max) {
