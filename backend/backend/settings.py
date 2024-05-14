@@ -276,6 +276,11 @@ OAUTH2_PROVIDERS = {
             'openid'
         ],
         'profile_url': 'https://www.googleapis.com/oauth2/v1/userinfo',
+        'fields' : {
+            'username': 'email',
+            'email': 'email',
+            'full_name': 'name',
+        }
     },
     'fortytwo': {
         'client_id': env('FORTYTWO_CLIENT_ID'),
@@ -285,5 +290,10 @@ OAUTH2_PROVIDERS = {
         'token_url': 'https://api.intra.42.fr/oauth/token',
         'scope': ['public'],
         'profile_url': 'https://api.intra.42.fr/v2/me',
+        'fields' : {
+            'username': 'login',
+            'email': 'email',
+            'full_name': 'displayname',
+        }
     }
 }

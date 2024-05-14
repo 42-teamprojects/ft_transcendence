@@ -45,11 +45,6 @@ class LoginView(TokenObtainPairView):
 
             response = add_cookies(response, access_token, refresh_token)
  
-            # Get user data
-            user_data = response.data.get('user')
-            print(user_data)
-            # Do something with user data
-
         return response
 
 
