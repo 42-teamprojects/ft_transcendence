@@ -64,7 +64,8 @@ INSTALLED_APPS = [
     'djoser',
     # Apps
     'users',
-    'security'
+    'security',
+    'game'
 ]
 
 MIDDLEWARE = [

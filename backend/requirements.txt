@@ -13,3 +13,6 @@ django-sslserver==0.22
 pyotp==2.9.0
 django-ses==4.0.0
 qrcode==7.4.2
+
+channels==3.0.4
+daphne==3.0.2
