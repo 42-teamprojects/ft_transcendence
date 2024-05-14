@@ -64,7 +64,8 @@ INSTALLED_APPS = [
     'djoser',
     # Apps
     'users',
-    'security'
+    'security',
+    'oauth',
 ]
 
 MIDDLEWARE = [
@@ -238,9 +239,6 @@ DJOSER = {
     'TOKEN_MODEL': None,
     # 'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS': env('REDIRECT_URLS').split(',')
 }
-# Google Oauth2
-GOOGLE_CLIENT_ID = env('GOOGLE_CLIENT_ID')
-GOOGLE_CLIENT_SECRET = env('GOOGLE_CLIENT_SECRET')
 
 # SSL
 # Set the paths to your generated SSL certificate and key
@@ -264,3 +262,28 @@ MEDIA_URL = '/storage/'
     
 # Path where media is stored  
 MEDIA_ROOT = os.path.join(BASE_DIR, 'storage/')
+
+OAUTH2_PROVIDERS = {
+    'google': {
+        'client_id': env('GOOGLE_CLIENT_KEY'),
+        'client_secret': env('GOOGLE_CLIENT_SECRET'),
+        'redirect_uri': env('GOOGLE_REDIRECT_URL'),
+        'authorization_url': 'https://accounts.google.com/o/oauth2/auth',
+        'token_url': 'https://accounts.google.com/o/oauth2/token',
+        'scope': [
+            'https://www.googleapis.com/auth/userinfo.email',
+            'https://www.googleapis.com/auth/userinfo.profile',
+            'openid'
+        ],
+        'profile_url': 'https://www.googleapis.com/oauth2/v1/userinfo',
+    },
+    'fortytwo': {
+        'client_id': env('FORTYTWO_CLIENT_ID'),
+        'client_secret': env('FORTYTWO_CLIENT_SECRET'),
+        'redirect_uri': env('FORTYTWO_REDIRECT_URL'),
+        'authorization_url': 'https://api.intra.42.fr/oauth/authorize',
+        'token_url': 'https://api.intra.42.fr/oauth/token',
+        'scope': ['public'],
+        'profile_url': 'https://api.intra.42.fr/v2/me',
+    }
+}
