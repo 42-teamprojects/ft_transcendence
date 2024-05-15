@@ -11,7 +11,7 @@ export default class Chat extends HTMLElement {
 
     render() {
         this.innerHTML = /*html*/`
-        <h1>chat</h1>
+        <c-chat-list></c-chat-list>
         `;
     }
 }

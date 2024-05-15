@@ -85,4 +85,9 @@ export const routes = [
 		canActivate: [LoginGuard],
 		component: () => import("./components/pages/sign-up.js"),
 	},
+	{
+		path: "/chat",
+		// canActivate: [AuthGuard],
+		component: () => import("./components/pages/chat.js"),
+	}
 ];
