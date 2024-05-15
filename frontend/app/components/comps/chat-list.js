@@ -17,9 +17,9 @@ export default class Chatlist extends HTMLElement {
                 <img src="/public/assets/icons/plus.svg" alt="add" class="chat-list__add" />
             </div>
             <div class="chat-list__search">
-                <input type="text" class="input-field w-90 mt-6" style="border: none;" placeholder="Search Messages" />
+                <input type="text" class="input-field" style="border: none;" placeholder="Search Messages" />
             </div>
-            <c-chat-card></c-chat-card>
+            <c-chat-card username="msodor" img="https://api.dicebear.com/8.x/thumbs/svg?seed=mouad" msg="hello" time="1h"></c-chat-card>
         </div>
         `;
     }

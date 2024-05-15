@@ -51,7 +51,7 @@ export const routes = [
 	},
 	{
 		path: "/dashboard",
-		canActivate: [AuthGuard],
+		// canActivate: [AuthGuard],
 		children: [
 			{
 				path: "/home",
@@ -77,12 +77,12 @@ export const routes = [
 	},
 	{
 		path: "/login",
-		canActivate: [LoginGuard],
+		// canActivate: [LoginGuard],
 		component: () => import("./components/pages/login.js"),
 	},
 	{
 		path: "/register",
-		canActivate: [LoginGuard],
+		// canActivate: [LoginGuard],
 		component: () => import("./components/pages/sign-up.js"),
 	},
 	{
