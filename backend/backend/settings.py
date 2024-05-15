@@ -157,14 +157,23 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Email
-DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
-EMAIL_PORT = 2525
-EMAIL_HOST_USER = env('MAILTRAP_USERNAME')
-EMAIL_HOST_PASSWORD = env('MAILTRAP_PASSWORD')
-EMAIL_USE_TLS = True
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
+# EMAIL_PORT = 2525
+# EMAIL_HOST_USER = env('MAILTRAP_USERNAME')
+# EMAIL_HOST_PASSWORD = env('MAILTRAP_PASSWORD')
+# EMAIL_USE_TLS = True
+# DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
+
+EMAIL_BACKEND = 'django_ses.SESBackend'
+AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
+AWS_SES_REGION_NAME = env('AWS_SES_REGION_NAME')
+AWS_SES_REGION_ENDPOINT = f'email.{AWS_SES_REGION_NAME}.amazonaws.com'
+AWS_SES_FROM_EMAIL = env('AWS_SES_FROM_EMAIL')
+USE_SES_V2 = True
+
 
 # JWT
 SIMPLE_JWT = {
