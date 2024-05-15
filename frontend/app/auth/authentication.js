@@ -150,12 +150,14 @@ export default class Authentication {
 
 			return authorization_url;
 		} catch (error) {
-			console.error(error);
 			throw error;
 		}
 	}
 
 	async callbackOAuth(provider, code, state) {
+		if (code == null || state == null) {
+			throw new Error("Invalid code or state");
+		}
 		try {
 			const response = await fetch(config.rest_url + `oauth2/callback/${provider}/?code=${code}&state=${state}`, {
 				method: "GET",
@@ -169,10 +171,9 @@ export default class Authentication {
 				return true;
 			}
 			if (!response.ok) {
-				throw response.json();
+				throw await response.json();
 			}
 		} catch (error) {
-			console.error(error);
 			throw error;
 		}
 	}

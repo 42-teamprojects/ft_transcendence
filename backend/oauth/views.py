@@ -17,7 +17,7 @@ class OAuth2LoginView(APIView):
     def get(self, request, provider):
         provider_config = settings.OAUTH2_PROVIDERS.get(provider)
         if not provider_config:
-            return HttpResponseBadRequest("Unsupported provider")
+            return Response({"error" : "Unsupported provider"}, status=status.HTTP_400_BAD_REQUEST)
 
         os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'  # Only for development
         oauth = OAuth2Session(
@@ -40,7 +40,7 @@ class OAuth2CallbackView(APIView):
     def get(self, request, provider):
         provider_config = settings.OAUTH2_PROVIDERS.get(provider)
         if not provider_config:
-            return HttpResponseBadRequest("Unsupported provider")
+            return Response({"error" : "Unsupported provider"}, status=status.HTTP_400_BAD_REQUEST)
 
         os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'  # Only for development
 
@@ -48,7 +48,7 @@ class OAuth2CallbackView(APIView):
         state = request.session.get('oauth_state')
         oauth_provider = request.session.get('oauth_provider')
         if not state or oauth_provider != provider:
-            return HttpResponseBadRequest("State not found or provider mismatch.")
+            return Response({"error" : "State not found or provider mismatch."}, status=status.HTTP_400_BAD_REQUEST)
 
         oauth = OAuth2Session(
             provider_config['client_id'],
@@ -69,13 +69,12 @@ class OAuth2CallbackView(APIView):
         del request.session['oauth_state']
         del request.session['oauth_provider']
         
+        email = profile['email']
         if (provider == 'google'):
-            email = profile['email']
             full_name = profile['name']
             username = profile['email'].split('@')[0]
         
         if (provider == 'fortytwo'):
-            email = profile['email']
             full_name = profile['displayname']
             username = profile['login']
         
@@ -93,11 +92,12 @@ class OAuth2CallbackView(APIView):
             user.save()
             ok = True
             
-        response = Response(status=status.HTTP_401_UNAUTHORIZED)
         if ok:
             response = Response(status=status.HTTP_200_OK)
             access_token, refresh_token = user.tokens().values()
             response = add_cookies(response, access_token, refresh_token)
+        else:
+            response = Response({"error" : "Something went wrong, please try again."}, status=status.HTTP_401_UNAUTHORIZED)
 
         return response
         
