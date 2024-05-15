@@ -4,7 +4,11 @@ import Router from "../../router/router.js";
 export default class Oauth2 extends HTMLElement {
     constructor() {
         super();
-
+        this.innerHTML = /*html*/`
+            <div class="flex-col vh-full flex-col-center">
+                <span class="loader"></span>
+            </div>
+        `;
         // get query search params
         const urlParams = new URLSearchParams(window.location.search);
 
@@ -18,9 +22,9 @@ export default class Oauth2 extends HTMLElement {
         this.callbackOAuth(provider, code, state);
     }
     
-    connectedCallback() {
-        this.render();
-    }
+    // connectedCallback() {
+    //     this.render();
+    // }
 
     async callbackOAuth(provider, code, state) {
         try {
@@ -37,13 +41,9 @@ export default class Oauth2 extends HTMLElement {
 
     disconnectedCallback() {}
 
-    render() {
-        this.innerHTML = /*html*/`
-            <div class="flex-col vh-full flex-col-center">
-                <span class="loader"></span>
-            </div>
-        `;
-    }
+    // render() {
+        
+    // }
 }
 
 customElements.define('p-oauth2', Oauth2);

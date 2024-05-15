@@ -33,7 +33,6 @@ export default class Authentication {
 			}
 			return data;
 		} catch (error) {
-			console.error(error);
 			throw error;
 		}
 	}
@@ -55,7 +54,6 @@ export default class Authentication {
 			}
 			return data;
 		} catch (error) {
-			console.error(error);
 			throw error;
 		}
 	}
@@ -125,7 +123,6 @@ export default class Authentication {
 				throw data;
 			}
 		} catch (error) {
-			console.error(error);
 			throw error;
 		}
 	}
@@ -182,7 +179,7 @@ export default class Authentication {
 		try {
 			await this.login("yusufisawi", "password");
 		} catch (error) {
-			console.error(error);
+			console.log(error)
 		}
 	}
 }
