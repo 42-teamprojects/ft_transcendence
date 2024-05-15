@@ -728,19 +728,22 @@
 }
 
 .w-75 {
-    height: 75% !important;
+    width: 75% !important;
 }
 
 .w-90 {
-    height: 90% !important;
+    width: 90% !important;
+}
+.w-80 {
+    width: 80% !important;
 }
 
 .vw-75 {
-    height: 75vh !important;
+    width: 75vh !important;
 }
 
 .vw-90 {
-    height: 90vh !important;
+    width: 90vh !important;
 }
 
 /* Height */

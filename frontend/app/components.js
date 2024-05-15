@@ -1,3 +1,4 @@
+import Chatcard from "./components/comps/chat-card.js";
 import Chatlist from "./components/comps/chat-list.js";
 import Tournamentcard from "./components/comps/tournament-card.js";
 import Logout from "./components/comps/logout.js";
@@ -58,4 +59,5 @@ export const components = [
 	{ tagName: 'c-logout', component: Logout },
 	{ tagName: 'c-tournament-card', component: Tournamentcard },
 	{ tagName: 'c-chat-list', component: Chatlist },
+	{ tagName: 'c-chat-card', component: Chatcard },
 ];
