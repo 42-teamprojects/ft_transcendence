@@ -31,10 +31,7 @@ class OAuth2LoginView(APIView):
         request.session['oauth_state'] = state
         request.session['oauth_provider'] = provider
 
-        json = {
-            'authorization_url': authorization_url
-        }
-        return Response(json, status=status.HTTP_200_OK)
+        return Response({ 'authorization_url': authorization_url }, status=status.HTTP_200_OK)
 
 class OAuth2CallbackView(APIView):
     def get(self, request, provider):
