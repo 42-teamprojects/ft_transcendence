@@ -130,6 +130,53 @@ export default class Authentication {
 		}
 	}
 
+	async continueWithOAuth(provider) {
+		try {
+			const response = await fetch(config.rest_url + `oauth2/login/${provider}/`, {
+				method: "GET",
+				headers: {
+					Accept: "application/json, text/plain, */*",
+					"Content-Type": "application/json",
+				},
+				credentials: "include",
+			});
+			const { authorization_url } = await response.json();
+			if (!response.ok) {
+				throw data;
+			}
+
+			// navigate to the authorization url
+			window.location.replace(authorization_url);
+
+			return authorization_url;
+		} catch (error) {
+			console.error(error);
+			throw error;
+		}
+	}
+
+	async callbackOAuth(provider, code, state) {
+		try {
+			const response = await fetch(config.rest_url + `oauth2/callback/${provider}/?code=${code}&state=${state}`, {
+				method: "GET",
+				headers: {
+					Accept: "application/json, text/plain, */*",
+					"Content-Type": "application/json",
+				},
+				credentials: "include",
+			});
+			if (response.status === 200) {
+				return true;
+			}
+			if (!response.ok) {
+				throw response.json();
+			}
+		} catch (error) {
+			console.error(error);
+			throw error;
+		}
+	}
+
 	async testAuthentication() {
 		try {
 			await this.login("yusufisawi", "password");

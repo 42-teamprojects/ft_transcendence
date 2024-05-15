@@ -85,4 +85,22 @@ export const routes = [
 		canActivate: [LoginGuard],
 		component: () => import("./components/pages/sign-up.js"),
 	},
+	{
+		path: "/oauth2",
+		children: [
+			{
+				path: "/callback",
+				children: [
+					{
+						path: "/google",
+						component: () => import("./components/pages/oauth2.js"),
+					},
+					{
+						path: "/fortytwo",
+						component: () => import("./components/pages/oauth2.js"),
+					},
+				]
+			},
+		],
+	}
 ];

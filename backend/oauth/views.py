@@ -10,8 +10,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.core import serializers
 
-# http://localhost:8000/oauth2/login/google/
-# http://localhost:8000/oauth2/login/fortytwo/
+# http://localhost:8000/api/oauth2/login/google/
+# http://localhost:8000/api/oauth2/login/fortytwo/
 
 class OAuth2LoginView(APIView):
     def get(self, request, provider):
@@ -31,7 +31,10 @@ class OAuth2LoginView(APIView):
         request.session['oauth_state'] = state
         request.session['oauth_provider'] = provider
 
-        return Response(authorization_url, status=status.HTTP_200_OK)
+        json = {
+            'authorization_url': authorization_url
+        }
+        return Response(json, status=status.HTTP_200_OK)
 
 class OAuth2CallbackView(APIView):
     def get(self, request, provider):
