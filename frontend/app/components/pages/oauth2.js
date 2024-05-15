@@ -1,9 +1,14 @@
 import Authentication from "../../auth/authentication.js";
 import Router from "../../router/router.js";
+import Toast from "../comps/toast.js";
 
 export default class Oauth2 extends HTMLElement {
     constructor() {
         super();
+        
+    }
+    
+    connectedCallback() {
         this.innerHTML = /*html*/`
             <div class="flex-col vh-full flex-col-center">
                 <span class="loader"></span>
@@ -21,10 +26,6 @@ export default class Oauth2 extends HTMLElement {
 
         this.callbackOAuth(provider, code, state);
     }
-    
-    // connectedCallback() {
-    //     this.render();
-    // }
 
     async callbackOAuth(provider, code, state) {
         try {
@@ -35,15 +36,12 @@ export default class Oauth2 extends HTMLElement {
         }
         catch (error) {
             console.error(error);
+            Toast.notify({ type: "error", message: "An error occurred, please try again later" });
             Router.instance.navigate("/login");
         }
     }
 
     disconnectedCallback() {}
-
-    // render() {
-        
-    // }
 }
 
 customElements.define('p-oauth2', Oauth2);
