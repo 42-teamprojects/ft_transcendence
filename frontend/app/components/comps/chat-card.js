@@ -11,7 +11,7 @@ export default class Chatcard extends HTMLElement {
 
     render() {
         this.innerHTML = /*html*/`
-        <h1>chatcard</h1>
+        <div>chatcard</div>
         `;
     }
 }

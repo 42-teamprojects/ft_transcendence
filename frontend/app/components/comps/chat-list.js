@@ -19,6 +19,7 @@ export default class Chatlist extends HTMLElement {
             <div class="chat-list__search">
                 <input type="text" class="input-field w-90 mt-6" style="border: none;" placeholder="Search Messages" />
             </div>
+            <c-chat-card></c-chat-card>
         </div>
         `;
     }

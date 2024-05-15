@@ -22,26 +22,19 @@
 .chat-list__add {
     width: 30px;
     height: 30px;
-    /* align-self: end; */
 }
 
 .chat-list__title {
-    /* align-self: flex-start; */
-
     font-size: 1.25rem;
 }
 
 
 .chat-list__search {
     width: 100%;
-    height: 50px;
+    height: 70px;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 0 1rem;
+    /* padding: 0 1rem; */
 }
-
-
-
-chat-list
