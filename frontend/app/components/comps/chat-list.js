@@ -19,10 +19,10 @@ export default class Chatlist extends HTMLElement {
                 <span class="chat-list__title">Messages</span>
                 <img src="/public/assets/icons/plus.svg" alt="add" class="chat-list__add" />
             </div>
+            <div class="chat-list__search">
+                <input type="text" class="input-field" placeholder="Search Messages" />
+            </div>
             <div class="chat-list__content">
-                <div class="chat-list__search">
-                    <input type="text" class="input-field" placeholder="Search Messages" />
-                </div>
                 <div class="chat-list__items">
                     <c-chat-card username="msodor" img="https://api.dicebear.com/8.x/thumbs/svg?seed=mouad" msg="hello" time="1h" active="${this.router.currentRoute.endsWith('msodor')}"></c-chat-card>
                     <c-chat-card username="hassan" img="https://api.dicebear.com/8.x/thumbs/svg?seed=hassan" msg="wa fin a sat" time="50m" active="${this.router.currentRoute.endsWith('hassan')}"></c-chat-card>

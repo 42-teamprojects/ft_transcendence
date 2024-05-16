@@ -11,7 +11,11 @@ export default class Chat extends HTMLElement {
 
     render() {
         this.innerHTML = /*html*/`
-        <c-chat-list></c-chat-list>
+        <div class="chat-page">
+            <c-chat-list></c-chat-list>
+            <c-conv username="msodor" img="https://api.dicebear.com/8.x/thumbs/svg?seed=mouad"></c-conv>
+            <div class="match-history vh-full w-full"></div>
+        </div>
         `;
     }
 }
