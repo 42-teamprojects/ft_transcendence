@@ -65,7 +65,8 @@ INSTALLED_APPS = [
     # Apps
     'users',
     'security',
-    'game'
+    'game',
+    'oauth',
 ]
 
 MIDDLEWARE = [
@@ -157,14 +158,24 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Email
-DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
-EMAIL_PORT = 2525
-EMAIL_HOST_USER = env('MAILTRAP_USERNAME')
-EMAIL_HOST_PASSWORD = env('MAILTRAP_PASSWORD')
-EMAIL_USE_TLS = True
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
+# EMAIL_PORT = 2525
+# EMAIL_HOST_USER = env('MAILTRAP_USERNAME')
+# EMAIL_HOST_PASSWORD = env('MAILTRAP_PASSWORD')
+# EMAIL_USE_TLS = True
+# DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
+
+EMAIL_BACKEND = 'django_ses.SESBackend'
+
+AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
+AWS_SES_REGION_NAME = env('AWS_SES_REGION_NAME')
+AWS_SES_REGION_ENDPOINT = f'email.{AWS_SES_REGION_NAME}.amazonaws.com'
+AWS_SES_FROM_EMAIL = env('AWS_SES_FROM_EMAIL')
+USE_SES_V2 = True
+
 
 # JWT
 SIMPLE_JWT = {
@@ -239,9 +250,6 @@ DJOSER = {
     'TOKEN_MODEL': None,
     # 'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS': env('REDIRECT_URLS').split(',')
 }
-# Google Oauth2
-GOOGLE_CLIENT_ID = env('GOOGLE_CLIENT_ID')
-GOOGLE_CLIENT_SECRET = env('GOOGLE_CLIENT_SECRET')
 
 # SSL
 # Set the paths to your generated SSL certificate and key
@@ -265,3 +273,38 @@ MEDIA_URL = '/storage/'
     
 # Path where media is stored  
 MEDIA_ROOT = os.path.join(BASE_DIR, 'storage/')
+
+OAUTH2_PROVIDERS = {
+    'google': {
+        'client_id': env('GOOGLE_CLIENT_KEY'),
+        'client_secret': env('GOOGLE_CLIENT_SECRET'),
+        'redirect_uri': env('GOOGLE_REDIRECT_URL'),
+        'authorization_url': 'https://accounts.google.com/o/oauth2/auth',
+        'token_url': 'https://accounts.google.com/o/oauth2/token',
+        'scope': [
+            'https://www.googleapis.com/auth/userinfo.email',
+            'https://www.googleapis.com/auth/userinfo.profile',
+            'openid'
+        ],
+        'profile_url': 'https://www.googleapis.com/oauth2/v1/userinfo',
+        'fields' : {
+            'username': 'email',
+            'email': 'email',
+            'full_name': 'name',
+        }
+    },
+    'fortytwo': {
+        'client_id': env('FORTYTWO_CLIENT_ID'),
+        'client_secret': env('FORTYTWO_CLIENT_SECRET'),
+        'redirect_uri': env('FORTYTWO_REDIRECT_URL'),
+        'authorization_url': 'https://api.intra.42.fr/oauth/authorize',
+        'token_url': 'https://api.intra.42.fr/oauth/token',
+        'scope': ['public'],
+        'profile_url': 'https://api.intra.42.fr/v2/me',
+        'fields' : {
+            'username': 'login',
+            'email': 'email',
+            'full_name': 'displayname',
+        }
+    }
+}

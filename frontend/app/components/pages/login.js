@@ -9,10 +9,28 @@ import Toast from "../comps/toast.js";
 export default class Login extends HTMLElement {
 	constructor() {
 		super();
+		document.title = "Login | Blitzpong.";
 	}
 
 	connectedCallback() {
 		this.render();
+
+		this.oauthBtns = this.querySelectorAll(".oauth-btn")
+		
+		this.oauthBtns.forEach((btn) => {
+			btn.addEventListener("click", async (e) => {
+				const provider = e.target.id;
+				try {
+					const authorization_url = await Authentication.instance.continueWithOAuth(provider);
+					console.log(authorization_url)
+				}
+				catch (error) {
+					console.error(error);
+					Toast.notify({ type: "error", message: "An error occurred, please try again later" });
+				}
+			});
+		});
+
 		this.loginBtn = this.querySelector("#login");
 		this.form = this.querySelector("form");
 		this.inputs = Array.from(this.querySelectorAll('input'));
@@ -78,8 +96,8 @@ export default class Login extends HTMLElement {
                 <hr> <span> or </span> <hr>
             </div>
             <div class="social-login">
-                <button is="c-button" class="btn-default"> <img src="/public/assets/icons/42.svg" alt="42"/> intra </button>
-                <button is="c-button" class="btn-default"> <img src="/public/assets/icons/google.svg" alt="google"/> google </button>
+                <button is="c-button" class="btn-default oauth-btn" id="fortytwo"> <img src="/public/assets/icons/42.svg" alt="42"/> intra </button>
+                <button is="c-button" class="btn-default oauth-btn" id="google"> <img src="/public/assets/icons/google.svg" alt="google"/> google </button>
             </div>
         </div>
         `;

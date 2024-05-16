@@ -1,0 +1,15 @@
+// Us           // Google
+// Username     // email.split('@')[0]
+// email        // email
+// fullname     // name
+
+{
+	"id": "106448720995739994065",
+	"email": "yusufisawi@gmail.com",
+	"verified_email": true,
+	"name": "Youssef El Aissaoui",
+	"given_name": "Youssef",
+	"family_name": "El Aissaoui",
+	"picture": "https://lh3.googleusercontent.com/a/ACg8ocKn8Hzbz0_oPzwWaVUG1m009uCfZKMs7aaeX8BFJ-sv6KY8Oo4v=s96-c",
+	"locale": "en-GB"
+}

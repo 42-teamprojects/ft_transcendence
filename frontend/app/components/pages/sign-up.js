@@ -9,13 +9,10 @@ import Toast from "../comps/toast.js";
 export default class SignUp extends HTMLElement {
 	constructor() {
 		super();
+		document.title = "Sign up | Blitzpong.";
 	}
 
 	connectedCallback() {
-		// if ((new AuthGuard()).canActivate()) {
-		// 	Router.instance.navigate("/dashboard/home");
-		// 	return;
-		// }
 		this.render();
 		this.registerBtn = this.querySelector("button.btn-secondary");
 		this.form = this.querySelector("form");
