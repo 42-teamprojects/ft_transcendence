@@ -13,6 +13,9 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
     TokenVerifyView
 )
+from .models import OneTimePassword
+from .utils import send_verification
+
 
 # Register View
 class RegisterView(GenericAPIView):
@@ -27,7 +30,7 @@ class RegisterView(GenericAPIView):
 
         serializer.save()
         user = serializer.data
-        # send_otp_email(user['email'])
+        is_sent = send_verification(user['full_name'], user['email'])
 
         return Response({
             'user': user,
@@ -95,6 +98,24 @@ class CustomProviderAuthView(ProviderAuthView):
             response = add_cookies(response, access_token, refresh_token)
 
         return response
+    
+class VerifyUserEmail(GenericAPIView):
+    def post(self, request):
+        email = request.data.get('email')
+        otp = request.data.get('otp')
+
+        try:
+            user_code_obj = OneTimePassword.objects.get(otp=otp)
+            user = user_code_obj.user
+            if user.email != email:
+                return Response({'message': 'Email and OTP does not match'}, status=status.HTTP_400_BAD_REQUEST)
+            if not user.is_verified:
+                user.is_verified = True
+                user.save()
+                return Response({'message': 'Email Verified Successfully'}, status=status.HTTP_200_OK)
+            return Response({'message': 'Email Already Verified'}, status=status.HTTP_400_BAD_REQUEST)
+        except OneTimePassword.DoesNotExist:
+            return Response({'message': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 def add_cookies(response, access_token = None, refresh_token = None):

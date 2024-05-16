@@ -4,8 +4,8 @@ from .views import (
     JWTVerifyView,
     LoginView,
     RegisterView,
-    CustomProviderAuthView,
-    LogoutView
+    LogoutView,
+    VerifyUserEmail
 )
 
 urlpatterns = [
@@ -14,4 +14,5 @@ urlpatterns = [
     path('jwt/refresh/', JWTRefreshView.as_view()),
     path('jwt/verify/', JWTVerifyView.as_view()),
     path('logout/', LogoutView.as_view()),
+    path('verify-email/', VerifyUserEmail.as_view(), name='verify-email'),
 ]
