@@ -21,6 +21,12 @@ export default class Oauth2 extends HTMLElement {
         const code = urlParams.get('code');
         const state = urlParams.get('state');
 
+        if (!code || !state) {
+            Toast.notify({ type: "error", message: "An error occurred, please try again later" });
+            Router.instance.navigate("/login");
+            return;
+        }
+
         // get provider from pathname
         const provider = window.location.pathname.split('/')[3];
 
@@ -35,7 +41,7 @@ export default class Oauth2 extends HTMLElement {
             }
         }
         catch (error) {
-            console.error(error);
+            console.error(error.error);
             Toast.notify({ type: "error", message: "An error occurred, please try again later" });
             Router.instance.navigate("/login");
         }
