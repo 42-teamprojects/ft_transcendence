@@ -16,7 +16,7 @@ export default class Chatlist extends HTMLElement {
         this.innerHTML = /*html*/`
         <div class="chat-list">
             <div class="chat-list__header">
-                <span class="chat-list__title">Messages</span>
+                <h1 class="chat-list__title">Messages</h1>
                 <img src="/public/assets/icons/plus.svg" alt="add" class="chat-list__add" />
             </div>
             <div class="chat-list__search">

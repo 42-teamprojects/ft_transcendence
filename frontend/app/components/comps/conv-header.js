@@ -16,11 +16,17 @@ export default class Convheader extends HTMLElement {
     render() {
         this.innerHTML = /*html*/`
         <div class="conv-header">
-            <img class="message-card__img" src="${this.imgAtt}" alt="user">
-            <div class="flex-col gap-2">
-                <div class="" >${this.usernameAtt}</div>
-                <div class="">${this.stateAtt}</div>
+            <div class="flex-center gap-4">
+                <img class="message-card__img" src="${this.imgAtt}" alt="user">
+                <div class="flex-col gap-2">
+                    <div class="conv-header__username" >${this.usernameAtt}</div>
+                    <div class="conv-header__status gap-2">
+                        <div class="conv-header__status__dot playing"></div>
+                        <div class="conv-header__status__text capitalize">${this.stateAtt}</div>
+                    </div>
+                </div>
             </div>
+            <button is="c-button" class="btn-primary capitalize">play</button>
         </div>
         `;
     }
