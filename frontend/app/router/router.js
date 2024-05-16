@@ -54,6 +54,17 @@ export default class Router {
 		const url = new URL(window.location.href);
 		const queryParams = Object.fromEntries(url.searchParams.entries());
 
+		// find first exact match using regex
+		const exactMatch = routes.find((route) => {
+			const regex = `^${route.path.replace(/:[^\s/]+/g, "([^\\s/]+)")}$`;
+			return new RegExp(regex).test(path);
+		});
+
+		if (exactMatch) {
+			const params = this.#extractParams(path, exactMatch.path);
+			return { ...exactMatch, params: { ...params, ...queryParams } };
+		}
+
 		const segments = path
 			.split("/")
 			.filter(Boolean)
@@ -67,7 +78,7 @@ export default class Router {
 				const match = segments[segmentIndex].match(new RegExp(regex));
 				
 				if (match) {
-					const params = this.#extractParams(match, route.path);
+					const params = this.#extractParams(path, route.path);
 					let matchedRoute = { ...route, params: { ...params, ...queryParams } };
 					
 					// If the route has children and there are remaining segments, recursively search for a match
@@ -89,12 +100,19 @@ export default class Router {
 		return findMatchingRoute(0, routes);
 	}
 
-	#extractParams(match, routePath) {
-		const keys = routePath.match(/:[^\s/]+/g) || [];
+	#extractParams(path, routePath) {
+		const pathSegments = path.split("/");
+		const routeSegments = routePath.split("/");
 		const params = {};
-		keys.forEach((key, index) => {
-			params[key.replace(":", "")] = match[index + 1];
-		});
+
+		for (let i = 0; i < routeSegments.length; i++) {
+			const routeSegment = routeSegments[i];
+			if (routeSegment.startsWith(":")) {
+				const key = routeSegment.slice(1);
+				const value = pathSegments[i];
+				params[key] = value;
+			}
+		}
 		return params;
 	}
 

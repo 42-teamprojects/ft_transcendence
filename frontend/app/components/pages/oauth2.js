@@ -3,9 +3,10 @@ import Router from "../../router/router.js";
 import Toast from "../comps/toast.js";
 
 export default class Oauth2 extends HTMLElement {
-    constructor() {
+    constructor(params) {
         super();
-        
+        const { provider } = params;
+        this.provider = provider;
     }
     
     connectedCallback() {
@@ -27,10 +28,7 @@ export default class Oauth2 extends HTMLElement {
             return;
         }
 
-        // get provider from pathname
-        const provider = window.location.pathname.split('/')[3];
-
-        this.callbackOAuth(provider, code, state);
+        this.callbackOAuth(this.provider, code, state);
     }
 
     async callbackOAuth(provider, code, state) {
