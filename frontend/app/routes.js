@@ -51,7 +51,7 @@ export const routes = [
 	},
 	{
 		path: "/dashboard",
-		// canActivate: [AuthGuard],
+		canActivate: [AuthGuard],
 		children: [
 			{
 				path: "/home",

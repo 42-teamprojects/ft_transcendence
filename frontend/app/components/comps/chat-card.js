@@ -30,7 +30,6 @@ export default class Chatcard extends HTMLElement {
     disconnectedCallback() {}
 
     render() {
-        console.log(this.isActive)
         this.innerHTML = /*html*/`
         <a is="c-link" href="/dashboard/chat/${this.usernameAtt}">
             <div class="message-card ${this.isActive ? 'active' : ''}">
