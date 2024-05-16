@@ -35,21 +35,15 @@ class RegisterView(GenericAPIView):
         }, status=status.HTTP_201_CREATED)
 
 # Login View with TokenObtainPairView generic view
-class LoginView(GenericAPIView):
-    serializer_class = LoginSerializer
 
+class LoginView(APIView):
     def post(self, request):
-        print(request.data)
-        serializer = self.get_serializer(data=request.data)
-        try:
-            serializer.is_valid(raise_exception=True)
-        except ValidationError as e:
-            return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
-        data = serializer.data
-        two_factor_auth_required = data.get('two_factor_auth_required')
-        
-        response = Response({'two_factor_auth_required' : two_factor_auth_required}, status=status.HTTP_200_OK)
-        return response
+        serializer = LoginSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            data = serializer.validated_data
+            return Response({'two_factor_auth_required': data['two_factor_auth_required']}, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # Custom TokenRefreshView to get and set the access token in the cookie
 class JWTRefreshView(TokenRefreshView):

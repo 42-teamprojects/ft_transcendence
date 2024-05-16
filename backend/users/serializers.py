@@ -47,13 +47,12 @@ class LoginSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         
         user = authenticate(request=request, username=username, password=password)
-
         if not user:
             raise AuthenticationFailed('Invalid credentials, try again')
         
         # if not user.is_verified:
         #     raise AuthenticationFailed('Account is not verified')
-        
+
         return {
             'two_factor_auth_required': user.two_factor_enabled,
         }
