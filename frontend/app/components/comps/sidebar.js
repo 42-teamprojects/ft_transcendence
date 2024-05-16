@@ -38,7 +38,7 @@ export default class Sidebar extends HTMLElement {
         const shouldRender = window.location.pathname.startsWith('/dashboard');
 
         const sidebarLinks = this.links.map(link => /*html*/`
-            <c-sidebar-link link="${link}" active="${this.router.isCurrentRoute('/dashboard/' + link)}" ${this.addTooltip(link)}>
+            <c-sidebar-link link="${link}" active="${this.router.currentRoute.startsWith('/dashboard/' + link)}" ${this.addTooltip(link)}>
                 ${link}
             </c-sidebar-link>
         `).join('');

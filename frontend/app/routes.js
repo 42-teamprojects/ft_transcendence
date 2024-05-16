@@ -59,7 +59,7 @@ export const routes = [
 			},
 			{
 				path: "/chat",
-				component: () => import("./components/pages/dashboard.js"),
+				component: () => import("./components/pages/chat.js"),
 			},
 			{
 				path: "/tournaments",
@@ -77,17 +77,12 @@ export const routes = [
 	},
 	{
 		path: "/login",
-		// canActivate: [LoginGuard],
+		canActivate: [LoginGuard],
 		component: () => import("./components/pages/login.js"),
 	},
 	{
 		path: "/register",
-		// canActivate: [LoginGuard],
+		canActivate: [LoginGuard],
 		component: () => import("./components/pages/sign-up.js"),
 	},
-	{
-		path: "/chat",
-		// canActivate: [AuthGuard],
-		component: () => import("./components/pages/chat.js"),
-	}
 ];
