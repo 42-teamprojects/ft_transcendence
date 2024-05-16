@@ -26,7 +26,10 @@ export default class Convheader extends HTMLElement {
                     </div>
                 </div>
             </div>
-            <button is="c-button" class="btn-primary capitalize">play</button>
+            <button is="c-button" class="btn-primary gap-3">
+                <i class="fa-solid fa-play"></i>
+                play
+            </button>
         </div>
         `;
     }
