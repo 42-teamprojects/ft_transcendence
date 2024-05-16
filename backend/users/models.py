@@ -24,6 +24,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_verified = models.BooleanField(_('Is Verified'), default=False)
     secret_key = models.CharField(_('Secret Key'), max_length=100, blank=True, null=True)
     date_joined = models.DateTimeField(_('Date Joined'), auto_now_add=True)
+    two_factor_enabled = models.BooleanField(_('Two Factor Enabled'), default=False)
+
     
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['full_name', 'email']

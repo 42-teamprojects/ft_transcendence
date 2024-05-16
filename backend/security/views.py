@@ -9,6 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 
 from backend import settings
+from users.views import add_cookies
 
 # Create your views here.
 class EnableTwoFactorAuthView(APIView):
@@ -43,8 +44,11 @@ class VerifyTwoFactorAuthView(APIView):
         totp = pyotp.TOTP(user.secret_key)
         
         if totp.verify(request.data['otp']):
-            user.two_factor_auth = True
-            user.save()
-            return Response({'message': 'Two-factor authentication enabled successfully'}, status=status.HTTP_200_OK)
+            tokens = user.tokens()
+            
+            response = Response({'message': 'Two-factor authentication is successful'}, status=status.HTTP_200_OK)
+            
+            response = add_cookies(response, tokens['access'], tokens['refresh'])
+            return response
         else:
             return Response({'message': 'Invalid OTP'}, status=status.HTTP_401_UNAUTHORIZED)

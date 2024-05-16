@@ -34,12 +34,12 @@ class LoginSerializer(serializers.ModelSerializer):
     username = serializers.CharField(max_length=255)
     password = serializers.CharField(max_length=128, min_length=8, write_only=True)
     full_name = serializers.CharField(max_length=255, read_only=True)
-    access_token = serializers.CharField(max_length=255, read_only=True)
-    refresh_token = serializers.CharField(max_length=255, read_only=True)
+    # access_token = serializers.CharField(max_length=255, read_only=True)
+    # refresh_token = serializers.CharField(max_length=255, read_only=True)
     
     class Meta:
         model = User
-        fields = ['username', 'password', 'full_name', 'access_token', 'refresh_token']
+        fields = ['username', 'password', 'full_name']
     
     def validate(self, attrs):
         username = attrs.get('username', None)
@@ -54,13 +54,7 @@ class LoginSerializer(serializers.ModelSerializer):
         # if not user.is_verified:
         #     raise AuthenticationFailed('Account is not verified')
         
-        token = user.tokens()
-        
         return {
-            'email': user.email,
-            'username': user.username,
-            'full_name': user.full_name,
-            'access_token': token.get('access'),
-            'refresh_token': token.get('refresh')
+            'two_factor_auth_required': user.two_factor_enabled,
         }
             

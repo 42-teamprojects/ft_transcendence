@@ -1,6 +1,6 @@
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
-from .serializers import RegisterSerializer
+from .serializers import LoginSerializer, RegisterSerializer
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from django.conf import settings
@@ -35,18 +35,21 @@ class RegisterView(GenericAPIView):
         }, status=status.HTTP_201_CREATED)
 
 # Login View with TokenObtainPairView generic view
-class LoginView(TokenObtainPairView):
-    def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
+class LoginView(GenericAPIView):
+    serializer_class = LoginSerializer
 
-        if response.status_code == 200:
-            access_token = response.data.get('access')
-            refresh_token = response.data.get('refresh')
-
-            response = add_cookies(response, access_token, refresh_token)
- 
+    def post(self, request):
+        print(request.data)
+        serializer = self.get_serializer(data=request.data)
+        try:
+            serializer.is_valid(raise_exception=True)
+        except ValidationError as e:
+            return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
+        data = serializer.data
+        two_factor_auth_required = data.get('two_factor_auth_required')
+        
+        response = Response({'two_factor_auth_required' : two_factor_auth_required}, status=status.HTTP_200_OK)
         return response
-
 
 # Custom TokenRefreshView to get and set the access token in the cookie
 class JWTRefreshView(TokenRefreshView):
