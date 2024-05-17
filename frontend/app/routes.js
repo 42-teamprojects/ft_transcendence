@@ -20,6 +20,10 @@ export const routes = [
 		component: () => import("./components/pages/components.js"),
 	},
 	{
+		path: "/email-verification",
+		component: () => import("./components/pages/email-verif.js"),
+	},
+	{
 		path: "/local",
 		component: () => import("./components/pages/local.js"),
 		children: [
@@ -47,6 +51,7 @@ export const routes = [
 					},
 				],
 			},
+
 		],
 	},
 	{
