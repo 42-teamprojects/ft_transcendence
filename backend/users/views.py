@@ -1,6 +1,6 @@
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
-from .serializers import LoginSerializer, RegisterSerializer
+from .serializers import LoginSerializer, MyTokenObtainPairSerializer, RegisterSerializer
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from django.conf import settings
@@ -45,13 +45,14 @@ class RegisterView(GenericAPIView):
 
 # Login View with TokenObtainPairView generic view
 class LoginView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
 
         if response.status_code == 200:
             access_token = response.data.get('access')
             refresh_token = response.data.get('refresh')
-
+            
             response = add_cookies(response, access=access_token, refresh=refresh_token)
 
         return response
