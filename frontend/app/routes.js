@@ -65,7 +65,7 @@ export const routes = [
 			},
 			{
 				path: "/chat",
-				component: () => import("./components/pages/dashboard.js"),
+				component: () => import("./components/pages/chat.js"),
 			},
 			{
 				path: "/tournaments",

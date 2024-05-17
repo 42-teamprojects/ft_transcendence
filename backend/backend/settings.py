@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     # Apps
     'users',
     'security',
+    'game',
     'oauth',
 ]
 

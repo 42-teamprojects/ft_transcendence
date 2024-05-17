@@ -30,7 +30,7 @@ c-usercard {
         line-height: 18px;
         letter-spacing: 0.8px;
 
-        &.online 
+        &.online
         {
             color: var(--success-color);
         }
