@@ -1,5 +1,8 @@
-import Conv from "./components/comps/conv.js";
-import Convheader from "./components/comps/conv-header.js";
+import Messagebubble from "./components/comps/message-bubble.js";
+import Conversationbody from "./components/comps/conversation-body.js";
+import Conversationfooter from "./components/comps/conversation-footer.js";
+import Conversation from "./components/comps/conversation.js";
+import Conversationheader from "./components/comps/conversation-header.js";
 import Chatcard from "./components/comps/chat-card.js";
 import Chatlist from "./components/comps/chat-list.js";
 import Tournamentcard from "./components/comps/tournament-card.js";
@@ -62,6 +65,9 @@ export const components = [
 	{ tagName: 'c-tournament-card', component: Tournamentcard },
 	{ tagName: 'c-chat-list', component: Chatlist },
 	{ tagName: 'c-chat-card', component: Chatcard },
-	{ tagName: 'c-conv-header', component: Convheader },
-	{ tagName: 'c-conv', component: Conv },
+	{ tagName: 'c-conversation-header', component: Conversationheader },
+	{ tagName: 'c-conversation', component: Conversation },
+	{ tagName: 'c-conversation-footer', component: Conversationfooter },
+	{ tagName: 'c-conversation-body', component: Conversationbody },
+	{ tagName: 'c-message-bubble', component: Messagebubble },
 ];
