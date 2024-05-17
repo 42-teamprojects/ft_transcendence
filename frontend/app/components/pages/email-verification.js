@@ -27,7 +27,8 @@ export default class Emailverification extends HTMLElement {
         e.preventDefault();
         const code = this.input.value;
         console.log(code);
-        /* Verify the code, by calling the api /api/auth/verify-email/ 
+        /* Verify the code, by calling the api /api/auth/verify-email/  
+        with a post request (the same as i did in login you can find the code at authenticaion.js file)
         with the code in the body of the request then wait for the response 
         and if the response is successful navigate to the dashboard 
         and show a success message using 
