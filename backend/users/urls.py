@@ -15,5 +15,5 @@ urlpatterns = [
     path('jwt/refresh/', JWTRefreshView.as_view()),
     path('jwt/verify/', JWTVerifyView.as_view()),
     path('logout/', LogoutView.as_view()),
-    path('otp/verify/', OTPVerificationView.as_view(), name='otp-verify'),
+    path('verify-email/', OTPVerificationView.as_view(), name='verify-email'),
 ]
