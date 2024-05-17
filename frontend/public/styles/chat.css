@@ -174,19 +174,28 @@
 
 .conversation-body {
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     gap: 1rem;
     padding: 1rem;
     height: calc(100vh - 88px * 2);
-    scroll-snap-align: end;
     overflow-y: auto;
+
+    & .player-avatar {
+        opacity: 0;
+    }
+    
+    & c-message-bubble:first-child .player-avatar,
+    c-message-bubble[type="out"] + c-message-bubble[type="in"] .player-avatar {
+        opacity: 1;
+    }
 }
 
 c-message-bubble {
     display: flex;
-    flex-direction: column;
+    align-items: center;
     gap: .5rem;
 }
+
 .message-bubble {
     padding: .75rem;
     border-radius: .75rem;
@@ -200,6 +209,8 @@ c-message-bubble {
         margin-left: auto;
         background-color: var(--primary-color);
     }
+
+   
 }
 
 .message-content {

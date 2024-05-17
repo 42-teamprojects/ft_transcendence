@@ -2,7 +2,7 @@ export default class Messagebubble extends HTMLElement {
     constructor() {
         super();
         this.messageType = this.getAttribute('type') || '';
-        this.message = this.getAttribute('message') || '';
+        this.message = this.getAttribute('message') || 'Hello this is me mouad do you remember last time I smashed you';
     }
 
     connectedCallback() {
@@ -13,9 +13,12 @@ export default class Messagebubble extends HTMLElement {
 
     render() {
         this.innerHTML = /*html*/`
+        ${this.messageType === 'in' ? /*html*/`
+            <img src="https://api.dicebear.com/8.x/thumbs/svg?seed=mouad" alt="avatar" class="player-avatar">
+        ` : ''}
         <div class="message-bubble ${this.messageType}">
             <div class="message-content">
-                <p>Hello this is me mouad do you remember last time I smashed you</p>
+                <p>${this.message}</p>
             </div>
         </div>
         `;
