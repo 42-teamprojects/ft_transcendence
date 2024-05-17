@@ -15,6 +15,7 @@ from rest_framework_simplejwt.views import (
 )
 from .models import OneTimePassword
 from .utils import send_verification
+from .utils import verify_otp
 
 
 # Register View
@@ -28,14 +29,16 @@ class RegisterView(GenericAPIView):
         except ValidationError as e:
             return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
 
-        serializer.save()
-        user = serializer.data
-        is_sent = send_verification(user['full_name'], user['email'])
+        # Save the user instance
+        user = serializer.save()
+        # Pass the user instance to send_verification
+        is_sent = send_verification(user)
 
         return Response({
-            'user': user,
+            'user': serializer.data,
             'message': 'User Created Successfully. Check your email to verify your account.'
         }, status=status.HTTP_201_CREATED)
+
 
 # Login View with TokenObtainPairView generic view
 class LoginView(TokenObtainPairView):
@@ -99,23 +102,23 @@ class CustomProviderAuthView(ProviderAuthView):
 
         return response
     
-class VerifyUserEmail(GenericAPIView):
-    def post(self, request):
-        email = request.data.get('email')
-        otp = request.data.get('otp')
+# class VerifyUserEmail(GenericAPIView):
+#     def post(self, request):
+#         email = request.data.get('email')
+#         otp = request.data.get('otp')
 
-        try:
-            user_code_obj = OneTimePassword.objects.get(otp=otp)
-            user = user_code_obj.user
-            if user.email != email:
-                return Response({'message': 'Email and OTP does not match'}, status=status.HTTP_400_BAD_REQUEST)
-            if not user.is_verified:
-                user.is_verified = True
-                user.save()
-                return Response({'message': 'Email Verified Successfully'}, status=status.HTTP_200_OK)
-            return Response({'message': 'Email Already Verified'}, status=status.HTTP_400_BAD_REQUEST)
-        except OneTimePassword.DoesNotExist:
-            return Response({'message': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
+#         try:
+#             user_code_obj = OneTimePassword.objects.get(otp=otp)
+#             user = user_code_obj.user
+#             if user.email != email:
+#                 return Response({'message': 'Email and OTP does not match'}, status=status.HTTP_400_BAD_REQUEST)
+#             if not user.is_verified:
+#                 user.is_verified = True
+#                 user.save()
+#                 return Response({'message': 'Email Verified Successfully'}, status=status.HTTP_200_OK)
+#             return Response({'message': 'Email Already Verified'}, status=status.HTTP_400_BAD_REQUEST)
+#         except OneTimePassword.DoesNotExist:
+#             return Response({'message': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 def add_cookies(response, access_token = None, refresh_token = None):
@@ -139,3 +142,29 @@ def add_cookies(response, access_token = None, refresh_token = None):
         )
 
     return response
+
+
+
+class OTPVerificationView(GenericAPIView):
+    def post(self, request):
+        email = request.data.get('email')
+        otp = request.data.get('otp')
+        try:
+            # Fetch the OTP object using both the OTP and email
+            user_code_obj = OneTimePassword.objects.get(otp=otp, user__email=email)
+            user = user_code_obj.user
+
+            print('=====> user', user)
+            print('=====> user_code_obj', user_code_obj)
+
+            # Verify the OTP
+            if verify_otp(user_code_obj, otp):
+                if not user.is_verified:
+                    user.is_verified = True
+                    user.save()
+                    return Response({'message': 'Email Verified Successfully'}, status=status.HTTP_200_OK)
+                return Response({'message': 'Email Already Verified'}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'message': 'Invalid OTP or Email'}, status=status.HTTP_400_BAD_REQUEST)
+        except OneTimePassword.DoesNotExist:
+            return Response({'message': 'Invalid OTP or Email'}, status=status.HTTP_400_BAD_REQUEST)

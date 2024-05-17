@@ -1,11 +1,12 @@
 from django.urls import path, re_path
+from django.views import View
 from .views import (
     JWTRefreshView,
     JWTVerifyView,
     LoginView,
     RegisterView,
     LogoutView,
-    VerifyUserEmail
+    OTPVerificationView,
 )
 
 urlpatterns = [
@@ -14,5 +15,5 @@ urlpatterns = [
     path('jwt/refresh/', JWTRefreshView.as_view()),
     path('jwt/verify/', JWTVerifyView.as_view()),
     path('logout/', LogoutView.as_view()),
-    path('verify-email/', VerifyUserEmail.as_view(), name='verify-email'),
+    path('otp/verify/', OTPVerificationView.as_view(), name='otp-verify'),
 ]
