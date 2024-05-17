@@ -160,6 +160,13 @@
     margin: 1rem;
 }
 
+.conversation-form {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    gap: 1rem;
+}
+
 .btn-send {
     background: none;
     border: none;
