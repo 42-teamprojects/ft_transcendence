@@ -41,7 +41,7 @@ export default class SignUp extends HTMLElement {
 			this.registerBtn.setAttribute("processing", "true");
 			await Authentication.instance.register(user);
 			this.registerBtn.setAttribute("processing", "false");
-			Router.instance.navigate("/login");
+			Router.instance.navigate("/email-verification");
 			Toast.notify({
 				type: "success",
 				message: "Account created successfuly, Please verify your email. check spam",

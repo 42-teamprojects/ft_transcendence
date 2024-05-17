@@ -20,6 +20,11 @@ export const routes = [
 		component: () => import("./components/pages/components.js"),
 	},
 	{
+		path: "/email-verification",
+		canActivate: [AuthGuard], // add EmailUnverifiedGuard
+		component: () => import("./components/pages/email-verification.js"),
+	},
+	{
 		path: "/local",
 		component: () => import("./components/pages/local.js"),
 		children: [
@@ -47,6 +52,7 @@ export const routes = [
 					},
 				],
 			},
+
 		],
 	},
 	{

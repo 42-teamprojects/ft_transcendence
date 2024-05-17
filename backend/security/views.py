@@ -2,6 +2,7 @@ from io import BytesIO
 from django.http import FileResponse
 from django.shortcuts import render
 import pyotp
+import datetime;
 import qrcode
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -10,6 +11,7 @@ from rest_framework import status
 
 from backend import settings
 from users.views import add_cookies
+from django.utils import timezone
 
 # Create your views here.
 class EnableTwoFactorAuthView(APIView):
@@ -44,8 +46,14 @@ class VerifyTwoFactorAuthView(APIView):
         totp = pyotp.TOTP(user.secret_key)
         
         if totp.verify(request.data['otp']):
+            if user.last_2fa_login is None and not user.two_factor_enabled:
+                user.two_factor_enabled = True
+                
+            user.last_2fa_login = timezone.now()
+            user.save()
+
             tokens = user.tokens()
-            
+
             response = Response({'message': 'Two-factor authentication is successful'}, status=status.HTTP_200_OK)
             
             response = add_cookies(response, access=tokens['access'], refresh=tokens['refresh'])

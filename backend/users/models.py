@@ -25,6 +25,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(_('Date Joined'), auto_now_add=True)
     secret_key = models.CharField(_('Secret Key'), max_length=100, blank=True, null=True)
     two_factor_enabled = models.BooleanField(_('Two Factor Enabled'), default=False)
+    last_2fa_login = models.DateTimeField(_('Last 2FA Login'), blank=True, null=True)
 
     
     USERNAME_FIELD = 'username'
