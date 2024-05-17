@@ -1,3 +1,5 @@
+import { chatService } from "../../state/chatService.js";
+
 export default class Conversationbody extends HTMLElement {
     constructor() {
         super();
@@ -5,49 +7,21 @@ export default class Conversationbody extends HTMLElement {
 
     connectedCallback() {
         this.render();
+        this.unsubscribe = chatService.subscribe(() => {
+            this.render();
+        });
     }
 
     disconnectedCallback() {}
 
     render() {
+        const messages = chatService.getState().messages;
         this.innerHTML = /*html*/`
         <div class="conversation-body">
-            <c-message-bubble type="in"></c-message-bubble>
-            <c-message-bubble type="in"></c-message-bubble>
-            <c-message-bubble type="in"></c-message-bubble>
-            <c-message-bubble type="out" message="sf thala"></c-message-bubble>
-            <c-message-bubble type="out"></c-message-bubble>
-            <c-message-bubble type="out"></c-message-bubble>
-            <c-message-bubble type="in"></c-message-bubble>
-            <c-message-bubble type="out"></c-message-bubble>
-            <c-message-bubble type="in"></c-message-bubble>
-            <c-message-bubble type="in"></c-message-bubble>
-            <c-message-bubble type="in"></c-message-bubble>
-            <c-message-bubble type="out"></c-message-bubble>
-            <c-message-bubble type="out"></c-message-bubble>
-            <c-message-bubble type="in"></c-message-bubble>
-            <c-message-bubble type="out"></c-message-bubble>
-            <c-message-bubble type="in"></c-message-bubble>
-            <c-message-bubble type="in"></c-message-bubble>
-            <c-message-bubble type="in"></c-message-bubble>
-            <c-message-bubble type="out"></c-message-bubble>
-            <c-message-bubble type="out"></c-message-bubble>
-            <c-message-bubble type="in"></c-message-bubble>
-            <c-message-bubble type="out"></c-message-bubble>
-            <c-message-bubble type="in"></c-message-bubble>
-            <c-message-bubble type="in"></c-message-bubble>
-            <c-message-bubble type="in"></c-message-bubble>
-            <c-message-bubble type="out"></c-message-bubble>
-            <c-message-bubble type="out"></c-message-bubble>
-            <c-message-bubble type="in"></c-message-bubble>
-            <c-message-bubble type="out"></c-message-bubble>
-            <c-message-bubble type="in"></c-message-bubble>
-            <c-message-bubble type="out"></c-message-bubble>
-            <c-message-bubble type="in"></c-message-bubble>
-            <c-message-bubble type="out"></c-message-bubble>
-            <c-message-bubble type="in"></c-message-bubble>
-            <c-message-bubble type="in" message="mshi thfaka"></c-message-bubble>
-            </div>
+            ${messages.map((message) => /*html*/`
+                <c-message-bubble type="${message.sender === 'me' ? 'out' : 'in'}" message="${message.message}"></c-message-bubble>
+            `).join("")}
+        </div>
         `;
     }
 }

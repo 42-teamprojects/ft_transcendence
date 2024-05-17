@@ -223,4 +223,6 @@ c-message-bubble {
 .message-content {
     font-size: 1rem;
     color: var(--text-color);
+    word-break: break-word;
+    line-height: 1.6;
 }

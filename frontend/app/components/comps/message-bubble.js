@@ -17,9 +17,9 @@ export default class Messagebubble extends HTMLElement {
             <img src="https://api.dicebear.com/8.x/thumbs/svg?seed=mouad" alt="avatar" class="player-avatar">
         ` : ''}
         <div class="message-bubble ${this.messageType}">
-            <div class="message-content">
-                <p>${this.message}</p>
-            </div>
+            <p class="message-content">
+                ${this.message}
+            </p>
         </div>
         `;
     }
