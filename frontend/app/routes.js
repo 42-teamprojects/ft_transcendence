@@ -21,7 +21,8 @@ export const routes = [
 	},
 	{
 		path: "/email-verification",
-		component: () => import("./components/pages/email-verif.js"),
+		canActivate: [AuthGuard], // add EmailUnverifiedGuard
+		component: () => import("./components/pages/email-verification.js"),
 	},
 	{
 		path: "/local",

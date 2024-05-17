@@ -1,4 +1,3 @@
-import Emailverif from "./components/comps/email-verif.js";
 import Tournamentcard from "./components/comps/tournament-card.js";
 import Logout from "./components/comps/logout.js";
 import Taskcard from "./components/comps/taskcard.js";
@@ -57,5 +56,4 @@ export const components = [
 	{ tagName: 'c-taskcard', component: Taskcard },
 	{ tagName: 'c-logout', component: Logout },
 	{ tagName: 'c-tournament-card', component: Tournamentcard },
-	{ tagName: 'c-email-verif', component: Emailverif },
 ];

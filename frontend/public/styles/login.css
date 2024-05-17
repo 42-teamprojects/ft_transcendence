@@ -1,5 +1,6 @@
 p-login,
-p-signup {
+p-signup,
+p-email-verification {
 	display: flex;
 	justify-content: center;
 	align-items: center;
