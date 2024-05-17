@@ -53,7 +53,11 @@ class LoginSerializer(serializers.ModelSerializer):
         # if not user.is_verified:
         #     raise AuthenticationFailed('Account is not verified')
 
+        refresh_token, access_token = user.tokens().values()
+
         return {
             'two_factor_auth_required': user.two_factor_enabled,
+            'access': access_token,
+            'refresh': refresh_token
         }
             

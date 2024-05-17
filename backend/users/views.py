@@ -35,12 +35,13 @@ class RegisterView(GenericAPIView):
         }, status=status.HTTP_201_CREATED)
 
 # Login View with TokenObtainPairView generic view
-
 class LoginView(APIView):
     def post(self, request):
         serializer = LoginSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             data = serializer.validated_data
+            response = Response(status=status.HTTP_200_OK)
+            response = add_cookies(response=response, access=data['access'], refresh=data['refresh'])
             return Response({'two_factor_auth_required': data['two_factor_auth_required']}, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -58,7 +59,7 @@ class JWTRefreshView(TokenRefreshView):
         if response.status_code == 200:
             access_token = response.data.get('access')
 
-            response = add_cookies(response, access_token)
+            response = add_cookies(response, access=access_token)
 
         return response
 
@@ -89,29 +90,24 @@ class CustomProviderAuthView(ProviderAuthView):
             access_token = response.data.get('access')
             refresh_token = response.data.get('refresh')
 
-            response = add_cookies(response, access_token, refresh_token)
+            response = add_cookies(response, access=access_token, refresh=refresh_token)
 
         return response
 
 
-def add_cookies(response, access_token = None, refresh_token = None):
-    if (access_token):
+def add_cookies(response, **kwargs):
+    for key, val in kwargs.items():
+        if (key == 'access'):
+            key = settings.SIMPLE_JWT['AUTH_COOKIE']
+        if (key == 'refresh'):
+            key = settings.SIMPLE_JWT['AUTH_COOKIE_REFRESH']
         response.set_cookie(
-            key=settings.SIMPLE_JWT['AUTH_COOKIE'],
-            value=access_token,
+            key=key,
+            value=val,
             expires=settings.SIMPLE_JWT['AUTH_COOKIE_LIFETIME'],
             secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],
             httponly=settings.SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
             samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
         )
-    if (refresh_token):
-        response.set_cookie(
-            key=settings.SIMPLE_JWT['AUTH_COOKIE_REFRESH'],
-            value=refresh_token,
-            expires=settings.SIMPLE_JWT['AUTH_COOKIE_LIFETIME'],
-            secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],
-            httponly=settings.SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
-            samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
-        )
-
+        
     return response

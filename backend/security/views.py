@@ -48,7 +48,7 @@ class VerifyTwoFactorAuthView(APIView):
             
             response = Response({'message': 'Two-factor authentication is successful'}, status=status.HTTP_200_OK)
             
-            response = add_cookies(response, tokens['access'], tokens['refresh'])
+            response = add_cookies(response, access=tokens['access'], refresh=tokens['refresh'])
             return response
         else:
             return Response({'message': 'Invalid OTP'}, status=status.HTTP_401_UNAUTHORIZED)
