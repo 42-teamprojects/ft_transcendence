@@ -1,3 +1,5 @@
+import datetime
+import re
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from .serializers import LoginSerializer, MyTokenObtainPairSerializer, RegisterSerializer
@@ -16,7 +18,7 @@ from rest_framework_simplejwt.views import (
 from .models import OneTimePassword
 from .utils import send_verification
 from rest_framework.permissions import IsAuthenticated
-
+from django.utils import timezone
 
 # Register View
 class RegisterView(GenericAPIView):
@@ -93,6 +95,21 @@ class LogoutView(APIView):
         response.delete_cookie('refresh')
 
         return response
+
+class IsAuthenticatedView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        print(user.is_authenticated, user.two_factor_enabled, user.last_2fa_login)
+        
+        # Check if 2FA is enabled and last_2fa_login is null or past 1 day
+        if user.is_authenticated and user.two_factor_enabled and (user.last_2fa_login is None or user.last_2fa_login < timezone.now() - timezone.timedelta(days=1)):            # Delete access and refresh cookies
+            response = Response({'message': 'Two-factor authentication is required'}, status=status.HTTP_401_UNAUTHORIZED)
+            response.delete_cookie(settings.SIMPLE_JWT['AUTH_COOKIE'])
+            response.delete_cookie(settings.SIMPLE_JWT['AUTH_COOKIE_REFRESH'])   
+            return response
+        return Response({'message': 'Authenticated'}, status=status.HTTP_200_OK)
 
 class CustomProviderAuthView(ProviderAuthView):
     def post(self, request, *args, **kwargs):
