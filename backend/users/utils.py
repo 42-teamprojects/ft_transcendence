@@ -25,13 +25,3 @@ def send_verification(user):
     except SMTPException as e:
         print(e)
         return False
-
-
-def verify_otp(user, otp):
-    otp_obj = OneTimePassword.objects.filter(user=user, otp=otp).first()
-    if otp_obj:
-        otp_obj.delete()
-        user.is_verified = True
-        user.save()
-        return True
-    return False
