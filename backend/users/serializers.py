@@ -7,7 +7,7 @@ from django.db.models import Q
 from django.contrib.auth import authenticate
 from .models import User
 from rest_framework.exceptions import AuthenticationFailed
-from django.http import HttpResponse
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=128, min_length=8, write_only=True)
@@ -34,12 +34,12 @@ class LoginSerializer(serializers.ModelSerializer):
     username = serializers.CharField(max_length=255)
     password = serializers.CharField(max_length=128, min_length=8, write_only=True)
     full_name = serializers.CharField(max_length=255, read_only=True)
-    access_token = serializers.CharField(max_length=255, read_only=True)
-    refresh_token = serializers.CharField(max_length=255, read_only=True)
+    # access_token = serializers.CharField(max_length=255, read_only=True)
+    # refresh_token = serializers.CharField(max_length=255, read_only=True)
     
     class Meta:
         model = User
-        fields = ['username', 'password', 'full_name', 'access_token', 'refresh_token']
+        fields = ['username', 'password', 'full_name']
     
     def validate(self, attrs):
         username = attrs.get('username', None)
@@ -47,20 +47,25 @@ class LoginSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         
         user = authenticate(request=request, username=username, password=password)
-
         if not user:
             raise AuthenticationFailed('Invalid credentials, try again')
         
         # if not user.is_verified:
         #     raise AuthenticationFailed('Account is not verified')
-        
-        token = user.tokens()
-        
+
+        refresh_token, access_token = user.tokens().values()
+
         return {
-            'email': user.email,
-            'username': user.username,
-            'full_name': user.full_name,
-            'access_token': token.get('access'),
-            'refresh_token': token.get('refresh')
+            'two_factor_auth_required': user.two_factor_enabled,
+            'access': access_token,
+            'refresh': refresh_token
         }
             
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+        return {
+            'two_factor_auth_required': self.user.two_factor_enabled,
+            **attrs,
+        }

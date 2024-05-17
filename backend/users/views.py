@@ -1,6 +1,6 @@
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
-from .serializers import RegisterSerializer
+from .serializers import LoginSerializer, MyTokenObtainPairSerializer, RegisterSerializer
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from django.conf import settings
@@ -15,6 +15,7 @@ from rest_framework_simplejwt.views import (
 )
 from .models import OneTimePassword
 from .utils import send_verification
+from rest_framework.permissions import IsAuthenticated
 
 
 # Register View
@@ -28,26 +29,32 @@ class RegisterView(GenericAPIView):
         except ValidationError as e:
             return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
 
-        serializer.save()
-        user = serializer.data
-        is_sent = send_verification(user['full_name'], user['email'])
-
-        return Response({
-            'user': user,
+        # Save the user instance
+        user = serializer.save()
+        # Pass the user instance to send_verification
+        is_sent = send_verification(user)
+        refresh_token, access_token = user.tokens().values()
+        
+        response = Response({
             'message': 'User Created Successfully. Check your email to verify your account.'
         }, status=status.HTTP_201_CREATED)
 
+        response = add_cookies(response, access=access_token, refresh=refresh_token)
+        return response
+
+
 # Login View with TokenObtainPairView generic view
 class LoginView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
 
         if response.status_code == 200:
             access_token = response.data.get('access')
             refresh_token = response.data.get('refresh')
+            
+            response = add_cookies(response, access=access_token, refresh=refresh_token)
 
-            response = add_cookies(response, access_token, refresh_token)
- 
         return response
 
 
@@ -64,7 +71,7 @@ class JWTRefreshView(TokenRefreshView):
         if response.status_code == 200:
             access_token = response.data.get('access')
 
-            response = add_cookies(response, access_token)
+            response = add_cookies(response, access=access_token)
 
         return response
 
@@ -95,47 +102,48 @@ class CustomProviderAuthView(ProviderAuthView):
             access_token = response.data.get('access')
             refresh_token = response.data.get('refresh')
 
-            response = add_cookies(response, access_token, refresh_token)
+            response = add_cookies(response, access=access_token, refresh=refresh_token)
 
         return response
-    
-class VerifyUserEmail(GenericAPIView):
-    def post(self, request):
-        email = request.data.get('email')
-        otp = request.data.get('otp')
 
-        try:
-            user_code_obj = OneTimePassword.objects.get(otp=otp)
-            user = user_code_obj.user
-            if user.email != email:
-                return Response({'message': 'Email and OTP does not match'}, status=status.HTTP_400_BAD_REQUEST)
-            if not user.is_verified:
-                user.is_verified = True
-                user.save()
-                return Response({'message': 'Email Verified Successfully'}, status=status.HTTP_200_OK)
-            return Response({'message': 'Email Already Verified'}, status=status.HTTP_400_BAD_REQUEST)
-        except OneTimePassword.DoesNotExist:
-            return Response({'message': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
-
-
-def add_cookies(response, access_token = None, refresh_token = None):
-    if (access_token):
+def add_cookies(response, **kwargs):
+    for key, val in kwargs.items():
+        if (key == 'access'):
+            key = settings.SIMPLE_JWT['AUTH_COOKIE']
+        if (key == 'refresh'):
+            key = settings.SIMPLE_JWT['AUTH_COOKIE_REFRESH']
         response.set_cookie(
-            key=settings.SIMPLE_JWT['AUTH_COOKIE'],
-            value=access_token,
+            key=key,
+            value=val,
             expires=settings.SIMPLE_JWT['AUTH_COOKIE_LIFETIME'],
             secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],
             httponly=settings.SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
             samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
         )
-    if (refresh_token):
-        response.set_cookie(
-            key=settings.SIMPLE_JWT['AUTH_COOKIE_REFRESH'],
-            value=refresh_token,
-            expires=settings.SIMPLE_JWT['AUTH_COOKIE_LIFETIME'],
-            secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],
-            httponly=settings.SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
-            samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
-        )
-
+        
     return response
+
+
+class OTPVerificationView(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        otp = request.data.get('otp')
+        if not otp:
+            return Response({'message': 'OTP is required'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            # Fetch the OTP object using both the OTP and User
+            otp_object = OneTimePassword.objects.get(otp=otp, user=request.user)
+
+            # Verify the OTP
+            if otp_object:
+                otp_object.delete()
+                if not request.user.is_verified:
+                    request.user.is_verified = True
+                    request.user.save()
+                    return Response({'message': 'Email Verified Successfully'}, status=status.HTTP_200_OK)
+                return Response({'message': 'Email Already Verified'}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'message': 'Invalid OTP or Email'}, status=status.HTTP_400_BAD_REQUEST)
+        except OneTimePassword.DoesNotExist:
+            return Response({'message': 'Invalid OTP or Email'}, status=status.HTTP_400_BAD_REQUEST)

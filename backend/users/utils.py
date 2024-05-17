@@ -1,20 +1,23 @@
-from django.conf import settings
 from django.core.mail import send_mail
+from django.conf import settings
+from users.models import OneTimePassword, User  # Ensure necessary models are imported
+import pyotp
 from smtplib import SMTPException
-import random
-from .models import OneTimePassword
 
-def generateOtp():
-    return random.randint(100000, 999999)
+def generate_otp():
+    otp_secret = pyotp.random_base32()
+    otp = pyotp.TOTP(otp_secret)
+    return otp.now()
 
 def send_verification(user):
-    otp = generateOtp()
+    otp = generate_otp()
     subject = 'One Time Password (OTP) for Email Verification'
-    message = f'Hello {user['full_name']},\nYour OTP is {otp}'
+    message = f'Hi {user.username},\n\nYour OTP for email verification is {otp}.'
     email_from = settings.EMAIL_HOST_USER
-    recipient_list = [user['email']]
+    recipient_list = [user.email]
 
-    OneTimePassword.objects.create(user, otp=otp)
+    # Create OneTimePassword record
+    OneTimePassword.objects.create(user=user, otp=otp)
 
     try:
         send_mail(subject, message, email_from, recipient_list, fail_silently=False)
