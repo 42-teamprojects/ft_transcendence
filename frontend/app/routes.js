@@ -75,6 +75,20 @@ export const routes = [
 				path: "/shop",
 				component: () => import("./components/pages/dashboard.js"),
 			},
+			{
+				path: "/settings",
+				component: () => import("./components/pages/settings.js"),
+				children: [
+					{
+						path: "/game",
+						component: () => import("./components/pages/settings.js"),
+					},	
+					{
+						path: "/privacy",
+						component: () => import("./components/pages/settings-privacy.js"),
+					},	
+				]
+			},
 		],
 	},
 	{

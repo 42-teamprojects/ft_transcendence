@@ -47,26 +47,26 @@ c-usercard {
     }
 }
 
-c-friendscard, c-dailyquestscard
+
+
+.widget-container
 {
-    .container
-    {
-        width: 381px;
-        height: 259px;
-        padding: 20px 26px 26px 26px;
-    }
-
-    .container .title-bar h1
-    {
-        font-size: 22px;
-    }
-
-    .container .title-bar a
-    {
-        font-size: 15px;
-        color: var(--secondary-color);
-    }
+    width: 381px;
+    /* height: 259px; */
+    padding: 20px 26px 26px 26px;
 }
+
+.widget-container .title-bar h1
+{
+    font-size: 22px;
+}
+
+.widget-container .title-bar a
+{
+    font-size: 15px;
+    color: var(--secondary-color);
+}
+
 
 p-dashboard .home-content
 {

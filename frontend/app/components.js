@@ -1,3 +1,4 @@
+import Settingsnav from "./components/comps/settings-nav.js";
 import Messagebubble from "./components/comps/message-bubble.js";
 import Conversationbody from "./components/comps/conversation-body.js";
 import Conversationfooter from "./components/comps/conversation-footer.js";
@@ -70,4 +71,5 @@ export const components = [
 	{ tagName: 'c-conversation-footer', component: Conversationfooter },
 	{ tagName: 'c-conversation-body', component: Conversationbody },
 	{ tagName: 'c-message-bubble', component: Messagebubble },
+	{ tagName: 'c-settings-nav', component: Settingsnav },
 ];
