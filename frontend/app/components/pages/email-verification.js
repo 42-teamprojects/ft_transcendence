@@ -1,13 +1,6 @@
 import Authentication from "../../auth/authentication.js";
-import AuthGuard from "../../guards/authGuard.js";
-import Router from "../../router/router.js";
-import { useFormData } from "../../utils/useForm.js";
-import { handleInputError, removeErrors } from "../../utils/utils.js";
-import { validateRegister } from "../../utils/validations.js";
-import Authentication from "../../auth/authentication.js";
 import Router from "../../router/router.js";
 import Toast from "../comps/toast.js";
-
 
 export default class EmailVerification extends HTMLElement {
     constructor() {
@@ -27,6 +20,7 @@ export default class EmailVerification extends HTMLElement {
         const code = e.target.value;
         if (code.length === 6) {
             this.verify.disabled = false;
+            this.verify.click();
         } else {
             this.verify.disabled = true;
         }
@@ -41,6 +35,7 @@ export default class EmailVerification extends HTMLElement {
                 otp: code,
 			});
             this.verify.setAttribute("processing", "false");
+            Toast.notify({ type: "success", message: "Email verified successfully" })
             Router.instance.navigate("/dashboard/home");
 		} catch (error) {
             this.verify.setAttribute("processing", "false");

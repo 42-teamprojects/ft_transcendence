@@ -1,3 +1,4 @@
+import EmailVerification from "./components/pages/email-verification.js";
 import AuthGuard from "./guards/authGuard.js";
 import LoginGuard from "./guards/loginGuard.js";
 
