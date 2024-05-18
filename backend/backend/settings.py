@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     'security',
     'game',
     'oauth',
+    'chat',
 ]
 
 MIDDLEWARE = [
