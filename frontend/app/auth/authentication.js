@@ -17,8 +17,9 @@ export default class Authentication {
 
 	async login(username, password) {
 		const user = { username, password };
+		let response;
 		try {
-			const response = await fetch(config.rest_url + "auth/login/", {
+			response = await fetch(config.rest_url + "auth/login/", {
 				method: "POST",
 				headers: {
 					Accept: "application/json, text/plain, */*",
@@ -33,6 +34,9 @@ export default class Authentication {
 			}
 			return data;
 		} catch (error) {
+			if (response && response.status === 423) {
+				throw { detail: error.detail, status: 423 };
+			}
 			throw error;
 		}
 	}
@@ -127,6 +131,46 @@ export default class Authentication {
 		}
 	}
 
+	async verifyTwoFactorAuth(otpObject) {
+		try {
+			const response = await fetch(config.rest_url + "security/verify-2fa/", {
+				method: "POST",
+				headers: {
+					Accept: "application/json, text/plain, */*",
+					"Content-Type": "application/json",
+				},
+				credentials: "include",
+				body: JSON.stringify(otpObject),
+			});
+			const data = await response.json();
+			if (!response.ok) {
+				throw data;
+			}
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	async refreshToken() {
+		try {
+			const response = await fetch(config.rest_url + "auth/jwt/refresh/", {
+				method: "POST",
+				headers: {
+					Accept: "application/json, text/plain, */*",
+					"Content-Type": "application/json",
+				},
+				credentials: "include",
+			});
+			const data = await response.json();
+			if (!response.ok) {
+				throw data;
+			}
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	// OAuth2
 	async continueWithOAuth(provider) {
 		try {
 			const response = await fetch(config.rest_url + `oauth2/login/${provider}/`, {

@@ -61,6 +61,9 @@ export default class Login extends HTMLElement {
 			Router.instance.navigate("/dashboard/home");
 		} catch (errors) {
 			this.loginBtn.setAttribute("processing", "false");
+			if (errors.status === 423) {
+				Router.instance.navigate("/verify-2fa");
+			}
 			const errorsKeys = Object.keys(errors);
 			if (errorsKeys.includes("detail")) {
 				Toast.notify({ type: "error", message: errors.detail });

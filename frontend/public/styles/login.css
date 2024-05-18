@@ -1,6 +1,7 @@
 p-login,
 p-signup,
-p-email-verification {
+p-email-verification,
+p-verify-two-factor-auth {
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -63,5 +64,10 @@ p-email-verification {
 		justify-content: center;
 		align-items: center;
         width: 100%;
+	}
+
+	h1 {
+		text-align: center;
+		font-size: 1.5rem;
 	}
 }

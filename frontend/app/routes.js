@@ -20,11 +20,6 @@ export const routes = [
 		component: () => import("./components/pages/components.js"),
 	},
 	{
-		path: "/email-verification",
-		canActivate: [AuthGuard], // add EmailUnverifiedGuard
-		component: () => import("./components/pages/email-verification.js"),
-	},
-	{
 		path: "/local",
 		component: () => import("./components/pages/local.js"),
 		children: [
@@ -94,5 +89,15 @@ export const routes = [
 	{
 		path: "/oauth2/callback/:provider",
 		component: () => import("./components/pages/oauth2.js"),
+	},
+	{
+		path: "/email-verification",
+		canActivate: [AuthGuard], // add EmailVerifiedGuard
+		component: () => import("./components/pages/email-verification.js"),
+	},
+	{
+		path: "/verify-2fa",
+		canActivate: [LoginGuard],
+		component: () => import("./components/pages/verify-two-factor-auth.js"),
 	},
 ];

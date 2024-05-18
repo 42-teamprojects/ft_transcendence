@@ -223,6 +223,9 @@ SIMPLE_JWT = {
     # Whether to set the flag restricting cookie leaks on cross-site requests. This can be 'Lax', 'Strict', or None to disable the flag.
     'AUTH_COOKIE_SAMESITE': "None", # TODO: Modify to Lax
     'AUTH_COOKIE_LIFETIME': 60 * 60 * 24, # 1 day
+
+    # 2fa
+    'TWO_FACTOR_AUTH_COOKIE': 'two-factor-auth',
 }
 
 # CORS

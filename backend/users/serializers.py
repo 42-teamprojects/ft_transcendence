@@ -66,6 +66,8 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         attrs = super().validate(attrs)
         return {
+            'username' : self.user.username,
+            'last_2fa_login' : self.user.last_2fa_login,
             'two_factor_auth_required': self.user.two_factor_enabled,
             **attrs,
         }
