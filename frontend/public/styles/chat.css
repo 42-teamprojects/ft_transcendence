@@ -189,6 +189,8 @@
 
     & .player-avatar {
         opacity: 0;
+        align-self: flex-end;
+        margin-bottom: .25rem;
     }
     
     & c-message-bubble:first-child .player-avatar,
