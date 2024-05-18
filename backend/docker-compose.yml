@@ -28,7 +28,6 @@ services:
 
   pg-admin:
     image: dpage/pgadmin4:6
-    restart: always
     environment:
       PGADMIN_DEFAULT_EMAIL: yusufisawi@gmail.com
       PGADMIN_DEFAULT_PASSWORD: root

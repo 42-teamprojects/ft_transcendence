@@ -1,17 +1,21 @@
 from io import BytesIO
 from django.http import FileResponse
 from django.shortcuts import render
+import jwt
 import pyotp
+import datetime;
 import qrcode
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
-
-from backend import settings
+from django.conf import settings
+from users.models import User
+from users.views import add_cookies
+from django.utils import timezone
 
 # Create your views here.
-class EnableTwoFactorAuthView(APIView):
+class GetTwoFactorAuthView(APIView):
     permission_classes = [IsAuthenticated]
     
     def get(self, request):
@@ -35,16 +39,50 @@ class EnableTwoFactorAuthView(APIView):
             'secret_key': user_secret_key
         }, status=status.HTTP_200_OK)
         
-class VerifyTwoFactorAuthView(APIView):
+class EnableTwoFactorAuthView(APIView):
     permission_classes = [IsAuthenticated]
     
     def post(self, request):
-        user = request.user
-        totp = pyotp.TOTP(user.secret_key)
+        if request.user.two_factor_enabled:
+            return Response({'detail': 'Two-factor authentication is already enabled'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        totp = pyotp.TOTP(request.user.secret_key)
         
         if totp.verify(request.data['otp']):
-            user.two_factor_auth = True
-            user.save()
-            return Response({'message': 'Two-factor authentication enabled successfully'}, status=status.HTTP_200_OK)
+            request.user.two_factor_enabled = True
+            request.user.save()
+            return Response({'detail': 'Two-factor authentication is enabled'}, status=status.HTTP_200_OK)
         else:
-            return Response({'message': 'Invalid OTP'}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'detail': 'Invalid OTP'}, status=status.HTTP_401_UNAUTHORIZED)
+        
+class VerifyTwoFactorAuthView(APIView):    
+    def post(self, request):
+        two_factor_cookie = request.COOKIES.get(settings.SIMPLE_JWT['TWO_FACTOR_AUTH_COOKIE'])
+        if (two_factor_cookie is None or two_factor_cookie == 'null' or two_factor_cookie == 'undefined'):
+            return Response({'detail': 'Something went wrong, try again later'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            payload = jwt.decode(two_factor_cookie, settings.SIMPLE_JWT['SIGNING_KEY'], algorithms=['HS256'])
+            username = payload.get('username')
+            user = User.objects.get(username=username)
+            totp = pyotp.TOTP(user.secret_key)
+            
+            if totp.verify(request.data['otp']):
+                if user.last_2fa_login is None and not user.two_factor_enabled:
+                    user.two_factor_enabled = True
+                    
+                user.last_2fa_login = timezone.now()
+                user.save()
+
+                tokens = user.tokens()
+
+                response = Response({'detail': 'Two-factor authentication is successful'}, status=status.HTTP_200_OK)
+                response.delete_cookie(settings.SIMPLE_JWT['TWO_FACTOR_AUTH_COOKIE'])
+                response = add_cookies(response, access=tokens['access'], refresh=tokens['refresh'])
+                return response
+            else:
+                return Response({'detail': 'Invalid OTP'}, status=status.HTTP_401_UNAUTHORIZED)
+            
+        except jwt.ExpiredSignatureError:
+            response = Response({'detail': 'Two-factor authentication token has expired'}, status=status.HTTP_400_BAD_REQUEST)
+            response.delete_cookie(settings.SIMPLE_JWT['TWO_FACTOR_AUTH_COOKIE'])
+            return response

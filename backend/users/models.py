@@ -22,8 +22,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(_('Is Staff'), default=False)
     is_superuser = models.BooleanField(_('Is Superuser'), default=False)
     is_verified = models.BooleanField(_('Is Verified'), default=False)
-    secret_key = models.CharField(_('Secret Key'), max_length=100, blank=True, null=True)
     date_joined = models.DateTimeField(_('Date Joined'), auto_now_add=True)
+    secret_key = models.CharField(_('Secret Key'), max_length=100, blank=True, null=True)
+    two_factor_enabled = models.BooleanField(_('Two Factor Enabled'), default=False)
+    last_2fa_login = models.DateTimeField(_('Last 2FA Login'), blank=True, null=True)
+
     
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['full_name', 'email']
@@ -49,3 +52,13 @@ class User(AbstractBaseUser, PermissionsMixin):
             'refresh': str(refresh),
             'access': str(access_token)
         }
+    
+
+
+class OneTimePassword(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)  # Set on_delete to CASCADE
+    otp = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.otp}'

@@ -92,7 +92,7 @@ class OAuth2CallbackView(APIView):
         if ok:
             response = Response(status=status.HTTP_200_OK)
             refresh_token, access_token = user.tokens().values()
-            response = add_cookies(response, access_token, refresh_token)
+            response = add_cookies(response, access=access_token, refresh=refresh_token)
         else:
             response = Response({"error" : "Something went wrong, please try again."}, status=status.HTTP_401_UNAUTHORIZED)
 
