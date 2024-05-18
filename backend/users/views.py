@@ -69,7 +69,7 @@ class LoginView(TokenObtainPairView):
                 response.set_cookie(
                     key=settings.SIMPLE_JWT['TWO_FACTOR_AUTH_COOKIE'],
                     value=intermediate_token,
-                    expires=60 * 15, # 15 Minutes
+                    expires=60 * 5, # 5 Minutes
                     secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],
                     httponly=settings.SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
                     samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
