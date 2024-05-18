@@ -151,6 +151,28 @@ export default class Authentication {
 		}
 	}
 
+	async verifyEmail(otpObject) {
+		try {
+            const response = await fetch(config.rest_url + "auth/verify-email/", {
+                method: "POST",
+                headers: {
+                    Accept: "application/json, text/plain, */*",
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify(otpObject),
+            });
+
+            const data = await response.json();
+			if (!response.ok) {
+				throw data;
+			}
+        }
+        catch (error) {
+            throw error;
+        }
+	}
+
 	async refreshToken() {
 		try {
 			const response = await fetch(config.rest_url + "auth/jwt/refresh/", {

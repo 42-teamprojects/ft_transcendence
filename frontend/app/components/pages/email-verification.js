@@ -1,4 +1,15 @@
-export default class Emailverification extends HTMLElement {
+import Authentication from "../../auth/authentication.js";
+import AuthGuard from "../../guards/authGuard.js";
+import Router from "../../router/router.js";
+import { useFormData } from "../../utils/useForm.js";
+import { handleInputError, removeErrors } from "../../utils/utils.js";
+import { validateRegister } from "../../utils/validations.js";
+import Authentication from "../../auth/authentication.js";
+import Router from "../../router/router.js";
+import Toast from "../comps/toast.js";
+
+
+export default class EmailVerification extends HTMLElement {
     constructor() {
         super();
     }
@@ -7,35 +18,38 @@ export default class Emailverification extends HTMLElement {
         this.render();
         this.form = this.querySelector("form");
         this.input = this.form.querySelector("input");
-        this.verify = this.querySelector("#verify")
-        this.input.addEventListener("keyup", this.handleChange.bind(this));
-        this.form.addEventListener("submit", this.handleSubmit.bind(this));
+        this.verify = this.querySelector("#verify");
+        this.verify.addEventListener("click", this.handleSubmit.bind(this));
+        this.input.addEventListener("input", this.handleChange.bind(this));
     }
 
     handleChange(e) {
         const code = e.target.value;
         if (code.length === 6) {
             this.verify.disabled = false;
-            this.verify.click();
-            this.input.value = "";
         } else {
             this.verify.disabled = true;
         }
     }
 
-    handleSubmit(e) {
+    async handleSubmit(e) {
         e.preventDefault();
         const code = this.input.value;
-        console.log(code);
-        /* Verify the code, by calling the api /api/auth/verify-email/  
-        with a post request (the same as i did in login you can find the code at authenticaion.js file)
-        with the code in the body of the request then wait for the response 
-        and if the response is successful navigate to the dashboard 
-        and show a success message using 
-        Toast.notify({ type: "success", message: "Email verified successfuly" }); 
-        otherwise show an error message using Toast.notify({ type: "error", message: "Invalid code" }); */
-    }
+		try {
+            this.verify.setAttribute("processing", "true");
+			await Authentication.instance.verifyEmail({
+                otp: code,
+			});
+            this.verify.setAttribute("processing", "false");
+            Router.instance.navigate("/dashboard/home");
+		} catch (error) {
+            this.verify.setAttribute("processing", "false");
+            Toast.notify({ type: "error", message: error.detail })
+		}
 
+      
+    }
+    
     disconnectedCallback() {}
 
     render() {
@@ -57,4 +71,4 @@ export default class Emailverification extends HTMLElement {
     }
 }
 
-customElements.define('p-email-verification', Emailverification);
+customElements.define('p-email-verification', EmailVerification);
