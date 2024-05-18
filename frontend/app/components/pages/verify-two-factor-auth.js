@@ -21,7 +21,6 @@ export default class VerifyTwoFactorAuth extends HTMLElement {
 		if (code.length === 6) {
 			this.verify.disabled = false;
 			this.verify.click();
-			this.input.value = "";
 		} else {
 			this.verify.disabled = true;
 		}
