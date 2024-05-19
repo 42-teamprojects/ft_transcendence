@@ -179,6 +179,12 @@ button:active:not([disabled]) {
 	transform: translate(-50%, -50%);
 }
 
+@media screen and (max-width: 1280px) {
+	[opened] .modal {
+		top: 50%;
+	}
+}
+
 .modal {
 	position: fixed;
 	top: 30%;
@@ -228,7 +234,7 @@ button:active:not([disabled]) {
 	position: fixed;
 	top: 25px;
 	right: 30px;
-	z-index: 100;
+	z-index: 10000;
 	display: flex;
 	flex-direction: column-reverse;
 	gap: 1rem;

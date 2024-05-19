@@ -1,8 +1,9 @@
 import Authentication from "../../auth/authentication.js";
+import { config } from "../../config.js";
 import AuthGuard from "../../guards/authGuard.js";
 import Router from "../../router/router.js";
 import { useFormData } from "../../utils/useForm.js";
-import { handleInputError, removeErrors } from "../../utils/utils.js";
+import { handleFormSubmitApi, handleInputError, removeErrors } from "../../utils/utils.js";
 import { validateRequire } from "../../utils/validations.js";
 import Toast from "../comps/toast.js";
 
@@ -15,67 +16,47 @@ export default class Login extends HTMLElement {
 	connectedCallback() {
 		this.render();
 
-		this.oauthBtns = this.querySelectorAll(".oauth-btn")
-		
+		this.oauthBtns = this.querySelectorAll(".oauth-btn");
+
 		this.oauthBtns.forEach((btn) => {
 			btn.addEventListener("click", async (e) => {
 				const provider = e.target.id;
 				try {
 					const { authorization_url } = await Authentication.instance.continueWithOAuth(provider);
 					window.location.replace(authorization_url);
-				}
-				catch (error) {
+				} catch (error) {
 					console.error(error);
 					Toast.notify({ type: "error", message: "An error occurred, please try again later" });
 				}
 			});
 		});
 
-		this.loginBtn = this.querySelector("#login");
 		this.form = this.querySelector("form");
-		this.inputs = Array.from(this.querySelectorAll('input'));
 
 		this.form.addEventListener("submit", this.handleSubmit.bind(this));
 	}
 
-	async handleSubmit(e) {
+	handleSubmit(e) {
 		e.preventDefault();
 
-		this.inputs.forEach((input) => removeErrors.call(this, input.name));
-
-		const user = useFormData(this.form).getObject();
-
-		const errors = validateRequire(user, ["username", "password"]);
-
-		if (Object.keys(errors).length > 0) {
-			Object.keys(errors).forEach((key) => {
-				handleInputError.call(this, key, errors[key]);
-			});
-			return;
-		}
-
-		try {
-			this.loginBtn.setAttribute("processing", "true");
-			await Authentication.instance.login(user.username, user.password);
-			this.loginBtn.setAttribute("processing", "false");
-			Router.instance.navigate("/dashboard/home");
-		} catch (errors) {
-			this.loginBtn.setAttribute("processing", "false");
-			if (errors.status === 423) {
-				Router.instance.navigate("/verify-2fa");
-				Toast.notify({ type: "info", message: errors.detail });
-				return;
+		const formValidations = (data) => {
+			return validateRequire(data, ["username", "password"]);
+		};
+		
+		handleFormSubmitApi(
+			this.form,
+			Authentication.instance.login.bind(Authentication.instance),
+			formValidations,
+			() => {},
+			(errors) => {
+				if (errors.status === 423) {
+					Router.instance.navigate("/verify-2fa");
+					Toast.notify({ type: "info", message: errors.detail });
+					return false;
+				}
+				return true;
 			}
-			const errorsKeys = Object.keys(errors);
-			if (errorsKeys.includes("detail")) {
-				Toast.notify({ type: "error", message: errors.detail });
-				return;
-			} else if (this.inputs.some((input) => errorsKeys.includes(input.name))) {
-				this.inputs.forEach((input) => handleInputError.call(this, input.name, errors[input.name]));
-			} else {
-				Toast.notify({ type: "error", message: "An error occurred, please try again later" });
-			}
-		}
+		);
 	}
 
 	disconnectedCallback() {}
@@ -94,7 +75,7 @@ export default class Login extends HTMLElement {
                         <a is="c-link" href="/password/forgot">Forgot password?</a>
                     </span>
                 </div>
-                <button is="c-button" id="login" class="btn-secondary">Login</button>
+                <button is="c-button" type="submit" id="login" class="btn-secondary">Login</button>
             </form>
             <p>Don't have an account? <a is="c-link" href="/register">Register here.</a></p>
             <div class="hr uppercase font-bold">

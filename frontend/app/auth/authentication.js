@@ -2,6 +2,7 @@ import { config } from "../config.js";
 import HttpClient from "../http/httpClient.js";
 import AuthService from "./authService.js";
 import OAuthService from "./oAuthService.js";
+import UserService from "./userService.js";
 import VerificationService from "./verificationService.js";
 
 export default class Authentication {
@@ -11,19 +12,23 @@ export default class Authentication {
 		if (Authentication.#instance) {
 			throw new Error("Use instance");
 		}
+		Authentication.#instance = this;
+
+		// Initialize services
 		this.httpClient = new HttpClient(config.rest_url);
 		this.authService = new AuthService(this.httpClient);
 		this.oauthService = new OAuthService(this.httpClient);
 		this.verificationService = new VerificationService(this.httpClient);
-		Authentication.#instance = this;
+		this.userService = new UserService(this.httpClient);
 	}
 
 	static get instance() {
 		return Authentication.#instance || new Authentication();
 	}
 
-	async login(username, password) {
+	async login(data) {
 		try {
+			const { username, password } = data;
 			return await this.authService.login(username, password);
 		} catch (error) {
 			throw error;
@@ -54,14 +59,6 @@ export default class Authentication {
 		}
 	}
 
-	async verifyTwoFactorAuth(otpObject) {
-		try {
-			return await this.verificationService.verifyTwoFactorAuth(otpObject);
-		} catch (error) {
-			throw error;
-		}
-	}
-
 	async verifyEmail(otp) {
 		try {
 			return await this.verificationService.verifyEmail(otp);
@@ -82,6 +79,42 @@ export default class Authentication {
 	async callbackOAuth(provider, code, state) {
 		try {
 			return await this.oauthService.callbackOAuth(provider, code, state);
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	// 2FA
+
+	async verifyTwoFactorAuth(otp) {
+		try {
+			return await this.verificationService.verifyTwoFactorAuth(otp);
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	async enableTwoFactorAuth(data) {
+		try {
+			return await this.verificationService.enableTwoFactorAuth(data);
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	async getTwoFactorAuthSecret() {
+		try {
+			return await this.verificationService.getTwoFactorAuthSecret();
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	// User
+	async changePassword(data) {
+		try {
+			const { new_password, current_password } = data;
+			return await this.userService.changePassword(new_password, current_password);
 		} catch (error) {
 			throw error;
 		}
