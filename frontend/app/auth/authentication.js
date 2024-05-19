@@ -129,7 +129,7 @@ export default class Authentication {
 	}
 	async resetPassword(password, uid, token) {
 		try {
-			return await this.httpClient.post("auth/reset-password-confirm/", {password, uid, token });
+			return await this.verificationService.resetPassword(password, uid, token);
 		} catch (error) {
 			throw error;
 		}

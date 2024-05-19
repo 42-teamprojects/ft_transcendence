@@ -8,6 +8,10 @@ export default class VerificationService {
 		return this.httpClient.post("auth/reset-password/", { email });
 	}
 
+	async resetPassword(password, uid, token) {
+		return this.httpClient.post("auth/reset-password-confirm/", { password, uid, token })
+	}
+
 	// Email verification
 	async verifyEmail(otp) {
 		return this.httpClient.post("auth/verify-email/", { otp });
