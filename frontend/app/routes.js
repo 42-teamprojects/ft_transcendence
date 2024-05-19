@@ -115,4 +115,14 @@ export const routes = [
 		canActivate: [LoginGuard],
 		component: () => import("./components/pages/verify-two-factor-auth.js"),
 	},
+	{
+		path: "/forgot-password",
+		canActivate: [LoginGuard],
+		component: () => import("./components/pages/email-reset-password.js"),
+	},
+	{
+		path: "/reset-password",
+		canActivate: [LoginGuard],
+		component: () => import("./components/pages/reset-password.js"),
+	},
 ];

@@ -13,22 +13,12 @@ export default class EmailVerification extends HTMLElement {
 		this.input = this.form.querySelector("input");
 		this.verify = this.querySelector("#verify");
 		this.verify.addEventListener("click", this.handleSubmit.bind(this));
-		this.input.addEventListener("input", this.handleChange.bind(this));
-	}
-
-	handleChange(e) {
-		const code = e.target.value;
-		if (code.length === 6) {
-			this.verify.disabled = false;
-			this.verify.click();
-		} else {
-			this.verify.disabled = true;
-		}
 	}
 
 	async handleSubmit(e) {
 		e.preventDefault();
 		const code = this.input.value;
+		if (code.length !== 6) return Toast.notify({ type: "error", message: "Invalid verification code" });
 		try {
 			this.verify.setAttribute("processing", "true");
 			await Authentication.instance.verifyEmail(code);
@@ -54,7 +44,7 @@ export default class EmailVerification extends HTMLElement {
                 <input type="text" name="code" class="input-field" placeholder="Verification code" maxlength="6" />
                 <p>Didn't get the email? <a is="c-link" href=""> Resend</a>.</p>
             </div>
-            <button is="c-button" id="verify" class="btn-secondary" disabled>Verify</button>
+            <button is="c-button" id="verify" class="btn-secondary">Verify</button>
             </form>
             <p>Too lazy to verify it? <a is="c-link" href="/dashboard/home"> Do it later</a>.</p>
         </div>

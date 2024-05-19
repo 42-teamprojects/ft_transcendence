@@ -2,7 +2,7 @@ import Authentication from "../../auth/authentication.js";
 import AuthGuard from "../../guards/authGuard.js";
 import Router from "../../router/router.js";
 import { useFormData } from "../../utils/useForm.js";
-import { handleInputError, removeErrors } from "../../utils/utils.js";
+import { handleFormSubmitApi, handleInputError, removeErrors } from "../../utils/utils.js";
 import { validateRegister } from "../../utils/validations.js";
 import Toast from "../comps/toast.js";
 
@@ -66,7 +66,7 @@ export default class SignUp extends HTMLElement {
                 <div class="form-group">
                     <input type="password" name="confirm_password" class="input-field" placeholder="Confirm password" />
                 </div>
-                <button is="c-button" class="btn-secondary ">Sign up</button>
+                <button is="c-button" type="submit" class="btn-secondary ">Sign up</button>
             </form>
             <p>Already signed up? <a is="c-link" href="/login">Log in here.</a></p>
         </div>

@@ -14,8 +14,8 @@ export default class Authentication {
 		}
 		Authentication.#instance = this;
 
-		// Initialize services
 		this.httpClient = new HttpClient(config.rest_url);
+		// Initialize services
 		this.authService = new AuthService(this.httpClient);
 		this.oauthService = new OAuthService(this.httpClient);
 		this.verificationService = new VerificationService(this.httpClient);
@@ -115,6 +115,21 @@ export default class Authentication {
 		try {
 			const { new_password, current_password } = data;
 			return await this.userService.changePassword(new_password, current_password);
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	async resetPasswordEmail(email) {
+		try {
+			return await this.verificationService.sendPasswordResetEmail(email);
+		} catch (error) {
+			throw error;
+		}
+	}
+	async resetPassword(password, uid, token) {
+		try {
+			return await this.httpClient.post("auth/reset-password-confirm/", {password, uid, token });
 		} catch (error) {
 			throw error;
 		}

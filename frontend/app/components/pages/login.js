@@ -47,7 +47,9 @@ export default class Login extends HTMLElement {
 			this.form,
 			Authentication.instance.login.bind(Authentication.instance),
 			formValidations,
-			() => {},
+			() => {
+				Router.instance.navigate("/dashboard/home")
+			},
 			(errors) => {
 				if (errors.status === 423) {
 					Router.instance.navigate("/verify-2fa");
@@ -72,7 +74,7 @@ export default class Login extends HTMLElement {
                 <div class="form-group">
                     <input type="password" name="password" class="input-field" placeholder="Password" />
                     <span class="text-xs mr-1 text-right">
-                        <a is="c-link" href="/password/forgot">Forgot password?</a>
+                        <a is="c-link" href="/forgot-password">Forgot password?</a>
                     </span>
                 </div>
                 <button is="c-button" type="submit" id="login" class="btn-secondary">Login</button>
