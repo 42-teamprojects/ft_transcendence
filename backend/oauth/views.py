@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from requests_oauthlib import OAuth2Session
 import os
 from users.models import User
-from users.views import add_cookies
+from users.views import add_cookies, generate_2fa_token
 from rest_framework.response import Response
 from rest_framework import status
 from django.core import serializers
@@ -79,8 +79,13 @@ class OAuth2CallbackView(APIView):
         try:
             user = User.objects.get(email=email)
             response = Response(status=status.HTTP_200_OK)
-            refresh_token, access_token = user.tokens().values()
-            response = add_cookies(response, access=access_token, refresh=refresh_token)
+
+            if user.two_factor_enabled: #and (last_2fa_login is None or last_2fa_login < timezone.now() - timezone.timedelta(days=1)): # Delete access and refresh cookies
+                # Generate intermediate token
+                response = generate_2fa_token(user.username)
+            else:
+                refresh_token, access_token = user.tokens().values()
+                response = add_cookies(response, access=access_token, refresh=refresh_token)
             return response
         except User.DoesNotExist:
             if User.objects.filter(username=username).exists():

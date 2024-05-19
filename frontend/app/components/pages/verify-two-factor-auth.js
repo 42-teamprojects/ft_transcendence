@@ -12,17 +12,7 @@ export default class VerifyTwoFactorAuth extends HTMLElement {
 		this.form = this.querySelector("form");
 		this.input = this.form.querySelector("input");
 		this.verify = this.querySelector("#verify");
-		this.input.addEventListener("keyup", this.handleChange.bind(this));
 		this.form.addEventListener("submit", this.handleSubmit.bind(this));
-	}
-
-	handleChange(e) {
-		const code = e.target.value;
-		if (code.length === 6) {
-			this.verify.disabled = false;
-		} else {
-			this.verify.disabled = true;
-		}
 	}
 
 	async handleSubmit(e) {
@@ -53,7 +43,7 @@ export default class VerifyTwoFactorAuth extends HTMLElement {
             <p>Enter a 6-digit code from your authenticator device</p>
             <form method="post">
                 <input type="text" name="otp" class="input-field" placeholder="One-Time Password" maxlength="6" />
-            <button is="c-button" id="verify" class="btn-secondary" disabled>Verify</button>
+            <button is="c-button" id="verify" class="btn-secondary">Verify</button>
             </form>
             <p>Have problems? <a is="c-link" href="/"> Request Reset</a>.</p>
         </div>

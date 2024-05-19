@@ -14,54 +14,36 @@ export default class SignUp extends HTMLElement {
 
 	connectedCallback() {
 		this.render();
-		this.registerBtn = this.querySelector("button.btn-secondary");
+
 		this.form = this.querySelector("form");
-		this.inputs = Array.from(this.querySelectorAll('input'));
 
 		this.form.addEventListener("submit", this.handleSubmit.bind(this));
 	}
 
-	async handleSubmit(e) {
+	handleSubmit(e) {
 		e.preventDefault();
 
-		this.inputs.forEach((input) => removeErrors.call(this, input.name));
+		const formValidations = (data) => {
+			return validateRegister(data);
+		};
 
-		const user = useFormData(this.form).getObject();
-
-		const errors = validateRegister(user);
-
-		if (Object.keys(errors).length > 0) {
-			Object.keys(errors).forEach((key) => {
-				handleInputError.call(this, key, errors[key]);
-			});
-			return;
-		}
-
-		try {
-			this.registerBtn.setAttribute("processing", "true");
-			await Authentication.instance.register(user);
-			this.registerBtn.setAttribute("processing", "false");
-			Router.instance.navigate("/email-verification");
-			Toast.notify({
-				type: "success",
-				message: "Account created successfuly, Please verify your email. check spam",
-			});
-		} catch (errors) {
-			this.registerBtn.setAttribute("processing", "false");
-			const errorsKeys = Object.keys(errors);
-			if (errorsKeys.includes("detail")) {
-				Toast.notify({ type: "error", message: errors.detail });
-				return;
-			} else if (this.inputs.some((input) => errorsKeys.includes(input.name))) {
-				this.inputs.forEach((input) => handleInputError.call(this, input.name, errors[input.name]));
-			} else {
-				Toast.notify({ type: "error", message: "An error occurred, please try again later" });
-			}
-		}
+		handleFormSubmitApi(
+			this.form,
+			Authentication.instance.register.bind(Authentication.instance),
+			formValidations,
+			() => {
+				Router.instance.navigate("/email-verification");
+				Toast.notify({
+					type: "success",
+					message: "Account created successfully, Please verify your email. check spam",
+				});
+			},
+			() => {}
+		);
 	}
 
 	disconnectedCallback() {
-		this.querySelector("form").removeEventListener("submit", this.handleSubmit);
+		this.form.removeEventListener("submit", this.handleSubmit);
 	}
 
 	render() {

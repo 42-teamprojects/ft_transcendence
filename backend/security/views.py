@@ -21,10 +21,6 @@ class GetTwoFactorAuthView(APIView):
     def get(self, request):
         user_secret_key = pyotp.random_base32()
     
-        # Save the secret key in the user's profile
-        request.user.secret_key = user_secret_key
-        request.user.save()
-        
         # Generate a TOTP object
         totp = pyotp.TOTP(user_secret_key)
         
@@ -46,10 +42,12 @@ class EnableTwoFactorAuthView(APIView):
         if request.user.two_factor_enabled:
             return Response({'detail': 'Two-factor authentication is already enabled'}, status=status.HTTP_400_BAD_REQUEST)
         
-        totp = pyotp.TOTP(request.user.secret_key)
-        
+        totp = pyotp.TOTP(request.data['secret_key'])
+
         if totp.verify(request.data['otp']):
             request.user.two_factor_enabled = True
+            request.user.last_2fa_login = timezone.now()
+            request.user.secret_key = request.data['secret_key']
             request.user.save()
             return Response({'detail': 'Two-factor authentication is enabled'}, status=status.HTTP_200_OK)
         else:

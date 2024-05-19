@@ -6,7 +6,8 @@
 }
 
 .settings-form button {
-    width: min-content;
+    /* dont apply flex fill width */
+    width: fit-content;
 }
 
 /* Privacy Start */

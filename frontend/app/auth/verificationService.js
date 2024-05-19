@@ -18,8 +18,8 @@ export default class VerificationService {
 		return this.httpClient.post("security/verify-2fa/", { otp });
 	}
 
-	async enableTwoFactorAuth(otp) {
-		return this.httpClient.post("security/enable-2fa/", { otp });
+	async enableTwoFactorAuth(data) {
+		return this.httpClient.post("security/enable-2fa/", data);
 	}
 
 	async getTwoFactorAuthSecret() {

@@ -38,6 +38,11 @@ export default class Oauth2 extends HTMLElement {
         }
         catch (error) {
             console.error(error);
+            if (error.status === 423) {
+                Router.instance.navigate("/verify-2fa");
+                Toast.notify({ type: "info", message: error.detail });
+                return;
+            }
             Toast.notify({ type: "error", message: "An error occurred, please try again later" });
             Router.instance.navigate("/login");
         }

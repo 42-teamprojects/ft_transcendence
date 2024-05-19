@@ -1,17 +1,18 @@
+
 export default class Settingsprivacy extends HTMLElement {
-    constructor() {
-        super();
-        document.title = "Settings | Privacy";
+	constructor() {
+		super();
+		document.title = "Settings | Privacy";
+	}
+
+	connectedCallback() {
+		this.render();
     }
 
-    connectedCallback() {
-        this.render();
-    }
+	disconnectedCallback() {}
 
-    disconnectedCallback() {}
-
-    render() {
-        this.innerHTML = /*html*/`
+	render() {
+		this.innerHTML = /*html*/ `
         <c-enable-2fa-modal></c-enable-2fa-modal>
         <div class="dashboard-content">
             <main class="flex-col gap-16 mb-12">
@@ -24,24 +25,7 @@ export default class Settingsprivacy extends HTMLElement {
                         <h2 class="mb-3">Change password</h2>
                         <h4 class="font-normal text-stroke line-3">Must be at least 8 characters, include both lower and upper case <br /> letters and numbers</h4>
                     </div>
-                    <form id="change-password" class="settings-form">
-                        <div class="form-group-inline">
-                            <label for="current-password">Current password</label>
-                            <input type="password" id="current-password" name="current-password" class="input-field" placeholder="Current password"/>
-                        </div>
-                        <div class="form-group-inline">
-                            <label for="new-password">New password</label>
-                            <input type="password" id="new-password" name="new-password" class="input-field" placeholder="New password"/>
-                        </div>
-                        <div class="form-group-inline">
-                            <label for="confirm-password">Confirm password</label>
-                            <input type="password" id="confirm-password" name="confirm-password" class="input-field" placeholder="Confirm password"/>
-                        </div>
-                        <div class="form-group-inline">
-                            <label></label>
-                            <button class="btn-secondary" type="submit">Change password</button>
-                        </div>
-                    </form>
+                    <c-change-password-form></c-change-password-form>
                 </section>
                 <section class="two-factor-auth">
                     <div class="settings-header mb-9">
@@ -63,7 +47,7 @@ export default class Settingsprivacy extends HTMLElement {
             </div>
         </div>
         `;
-    }
+	}
 }
 
-customElements.define('p-settings-privacy', Settingsprivacy);
+customElements.define("p-settings-privacy", Settingsprivacy);

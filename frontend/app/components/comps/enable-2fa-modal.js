@@ -21,9 +21,12 @@ export default class Enable2famodal extends HTMLElement {
 		return ["opened"];
 	}
 
-	open() {
-		this.setAttribute("opened", "");
-		this.isOpen = true;
+	async open() {
+		await this.init();
+		setTimeout(() => {
+			this.setAttribute("opened", "");
+			this.isOpen = true;
+		}, 100);
 	}
 
 	hide() {
@@ -40,33 +43,33 @@ export default class Enable2famodal extends HTMLElement {
 	}
 
 	async #confirm() {
-        const otp = this.otpInput.value;
-        if (otp.length !== 6) {
-            Toast.notify({ type: "error", message: "Invalid OTP" });
-            return;
-        }
-        const response = await this.enable2fa(otp);
-        if (!response) {
-            return;
-        }
-        this.hide();
-        const confirmEvent = new Event("confirm", { bubbles: true, composed: true });
-        this.dispatchEvent(confirmEvent);
+		const otp = this.otpInput.value;
+		if (otp.length !== 6) {
+			Toast.notify({ type: "error", message: "Invalid OTP" });
+			return;
+		}
+		const response = await this.enable2fa(otp);
+		if (!response) {
+			return;
+		}
+		this.hide();
+		const confirmEvent = new Event("confirm", { bubbles: true, composed: true });
+		this.dispatchEvent(confirmEvent);
 	}
 
-	async connectedCallback() {
-        this.secret = await this.get2faSecret();
+	async init() {
+		this.secret = await this.get2faSecret();
 		this.render();
 		this.backdrop = this.querySelector("#backdrop");
 		this.cancelButton = this.querySelector("#cancel-btn");
 		this.confirmButton = this.querySelector("#confirm-btn");
-        this.secretKey = this.querySelector(".secret-key");
-        this.otpInput = this.querySelector("input");
-        
-        this.secretKey.addEventListener("click", () => {
-            navigator.clipboard.writeText(this.secret.secret_key);
-            Toast.notify({ type: "success", message: "Secret key copied" });
-        });
+		this.secretKey = this.querySelector(".secret-key");
+		this.otpInput = this.querySelector("input");
+
+		this.secretKey.addEventListener("click", () => {
+			navigator.clipboard.writeText(this.secret.secret_key);
+			Toast.notify({ type: "success", message: "Secret key copied" });
+		});
 		this.backdrop.addEventListener("click", this.#cancel.bind(this));
 		this.cancelButton.addEventListener("click", this.#cancel.bind(this));
 		this.confirmButton.addEventListener("click", this.#confirm.bind(this));
@@ -117,12 +120,15 @@ export default class Enable2famodal extends HTMLElement {
 
 	async enable2fa(otp) {
 		try {
-			const response = await this.authentication.enableTwoFactorAuth(otp);
-            Toast.notify({ type: "success", message: "2FA enabled" });
+            const data = {
+                otp: otp,
+                secret_key: this.secret.secret_key
+            }
+			const response = await this.authentication.enableTwoFactorAuth(data);
+			Toast.notify({ type: "success", message: "2FA enabled" });
 			return response;
 		} catch (error) {
-			console.error(error);
-            Toast.notify({ type: "error", message: "Failed to enable 2FA secret" });
+			Toast.notify({ type: "error", message: error.detail });
 		}
 	}
 }

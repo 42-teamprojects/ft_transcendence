@@ -1,3 +1,4 @@
+import Changepasswordform from "./components/comps/change-password-form.js";
 import Enable2famodal from "./components/comps/enable-2fa-modal.js";
 import Settingsnav from "./components/comps/settings-nav.js";
 import Messagebubble from "./components/comps/message-bubble.js";
@@ -74,4 +75,5 @@ export const components = [
 	{ tagName: 'c-message-bubble', component: Messagebubble },
 	{ tagName: 'c-settings-nav', component: Settingsnav },
 	{ tagName: 'c-enable-2fa-modal', component: Enable2famodal },
+	{ tagName: 'c-change-password-form', component: Changepasswordform },
 ];
