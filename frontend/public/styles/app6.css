@@ -47,13 +47,28 @@ c-usercard {
     }
 }
 
+.dashboard-content {
+    display: grid;
+    grid-template-columns: minmax(580px, 1fr) 381px;
+    grid-template-rows: auto;
+    align-items: self-start;
+    margin: 38px auto;
+    gap: 3rem;
+    max-width: 1000px;
+}
 
+.dashboard-content main {
+    max-width: 580px;
+}
 
-.widget-container
-{
+.widgets {
+    position: sticky;
+    top: 38px;
+}
+
+.widget-container {
+    padding: 1.5rem;
     width: 381px;
-    /* height: 259px; */
-    padding: 20px 26px 26px 26px;
 }
 
 .widget-container .title-bar h1
@@ -66,13 +81,3 @@ c-usercard {
     font-size: 15px;
     color: var(--secondary-color);
 }
-
-
-p-dashboard .home-content
-{
-    display: flex;
-    justify-content: center;
-    align-items: self-start;
-    margin-top: 38px;
-    gap: 30px;
-} 

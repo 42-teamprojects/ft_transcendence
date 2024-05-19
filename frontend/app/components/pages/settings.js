@@ -11,7 +11,18 @@ export default class Settings extends HTMLElement {
 
     render() {
         this.innerHTML = /*html*/`
-        <h1>settings</h1>
+        <div class="dashboard-content">
+            <main>
+                <div class="settings-header">
+                    <h1 class="mb-2">Settings</h1>
+                    <h3 class="font-normal text-stroke">Account, Email, username...</h3>
+                </div>
+            </main>
+            <div class="widgets flex-col-center gap-5">
+                <c-playerresources></c-playerresources>
+                <c-settings-nav></c-settings-nav>
+            </div>
+        </div>
         `;
     }
 }

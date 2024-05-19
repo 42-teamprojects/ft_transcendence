@@ -57,7 +57,7 @@ export const routes = [
 		children: [
 			{
 				path: "/home",
-				component: () => import("./components/pages/dashboard.js"),
+				component: () => import("./components/pages/dashboard-home.js"),
 			},
 			{
 				path: "/chat",
@@ -65,15 +65,15 @@ export const routes = [
 			},
 			{
 				path: "/tournaments",
-				component: () => import("./components/pages/dashboard.js"),
+				component: () => import("./components/pages/dashboard-home.js"),
 			},
 			{
 				path: "/quests",
-				component: () => import("./components/pages/dashboard.js"),
+				component: () => import("./components/pages/dashboard-home.js"),
 			},
 			{
 				path: "/shop",
-				component: () => import("./components/pages/dashboard.js"),
+				component: () => import("./components/pages/dashboard-home.js"),
 			},
 			{
 				path: "/settings",

@@ -44,6 +44,10 @@ export default class Router {
 		return this.currentRoute === path;
 	}
 
+	routeLike(route) {
+		return this.currentRoute === route || this.currentRoute === route + '/';
+	}
+
 	get currentRoute() {
 		return window.location.pathname;
 	}

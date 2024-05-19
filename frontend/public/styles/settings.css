@@ -1,0 +1,16 @@
+/* Settings */
+.settings-form{
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.settings-form button {
+    width: min-content;
+}
+
+/* Privacy Start */
+
+
+/* Privacy End */
+/* Settings End */

@@ -2,6 +2,14 @@ import Authentication from "../auth/Authentication.js";
 import { config } from "../config.js";
 import Router from "../router/router.js";
 
+
+/* 
+Depricated code,
+This is the old way of doing things,
+Now we use HttpOnly Cookies for authentication, 
+so no need to store token in local storage,
+and no need to send token in headers for every request.
+*/
 export default class Http {
     static #instance = null;
 
