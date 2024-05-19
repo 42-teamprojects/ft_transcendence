@@ -20,7 +20,6 @@ export default class VerifyTwoFactorAuth extends HTMLElement {
 		const code = e.target.value;
 		if (code.length === 6) {
 			this.verify.disabled = false;
-			this.verify.click();
 		} else {
 			this.verify.disabled = true;
 		}
@@ -29,11 +28,13 @@ export default class VerifyTwoFactorAuth extends HTMLElement {
 	async handleSubmit(e) {
 		e.preventDefault();
 		const code = this.input.value;
+		if (code.length !== 6) {
+			Toast.notify({ type: "error", message: "Please enter a valid OTP" });
+			return;
+		}
 		try {
             this.verify.setAttribute("processing", "true");
-			await Authentication.instance.verifyTwoFactorAuth({
-                otp: code,
-			});
+			await Authentication.instance.verifyTwoFactorAuth(code);
             this.verify.setAttribute("processing", "false");
             Router.instance.navigate("/dashboard/home");
 		} catch (error) {

@@ -59,7 +59,7 @@ class VerifyTwoFactorAuthView(APIView):
     def post(self, request):
         two_factor_cookie = request.COOKIES.get(settings.SIMPLE_JWT['TWO_FACTOR_AUTH_COOKIE'])
         if (two_factor_cookie is None or two_factor_cookie == 'null' or two_factor_cookie == 'undefined'):
-            return Response({'detail': 'Something went wrong, try again later'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'Something went wrong, try login again'}, status=status.HTTP_400_BAD_REQUEST)
         try:
             payload = jwt.decode(two_factor_cookie, settings.SIMPLE_JWT['SIGNING_KEY'], algorithms=['HS256'])
             username = payload.get('username')

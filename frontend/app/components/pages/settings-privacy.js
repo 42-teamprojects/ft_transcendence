@@ -12,6 +12,7 @@ export default class Settingsprivacy extends HTMLElement {
 
     render() {
         this.innerHTML = /*html*/`
+        <c-enable-2fa-modal></c-enable-2fa-modal>
         <div class="dashboard-content">
             <main class="flex-col gap-16 mb-12">
                 <div class="settings-header">
@@ -38,7 +39,7 @@ export default class Settingsprivacy extends HTMLElement {
                         </div>
                         <div class="form-group-inline">
                             <label></label>
-                            <button class="btn-primary" type="submit">Change password</button>
+                            <button class="btn-secondary" type="submit">Change password</button>
                         </div>
                     </form>
                 </section>
@@ -52,7 +53,7 @@ export default class Settingsprivacy extends HTMLElement {
                             <h3 class="font-normal mb-4">Secure your account</h3>
                             <p class="text-stroke">Enable 2FA to add an extra layer of security</p>
                         </div>
-                        <button class="btn-primary">Enable 2FA</button>
+                        <button class="btn-secondary" onclick="document.querySelector('c-enable-2fa-modal').open()">Enable 2FA</button>
                     </div>
                 </section>
             </main>

@@ -1,19 +1,30 @@
 export default class VerificationService {
-    constructor(httpClient) {
-        this.httpClient = httpClient;
-    }
+	constructor(httpClient) {
+		this.httpClient = httpClient;
+	}
 
-    async verifyTwoFactorAuth(otpObject) {
-        return this.httpClient.post('security/verify-2fa/', otpObject);
-    }
+	// Email verification
+	async verifyEmail(otp) {
+		return this.httpClient.post("auth/verify-email/", { otp });
+	}
 
-    async verifyEmail(otp) {
-        return this.httpClient.post('auth/verify-email/', { otp });
-    }
-    
-    // End-point not implemented yet
-    async sendVerificationEmail(email) {
-        return this.httpClient.post('auth/verification/send/', { email });
-    }
-    // Todo: Add other verification-related methods
+	// End-point not implemented yet
+	async sendVerificationEmail(email) {
+		return this.httpClient.post("auth/verification/send/", { email });
+	}
+
+	// 2FA
+	async verifyTwoFactorAuth(otp) {
+		return this.httpClient.post("security/verify-2fa/", { otp });
+	}
+
+	async enableTwoFactorAuth(otp) {
+		return this.httpClient.post("security/enable-2fa/", { otp });
+	}
+
+	async getTwoFactorAuthSecret() {
+		return this.httpClient.get("security/get-2fa/");
+	}
+
+	// Todo: Add other verification-related methods
 }

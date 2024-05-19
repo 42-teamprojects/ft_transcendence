@@ -81,7 +81,6 @@ class OAuth2CallbackView(APIView):
             response = Response(status=status.HTTP_200_OK)
             refresh_token, access_token = user.tokens().values()
             response = add_cookies(response, access=access_token, refresh=refresh_token)
-            print("all good")
             return response
         except User.DoesNotExist:
             if User.objects.filter(username=username).exists():

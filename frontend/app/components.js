@@ -1,3 +1,4 @@
+import Enable2famodal from "./components/comps/enable-2fa-modal.js";
 import Settingsnav from "./components/comps/settings-nav.js";
 import Messagebubble from "./components/comps/message-bubble.js";
 import Conversationbody from "./components/comps/conversation-body.js";
@@ -72,4 +73,5 @@ export const components = [
 	{ tagName: 'c-conversation-body', component: Conversationbody },
 	{ tagName: 'c-message-bubble', component: Messagebubble },
 	{ tagName: 'c-settings-nav', component: Settingsnav },
+	{ tagName: 'c-enable-2fa-modal', component: Enable2famodal },
 ];
