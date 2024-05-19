@@ -21,8 +21,8 @@ export default class Login extends HTMLElement {
 			btn.addEventListener("click", async (e) => {
 				const provider = e.target.id;
 				try {
-					const authorization_url = await Authentication.instance.continueWithOAuth(provider);
-					console.log(authorization_url)
+					const { authorization_url } = await Authentication.instance.continueWithOAuth(provider);
+					window.location.replace(authorization_url);
 				}
 				catch (error) {
 					console.error(error);

@@ -75,11 +75,14 @@ class OAuth2CallbackView(APIView):
             full_name = profile['displayname']
             username = profile['login']
         
-        ok = False
         #check if username already exists
         try:
             user = User.objects.get(email=email)
-            ok = True
+            response = Response(status=status.HTTP_200_OK)
+            refresh_token, access_token = user.tokens().values()
+            response = add_cookies(response, access=access_token, refresh=refresh_token)
+            print("all good")
+            return response
         except User.DoesNotExist:
             if User.objects.filter(username=username).exists():
                 username = username + str(User.objects.count())
@@ -87,15 +90,11 @@ class OAuth2CallbackView(APIView):
             user = User.objects.create(username=username, email=email, full_name=full_name, is_verified=profile.get('verified_email', False))
             user.set_unusable_password()
             user.save()
-            ok = True
-            
-        if ok:
             response = Response(status=status.HTTP_200_OK)
             refresh_token, access_token = user.tokens().values()
             response = add_cookies(response, access=access_token, refresh=refresh_token)
-        else:
-            response = Response({"error" : "Something went wrong, please try again."}, status=status.HTTP_401_UNAUTHORIZED)
-
-        return response
+            return response
+        except:
+            return Response({"error" : "Something went wrong, please try again."}, status=status.HTTP_401_UNAUTHORIZED)
         
 

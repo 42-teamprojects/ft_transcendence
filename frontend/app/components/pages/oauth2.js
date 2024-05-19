@@ -33,13 +33,11 @@ export default class Oauth2 extends HTMLElement {
 
     async callbackOAuth(provider, code, state) {
         try {
-            const isGranted = await Authentication.instance.callbackOAuth(provider, code, state);
-            if (isGranted) {
-                Router.instance.navigate("/dashboard/home");
-            }
+            await Authentication.instance.callbackOAuth(provider, code, state);
+            Router.instance.navigate("/dashboard/home");
         }
         catch (error) {
-            console.error(error.error);
+            console.error(error);
             Toast.notify({ type: "error", message: "An error occurred, please try again later" });
             Router.instance.navigate("/login");
         }

@@ -3,52 +3,48 @@ import Router from "../../router/router.js";
 import Toast from "../comps/toast.js";
 
 export default class EmailVerification extends HTMLElement {
-    constructor() {
-        super();
-    }
+	constructor() {
+		super();
+	}
 
-    connectedCallback() {
-        this.render();
-        this.form = this.querySelector("form");
-        this.input = this.form.querySelector("input");
-        this.verify = this.querySelector("#verify");
-        this.verify.addEventListener("click", this.handleSubmit.bind(this));
-        this.input.addEventListener("input", this.handleChange.bind(this));
-    }
+	connectedCallback() {
+		this.render();
+		this.form = this.querySelector("form");
+		this.input = this.form.querySelector("input");
+		this.verify = this.querySelector("#verify");
+		this.verify.addEventListener("click", this.handleSubmit.bind(this));
+		this.input.addEventListener("input", this.handleChange.bind(this));
+	}
 
-    handleChange(e) {
-        const code = e.target.value;
-        if (code.length === 6) {
-            this.verify.disabled = false;
-            this.verify.click();
-        } else {
-            this.verify.disabled = true;
-        }
-    }
-
-    async handleSubmit(e) {
-        e.preventDefault();
-        const code = this.input.value;
-		try {
-            this.verify.setAttribute("processing", "true");
-			await Authentication.instance.verifyEmail({
-                otp: code,
-			});
-            this.verify.setAttribute("processing", "false");
-            Toast.notify({ type: "success", message: "Email verified successfully" })
-            Router.instance.navigate("/dashboard/home");
-		} catch (error) {
-            this.verify.setAttribute("processing", "false");
-            Toast.notify({ type: "error", message: error.detail })
+	handleChange(e) {
+		const code = e.target.value;
+		if (code.length === 6) {
+			this.verify.disabled = false;
+			this.verify.click();
+		} else {
+			this.verify.disabled = true;
 		}
+	}
 
-      
-    }
-    
-    disconnectedCallback() {}
+	async handleSubmit(e) {
+		e.preventDefault();
+		const code = this.input.value;
+		try {
+			this.verify.setAttribute("processing", "true");
+			await Authentication.instance.verifyEmail(code);
+			this.verify.setAttribute("processing", "false");
+			Toast.notify({ type: "success", message: "Email verified successfully" });
+			Router.instance.navigate("/dashboard/home");
+		} catch (error) {
+			this.verify.setAttribute("processing", "false");
+			Toast.notify({ type: "error", message: error.detail });
+		}
+	}
 
-    render() {
-        this.innerHTML = /*html*/`
+	disconnectedCallback() {}
+
+	render() {
+		this.innerHTML = /*html*/ `
         <div class="form-container">
             <h1>Email Verification</h1>
             <img src="/public/assets/icons/ok.svg" alt="email verification">
@@ -63,7 +59,7 @@ export default class EmailVerification extends HTMLElement {
             <p>Too lazy to verify it? <a is="c-link" href="/dashboard/home"> Do it later</a>.</p>
         </div>
         `;
-    }
+	}
 }
 
-customElements.define('p-email-verification', EmailVerification);
+customElements.define("p-email-verification", EmailVerification);
