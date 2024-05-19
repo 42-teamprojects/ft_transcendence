@@ -4,6 +4,7 @@ from users.models import OneTimePassword, User  # Ensure necessary models are im
 import pyotp
 from smtplib import SMTPException
 
+
 def generate_otp():
     otp_secret = pyotp.random_base32()
     otp = pyotp.TOTP(otp_secret)
@@ -25,3 +26,17 @@ def send_verification(user):
     except SMTPException as e:
         print(e)
         return False
+    
+# def send_reset_password(user):
+#     subject = 'Reset Password'
+#     message = f'Hi {user.username},\n\nClick the link below to reset your password.\n\nhttp://localhost:8000/reset-password/{user.id}/'
+#     email_from = settings.EMAIL_HOST_USER
+#     recipient_list = [user.email]
+    
+#     try:
+#         send_mail(subject, message, email_from, recipient_list, fail_silently=False)
+#         return True
+#     except SMTPException as e:
+#         print(e)
+#         return False
+    

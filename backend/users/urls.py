@@ -7,6 +7,8 @@ from .views import (
     RegisterView,
     LogoutView,
     OTPVerificationView,
+    ResetPasswordRequestView,
+    ResetPasswordConfirmView,
 )
 
 urlpatterns = [
@@ -16,4 +18,6 @@ urlpatterns = [
     path('jwt/verify/', JWTVerifyView.as_view()),
     path('logout/', LogoutView.as_view()),
     path('verify-email/', OTPVerificationView.as_view(), name='verify-email'),
+    path('reset-password/', ResetPasswordRequestView.as_view(), name='reset-password'),
+    path('reset-password-confirm/', ResetPasswordConfirmView.as_view(), name='reset-password-confirm')
 ]
