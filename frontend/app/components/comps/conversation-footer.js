@@ -22,7 +22,7 @@ export default class Conversationfooter extends HTMLElement {
         this.innerHTML = /*html*/`
         <div class="conversation-footer">
             <form class="conversation-form">
-                <input class="input-field message" name="message" type="text" placeholder="Type a message">
+                <input class="input-field message" name="message" type="text" placeholder="Type a message" autocomplete="off">
                 <button type="submit" class="btn-send">
                     <img src="public/assets/icons/send.svg" alt="send">
                 </button>
@@ -31,4 +31,3 @@ export default class Conversationfooter extends HTMLElement {
         `;
     }
 }
-

@@ -5,6 +5,16 @@
     gap: 0px 0px;
     grid-template-areas: "chat-list chat-conversation chat-matches-history";
 }
+
+@media screen and (max-width: 1550px) {
+    .chat-page {
+        display: grid;
+        grid-template-columns: minmax(300px, 350px) minmax(700px, 1fr);
+        grid-template-rows: 100vh;
+        gap: 0px 0px;
+        grid-template-areas: "chat-list chat-conversation";
+    }
+}
 .chat-list {
     grid-area: chat-list;
     height: 100vh;
@@ -189,6 +199,8 @@
 
     & .player-avatar {
         opacity: 0;
+        align-self: flex-end;
+        margin-bottom: .25rem;
     }
     
     & c-message-bubble:first-child .player-avatar,
@@ -216,8 +228,6 @@ c-message-bubble {
         margin-left: auto;
         background-color: var(--primary-color);
     }
-
-   
 }
 
 .message-content {
