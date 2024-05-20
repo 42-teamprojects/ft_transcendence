@@ -26,6 +26,7 @@ urlpatterns = [
     path('api/auth/', include('djoser.urls')),
     path('api/security/', include('security.urls')),
     path('api/oauth2/', include('oauth.urls')),
+    path('api/chat/', include('chat.urls')),
 ]
 
 if settings.DEBUG:
