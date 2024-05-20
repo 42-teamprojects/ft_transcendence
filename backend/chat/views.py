@@ -5,10 +5,6 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from django.db.models import Q
 
-# class ChatListView(generics.ListCreateAPIView):
-#     queryset = Chat.objects.all()
-#     serializer_class = ChatSerializer
-#     permission_classes = [permissions.IsAuthenticated]
 
 class ChatListView(generics.ListCreateAPIView):
     queryset = Chat.objects.all()
