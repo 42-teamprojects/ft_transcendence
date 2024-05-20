@@ -1,6 +1,3 @@
-from io import BytesIO
-from django.http import FileResponse
-from django.shortcuts import render
 import jwt
 import pyotp
 import datetime;
@@ -11,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from django.conf import settings
 from users.models import User
-from users.views import add_cookies
+from users.utils import add_cookies
 from django.utils import timezone
 
 # Create your views here.

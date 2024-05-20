@@ -59,9 +59,9 @@ export default class Authentication {
 		}
 	}
 
-	async verifyEmail(otp) {
+	async verifyEmail(data) {
 		try {
-			return await this.verificationService.verifyEmail(otp);
+			return await this.verificationService.verifyEmail(data);
 		} catch (error) {
 			throw error;
 		}
@@ -86,9 +86,9 @@ export default class Authentication {
 
 	// 2FA
 
-	async verifyTwoFactorAuth(otp) {
+	async verifyTwoFactorAuth(data) {
 		try {
-			return await this.verificationService.verifyTwoFactorAuth(otp);
+			return await this.verificationService.verifyTwoFactorAuth(data);
 		} catch (error) {
 			throw error;
 		}
@@ -120,16 +120,16 @@ export default class Authentication {
 		}
 	}
 
-	async resetPasswordEmail(email) {
+	async resetPasswordEmail(data) {
 		try {
-			return await this.verificationService.sendPasswordResetEmail(email);
+			return await this.verificationService.sendPasswordResetEmail(data);
 		} catch (error) {
 			throw error;
 		}
 	}
-	async resetPassword(password, uid, token) {
+	async resetPassword(data) {
 		try {
-			return await this.verificationService.resetPassword(password, uid, token);
+			return await this.verificationService.resetPassword(data);
 		} catch (error) {
 			throw error;
 		}

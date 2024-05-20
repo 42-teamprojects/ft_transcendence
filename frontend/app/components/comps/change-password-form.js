@@ -19,17 +19,15 @@ export default class Changepasswordform extends HTMLElement {
     handleSubmit(e) {
         e.preventDefault();
 
-        const formValidations = (data) => {
-			return {
-				...validateRequire(data),
-				...validateConfirmPassword(data["new_password"], data["confirm_password"]),
-			};
-		};
-
         handleFormSubmitApi(
             this.form,
             Authentication.instance.changePassword.bind(Authentication.instance),
-            formValidations,
+            (data) => {
+                return {
+                    ...validateRequire(data),
+                    ...validateConfirmPassword(data["new_password"], data["confirm_password"]),
+                };
+            },
             () => {
                 Toast.notify({ type: "success", message: "Password changed successfully" });
             },

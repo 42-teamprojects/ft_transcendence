@@ -4,27 +4,27 @@ export default class VerificationService {
 	}
 
 	// Password reset
-	async sendPasswordResetEmail(email) {
-		return this.httpClient.post("auth/reset-password/", { email });
+	async sendPasswordResetEmail(data) {
+		return this.httpClient.post("auth/reset-password/", data);
 	}
 
-	async resetPassword(password, uid, token) {
-		return this.httpClient.post("auth/reset-password-confirm/", { password, uid, token })
+	async resetPassword(data) {
+		return this.httpClient.post("auth/reset-password-confirm/", data)
 	}
 
 	// Email verification
-	async verifyEmail(otp) {
-		return this.httpClient.post("auth/verify-email/", { otp });
+	async verifyEmail(data) {
+		return this.httpClient.post("auth/verify-email/", data);
 	}
 
 	// End-point not implemented yet
-	async sendVerificationEmail(email) {
-		return this.httpClient.post("auth/verification/send/", { email });
+	async sendVerificationEmail(data) {
+		return this.httpClient.post("auth/verification/send/", data);
 	}
 
 	// 2FA
-	async verifyTwoFactorAuth(otp) {
-		return this.httpClient.post("security/verify-2fa/", { otp });
+	async verifyTwoFactorAuth(data) {
+		return this.httpClient.post("security/verify-2fa/", data);
 	}
 
 	async enableTwoFactorAuth(data) {

@@ -1,7 +1,8 @@
-import { validateConfirmPassword, validateEmail } from '../../utils/validations.js';
+import { validateConfirmPassword, validateEmail, validateRequire } from '../../utils/validations.js';
 import Toast from '../comps/toast.js';
 import Authentication from '../../auth/authentication.js';
 import Router from '../../router/router.js';
+import { handleFormSubmitApi } from '../../utils/utils.js';
 
 export default class Resetpassword extends HTMLElement {
     constructor() {
@@ -16,33 +17,24 @@ export default class Resetpassword extends HTMLElement {
 
         this.form = this.querySelector('form');
 
-        this.button = this.form.querySelector('button')
-
-        this.form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const new_password = e.target.new_password.value;
-            const confirm_password = e.target.confirm_password.value;
-            const errors = validateConfirmPassword(new_password, confirm_password);
-            if (errors.length > 0) {
-                Toast.notify({type: 'error', message: errors[0]});
-                return;
-            }
-
-            try {
-                this.button.setAttribute('processing', 'true')
-                await Authentication.instance.resetPassword(new_password, this.uid, this.token);
-                this.button.setAttribute('processing', 'false')
-                Toast.notify({type: 'success', message: "password reset successfully. You can now login with your new password"})
-                Router.instance.navigate("/login");
-            }
-            catch (error) {
-                this.button.setAttribute('processing', 'false')
-                console.log(error)
-                Toast.notify({type: 'error', message: error.detail})
-            }
-        });
+        this.form.addEventListener('submit', this.handleSubmit.bind(this));
     }
+
+    handleSubmit(e) {
+		e.preventDefault();
+
+		handleFormSubmitApi(
+			this.form,
+			Authentication.instance.resetPassword.bind(Authentication.instance),
+			(data) => {
+                return {...validateRequire(data), ...validateConfirmPassword(data['password'], data['confirm_password'])}
+            },
+			() => {
+                Toast.notify({type: 'success', message: "Password reset successfully. You can now login with your new password"})
+                Router.instance.navigate("/login");
+			}
+		);
+	}
 
     disconnectedCallback() {}
 
@@ -52,10 +44,12 @@ export default class Resetpassword extends HTMLElement {
             <h1>Reset Password</h1>
             <form method="post" class="mt-8">
                 <div class="form-group">
-                    <input type="password" name="new_password" class="input-field" placeholder="New Password" />
+                    <input type="hidden" name="uid" value="${this.uid}" />
+                    <input type="hidden" name="token" value="${this.token}" />
+                    <input type="password" name="password" class="input-field" placeholder="New Password" />
                     <input type="password" name="confirm_password" class="input-field" placeholder="Confirm Password" />
                 </div>
-                <button is="c-button" id="verify" class="btn-secondary">Reset Password</button>
+                <button is="c-button" type="submit" id="verify" class="btn-secondary">Reset Password</button>
             </form>
         </div>
         `;

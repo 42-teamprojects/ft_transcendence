@@ -1,6 +1,7 @@
 import { validateEmail } from '../../utils/validations.js';
 import Toast from '../comps/toast.js';
 import Authentication from '../../auth/authentication.js';
+import { handleFormSubmitApi } from '../../utils/utils.js';
 
 export default class Emailresetpassword extends HTMLElement {
     constructor() {
@@ -12,31 +13,21 @@ export default class Emailresetpassword extends HTMLElement {
 
         this.form = this.querySelector('form');
 
-        this.button = this.form.querySelector('button')
-
-        this.form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const email = e.target.email.value;
-            const errors = validateEmail(email);
-            if (errors.length > 0) {
-                Toast.notify({type: 'error', message: errors[0]});
-                return;
-            }
-
-            try {
-                this.button.setAttribute('processing', 'true')
-                await Authentication.instance.resetPasswordEmail(email);
-                this.button.setAttribute('processing', 'false')
-                Toast.notify({type: 'success', message: "We sent an email to your inbox"})
-            }
-            catch (error) {
-                this.button.setAttribute('processing', 'false')
-                console.log(error)
-                Toast.notify({type: 'success', message: error.detail})
-            }
-        });
+        this.form.addEventListener('submit', this.handleSubmit.bind(this));
     }
+
+    handleSubmit(e) {
+		e.preventDefault();
+
+		handleFormSubmitApi(
+			this.form,
+			Authentication.instance.resetPasswordEmail.bind(Authentication.instance),
+			(data) => validateEmail(data['email']),
+			() => {
+                Toast.notify({type: 'success', message: "We sent an email to your inbox"})
+			}
+		);
+	}
 
     disconnectedCallback() {}
 
@@ -50,7 +41,7 @@ export default class Emailresetpassword extends HTMLElement {
                     <label for="email">Email</label>
                     <input type="text" name="email" class="input-field" placeholder="Enter your Email" />
                 </div>
-                <button is="c-button" id="verify" class="btn-secondary">Request Password Reset</button>
+                <button is="c-button" type="submit" class="btn-secondary">Request Password Reset</button>
             </form>
             <p>Forgot your email? <a is="c-link" href="/"> Ydek feh</a>.</p>
         </div>

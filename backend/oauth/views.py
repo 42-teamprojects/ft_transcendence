@@ -1,14 +1,12 @@
 from random import Random
 from django.conf import settings
-from django.http import HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
 from rest_framework.views import APIView
 from requests_oauthlib import OAuth2Session
 import os
 from users.models import User
-from users.views import add_cookies, generate_2fa_token
+from users.utils import add_cookies, generate_2fa_token
 from rest_framework.response import Response
 from rest_framework import status
-from django.core import serializers
 
 # http://localhost:8000/api/oauth2/login/google/
 # http://localhost:8000/api/oauth2/login/fortytwo/

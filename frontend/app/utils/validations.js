@@ -95,3 +95,15 @@ export function validateRegister(values) {
     
     return errors;
 }
+
+export function validateCode(code, length = 6, field = "otp") {
+    const errors = {};
+
+    if (!code) {
+        errors[field] = "This field is required";
+    } else if (code.length !== length) {
+        errors[field] = `Invalid ${field}`;
+    }
+
+    return errors;
+}
