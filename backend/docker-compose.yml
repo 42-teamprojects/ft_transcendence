@@ -2,6 +2,7 @@ version: "3"
 
 services:
   backend:
+    container_name: backend
     build:
       context: .
       dockerfile: Dockerfile
@@ -15,6 +16,7 @@ services:
       - db
 
   db:
+    container_name: postgres
     image: postgres:13-alpine
     restart: always
     environment:
