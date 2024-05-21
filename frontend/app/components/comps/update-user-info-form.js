@@ -1,5 +1,6 @@
 import { handleFormSubmitApi } from "../../utils/utils.js";
 import { validateEmail, validateFullName, validateRequire, validateUsername } from "../../utils/validations.js";
+import Toast from "./toast.js";
 
 export default class Updateuserinfoform extends HTMLElement {
 	constructor() {
@@ -31,10 +32,6 @@ export default class Updateuserinfoform extends HTMLElement {
 			() => {
 				Toast.notify({ type: "success", message: "Changes saved successfully" });
 			},
-			// No need for this, remove it when you add the actual function api
-			() => {
-				return false;
-			}
 		);
 	}
 
