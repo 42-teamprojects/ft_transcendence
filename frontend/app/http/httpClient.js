@@ -37,6 +37,7 @@ export default class HttpClient {
 
 		return data;
 	}
+	
 	async get(endpoint, options = {}) {
 		return this.fetch(endpoint, { ...options, method: "GET" });
 	}

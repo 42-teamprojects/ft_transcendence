@@ -1,10 +1,16 @@
+import ChatApiService from "../../api/chat/chatApiService.js";
+
 export default class Chat extends HTMLElement {
     constructor() {
         super();
+        this.chatService = new ChatApiService();
     }
 
-    connectedCallback() {
+    async connectedCallback() {
         this.render();
+        const res = await this.chatService.getUserChats();
+        const messages = await this.chatService.getChatMessages(res[3].id);
+        console.log(messages);
     }
 
     disconnectedCallback() {}
