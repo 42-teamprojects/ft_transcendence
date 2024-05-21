@@ -11,10 +11,10 @@ class Chat(models.Model):
 
 class Message(models.Model):
     content = models.TextField()
-    chat_id = models.ForeignKey(Chat, on_delete=models.CASCADE)
+    chat = models.ForeignKey(Chat, on_delete=models.CASCADE)
     is_seen = models.BooleanField(default=False)
-    sender_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    sender = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return f'message from {self.sender_id} in {self.chat_id}'
+        return f'message from {self.sender} in {self.chat}'
