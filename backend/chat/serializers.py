@@ -2,7 +2,7 @@ from rest_framework import serializers
 # from users.serializers import UserSerializer
 from .models import Chat, Message
 
-class ChatSerializer(serializers.ModelSerializer):
+class ChatSerializer(serializers.ModelSerializer):      
     class Meta:
         model = Chat
         fields = ['id', 'user1', 'user2']

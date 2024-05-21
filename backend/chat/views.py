@@ -4,18 +4,34 @@ from .serializers import ChatSerializer, MessageSerializer
 from rest_framework import viewsets
 from rest_framework.response import Response
 from django.db.models import Q
-
+from users.models import User
 
 class ChatListView(generics.ListCreateAPIView):
     queryset = Chat.objects.all()
     serializer_class = ChatSerializer
+    permission_classes = [permissions.IsAuthenticated]  
+
+    def get(self, request, *args, **kwargs):
+        print("getting data")
+        user = request.user
+        if not user:
+            return Response(
+                {'detail': 'You are not authenticated.'},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+        return super().get(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
-        user1 = request.data.get('user1')
-        user2 = request.data.get('user2')
-
+        user = request.user
+        if not user:
+            return Response(
+                {'detail': 'You are not authenticated.'},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+        user1_id = user
+        user2_id = request.data.get('user2')
         existing_chat = Chat.objects.filter(
-            Q(user1=user1, user2=user2) | Q(user1=user2, user2=user1)
+            Q(user1=user1_id, user2=user2_id) | Q(user1=user2_id, user2=user1_id)
         ).first()
 
         if existing_chat:
@@ -23,7 +39,6 @@ class ChatListView(generics.ListCreateAPIView):
                 {'detail': 'A chat between these users already exists.'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-
         return super().create(request, *args, **kwargs)
 
 class MessageListView(generics.ListCreateAPIView):
@@ -45,13 +60,42 @@ class MessageListView(generics.ListCreateAPIView):
 
         return super().create(request, *args, **kwargs)
 
-class UserChatsListView(generics.ListAPIView):
-    serializer_class = ChatSerializer
+class UserChatMessagesListView(generics.ListAPIView):
+    serializer_class = MessageSerializer
 
     def get_queryset(self):
-        user_id = self.kwargs.get('user_id')
-        return Chat.objects.filter(Q(user1=user_id) | Q(user2=user_id))
+        chat_id = self.kwargs.get('chat_id')
+        chat = Chat.objects.filter(id=chat_id).first()
+        if not chat:
+            return Message.objects.none()
 
+        return Message.objects.filter(chat=chat)
+
+class UserChatsListView(generics.GenericAPIView):
+    queryset = Chat.objects.all()
+    serializer_class = ChatSerializer
+    permissions_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        if not user:
+            return Response(
+                {'detail': 'You are not authenticated.'},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+        chats = self.queryset.filter(Q(user1=user) | Q(user2=user))
+        serializer = ChatSerializer(chats, many=True)
+        return Response(serializer.data)
+
+    # def get_queryset(self):
+    #     user_id = self.kwargs.get('user_id')
+    #     try:
+    #         user = User.objects.get(id=user_id)
+    #     except User.DoesNotExist:
+    #         return Chat.objects.none()  
+    #     #! check if user does not exist return 400
+    #     user_chats = Chat.objects.filter(Q(user1=user) | Q(user2=user))
+    #     return user_chats
 # class MessageListView(generics.ListCreateAPIView):
 #     queryset = Message.objects.all()
 #     serializer_class = MessageSerializer
