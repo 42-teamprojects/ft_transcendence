@@ -7,6 +7,7 @@ from pathlib import Path
 from datetime import timedelta
 
 PROJECT_NAME = "Blitzpong"
+FRONTEND_DOMAIN = "http://localhost:8080"
 
 env = environ.Env(
     DEBUG=(bool, False)
@@ -167,16 +168,6 @@ EMAIL_PORT = 587
 EMAIL_USE_SSL = False
 EMAIL_HOST_USER = env('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
-
-# EMAIL_BACKEND = 'django_ses.SESBackend'
-
-# AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
-# AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
-# AWS_SES_REGION_NAME = env('AWS_SES_REGION_NAME')
-# AWS_SES_REGION_ENDPOINT = f'email.{AWS_SES_REGION_NAME}.amazonaws.com'
-# AWS_SES_FROM_EMAIL = env('AWS_SES_FROM_EMAIL')
-# USE_SES_V2 = True
-
 
 # JWT
 SIMPLE_JWT = {

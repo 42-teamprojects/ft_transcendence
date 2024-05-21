@@ -9,7 +9,7 @@ export default class SidebarLink extends HTMLElement {
           home: "/public/assets/game/sidebar-icons/home.svg",
           chat: "/public/assets/game/sidebar-icons/chat.svg",
           tournaments: "/public/assets/game/sidebar-icons/leaderboard.svg",
-          quests: "/public/assets/game/sidebar-icons/quest.svg",
+          settings: "/public/assets/game/sidebar-icons/settings.svg",
           shop: "/public/assets/game/sidebar-icons/shop.svg",
       };
       this.isActive = isThere(["true", ""], this.getAttribute("active"), false);

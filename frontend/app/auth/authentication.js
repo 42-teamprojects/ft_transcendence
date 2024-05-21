@@ -1,4 +1,9 @@
 import { config } from "../config.js";
+import HttpClient from "../http/httpClient.js";
+import AuthService from "./authService.js";
+import OAuthService from "./oAuthService.js";
+import UserService from "./userService.js";
+import VerificationService from "./verificationService.js";
 
 export default class Authentication {
 	static #instance = null;
@@ -7,56 +12,32 @@ export default class Authentication {
 		if (Authentication.#instance) {
 			throw new Error("Use instance");
 		}
-		this._callbacks = [];
 		Authentication.#instance = this;
+
+		this.httpClient = new HttpClient(config.rest_url);
+		// Initialize services
+		this.authService = new AuthService(this.httpClient);
+		this.oauthService = new OAuthService(this.httpClient);
+		this.verificationService = new VerificationService(this.httpClient);
+		this.userService = new UserService(this.httpClient);
 	}
 
 	static get instance() {
 		return Authentication.#instance || new Authentication();
 	}
 
-	async login(username, password) {
-		const user = { username, password };
-		let response;
+	async login(data) {
 		try {
-			response = await fetch(config.rest_url + "auth/login/", {
-				method: "POST",
-				headers: {
-					Accept: "application/json, text/plain, */*",
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(user),
-				credentials: "include",
-			});
-			const data = await response.json();
-			if (!response.ok) {
-				throw data;
-			}
-			return data;
+			const { username, password } = data;
+			return await this.authService.login(username, password);
 		} catch (error) {
-			if (response && response.status === 423) {
-				throw { detail: error.detail, status: 423 };
-			}
 			throw error;
 		}
 	}
 
 	async register(user) {
 		try {
-			const response = await fetch(config.rest_url + "auth/register/", {
-				method: "POST",
-				headers: {
-					Accept: "application/json, text/plain, */*",
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(user),
-				credentials: "include",
-			});
-			const data = await response.json();
-			if (!response.ok) {
-				throw data;
-			}
-			return data;
+			return await this.authService.register(user);
 		} catch (error) {
 			throw error;
 		}
@@ -64,129 +45,23 @@ export default class Authentication {
 
 	async logout() {
 		try {
-			const response = await fetch(config.rest_url + "auth/logout/", {
-				method: "POST",
-				headers: {
-					Accept: "application/json, text/plain, */*",
-					"Content-Type": "application/json",
-				},
-				credentials: "include",
-			});
-			if (!response.ok) {
-				throw response.json();
-			}
+			await this.authService.logout();
 		} catch (error) {
 			throw error;
 		}
 	}
 
 	async isAuthenticated() {
-		let response;
-		let retries = 3;
-
-		while (retries > 0) {
-			try {
-				response = await fetch(config.rest_url + "auth/jwt/verify/", {
-					method: "POST",
-					headers: {
-						Accept: "application/json, text/plain, */*",
-						"Content-Type": "application/json",
-					},
-					credentials: "include",
-				});
-				const data = await response.json();
-				if (!response.ok) {
-					throw data;
-				}
-				return true;
-			} catch (error) {
-				if (response && response.status === 401) {
-					// Unauthorized, try refreshing token
-					await this.refreshToken();
-					retries--;
-				} else {
-					throw error;
-				}
-			}
-		}
-		throw new Error("Authentication failed after multiple attempts");
-	}
-
-	async refreshToken() {
 		try {
-			const response = await fetch(config.rest_url + "auth/jwt/refresh/", {
-				method: "POST",
-				headers: {
-					Accept: "application/json, text/plain, */*",
-					"Content-Type": "application/json",
-				},
-				credentials: "include",
-			});
-			const data = await response.json();
-			if (!response.ok) {
-				throw data;
-			}
+			return await this.authService.isAuthenticated();
 		} catch (error) {
 			throw error;
 		}
 	}
 
-	async verifyTwoFactorAuth(otpObject) {
+	async verifyEmail(data) {
 		try {
-			const response = await fetch(config.rest_url + "security/verify-2fa/", {
-				method: "POST",
-				headers: {
-					Accept: "application/json, text/plain, */*",
-					"Content-Type": "application/json",
-				},
-				credentials: "include",
-				body: JSON.stringify(otpObject),
-			});
-			const data = await response.json();
-			if (!response.ok) {
-				throw data;
-			}
-		} catch (error) {
-			throw error;
-		}
-	}
-
-	async verifyEmail(otpObject) {
-		try {
-            const response = await fetch(config.rest_url + "auth/verify-email/", {
-                method: "POST",
-                headers: {
-                    Accept: "application/json, text/plain, */*",
-                    "Content-Type": "application/json",
-                },
-                credentials: "include",
-                body: JSON.stringify(otpObject),
-            });
-
-            const data = await response.json();
-			if (!response.ok) {
-				throw data;
-			}
-        }
-        catch (error) {
-            throw error;
-        }
-	}
-
-	async refreshToken() {
-		try {
-			const response = await fetch(config.rest_url + "auth/jwt/refresh/", {
-				method: "POST",
-				headers: {
-					Accept: "application/json, text/plain, */*",
-					"Content-Type": "application/json",
-				},
-				credentials: "include",
-			});
-			const data = await response.json();
-			if (!response.ok) {
-				throw data;
-			}
+			return await this.verificationService.verifyEmail(data);
 		} catch (error) {
 			throw error;
 		}
@@ -195,57 +70,68 @@ export default class Authentication {
 	// OAuth2
 	async continueWithOAuth(provider) {
 		try {
-			const response = await fetch(config.rest_url + `oauth2/login/${provider}/`, {
-				method: "GET",
-				headers: {
-					Accept: "application/json, text/plain, */*",
-					"Content-Type": "application/json",
-				},
-				credentials: "include",
-			});
-			const { authorization_url } = await response.json();
-			if (!response.ok) {
-				throw data;
-			}
-
-			// navigate to the authorization url
-			window.location.replace(authorization_url);
-
-			return authorization_url;
+			return await this.oauthService.continueWithOAuth(provider);
 		} catch (error) {
 			throw error;
 		}
 	}
 
 	async callbackOAuth(provider, code, state) {
-		if (code == null || state == null) {
-			throw new Error("Invalid code or state");
-		}
 		try {
-			const response = await fetch(config.rest_url + `oauth2/callback/${provider}/?code=${code}&state=${state}`, {
-				method: "GET",
-				headers: {
-					Accept: "application/json, text/plain, */*",
-					"Content-Type": "application/json",
-				},
-				credentials: "include",
-			});
-			if (response.status === 200) {
-				return true;
-			}
-			if (!response.ok) {
-				throw await response.json();
-			}
+			return await this.oauthService.callbackOAuth(provider, code, state);
 		} catch (error) {
 			throw error;
 		}
 	}
 
-	async testAuthentication() {
+	// 2FA
+
+	async verifyTwoFactorAuth(data) {
 		try {
-			await this.login("yusufisawi", "password");
+			return await this.verificationService.verifyTwoFactorAuth(data);
 		} catch (error) {
-			console.log(error)
+			throw error;
+		}
+	}
+
+	async enableTwoFactorAuth(data) {
+		try {
+			return await this.verificationService.enableTwoFactorAuth(data);
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	async getTwoFactorAuthSecret() {
+		try {
+			return await this.verificationService.getTwoFactorAuthSecret();
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	// User
+	async changePassword(data) {
+		try {
+			const { new_password, current_password } = data;
+			return await this.userService.changePassword(new_password, current_password);
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	async resetPasswordEmail(data) {
+		try {
+			return await this.verificationService.sendPasswordResetEmail(data);
+		} catch (error) {
+			throw error;
+		}
+	}
+	async resetPassword(data) {
+		try {
+			return await this.verificationService.resetPassword(data);
+		} catch (error) {
+			throw error;
 		}
 	}
 }

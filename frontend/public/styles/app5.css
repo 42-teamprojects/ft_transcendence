@@ -5,6 +5,11 @@ body.content {
 	grid-template-areas: "side body";
 }
 
+router-outlet {
+	grid-area: body;
+	overflow: auto !important;
+}
+
 .sidebar {
 	grid-area: side;
 	display: flex;
@@ -23,10 +28,7 @@ body.content {
 	gap: 0.5rem;
 }
 
-p-dashboard {
-	grid-area: body;
-	overflow: auto !important;
-}
+
 
 .sidebar-link {
 	display: flex;

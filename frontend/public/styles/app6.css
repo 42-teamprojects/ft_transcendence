@@ -47,32 +47,37 @@ c-usercard {
     }
 }
 
-c-friendscard, c-dailyquestscard
-{
-    .container
-    {
-        width: 381px;
-        height: 259px;
-        padding: 20px 26px 26px 26px;
-    }
-
-    .container .title-bar h1
-    {
-        font-size: 22px;
-    }
-
-    .container .title-bar a
-    {
-        font-size: 15px;
-        color: var(--secondary-color);
-    }
+.dashboard-content {
+    display: grid;
+    grid-template-columns: minmax(580px, 1fr) 381px;
+    grid-template-rows: auto;
+    align-items: self-start;
+    margin: 38px auto;
+    gap: 3rem;
+    max-width: 1000px;
 }
 
-p-dashboard .home-content
+.dashboard-content main {
+    max-width: 580px;
+}
+
+.widgets {
+    position: sticky;
+    top: 38px;
+}
+
+.widget-container {
+    padding: 1.5rem;
+    width: 381px;
+}
+
+.widget-container .title-bar h1
 {
-    display: flex;
-    justify-content: center;
-    align-items: self-start;
-    margin-top: 38px;
-    gap: 30px;
-} 
+    font-size: 22px;
+}
+
+.widget-container .title-bar a
+{
+    font-size: 15px;
+    color: var(--secondary-color);
+}

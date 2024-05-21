@@ -22,10 +22,10 @@ from backend import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/auth/', include('users.urls')),
     path('api/auth/', include('djoser.urls')),
+    path('api/auth/', include('users.urls')),
     path('api/security/', include('security.urls')),
-    path('api/oauth2/', include('oauth.urls')),
+    path('api/oauth/', include('oauth.urls')),
     path('api/chat/', include('chat.urls')),
 ]
 

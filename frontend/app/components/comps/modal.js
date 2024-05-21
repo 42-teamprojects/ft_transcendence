@@ -4,7 +4,7 @@ export default class Modal extends HTMLElement {
         this.isOpen = false;
         this.innerHTML = /*html*/`
             <div id="backdrop"></div>
-            <div id="modal" class="flex-center">
+            <div class="modal" class="flex-center">
                 <header class="text-center">
                     <h1 id="title" class="text-3xl font-bold mb-2">${this.getAttribute('title') || 'Default title'}</h1>
                     <h2 id="subtitle" class="text-xl font-normal text-stroke">${this.getAttribute('subtitle') || 'Default subtitle'}</h2>

@@ -53,7 +53,17 @@
     justify-content: center !important;
 }
 
+.align-center {
+    align-items: center !important;
+}
 
+.align-start {
+    align-items: flex-start !important;
+}
+
+.justify-start {
+    justify-content: flex-start !important;
+}
 
 .justify-between {
     justify-content: space-between !important;
@@ -893,6 +903,19 @@
     background-color: var(--text-color) !important;
 }
 
+.bg-active {
+    background-color: var(--active-bg-color) !important;
+}
+
+.bg-active-border {
+    background-color: var(--active-bg-color) !important;
+    box-shadow: 0 0 0 2px var(--border-color) inset;
+}
+
+.bg-input {
+    background-color: var(--input-bg-color) !important;
+}
+
 /* Fonts */
 
 .font-light {
@@ -1295,4 +1318,9 @@
 {
     border: 2px solid #262F35;
     border-radius: 24px;
+}
+
+.cursor-pointer
+{
+    cursor: pointer !important;
 }

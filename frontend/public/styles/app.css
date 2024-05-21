@@ -5,6 +5,17 @@ html {
 	--btn-shadow-length: 3px;
 }
 
+.bg-hover:hover {
+	background-color: var(--active-bg-color);
+}
+
+.option-card {
+	/* width: minmax(100%, 278px);
+	height: minmax(100%, 189px); */
+	width: 278px;
+	height: 189px;
+}
+
 c-logo .logo {
 	content: url("../assets/icons/logo.svg");
 }
@@ -42,9 +53,18 @@ a {
 }
 
 .form-group-inline {
-	display: flex;
+    display: grid;
+    grid-template-columns: .4fr 1fr;
 	align-items: center;
-	gap: 1rem;
+    gap: 2rem;
+}
+
+.form-group-inline label {
+    text-align: right;
+}
+
+.form-group-inline input {
+    width: 100%;
 }
 
 .input-field,
@@ -159,6 +179,12 @@ button:active:not([disabled]) {
 	transform: translate(-50%, -50%);
 }
 
+@media screen and (max-width: 1280px) {
+	[opened] .modal {
+		top: 50%;
+	}
+}
+
 .modal {
 	position: fixed;
 	top: 30%;
@@ -208,7 +234,7 @@ button:active:not([disabled]) {
 	position: fixed;
 	top: 25px;
 	right: 30px;
-	z-index: 100;
+	z-index: 10000;
 	display: flex;
 	flex-direction: column-reverse;
 	gap: 1rem;
@@ -488,7 +514,7 @@ button:active:not([disabled]) {
 /* background */
 
 .bg {
-	background-color: var(--default-color);
+	background-color: var(--default-color) !important;
 	border: 2px solid var(--border-color);
 }
 

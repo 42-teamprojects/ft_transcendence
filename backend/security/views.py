@@ -1,6 +1,3 @@
-from io import BytesIO
-from django.http import FileResponse
-from django.shortcuts import render
 import jwt
 import pyotp
 import datetime;
@@ -11,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from django.conf import settings
 from users.models import User
-from users.views import add_cookies
+from users.utils import add_cookies
 from django.utils import timezone
 
 # Create your views here.
@@ -21,10 +18,6 @@ class GetTwoFactorAuthView(APIView):
     def get(self, request):
         user_secret_key = pyotp.random_base32()
     
-        # Save the secret key in the user's profile
-        request.user.secret_key = user_secret_key
-        request.user.save()
-        
         # Generate a TOTP object
         totp = pyotp.TOTP(user_secret_key)
         
@@ -46,10 +39,12 @@ class EnableTwoFactorAuthView(APIView):
         if request.user.two_factor_enabled:
             return Response({'detail': 'Two-factor authentication is already enabled'}, status=status.HTTP_400_BAD_REQUEST)
         
-        totp = pyotp.TOTP(request.user.secret_key)
-        
+        totp = pyotp.TOTP(request.data['secret_key'])
+
         if totp.verify(request.data['otp']):
             request.user.two_factor_enabled = True
+            request.user.last_2fa_login = timezone.now()
+            request.user.secret_key = request.data['secret_key']
             request.user.save()
             return Response({'detail': 'Two-factor authentication is enabled'}, status=status.HTTP_200_OK)
         else:
@@ -59,7 +54,7 @@ class VerifyTwoFactorAuthView(APIView):
     def post(self, request):
         two_factor_cookie = request.COOKIES.get(settings.SIMPLE_JWT['TWO_FACTOR_AUTH_COOKIE'])
         if (two_factor_cookie is None or two_factor_cookie == 'null' or two_factor_cookie == 'undefined'):
-            return Response({'detail': 'Something went wrong, try again later'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'Something went wrong, try login again'}, status=status.HTTP_400_BAD_REQUEST)
         try:
             payload = jwt.decode(two_factor_cookie, settings.SIMPLE_JWT['SIGNING_KEY'], algorithms=['HS256'])
             username = payload.get('username')

@@ -1,3 +1,4 @@
+import EmailVerification from "./components/pages/email-verification.js";
 import AuthGuard from "./guards/authGuard.js";
 import LoginGuard from "./guards/loginGuard.js";
 
@@ -56,7 +57,7 @@ export const routes = [
 		children: [
 			{
 				path: "/home",
-				component: () => import("./components/pages/dashboard.js"),
+				component: () => import("./components/pages/dashboard-home.js"),
 			},
 			{
 				path: "/chat",
@@ -64,15 +65,29 @@ export const routes = [
 			},
 			{
 				path: "/tournaments",
-				component: () => import("./components/pages/dashboard.js"),
+				component: () => import("./components/pages/dashboard-home.js"),
 			},
 			{
 				path: "/quests",
-				component: () => import("./components/pages/dashboard.js"),
+				component: () => import("./components/pages/dashboard-home.js"),
 			},
 			{
 				path: "/shop",
-				component: () => import("./components/pages/dashboard.js"),
+				component: () => import("./components/pages/dashboard-home.js"),
+			},
+			{
+				path: "/settings",
+				component: () => import("./components/pages/settings.js"),
+				children: [
+					{
+						path: "/game",
+						component: () => import("./components/pages/settings.js"),
+					},	
+					{
+						path: "/privacy",
+						component: () => import("./components/pages/settings-privacy.js"),
+					},	
+				]
 			},
 		],
 	},
@@ -99,5 +114,15 @@ export const routes = [
 		path: "/verify-2fa",
 		canActivate: [LoginGuard],
 		component: () => import("./components/pages/verify-two-factor-auth.js"),
+	},
+	{
+		path: "/forgot-password",
+		canActivate: [LoginGuard],
+		component: () => import("./components/pages/email-reset-password.js"),
+	},
+	{
+		path: "/reset-password",
+		canActivate: [LoginGuard],
+		component: () => import("./components/pages/reset-password.js"),
 	},
 ];

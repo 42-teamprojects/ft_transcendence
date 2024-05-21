@@ -1,7 +1,9 @@
 p-login,
 p-signup,
 p-email-verification,
-p-verify-two-factor-auth {
+p-verify-two-factor-auth,
+p-email-reset-password,
+p-reset-password {
 	display: flex;
 	justify-content: center;
 	align-items: center;

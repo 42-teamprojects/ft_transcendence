@@ -1,11 +1,8 @@
-import datetime
-import re
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
-from .serializers import MyTokenObtainPairSerializer, RegisterSerializer
+from ..serializers import MyTokenObtainPairSerializer, RegisterSerializer
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
-from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -15,11 +12,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
     TokenVerifyView
 )
-import jwt
-from .models import OneTimePassword
-from .utils import send_verification
-from rest_framework.permissions import IsAuthenticated
-from django.utils import timezone
+from ..utils import add_cookies, generate_2fa_token, send_verification
 
 # Register View
 class RegisterView(GenericAPIView):
@@ -55,25 +48,13 @@ class LoginView(TokenObtainPairView):
         if response.status_code == 200:
             access_token = response.data.get('access')
             refresh_token = response.data.get('refresh')
-            two_factor_auth_required = response.data.get('two_factor_auth_required')
+            two_factor_enabled = response.data.get('two_factor_auth_required')
             last_2fa_login = response.data.get('last_2fa_login')
             username = response.data.get('username')
             
-            if two_factor_auth_required: #and (last_2fa_login is None or last_2fa_login < timezone.now() - timezone.timedelta(days=1)): # Delete access and refresh cookies
+            if two_factor_enabled: #and (last_2fa_login is None or last_2fa_login < timezone.now() - timezone.timedelta(days=1)): # Delete access and refresh cookies
                 # Generate intermediate token
-                intermediate_token = jwt.encode(
-                    {'username': username, 'exp': datetime.datetime.now() + datetime.timedelta(minutes=5)},
-                    settings.SIMPLE_JWT['SIGNING_KEY'], algorithm='HS256'
-                )
-                response = Response({'detail': 'Two-factor authentication is required'}, status=status.HTTP_423_LOCKED)
-                response.set_cookie(
-                    key=settings.SIMPLE_JWT['TWO_FACTOR_AUTH_COOKIE'],
-                    value=intermediate_token,
-                    expires=60 * 15, # 15 Minutes
-                    secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],
-                    httponly=settings.SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
-                    samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
-                )
+                response = generate_2fa_token(username)
             else:
                 response = add_cookies(response, access=access_token, refresh=refresh_token)
  
@@ -128,44 +109,3 @@ class CustomProviderAuthView(ProviderAuthView):
 
         return response
 
-def add_cookies(response, **kwargs):
-    for key, val in kwargs.items():
-        if (key == 'access'):
-            key = settings.SIMPLE_JWT['AUTH_COOKIE']
-        if (key == 'refresh'):
-            key = settings.SIMPLE_JWT['AUTH_COOKIE_REFRESH']
-        response.set_cookie(
-            key=key,
-            value=val,
-            expires=settings.SIMPLE_JWT['AUTH_COOKIE_LIFETIME'],
-            secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],
-            httponly=settings.SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
-            samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
-        )
-        
-    return response
-
-
-class OTPVerificationView(GenericAPIView):
-    permission_classes = [IsAuthenticated]
-    
-    def post(self, request):
-        otp = request.data.get('otp')
-        if not otp:
-            return Response({'detail': 'OTP is required'}, status=status.HTTP_400_BAD_REQUEST)
-        try:
-            # Fetch the OTP object using both the OTP and User
-            otp_object = OneTimePassword.objects.get(otp=otp, user=request.user)
-
-            # Verify the OTP
-            if otp_object:
-                otp_object.delete()
-                if not request.user.is_verified:
-                    request.user.is_verified = True
-                    request.user.save()
-                    return Response({'detail': 'Email Verified Successfully'}, status=status.HTTP_200_OK)
-                return Response({'detail': 'Email Already Verified'}, status=status.HTTP_400_BAD_REQUEST)
-            else:
-                return Response({'detail': 'Invalid OTP or Email'}, status=status.HTTP_400_BAD_REQUEST)
-        except OneTimePassword.DoesNotExist:
-            return Response({'detail': 'Invalid OTP or Email'}, status=status.HTTP_400_BAD_REQUEST)

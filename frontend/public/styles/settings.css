@@ -1,0 +1,17 @@
+/* Settings */
+.settings-form{
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.settings-form button {
+    /* dont apply flex fill width */
+    width: fit-content;
+}
+
+/* Privacy Start */
+
+
+/* Privacy End */
+/* Settings End */

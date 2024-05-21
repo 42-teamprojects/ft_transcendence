@@ -1,14 +1,12 @@
 from random import Random
 from django.conf import settings
-from django.http import HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
 from rest_framework.views import APIView
 from requests_oauthlib import OAuth2Session
 import os
 from users.models import User
-from users.views import add_cookies
+from users.utils import add_cookies, generate_2fa_token
 from rest_framework.response import Response
 from rest_framework import status
-from django.core import serializers
 
 # http://localhost:8000/api/oauth2/login/google/
 # http://localhost:8000/api/oauth2/login/fortytwo/
@@ -75,11 +73,18 @@ class OAuth2CallbackView(APIView):
             full_name = profile['displayname']
             username = profile['login']
         
-        ok = False
         #check if username already exists
         try:
             user = User.objects.get(email=email)
-            ok = True
+            response = Response(status=status.HTTP_200_OK)
+
+            if user.two_factor_enabled: #and (last_2fa_login is None or last_2fa_login < timezone.now() - timezone.timedelta(days=1)): # Delete access and refresh cookies
+                # Generate intermediate token
+                response = generate_2fa_token(user.username)
+            else:
+                refresh_token, access_token = user.tokens().values()
+                response = add_cookies(response, access=access_token, refresh=refresh_token)
+            return response
         except User.DoesNotExist:
             if User.objects.filter(username=username).exists():
                 username = username + str(User.objects.count())
@@ -87,15 +92,11 @@ class OAuth2CallbackView(APIView):
             user = User.objects.create(username=username, email=email, full_name=full_name, is_verified=profile.get('verified_email', False))
             user.set_unusable_password()
             user.save()
-            ok = True
-            
-        if ok:
             response = Response(status=status.HTTP_200_OK)
             refresh_token, access_token = user.tokens().values()
             response = add_cookies(response, access=access_token, refresh=refresh_token)
-        else:
-            response = Response({"error" : "Something went wrong, please try again."}, status=status.HTTP_401_UNAUTHORIZED)
-
-        return response
+            return response
+        except:
+            return Response({"error" : "Something went wrong, please try again."}, status=status.HTTP_401_UNAUTHORIZED)
         
 
