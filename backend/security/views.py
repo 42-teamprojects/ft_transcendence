@@ -1,6 +1,5 @@
 import jwt
 import pyotp
-import datetime;
 import qrcode
 from rest_framework.response import Response
 from rest_framework.views import APIView
