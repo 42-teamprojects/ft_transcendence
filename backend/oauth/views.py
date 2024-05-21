@@ -1,4 +1,3 @@
-from random import Random
 from django.conf import settings
 from rest_framework.views import APIView
 from requests_oauthlib import OAuth2Session

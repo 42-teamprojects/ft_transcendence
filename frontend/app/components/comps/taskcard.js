@@ -31,5 +31,3 @@ export default class Taskcard extends HTMLElement {
         `;
     }
 }
-
-false

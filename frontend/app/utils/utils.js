@@ -92,49 +92,49 @@ export function getWindowWidth() {
  * @param {Function} [errorCallback=()=>true] - The callback function to execute on API call error.
  */
 export const handleFormSubmitApi = async (
-    form,
-    apiFunction,
-    formValidations,
-    successCallback = () => {},
-    errorCallback = () => true 
+	form,
+	apiFunction,
+	formValidations,
+	successCallback = () => {},
+	errorCallback = () => true
 ) => {
-    const inputs = Array.from(form.querySelectorAll("input")); // Get all input elements within the form
+	const inputs = Array.from(form.querySelectorAll("input")); // Get all input elements within the form
 
-    const button = form.querySelector("button[type='submit']"); // Get the submit button element
+	const button = form.querySelector("button[type='submit']") || form.querySelector("button"); // Get the submit button element
 
-    inputs.forEach((input) => removeErrors(form, input.name)); // Remove any existing error messages for each input
+	inputs.forEach((input) => removeErrors(form, input.name)); // Remove any existing error messages for each input
 
-    const data = useFormData(form).getObject(); // Get the form data as an object using the useFormData utility function
+	const data = useFormData(form).getObject(); // Get the form data as an object using the useFormData utility function
 
-    const errors = formValidations(data); // Validate the form data using the provided formValidations function
+	const errors = formValidations(data); // Validate the form data using the provided formValidations function
 
-    if (Object.keys(errors).length > 0) {
-        // If there are validation errors
-        Object.keys(errors).forEach((key) => {
-            handleInputError(form, key, errors[key]); // Display error messages for each input with errors
-        });
-        return; // Stop further execution
-    }
+	if (Object.keys(errors).length > 0) {
+		// If there are validation errors
+		Object.keys(errors).forEach((key) => {
+			handleInputError(form, key, errors[key]); // Display error messages for each input with errors
+		});
+		return; // Stop further execution
+	}
 
-    try {
-        button.setAttribute("processing", "true"); // Set the button attribute to indicate processing
-        await apiFunction(data); // Call the API function with the form data
-        successCallback(); // Call the success callback function
-        form.reset(); // Reset the form
-        button.setAttribute("processing", "false"); // Set the button attribute to indicate processing is complete
-    } catch (errors) {
-        button.setAttribute("processing", "false"); // Set the button attribute to indicate processing is complete
-        if (!errorCallback(errors)) return; // Call the error callback function and stop further execution if it returns false
-		
+	try {
+		button.setAttribute("processing", "true"); // Set the button attribute to indicate processing
+		await apiFunction(data); // Call the API function with the form data
+		successCallback(); // Call the success callback function
+		form.reset(); // Reset the form
+		button.setAttribute("processing", "false"); // Set the button attribute to indicate processing is complete
+	} catch (errors) {
+		button.setAttribute("processing", "false"); // Set the button attribute to indicate processing is complete
+		if (!errorCallback(errors)) return; // Call the error callback function and stop further execution if it returns false
+
 		// Show error messages
-        const errorsKeys = Object.keys(errors);
-        if (errorsKeys.includes("detail")) {
-            Toast.notify({ type: "error", message: errors.detail }); // Display a toast notification with the error detail
-            return; // Stop further execution
-        } else if (inputs.some((input) => errorsKeys.includes(input.name))) {
-            inputs.forEach((input) => handleInputError(form, input.name, errors[input.name])); // Display error messages for inputs with errors
-        } else {
-            Toast.notify({ type: "error", message: "An error occurred, please try again later" }); // Display a generic error toast notification
-        }
-    }
+		const errorsKeys = Object.keys(errors);
+		if (errorsKeys.includes("detail")) {
+			Toast.notify({ type: "error", message: errors.detail }); // Display a toast notification with the error detail
+			return; // Stop further execution
+		} else if (inputs.some((input) => errorsKeys.includes(input.name))) {
+			inputs.forEach((input) => handleInputError(form, input.name, errors[input.name])); // Display error messages for inputs with errors
+		} else {
+			Toast.notify({ type: "error", message: "An error occurred, please try again later" }); // Display a generic error toast notification
+		}
+	}
 };
