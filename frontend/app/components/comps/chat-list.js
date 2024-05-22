@@ -1,3 +1,4 @@
+import HttpClient from "../../http/httpClient.js";
 import Router from "../../router/router.js";
 
 export default class Chatlist extends HTMLElement {
@@ -11,6 +12,7 @@ export default class Chatlist extends HTMLElement {
         document.querySelector('.chat-list__add').addEventListener('click', () => {
            this.showSearchModal = !this.showSearchModal;
         });
+        
     }
 
     disconnectedCallback() {}

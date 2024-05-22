@@ -1,3 +1,4 @@
+
 export default class Chatsearchmodal extends HTMLElement {
     constructor() {
         super();
@@ -52,9 +53,23 @@ export default class Chatsearchmodal extends HTMLElement {
             <div id="backdrop"></div>
             <div class="modal">
                 <header class="text-center">
-                    <h1 id="title" class="text-3xl font-bold mb-2">Search</h1>
+                    <h1 id="title" class="text-3xl font-bold mb-2">Search for friends   </h1>
+                    <h2 id="subtitle" class="text-xl font-normal text-stroke spacing-2">find your friends or new ones</h2>
                 </header>
-                <input type="text" class="input-field" placeholder="Search Messages" />
+                <div class="flex gap-2 mt-6 mb-6">
+                    <input type="text" class="input-field" placeholder="Search username, Email..." />
+                    <button class="btn-secondary"><i class="fa fa-search"></i></button> 
+                </div>
+                <main>
+                    <div class="flex-center flex-wrap" style="gap: 2rem 3rem;">
+                        <c-usercard username="HassanOigag" status="offline" img="https://api.dicebear.com/8.x/thumbs/svg?seed=Casper"></c-usercard>
+                        <c-usercard username="YusufIsawi" status="online" img="https://api.dicebear.com/8.x/thumbs/svg?seed=Garfield"></c-usercard>
+                        <c-usercard username="Jhonesnow" status="playing" img="https://api.dicebear.com/8.x/thumbs/svg?seed=youssef"></c-usercard>
+                        <c-usercard username="msodor" status="playing" img="https://api.dicebear.com/8.x/thumbs/svg?seed=mouad"></c-usercard>
+                        <c-usercard username="hassssan" status="playing" img="https://api.dicebear.com/8.x/thumbs/svg?seed=hassan"></c-usercard>
+                        <c-usercard username="hamzaaa" status="playing" img="https://api.dicebear.com/8.x/thumbs/svg?seed=hamza"></c-usercard>
+                    </div>
+                </main>
                 <section class="actions mt-6">
                     <button id="cancel-btn" class="btn-default text-secondary w-full">Cancel</button>
                 </section>
