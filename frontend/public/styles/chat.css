@@ -61,6 +61,13 @@
 .chat-list__add {
     width: 30px;
     height: 30px;
+    cursor: pointer;
+}
+
+.chat-list__add:hover {
+    width: 35px;
+    height: 35px;
+    transition: all 0.3s ease;
 }
 
 .chat-list__title {
