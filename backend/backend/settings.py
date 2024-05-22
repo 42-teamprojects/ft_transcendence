@@ -33,7 +33,7 @@ ALLOWED_HOSTS = [
     '127.0.0.1'
 ]
 
-AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = 'accounts.User'
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
@@ -41,7 +41,7 @@ AUTHENTICATION_BACKENDS = [
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'users.authentication.CustomJWTAuthentication',
+        'accounts.authentication.CustomJWTAuthentication',
         # 'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
@@ -62,7 +62,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'djoser',
     # Apps
-    'users',
+    'accounts',
     'security',
     'game',
     'oauth',

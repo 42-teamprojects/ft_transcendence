@@ -3,7 +3,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from users.models import OneTimePassword
+from accounts.models import OneTimePassword
 
 
 class EmailVerificationView(GenericAPIView):

@@ -6,8 +6,8 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from django.conf import settings
-from users.models import User
-from users.utils import add_cookies
+from accounts.models import User
+from accounts.utils import add_cookies
 from django.utils import timezone
 
 # Create your views here.
