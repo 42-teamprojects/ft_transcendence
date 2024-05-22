@@ -4,6 +4,7 @@ export default class Chat extends HTMLElement {
     constructor() {
         super();
         this.chatService = new ChatApiService();
+        this.isEmpty = window.location.href.match(/\/chat\/?$/);
     }
 
     async connectedCallback() {
@@ -17,7 +18,8 @@ export default class Chat extends HTMLElement {
 
     render() {
         this.innerHTML = /*html*/`
-        <div class="chat-page">
+
+        <div class=${this.isEmpty ? 'chat-page__empty' : 'chat-page'}>
             <c-chat-list></c-chat-list>
             <c-conversation username="msodor" img="https://api.dicebear.com/8.x/thumbs/svg?seed=mouad"></c-conversation>
             <div class="match-history vh-full w-full"></div>
