@@ -20,7 +20,9 @@ export default class Chat extends HTMLElement {
         <div class="chat-page">
             <c-chat-list></c-chat-list>
             <c-conversation username="msodor" img="https://api.dicebear.com/8.x/thumbs/svg?seed=mouad"></c-conversation>
-            <div class="match-history vh-full w-full"></div>
+            <div class="match-history vh-full w-full">
+                <c-match-history></c-match-history>
+            </div>
         </div>
         `;
     }
