@@ -1,7 +1,7 @@
 from django.urls import path
-from users.views.auth_views import JWTRefreshView, JWTVerifyView, LoginView, LogoutView, RegisterView
-from users.views.email_views import EmailVerificationView
-from users.views.password_reset_views import ResetPasswordConfirmView, ResetPasswordRequestView
+from accounts.views.auth_views import JWTRefreshView, JWTVerifyView, LoginView, LogoutView, RegisterView
+from accounts.views.email_views import EmailVerificationView
+from accounts.views.password_reset_views import ResetPasswordConfirmView, ResetPasswordRequestView
 
 urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),

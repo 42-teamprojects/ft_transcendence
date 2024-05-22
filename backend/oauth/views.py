@@ -2,8 +2,8 @@ from django.conf import settings
 from rest_framework.views import APIView
 from requests_oauthlib import OAuth2Session
 import os
-from users.models import User
-from users.utils import add_cookies, generate_2fa_token
+from accounts.models import User
+from accounts.utils import add_cookies, generate_2fa_token
 from rest_framework.response import Response
 from rest_framework import status
 

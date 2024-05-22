@@ -2,7 +2,7 @@ import datetime
 from django.core.mail import send_mail
 from django.conf import settings
 import jwt
-from users.models import OneTimePassword
+from accounts.models import OneTimePassword
 import pyotp
 from smtplib import SMTPException
 from rest_framework.response import Response
