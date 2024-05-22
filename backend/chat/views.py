@@ -1,46 +1,46 @@
 from rest_framework import generics, permissions, status
+from .permissions import IsChatParticipant
 from .models import Chat, Message
 from .serializers import ChatSerializer, MessageSerializer
-from rest_framework import viewsets
+from rest_framework import viewsets, serializers
 from rest_framework.response import Response
 from django.db.models import Q
 from accounts.models import User
+from rest_framework.decorators import action
 
-class ChatListView(generics.ListCreateAPIView):
-    queryset = Chat.objects.all()
+class ChatViewSet(viewsets.ModelViewSet):
     serializer_class = ChatSerializer
-    permission_classes = [permissions.IsAuthenticated]  
+    queryset = Chat.objects.all()
+    permission_classes = [permissions.IsAuthenticated, IsChatParticipant]
 
-    def get(self, request, *args, **kwargs):
-        user = request.user
-        # return all the chats that involve the user
-        chats = self.queryset.filter(Q(user1=user) | Q(user2=user))
-        serializer = ChatSerializer(chats, many=True)
+    def get_queryset(self):
+        user = self.request.user
+        return Chat.objects.filter(Q(user1=user) | Q(user2=user))
+
+    def perform_create(self, serializer):
+        user1 = self.request.user
+        user2_id = self.request.data.get('user2')
+        if not user2_id:
+            raise serializers.ValidationError("user2 field is required.")
+        if user1.id == int(user2_id):
+            raise serializers.ValidationError("user1 and user2 cannot be the same user.")
+        user2 = User.objects.get(pk=user2_id)
+        serializer.save(user1=user1, user2=user2)
+
+class MessageViewSet(viewsets.ModelViewSet):
+    serializer_class = MessageSerializer
+    queryset = Message.objects.all()
+    permissions_classes = [permissions.IsAuthenticated, IsChatParticipant]
+    
+    @action(detail=True, methods=['get'])
+    def chat_messages(self, request, pk=None):
+        chat = self.get_object().chat
+        messages = Message.objects.filter(chat=chat)
+        serializer = self.get_serializer(messages, many=True)
         return Response(serializer.data)
 
-    def create(self, request, *args, **kwargs):
-        user = request.user
-        user1_id = int(request.data.get('user1'))
-        user2_id = int(request.data.get('user2'))
-        if user1_id != user.id and user2_id != user.id:
-            return Response(
-                {'detail': 'You cannot create a chat which does not involve you.'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        if user1_id == user2_id:
-            return Response(
-                {'detail': 'You cannot create a chat with yourself.'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        existing_chat = Chat.objects.filter(
-            Q(user1=user1_id, user2=user2_id) | Q(user1=user2_id, user2=user1_id)
-        ).first()
-
-        if existing_chat:
-            serializer = ChatSerializer(existing_chat)
-            return Response(serializer.data)
-        return super().create(request, *args, **kwargs)
-
+        
+        
 
 class ChatMessagesListView(generics.ListCreateAPIView):
     queryset = Message.objects.all()    
