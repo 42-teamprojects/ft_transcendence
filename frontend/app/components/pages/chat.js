@@ -9,9 +9,9 @@ export default class Chat extends HTMLElement {
 
     async connectedCallback() {
         this.render();
-        const res = await this.chatService.getUserChats();
-        const messages = await this.chatService.getChatMessages(res[3].id);
-        console.log(messages);
+        // const res = await this.chatService.getUserChats();
+        // const messages = await this.chatService.getChatMessages(res[3].id);
+        // console.log(messages);
     }
 
     disconnectedCallback() {}

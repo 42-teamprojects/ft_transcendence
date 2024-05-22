@@ -1,3 +1,4 @@
+import Chatsearchmodal from "./components/comps/chat-search-modal.js";
 import Updateuserinfoform from "./components/comps/update-user-info-form.js";
 import Changepasswordform from "./components/comps/change-password-form.js";
 import Enable2famodal from "./components/comps/enable-2fa-modal.js";
@@ -78,4 +79,5 @@ export const components = [
 	{ tagName: 'c-enable-2fa-modal', component: Enable2famodal },
 	{ tagName: 'c-change-password-form', component: Changepasswordform },
 	{ tagName: 'c-update-user-info-form', component: Updateuserinfoform },
+	{ tagName: 'c-chat-search-modal', component: Chatsearchmodal },
 ];
