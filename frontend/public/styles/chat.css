@@ -80,9 +80,10 @@
 }
 
 .chat-list__add:hover {
-    width: 35px;
-    height: 35px;
-    transition: all 0.3s ease;
+    /* width: 32px;
+    height: 32px; */
+    transform: rotate(90deg);
+    transition: all 0.5s ease;
 }
 
 .chat-list__title {
