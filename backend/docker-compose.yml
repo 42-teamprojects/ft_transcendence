@@ -14,10 +14,12 @@ services:
       - .:/app
     depends_on:
       - db
+    networks:
+      - BlitzpongNetwork
 
   db:
     container_name: postgres
-    image: postgres:13-alpine
+    image: postgres:13.15
     restart: always
     environment:
       POSTGRES_USER: root
@@ -27,19 +29,25 @@ services:
       - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    networks:
+      - BlitzpongNetwork
 
-  pg-admin:
-    image: dpage/pgadmin4:6
-    environment:
-      PGADMIN_DEFAULT_EMAIL: yusufisawi@gmail.com
-      PGADMIN_DEFAULT_PASSWORD: root
-      PGADMIN_LISTEN_PORT: 8080
+  adminer:
+    container_name: adminer
+    image: adminer
     ports:
       - "8081:8080"
     volumes:
-      - pgadmin-data:/var/lib/pgadmin
-
+      - adminer-data:/var/www/html/adminer
+    depends_on:
+      - db
+    networks:
+      - BlitzpongNetwork
 
 volumes:
-  pgadmin-data:
+  adminer-data:
   postgres-data:
+
+networks:
+  BlitzpongNetwork:
+    driver: bridge
