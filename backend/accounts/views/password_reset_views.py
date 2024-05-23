@@ -9,10 +9,26 @@ from django.core.mail import send_mail
 from django.conf import settings
 from accounts.models import User
 from rest_framework import status
+from rest_framework.throttling import SimpleRateThrottle
+
+
+class PasswordResetThrottle(SimpleRateThrottle):
+    scope = 'password_reset'
+
+    def get_cache_key(self, request, view):
+        if request.user.is_authenticated:
+            # For authenticated users
+            return f'{self.scope}_{request.user.pk}'
+        else:
+            # For anonymous users, use IP address
+            return self.get_ident(request)
+
 
 
 class ResetPasswordRequestView(APIView):
+
     permission_classes = [AllowAny]
+    throttle_classes = [PasswordResetThrottle]
 
     def post(self, request):
         email = request.data.get('email')
