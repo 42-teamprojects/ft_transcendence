@@ -1,3 +1,4 @@
+import { userService } from "../../state/userService.js";
 import { handleFormSubmitApi } from "../../utils/utils.js";
 import { validateEmail, validateFullName, validateRequire, validateUsername } from "../../utils/validations.js";
 import Toast from "./toast.js";
@@ -5,6 +6,7 @@ import Toast from "./toast.js";
 export default class Updateuserinfoform extends HTMLElement {
 	constructor() {
 		super();
+		this.user = userService.getState().user;
 	}
 
 	connectedCallback() {
@@ -43,21 +45,22 @@ export default class Updateuserinfoform extends HTMLElement {
             <div class="form-group-inline">
                 <label for="username">Username</label>
                 <div className="form-group">
-                    <input type="text" id="username" name="username" class="input-field" placeholder="Username"/>
+                    <input type="text" id="username" name="username" class="input-field" placeholder="Username" value="${this.user.username}"/>
                 </div>
             </div>
             <div class="form-group-inline">
                 <label for="full_name">Full Name</label>
                 <div className="form-group">
-                    <input type="text" id="full_name" name="full_name" class="input-field" placeholder="Full Name"/>
+                    <input type="text" id="full_name" name="full_name" class="input-field" placeholder="Full Name" value="${this.user.full_name}"/>
                 </div>
             </div>
-            <div class="form-group-inline">
+            ${this.user.provider === null ? /*html*/`
+			<div class="form-group-inline">
                 <label for="email">Email</label>
                 <div className="form-group">
-                    <input type="text" id="email" name="email" class="input-field" placeholder="Email"/>
+                    <input type="text" id="email" name="email" class="input-field" placeholder="Email" value="${this.user.email}"/>
                 </div>
-            </div>
+            </div>` : ""}
             <div class="form-group-inline">
                 <label></label>
                 <button is="c-button" class="btn-secondary" type="submit">Save changes</button>

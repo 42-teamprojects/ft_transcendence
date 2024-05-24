@@ -116,7 +116,10 @@ class JWTVerifyView(TokenVerifyView):
             try:
                 User.objects.get(id=user_id)
             except User.DoesNotExist:
-                return Response({'detail': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+                response = Response({'detail': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+                response.delete_cookie('access')
+                response.delete_cookie('refresh')
+                return response
 
         return response
 

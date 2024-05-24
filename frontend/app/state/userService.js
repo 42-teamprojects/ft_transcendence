@@ -20,7 +20,7 @@ class UserService extends Service {
 
 	reset() {
 		this.setState({
-			messages: [],
+			user: {},
 		});
 	}
 }
