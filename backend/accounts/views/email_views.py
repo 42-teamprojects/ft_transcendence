@@ -4,10 +4,13 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from accounts.models import OneTimePassword
+from accounts.throttling_me import EmailVerificationThrottle
 
 
 class EmailVerificationView(GenericAPIView):
     permission_classes = [IsAuthenticated]
+    throttle_classes = [EmailVerificationThrottle]
+
     
     def post(self, request):
         otp = request.data.get('otp')

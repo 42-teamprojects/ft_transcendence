@@ -49,9 +49,11 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_THROTTLE_CLASSES': [
         'accounts.throttling_me.PasswordResetThrottle',
+        'accounts.throttling_me.EmailVerificationThrottle',
     ],
     'DEFAULT_THROTTLE_RATES': {
         'password_reset': '1/min',
+        'email_verification': '1/min',
     }
 }
 
