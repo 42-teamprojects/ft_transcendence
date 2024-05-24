@@ -1,8 +1,8 @@
-from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer
 from users.serializers import UserSerializer
 from .models import Chat, Message
 
-class ChatSerializer(serializers.ModelSerializer):
+class ChatSerializer(ModelSerializer):
     class Meta:
         model = Chat
         fields = ['id', 'user1', 'user2']
@@ -15,7 +15,7 @@ class ChatSerializer(serializers.ModelSerializer):
         representation['user2'] = user2.data
         return representation
 
-class MessageSerializer(serializers.ModelSerializer):
+class MessageSerializer(ModelSerializer):
     class Meta:
         model = Message
-        fields = "__all__"
+        fields = ('content', 'sender', 'is_seen', 'created_at', 'chat',)
