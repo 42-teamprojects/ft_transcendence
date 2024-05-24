@@ -48,14 +48,11 @@ REST_FRAMEWORK = {
         # 'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_THROTTLE_CLASSES': [
-        'rest_framework.throttling.UserRateThrottle',
-        'rest_framework.throttling.AnonRateThrottle',
+        'accounts.throttling_me.PasswordResetThrottle',
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'password_reset': '3/m',
-        'anon': '5/m',
-        'user': '1000/h',
-    },
+        'password_reset': '1/min',
+    }
 }
 
 # Application definition
