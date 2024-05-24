@@ -20,7 +20,6 @@ class ChatViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         user1 = self.request.user
-        #! potebtial error
         user2_id = self.request.data.get('user2')
         if not user2_id:
             raise serializers.ValidationError("user2 field is required.")
@@ -35,10 +34,19 @@ class MessageViewSet(ModelViewSet):
     queryset = Message.objects.all()
     permissions_classes = [IsAuthenticated, IsChatParticipant]
     
-    @action(detail=True, methods=['get'])
-    def chat_messages(self, request, pk=None):
-        chat = self.get_object().chat
-        messages = Message.objects.filter(chat=chat)
-        serializer = self.get_serializer(messages, many=True)
-        return Response(serializer.data)
+    def perform_create(self, serializer):
+        user = self.request.user
+        chat = Chat.objects.get(pk=chat)
+        sender_id = self.request.data.get('sender')
+        if user != chat.user1 and user != chat.user2:
+            raise serializers.ValidationError("You are not a participant in this chat.")
+        if sender_id != user:
+            raise serializers.ValidationError("You can only send messages as yourself.")
+
+    # @action(detail=True, methods=['get'])
+    # def chat_messages(self, request, pk=None):
+    #     chat = self.get_object().chat
+    #     messages = Message.objects.filter(chat=chat)
+    #     serializer = self.get_serializer(messages, many=True)
+    #     return Response(serializer.data)
 
