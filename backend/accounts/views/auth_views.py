@@ -1,3 +1,4 @@
+from datetime import datetime
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from ..serializers import MyTokenObtainPairSerializer, RegisterSerializer
@@ -14,7 +15,9 @@ from rest_framework_simplejwt.views import (
 )
 from ..utils import add_cookies, generate_2fa_token, send_verification
 from rest_framework.permissions import AllowAny
-
+from rest_framework_simplejwt.tokens import UntypedToken
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+from ..models import User
 # Register View
 class RegisterView(GenericAPIView):
     serializer_class = RegisterSerializer
@@ -32,6 +35,9 @@ class RegisterView(GenericAPIView):
         # Pass the user instance to send_verification
         is_sent = send_verification(user)
         refresh_token, access_token = user.tokens().values()
+
+        user.last_login = datetime.now()
+        user.save()
         
         response = Response({
             'detail': 'User Created Successfully. Check your email to verify your account.'
@@ -85,13 +91,34 @@ class JWTRefreshView(TokenRefreshView):
 # Custom TokenVerifyView to get the access token from the cookie
 class JWTVerifyView(TokenVerifyView):
     permission_classes = [AllowAny]
+
     def post(self, request, *args, **kwargs):
         access_token = request.COOKIES.get('access')
 
         if access_token:
             request.data['token'] = access_token
 
-        return super().post(request, *args, **kwargs)
+        # Verify the token first
+        response = super().post(request, *args, **kwargs)
+
+        # If token is valid, check if user exists
+        if response.status_code == status.HTTP_200_OK:
+            try:
+                # Decode the token
+                UntypedToken(request.data['token'])
+            except (InvalidToken, TokenError) as e:
+                return Response({'detail': str(e)}, status=status.HTTP_401_UNAUTHORIZED)
+
+            # Get user_id from the token
+            user_id = UntypedToken(request.data['token']).payload['user_id']
+
+            # Check if user exists
+            try:
+                User.objects.get(id=user_id)
+            except User.DoesNotExist:
+                return Response({'detail': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+        return response
 
 
 class LogoutView(APIView):

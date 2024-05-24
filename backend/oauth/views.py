@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.conf import settings
 from rest_framework.views import APIView
 from requests_oauthlib import OAuth2Session
@@ -81,6 +82,8 @@ class OAuth2CallbackView(APIView):
         try:
             user = User.objects.get(email=email)
             response = Response(status=status.HTTP_200_OK)
+            user.last_login = datetime.now()
+            user.save()
 
             if user.two_factor_enabled: #and (last_2fa_login is None or last_2fa_login < timezone.now() - timezone.timedelta(days=1)): # Delete access and refresh cookies
                 # Generate intermediate token
@@ -94,6 +97,8 @@ class OAuth2CallbackView(APIView):
                 username = username + str(User.objects.count())
             
             user = User.objects.create(username=username, email=email, full_name=full_name, is_verified=profile.get('verified_email', False))
+            user.provider = provider
+            user.last_login = datetime.now()
             user.set_unusable_password()
             user.save()
             response = Response(status=status.HTTP_200_OK)
