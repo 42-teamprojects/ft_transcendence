@@ -3,7 +3,7 @@ import pyotp
 import qrcode
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
 from django.conf import settings
 from accounts.models import User
@@ -49,7 +49,9 @@ class EnableTwoFactorAuthView(APIView):
         else:
             return Response({'detail': 'Invalid OTP'}, status=status.HTTP_401_UNAUTHORIZED)
         
-class VerifyTwoFactorAuthView(APIView):    
+class VerifyTwoFactorAuthView(APIView):
+    permission_classes = [AllowAny]
+    
     def post(self, request):
         two_factor_cookie = request.COOKIES.get(settings.SIMPLE_JWT['TWO_FACTOR_AUTH_COOKIE'])
         if (two_factor_cookie is None or two_factor_cookie == 'null' or two_factor_cookie == 'undefined'):

@@ -6,9 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from accounts.models import OneTimePassword
 
 
-class EmailVerificationView(GenericAPIView):
-    permission_classes = [IsAuthenticated]
-    
+class EmailVerificationView(GenericAPIView):    
     def post(self, request):
         otp = request.data.get('otp')
         if not otp:

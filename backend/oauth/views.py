@@ -6,11 +6,14 @@ from accounts.models import User
 from accounts.utils import add_cookies, generate_2fa_token
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 
 # http://localhost:8000/api/oauth2/login/google/
 # http://localhost:8000/api/oauth2/login/fortytwo/
 
 class OAuth2LoginView(APIView):
+    permission_classes = [AllowAny]
+    
     def get(self, request, provider):
         provider_config = settings.OAUTH2_PROVIDERS.get(provider)
         if not provider_config:
@@ -31,6 +34,8 @@ class OAuth2LoginView(APIView):
         return Response({ 'authorization_url': authorization_url }, status=status.HTTP_200_OK)
 
 class OAuth2CallbackView(APIView):
+    permission_classes = [AllowAny]
+    
     def get(self, request, provider):
         provider_config = settings.OAUTH2_PROVIDERS.get(provider)
         if not provider_config:
@@ -98,4 +103,3 @@ class OAuth2CallbackView(APIView):
         except:
             return Response({"error" : "Something went wrong, please try again."}, status=status.HTTP_401_UNAUTHORIZED)
         
-

@@ -13,10 +13,12 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView
 )
 from ..utils import add_cookies, generate_2fa_token, send_verification
+from rest_framework.permissions import AllowAny
 
 # Register View
 class RegisterView(GenericAPIView):
     serializer_class = RegisterSerializer
+    permission_classes = [AllowAny]
 
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
@@ -42,6 +44,8 @@ class RegisterView(GenericAPIView):
 # Login View with TokenObtainPairView generic view
 class LoginView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
+    permission_classes = [AllowAny]
+    
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
 
@@ -80,6 +84,7 @@ class JWTRefreshView(TokenRefreshView):
 
 # Custom TokenVerifyView to get the access token from the cookie
 class JWTVerifyView(TokenVerifyView):
+    permission_classes = [AllowAny]
     def post(self, request, *args, **kwargs):
         access_token = request.COOKIES.get('access')
 

@@ -49,9 +49,6 @@ export default class Components extends HTMLElement {
 	render() {
 		this.innerHTML = /*html*/ `
             <div class="mx-8 my-4">
-
-            
-
                 <h1 class="font-extrabold">Components</h1>
                 <div class="buttons my-8">
                     <h2 class="pb-3">Buttons</h2>
@@ -199,6 +196,10 @@ export default class Components extends HTMLElement {
 
                 <div class="matchhistory">
                     <c-match-history></c-match-history>
+                </div>
+
+                <div>
+                    <c-friendscard></c-friendscard>
                 </div>
                 `;
 	}
