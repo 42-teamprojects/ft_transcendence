@@ -36,7 +36,8 @@ class MessageViewSet(ModelViewSet):
     
     def perform_create(self, serializer):
         user = self.request.user
-        chat = Chat.objects.get(pk=chat)
+        chat_id = self.request.data.get('chat')
+        chat = Chat.objects.get(pk=chat_id)
         sender_id = self.request.data.get('sender')
         if user != chat.user1 and user != chat.user2:
             raise serializers.ValidationError("You are not a participant in this chat.")
