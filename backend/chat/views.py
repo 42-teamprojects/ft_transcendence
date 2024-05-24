@@ -1,108 +1,52 @@
-from rest_framework import generics, permissions, status
+from rest_framework.permissions import IsAuthenticated
+from .permissions import IsChatParticipant
 from .models import Chat, Message
 from .serializers import ChatSerializer, MessageSerializer
-from rest_framework import viewsets
+from rest_framework import serializers
 from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
 from django.db.models import Q
 from accounts.models import User
+from rest_framework.decorators import action
 
-class ChatListView(generics.ListCreateAPIView):
-    queryset = Chat.objects.all()
+class ChatViewSet(ModelViewSet):
     serializer_class = ChatSerializer
-    permission_classes = [permissions.IsAuthenticated]  
+    queryset = Chat.objects.all()
+    permission_classes = [IsAuthenticated, IsChatParticipant]
 
-    def get(self, request, *args, **kwargs):
-        user = request.user
-        # return all the chats that involve the user
-        chats = self.queryset.filter(Q(user1=user) | Q(user2=user))
-        serializer = ChatSerializer(chats, many=True)
-        return Response(serializer.data)
+    def get_queryset(self):
+        user = self.request.user
+        return Chat.objects.filter(Q(user1=user) | Q(user2=user))
 
-    def create(self, request, *args, **kwargs):
-        user = request.user
-        user1_id = int(request.data.get('user1'))
-        user2_id = int(request.data.get('user2'))
-        if user1_id != user.id and user2_id != user.id:
-            return Response(
-                {'detail': 'You cannot create a chat which does not involve you.'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        if user1_id == user2_id:
-            return Response(
-                {'detail': 'You cannot create a chat with yourself.'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        existing_chat = Chat.objects.filter(
-            Q(user1=user1_id, user2=user2_id) | Q(user1=user2_id, user2=user1_id)
-        ).first()
-
-        if existing_chat:
-            serializer = ChatSerializer(existing_chat)
-            return Response(serializer.data)
-        return super().create(request, *args, **kwargs)
+    def perform_create(self, serializer):
+        user1 = self.request.user
+        user2_id = self.request.data.get('user2')
+        if not user2_id:
+            raise serializers.ValidationError("user2 field is required.")
+        if user1.id == int(user2_id):
+            raise serializers.ValidationError("user1 and user2 cannot be the same user.")
+        user2 = User.objects.get(pk=user2_id)
+        serializer.save(user1=user1, user2=user2)
 
 
-class ChatMessagesListView(generics.ListCreateAPIView):
-    queryset = Message.objects.all()    
+class MessageViewSet(ModelViewSet):
     serializer_class = MessageSerializer
-    permissions_classes = [permissions.IsAuthenticated]
+    queryset = Message.objects.all()
+    permissions_classes = [IsAuthenticated, IsChatParticipant]
+    
+    def perform_create(self, serializer):
+        user = self.request.user
+        chat = Chat.objects.get(pk=chat)
+        sender_id = self.request.data.get('sender')
+        if user != chat.user1 and user != chat.user2:
+            raise serializers.ValidationError("You are not a participant in this chat.")
+        if sender_id != user:
+            raise serializers.ValidationError("You can only send messages as yourself.")
 
-    def get(self, request, *args, **kwargs):
-        chat_id = kwargs.get('chat_id')
-        chat = Chat.objects.filter(id=chat_id).first()
-        if not chat:
-            return Response(
-                {'detail': 'Chat does not exist.'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        user = request.user
-        if chat.user1 != user and chat.user2 != user:
-            return Response(
-                {'detail': 'You are not a member of this chat.'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        serializer = MessageSerializer(Message.objects.filter(chat=chat), many=True)
-        return Response(serializer.data)
+    # @action(detail=True, methods=['get'])
+    # def chat_messages(self, request, pk=None):
+    #     chat = self.get_object().chat
+    #     messages = Message.objects.filter(chat=chat)
+    #     serializer = self.get_serializer(messages, many=True)
+    #     return Response(serializer.data)
 
-
-    # def get_queryset(self):
-    #     user_id = self.kwargs.get('user_id')
-    #     try:
-    #         user = User.objects.get(id=user_id)
-    #     except User.DoesNotExist:
-    #         return Chat.objects.none()  
-    #     #! check if user does not exist return 400
-    #     user_chats = Chat.objects.filter(Q(user1=user) | Q(user2=user))
-    #     return user_chats
-# class MessageListView(generics.ListCreateAPIView):
-#     queryset = Message.objects.all()
-#     serializer_class = MessageSerializer
-
-#     def create(self, request, *args, **kwargs):
-#         chat_id = request.data.get('chat_id')
-#         sender_id = request.data.get('sender_id')
-#         content = request.data.get('content')
-#         is_seen = request.data.get('is_seen')
-
-
-#         chat = Chat.objects.filter(id=chat_id).first()
-#         if not chat:
-#             return Response(
-#                 {'detail': 'Chat does not exist.'},
-#                 status=status.HTTP_400_BAD_REQUEST
-#             )
-
-#         if sender_id != chat.user1_id and sender_id != chat.user2_id:
-#             return Response(
-#                 {'detail': 'You are not a member of this chat.'},
-#                 status=status.HTTP_400_BAD_REQUEST
-#             )
-
-#         return super().create(request, *args, **kwargs)
-
-# class UserChatsLIstView(generics.ListAPIView):
-#     serializer_class = ChatSerializer
-
-#     def get_queryset(self):
-#         user_id = self.kwargs.get('user_id')
-#         return Chat.objects.filter(Q(user1=user_id) | Q(user2=user_id))

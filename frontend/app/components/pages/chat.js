@@ -4,20 +4,22 @@ export default class Chat extends HTMLElement {
     constructor() {
         super();
         this.chatService = new ChatApiService();
+        this.isEmpty = window.location.href.match(/\/chat\/?$/);
     }
 
     async connectedCallback() {
         this.render();
-        const res = await this.chatService.getUserChats();
-        // const messages = await this.chatService.getChatMessages(res.id);
-        console.log(res);
+        // const res = await this.chatService.getUserChats();
+        // const messages = await this.chatService.getChatMessages(res[3].id);
+        // console.log(messages);
     }
 
     disconnectedCallback() {}
 
     render() {
         this.innerHTML = /*html*/`
-        <div class="chat-page">
+
+        <div class=${this.isEmpty ? 'chat-page__empty' : 'chat-page'}>
             <c-chat-list></c-chat-list>
             <c-conversation username="msodor" img="https://api.dicebear.com/8.x/thumbs/svg?seed=mouad"></c-conversation>
             <div class="match-history vh-full w-full">

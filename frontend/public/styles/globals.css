@@ -1293,6 +1293,10 @@
     letter-spacing: 0.8px;
 }
 
+.spacing-2 {
+    letter-spacing: 1px;
+}
+
 /* scale */
 
 .scale-0 {
