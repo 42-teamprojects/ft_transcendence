@@ -3,6 +3,7 @@ import ChatApiService from "../../api/chat/chatApiService.js";
 export default class Chat extends HTMLElement {
     constructor() {
         super();
+        document.title = 'Chat | Blitzpong';
         this.chatService = new ChatApiService();
         this.isEmpty = window.location.href.match(/\/chat\/?$/);
     }
@@ -22,9 +23,7 @@ export default class Chat extends HTMLElement {
         <div class=${this.isEmpty ? 'chat-page__empty' : 'chat-page'}>
             <c-chat-list></c-chat-list>
             <c-conversation username="msodor" img="https://api.dicebear.com/8.x/thumbs/svg?seed=mouad"></c-conversation>
-            <div class="match-history vh-full w-full">
-                <c-match-history me="yusufisawi" them="msodor" my-score="5" their-score="3"></c-match-history>
-            </div>
+            <c-chat-match-history></c-chat-match-history>
         </div>
         `;
     }

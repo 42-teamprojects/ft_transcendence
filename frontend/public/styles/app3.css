@@ -21,7 +21,7 @@ input[name="theme-option"]:checked ~ .table-theme {
 }
 
 .match-history__wrapper {
-	max-width: 400px;
+	width: minmax(450px, 100%);
 	display: flex;
 	align-items: center;
 	justify-content: space-between;

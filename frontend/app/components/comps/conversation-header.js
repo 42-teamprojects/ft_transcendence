@@ -15,13 +15,13 @@ export default class Conversationheader extends HTMLElement {
 
     render() {
         this.innerHTML = /*html*/`
-        <div class="conversation-header">
+        <div class="chat-header conversation-header">
             <div class="flex-center gap-4">
                 <img class="message-card__img" src="${this.imgAtt}" alt="user">
                 <div class="flex-col gap-2">
                     <div class="conversation-header__username" >${this.usernameAtt}</div>
                     <div class="conversation-header__status gap-2">
-                        <div class="conversation-header__status__dot playing"></div>
+                        <div class="conversation-header__status__dot online"></div>
                         <div class="conversation-header__status__text capitalize">${this.stateAtt}</div>
                     </div>
                 </div>
