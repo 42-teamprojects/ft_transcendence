@@ -4,8 +4,8 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from accounts.models import OneTimePassword
-from accounts.throttling_me import EmailVerificationThrottle
 from django.utils import timezone
+from accounts.throttling_me import EmailVerificationResendThrottle
 
 from accounts.utils import send_verification
 
@@ -38,7 +38,7 @@ class EmailVerificationView(GenericAPIView):
 
 class EmailVerificationResendView(GenericAPIView):
     permission_classes = [IsAuthenticated]
-    throttle_classes = [EmailVerificationThrottle]
+    throttle_classes = [EmailVerificationResendThrottle]
 
     def post(self, request):
         is_sent = send_verification(request.user)

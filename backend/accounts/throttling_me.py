@@ -16,17 +16,16 @@ class PasswordResetThrottle(UserRateThrottle):
         # Allow all other requests without throttling
         return True
   
-class EmailVerificationThrottle(UserRateThrottle):
-    scope = 'email_verification'
+class EmailVerificationResendThrottle(UserRateThrottle):
+    scope = 'email_verification_resend'
 
     def get_cache_key(self, request, view):
         return f'{self.scope}_{request.user.id}'
-
+  
     def allow_request(self, request, view):
-        # Check if the request is for email verification
-        if view.__class__.__name__ == 'EmailVerificationView':
-            # Throttle only email verification requests
+        # Check if the request is for email verification resend
+        if view.__class__.__name__ == 'EmailVerificationResendView':
+            # Throttle only email verification resend requests
             return super().allow_request(request, view)
-        
         # Allow all other requests without throttling
         return True
