@@ -54,3 +54,4 @@ class MessageViewSet(ModelViewSet):
         if sender != chat.user1 and sender != chat.user2:
             raise serializers.ValidationError("You are not a participant in this chat.")
         serializer.save(sender=sender, chat_id=chat_id)
+
