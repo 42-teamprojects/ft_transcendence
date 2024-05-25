@@ -44,7 +44,7 @@ export default class Emailresetpassword extends HTMLElement {
                 </div>
                 <button is="c-button" type="submit" class="btn-secondary">Request Password Reset</button>
             </form>
-            <p>Forgot your email? <a is="c-link" href="/"> Ydek feh</a>.</p>
+            <p>Forgot your email? <a is="c-link" href="/register"> Ydek feh</a>.</p>
         </div>
         `;
     }
