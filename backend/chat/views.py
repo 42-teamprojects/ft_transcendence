@@ -38,7 +38,13 @@ class MessageViewSet(ModelViewSet):
     queryset = Message.objects.all()
     permissions_classes = [IsAuthenticated, IsChatParticipant]
     
-    
+    def get_queryset(self):
+        chat_id = self.kwargs['chat_id']
+        chat = get_object_or_404(Chat, pk=chat_id)
+        user = self.request.user
+        if user != chat.user1 and user != chat.user2:
+            raise serializers.ValidationError("You are not a participant in this chat.")
+        return Message.objects.filter(chat=chat_id)
     
     def perform_create(self, serializer):
         sender = self.request.user
