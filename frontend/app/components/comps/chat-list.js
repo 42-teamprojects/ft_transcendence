@@ -1,7 +1,6 @@
 import HttpClient from "../../http/httpClient.js";
 import Router from "../../router/router.js";
 import ChatApiService from "../../api/chat/chatApiService.js";
-import { userService } from "../../state/userService.js";
 export default class Chatlist extends HTMLElement {
     constructor() {
         super();
