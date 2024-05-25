@@ -4,9 +4,14 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from accounts.models import OneTimePassword
+from accounts.throttling_me import EmailVerificationThrottle
+from django.utils import timezone
 
 
-class EmailVerificationView(GenericAPIView):    
+class EmailVerificationView(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    throttle_classes = [EmailVerificationThrottle]
+
     def post(self, request):
         otp = request.data.get('otp')
         if not otp:
@@ -14,17 +19,18 @@ class EmailVerificationView(GenericAPIView):
         try:
             # Fetch the OTP object using both the OTP and User
             otp_object = OneTimePassword.objects.get(otp=otp, user=request.user)
-
             # Verify the OTP
-            if otp_object:
+            if otp_object: # If OTP is valid
+                if timezone.now() > otp_object.expire_at:
+                    return Response({'detail': 'OTP has expired'}, status=status.HTTP_400_BAD_REQUEST)
                 otp_object.delete()
-                if not request.user.is_verified:
-                    request.user.is_verified = True
-                    request.user.save()
-                    return Response({'detail': 'Email Verified Successfully'}, status=status.HTTP_200_OK)
-                return Response({'detail': 'Email Already Verified'}, status=status.HTTP_400_BAD_REQUEST)
+                request.user.is_verified = True
+                request.user.save()
+                return Response({'detail': 'Email verified successfully'}, status=status.HTTP_200_OK)
             else:
-                return Response({'detail': 'Invalid OTP or Email'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'detail': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
         except OneTimePassword.DoesNotExist:
-            return Response({'detail': 'Invalid OTP or Email'}, status=status.HTTP_400_BAD_REQUEST)
-        
+            raise ValidationError({'detail': 'Invalid OTP'})
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'Something went wrong'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

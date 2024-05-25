@@ -21,7 +21,7 @@ def send_verification(user):
     recipient_list = [user.email]
 
     # Create OneTimePassword record
-    OneTimePassword.objects.create(user=user, otp=otp)
+    OneTimePassword.objects.create(user=user, otp=otp, created_at=datetime.datetime.now(), expire_at=datetime.datetime.now() + datetime.timedelta(minutes=1))
 
     try:
         send_mail(subject, message, email_from, recipient_list, fail_silently=False)

@@ -4,7 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from .managers import UserManager
 
 from rest_framework_simplejwt.tokens import RefreshToken
-
+from datetime import datetime
 
 class UserStatus(models.TextChoices):
     ONLINE = 'ON', _('Online')
@@ -58,10 +58,17 @@ class User(AbstractBaseUser, PermissionsMixin):
 class OneTimePassword(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)  # Set on_delete to CASCADE
     otp = models.CharField(max_length=6)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(_('created At'), auto_now_add=True)
+    expire_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f'{self.otp}'
+    
+    @property
+    def is_expired(self):
+        if self.expire_at:
+            return self.expire_at < datetime.now()
+        return False
     
 
 # class ResetPassword(models.Model):
