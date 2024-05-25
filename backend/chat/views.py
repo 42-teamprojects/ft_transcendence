@@ -3,6 +3,7 @@ from .permissions import IsChatParticipant
 from .models import Chat, Message
 from .serializers import ChatSerializer, MessageSerializer
 from rest_framework import serializers
+from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from django.db.models import Q
@@ -21,6 +22,9 @@ class ChatViewSet(ModelViewSet):
     def perform_create(self, serializer):
         user1 = self.request.user
         user2_id = self.request.data.get('user2')
+        chat_exists = Chat.objects.filter(Q(user1=user1.id) & Q(user2=user2_id))
+        if chat_exists:
+            raise serializers.ValidationError("chat already exist.")
         if not user2_id:
             raise serializers.ValidationError("user2 field is required.")
         if user1.id == int(user2_id):
@@ -34,20 +38,13 @@ class MessageViewSet(ModelViewSet):
     queryset = Message.objects.all()
     permissions_classes = [IsAuthenticated, IsChatParticipant]
     
+    
+    
     def perform_create(self, serializer):
-        user = self.request.user
-        chat_id = self.request.data.get('chat')
-        chat = Chat.objects.get(pk=chat_id)
-        sender_id = self.request.data.get('sender')
-        if user != chat.user1 and user != chat.user2:
+        sender = self.request.user
+        chat_id = self.kwargs['chat_id']
+        print(chat_id)
+        chat = get_object_or_404(Chat, pk=chat_id)
+        if sender != chat.user1 and sender != chat.user2:
             raise serializers.ValidationError("You are not a participant in this chat.")
-        if sender_id != user:
-            raise serializers.ValidationError("You can only send messages as yourself.")
-
-    # @action(detail=True, methods=['get'])
-    # def chat_messages(self, request, pk=None):
-    #     chat = self.get_object().chat
-    #     messages = Message.objects.filter(chat=chat)
-    #     serializer = self.get_serializer(messages, many=True)
-    #     return Response(serializer.data)
-
+        serializer.save(sender=sender, chat_id=chat_id)
