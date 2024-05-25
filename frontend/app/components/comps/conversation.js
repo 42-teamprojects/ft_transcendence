@@ -5,9 +5,12 @@ export default class Conversation extends HTMLElement {
     constructor() {
         super();
         this.chatId = getMatchUrl(/^\/dashboard\/chat\/(\w+)$/) || "none";
+        if (this.chatId === "none") {
+            throw new Error("Chat id not found");
+        }
         this.chat = chatService.getState().chats.find((chat) => {
             return chat.id === parseInt(this.chatId);
-        });
+        });;
     }
 
     connectedCallback() {

@@ -3,9 +3,8 @@ import Router from "../../router/router.js";
 import { chatService } from "../../state/chatService.js";
 
 export default class Chat extends HTMLElement {
-    constructor(params) {
+    constructor() {
         super();
-        console.log(params);
         document.title = 'Chat | Blitzpong';
         this.isEmpty = window.location.href.match(/\/chat\/?$/);
     }

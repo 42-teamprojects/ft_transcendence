@@ -36,7 +36,8 @@ class ChatService extends Service {
 
 	async getChatMessages(chatId) {
 		try {
-			const messages = await this.chatApiService.getChatMessages(chatId);
+			let messages = await this.chatApiService.getChatMessages(chatId);
+			messages = messages.reverse();
 			this.setState({ messages });
 		}
 		catch (error) {
