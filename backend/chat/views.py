@@ -3,6 +3,7 @@ from .permissions import IsChatParticipant
 from .models import Chat, Message
 from .serializers import ChatSerializer, MessageSerializer
 from rest_framework import serializers
+from rest_framework import status
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -43,13 +44,12 @@ class MessageViewSet(ModelViewSet):
         chat = get_object_or_404(Chat, pk=chat_id)
         user = self.request.user
         if user != chat.user1 and user != chat.user2:
-            raise serializers.ValidationError("You are not a participant in this chat.")
+            return Message.objects.none()
         return Message.objects.filter(chat=chat_id)
     
     def perform_create(self, serializer):
         sender = self.request.user
         chat_id = self.kwargs['chat_id']
-        print(chat_id)
         chat = get_object_or_404(Chat, pk=chat_id)
         if sender != chat.user1 and sender != chat.user2:
             raise serializers.ValidationError("You are not a participant in this chat.")
