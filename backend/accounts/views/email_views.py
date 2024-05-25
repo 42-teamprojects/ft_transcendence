@@ -21,7 +21,7 @@ class EmailVerificationView(GenericAPIView):
             # Fetch the OTP object using both the OTP and User
             otp_object = OneTimePassword.objects.get(otp=otp, user=request.user)
             # Verify the OTP
-            if otp_object:
+            if otp_object: # If OTP is valid
                 if timezone.now() > otp_object.expire_at:
                     return Response({'detail': 'OTP has expired'}, status=status.HTTP_400_BAD_REQUEST)
                 otp_object.delete()
