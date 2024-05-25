@@ -1,3 +1,5 @@
+import Chatmatchhistory from "./components/comps/chat-match-history.js";
+import Matchhistory from "./components/comps/match-history.js";
 import Chatsearchmodal from "./components/comps/chat-search-modal.js";
 import Updateuserinfoform from "./components/comps/update-user-info-form.js";
 import Changepasswordform from "./components/comps/change-password-form.js";
@@ -79,5 +81,7 @@ export const components = [
 	{ tagName: 'c-enable-2fa-modal', component: Enable2famodal },
 	{ tagName: 'c-change-password-form', component: Changepasswordform },
 	{ tagName: 'c-update-user-info-form', component: Updateuserinfoform },
+	{ tagName: 'c-match-history', component: Matchhistory },
 	{ tagName: 'c-chat-search-modal', component: Chatsearchmodal },
+	{ tagName: 'c-chat-match-history', component: Chatmatchhistory },
 ];

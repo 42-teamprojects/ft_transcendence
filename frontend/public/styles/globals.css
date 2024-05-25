@@ -721,6 +721,10 @@
 }
 
 /* Width */
+.w-0 {
+    width: 0rem !important;
+}
+
 .w-9 {
     width: 2.25rem !important;
 }

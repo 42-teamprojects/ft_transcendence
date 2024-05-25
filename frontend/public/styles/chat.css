@@ -1,6 +1,6 @@
 .chat-page {
     display: grid;
-    grid-template-columns: minmax(300px, 350px) minmax(700px, 1fr) minmax(300px, 350px);
+    grid-template-columns: minmax(300px, 350px) minmax(700px, 1fr) minmax(400px, 450px);
     grid-template-rows: 100vh;
     gap: 0px 0px;
     grid-template-areas: "chat-list chat-conversation chat-matches-history";
@@ -19,6 +19,9 @@
     .conversation-footer {
         display: none;
     }
+    .chat-match-history {
+        display: none;
+    }
 }
 
 @media screen and (max-width: 1550px) {
@@ -30,7 +33,7 @@
         grid-template-areas: "chat-list chat-conversation";
     }
 
-    .match-history {
+    .chat-match-history {
         display: none;
     }
 }
@@ -44,8 +47,10 @@
     gap: .5rem;
 }
 
-.match-history {
+.chat-match-history {
     grid-area: chat-matches-history;
+    border-left: 2px solid var(--border-color);
+    height: 100vh;
 }
 
 .conversation {
@@ -140,7 +145,7 @@
     font-size: .8rem;
 }
 
-.conversation-header {
+.chat-header, .conversation-header {
     display: flex;
     height: 88px;
     flex-direction: row;

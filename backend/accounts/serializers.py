@@ -45,7 +45,6 @@ class LoginSerializer(serializers.ModelSerializer):
         if not user:
             raise AuthenticationFailed('Invalid credentials, try again')
         
-        user.last_login = datetime.now()
         
         refresh_token, access_token = user.tokens().values()
 
@@ -59,6 +58,8 @@ class LoginSerializer(serializers.ModelSerializer):
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         attrs = super().validate(attrs)
+        self.user.last_login = datetime.now()
+        self.user.save()
         return {
             'username' : self.user.username,
             'last_2fa_login' : self.user.last_2fa_login,

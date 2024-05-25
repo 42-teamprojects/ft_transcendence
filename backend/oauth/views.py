@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.conf import settings
 from rest_framework.views import APIView
 from requests_oauthlib import OAuth2Session
@@ -6,11 +7,14 @@ from accounts.models import User
 from accounts.utils import add_cookies, generate_2fa_token
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 
 # http://localhost:8000/api/oauth2/login/google/
 # http://localhost:8000/api/oauth2/login/fortytwo/
 
 class OAuth2LoginView(APIView):
+    permission_classes = [AllowAny]
+    
     def get(self, request, provider):
         provider_config = settings.OAUTH2_PROVIDERS.get(provider)
         if not provider_config:
@@ -31,6 +35,8 @@ class OAuth2LoginView(APIView):
         return Response({ 'authorization_url': authorization_url }, status=status.HTTP_200_OK)
 
 class OAuth2CallbackView(APIView):
+    permission_classes = [AllowAny]
+    
     def get(self, request, provider):
         provider_config = settings.OAUTH2_PROVIDERS.get(provider)
         if not provider_config:
@@ -76,6 +82,8 @@ class OAuth2CallbackView(APIView):
         try:
             user = User.objects.get(email=email)
             response = Response(status=status.HTTP_200_OK)
+            user.last_login = datetime.now()
+            user.save()
 
             if user.two_factor_enabled: #and (last_2fa_login is None or last_2fa_login < timezone.now() - timezone.timedelta(days=1)): # Delete access and refresh cookies
                 # Generate intermediate token
@@ -89,6 +97,8 @@ class OAuth2CallbackView(APIView):
                 username = username + str(User.objects.count())
             
             user = User.objects.create(username=username, email=email, full_name=full_name, is_verified=profile.get('verified_email', False))
+            user.provider = provider
+            user.last_login = datetime.now()
             user.set_unusable_password()
             user.save()
             response = Response(status=status.HTTP_200_OK)
@@ -98,4 +108,3 @@ class OAuth2CallbackView(APIView):
         except:
             return Response({"error" : "Something went wrong, please try again."}, status=status.HTTP_401_UNAUTHORIZED)
         
-

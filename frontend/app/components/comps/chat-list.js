@@ -5,14 +5,9 @@ export default class Chatlist extends HTMLElement {
     constructor() {
         super();
         this.router = Router.instance;
-        this.showSearchModal = false;
     }
     connectedCallback() {
         this.render();
-        document.querySelector('.chat-list__add').addEventListener('click', () => {
-           this.showSearchModal = !this.showSearchModal;
-        });
-        
     }
 
     disconnectedCallback() {}
@@ -26,7 +21,7 @@ export default class Chatlist extends HTMLElement {
                 <img src="/public/assets/icons/plus.svg" alt="add" class="chat-list__add" onclick="document.querySelector('c-chat-search-modal').open()"/>
             </div>
             <div class="chat-list__search">
-                <input type="text" class="input-field" placeholder="Search Messages" />
+                <input type="text" class="input-field" placeholder="Search Users, Messages..." />
             </div>
             <div class="chat-list__content">
                 <div class="chat-list__items">

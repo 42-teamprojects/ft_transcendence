@@ -56,10 +56,10 @@ export default class Chatsearchmodal extends HTMLElement {
                     <h1 id="title" class="text-3xl font-bold mb-2">Search for friends   </h1>
                     <h2 id="subtitle" class="text-xl font-normal text-stroke spacing-2">find your friends or new ones</h2>
                 </header>
-                <div class="flex gap-2 mt-6 mb-6">
+                <form class="flex items-center gap-2 mt-6 mb-6">
                     <input type="text" class="input-field" placeholder="Search username, Email..." />
-                    <button class="btn-secondary"><i class="fa fa-search"></i></button> 
-                </div>
+                    <button class="btn-secondary py-4" style="width: 0"><i class="fa fa-search"></i></button> 
+                </form>
                 <main>
                     <div class="flex-center flex-wrap" style="gap: 2rem 3rem;">
                         <c-usercard username="HassanOigag" status="offline" img="https://api.dicebear.com/8.x/thumbs/svg?seed=Casper"></c-usercard>

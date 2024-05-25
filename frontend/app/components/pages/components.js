@@ -192,7 +192,14 @@ export default class Components extends HTMLElement {
                     </tr>
                   </tbody>
                 </table>
-              
+                </div>
+
+                <div class="matchhistory">
+                    <c-match-history></c-match-history>
+                </div>
+
+                <div>
+                    <c-friendscard></c-friendscard>
                 </div>
                 `;
 	}

@@ -1,17 +1,21 @@
+import { userService } from "../../state/userService.js";
+
 export default class Dashboard extends HTMLElement {
-    constructor() {
-        super();
-        document.title = "Dashboard | Blitzpong.";
-    }
+	constructor() {
+		super();
+		document.title = "Dashboard | Blitzpong.";
+	}
 
-    connectedCallback() {
-        this.render();
-    }
+	connectedCallback() {
+		this.render();
+		const { user } = userService.getState();
+        console.log(user)
+	}
 
-    disconnectedCallback() {}
+	disconnectedCallback() {}
 
-    render() {
-        this.innerHTML = /*html*/`  
+	render() {
+		this.innerHTML = /*html*/ `  
         <div class="dashboard-content">
             <main>
                 <div class="flex-center gap-6" >
@@ -27,8 +31,8 @@ export default class Dashboard extends HTMLElement {
             </div>
         </div>
         `;
-        // <c-dailyquestscard></c-dailyquestscard>
-    }
+		// <c-dailyquestscard></c-dailyquestscard>
+	}
 }
 
-customElements.define('p-dashboard-home', Dashboard);
+customElements.define("p-dashboard-home", Dashboard);

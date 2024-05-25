@@ -1,21 +1,94 @@
 .table-theme {
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border-radius: .75rem;
-    width: 254px;
-    /* height: 191px; */
-    padding: 1rem;
+	cursor: pointer;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	border-radius: 0.75rem;
+	width: 254px;
+	/* height: 191px; */
+	padding: 1rem;
 }
 
 input[name="theme-option"]:checked ~ .table-theme {
-    background-color: var(--active-bg-color);
+	background-color: var(--active-bg-color);
 }
 
 .vertical-line {
-    border: 1px solid var(--active-bg-color); /* Change color as needed */
-    height: 200px; /* Or any specific height */
-    width: 0;
+	border: 1px solid var(--active-bg-color); /* Change color as needed */
+	height: 200px; /* Or any specific height */
+	width: 0;
+}
+
+.match-history__wrapper {
+	width: minmax(450px, 100%);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	border: 2px solid var(--border-color);
+	background-color: var(--bg-color);
+	border-radius: 100px;
+	padding: 0.5rem;
+	overflow: hidden;
+	position: relative;
+	z-index: 1;
+}
+
+.match-history__wrapper .match-history__player {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+.match-history__wrapper .match-history__player:last-child {
+	flex-direction: row-reverse;
+}
+
+.match-history__wrapper .match-history__player img {
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+}
+
+.match-history__player-details {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 0.25rem;
+}
+
+.match-history__state {
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: rgb(35, 66, 35);
+    font-size: 1.25rem;
+}
+
+.match-history__state.isWinner {
+    background-color: rgb(35, 66, 35);
+}
+
+.match-history__state.isLoser {
+    background-color: rgb(66, 35, 35);
+}
+
+.match-history__state.isLoser i {
+    color: var(--danger-color);
+}
+
+.match-history__state.isWinner i {
+    color: var(--success-color);
+}
+
+.match-history__state.isWinner i.fa-times {
+    display: none;
+}
+
+.match-history__state.isLoser i.fa-check {
+    display: none;
 }
