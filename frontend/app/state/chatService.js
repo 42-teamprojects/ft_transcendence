@@ -44,13 +44,22 @@ class ChatService extends Service {
 		}
 	}
 
+	async saveMessage(chatId, message) {
+		try {
+			const response = await this.chatApiService.saveMessage(chatId, message);
+			this.addMessage(response);
+		}
+		catch (error) {
+			console.error(error);
+		}
+	}
 	// {message: string, sender: me|them}
 	addMessage(messageObject) {
 		const messages = this.getState().messages;
-		if (messageObject.message.startsWith("me:")) {
-			messageObject.sender = "me";
-			messageObject.message = messageObject.message.replace("me:", "");
-		}
+		// if (messageObject.message.startsWith("me:")) {
+		// 	messageObject.sender = "me";
+		// 	messageObject.message = messageObject.message.replace("me:", "");
+		// }
 		// insert in front of the array
 		messages.unshift(messageObject);
 		this.setState({ messages });

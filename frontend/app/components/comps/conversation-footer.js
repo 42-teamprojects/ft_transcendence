@@ -1,5 +1,5 @@
 import { chatService } from "../../state/chatService.js";
-
+import { getMatchUrl } from "../../utils/utils.js";
 export default class Conversationfooter extends HTMLElement {
     constructor() {
         super();
@@ -9,9 +9,10 @@ export default class Conversationfooter extends HTMLElement {
         this.render();
         this.form = this.querySelector("form.conversation-form");
         this.form.addEventListener("submit", (e) => {
+            let chatId = getMatchUrl(/^\/dashboard\/chat\/(\w+)$/);
             e.preventDefault();
-            const message = this.form.message.value;
-            chatService.addMessage({ message, sender: "them" });
+            const message = this.form.content.value;
+            chatService.saveMessage(chatId, message);
             this.form.reset();
         });
     }
@@ -21,8 +22,8 @@ export default class Conversationfooter extends HTMLElement {
     render() {
         this.innerHTML = /*html*/`
         <div class="conversation-footer">
-            <form class="conversation-form">
-                <input class="input-field message" name="message" type="text" placeholder="Type a message" autocomplete="off">
+            <form class="conversation-form" method="POST">
+                <input class="input-field message" name="content" type="text" placeholder="Type a message" autocomplete="off">
                 <button type="submit" class="btn-send">
                     <img src="public/assets/icons/send.svg" alt="send">
                 </button>

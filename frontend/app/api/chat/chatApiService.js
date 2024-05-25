@@ -23,4 +23,13 @@ export default class ChatApiService {
             console.error(error);
         }
     }
+
+    async saveMessage(chatId, message) {
+        try {
+            const response = await this.httpClient.post(`chats/${chatId}/messages/`, { "content": message });
+            return response;
+        } catch (error) {
+            console.error(error);
+        }
+    }
 }
