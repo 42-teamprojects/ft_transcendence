@@ -110,6 +110,14 @@ export default class Authentication {
 		}
 	}
 
+	async reset2FA(data) {
+		try {
+			return await this.verificationService.reset2FA(data);
+		} catch (error) {
+			throw error;
+		}
+	}
+
 	// User
 	async changePassword(data) {
 		try {
@@ -134,4 +142,5 @@ export default class Authentication {
 			throw error;
 		}
 	}
+
 }

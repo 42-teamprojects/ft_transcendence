@@ -12,8 +12,6 @@ from django.utils import timezone
 
 # Create your views here.
 class GetTwoFactorAuthView(APIView):
-    permission_classes = [IsAuthenticated]
-    
     def get(self, request):
         user_secret_key = pyotp.random_base32()
     
@@ -32,8 +30,6 @@ class GetTwoFactorAuthView(APIView):
         }, status=status.HTTP_200_OK)
         
 class EnableTwoFactorAuthView(APIView):
-    permission_classes = [IsAuthenticated]
-    
     def post(self, request):
         if request.user.two_factor_enabled:
             return Response({'detail': 'Two-factor authentication is already enabled'}, status=status.HTTP_400_BAD_REQUEST)

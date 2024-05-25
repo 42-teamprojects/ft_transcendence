@@ -35,5 +35,9 @@ export default class VerificationService {
 		return this.httpClient.get("security/get-2fa/");
 	}
 
+	async reset2FA(data) {
+		return this.httpClient.post("security/reset-2fa/", data)
+	}
+
 	// Todo: Add other verification-related methods
 }

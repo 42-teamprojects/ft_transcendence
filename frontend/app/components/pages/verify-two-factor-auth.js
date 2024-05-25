@@ -44,7 +44,7 @@ export default class VerifyTwoFactorAuth extends HTMLElement {
 				</div>
 				<button is="c-button" type="submit" class="btn-secondary">Verify</button>
             </form>
-            <p>Have problems? <a is="c-link" href="/"> Request Reset</a>.</p>
+            <p>Have problems? <a is="c-link" href="/reset-2fa"> Request Reset</a>.</p>
         </div>
         `;
 	}

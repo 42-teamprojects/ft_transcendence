@@ -17,22 +17,6 @@ export default class EmailVerification extends HTMLElement {
 		this.verify.addEventListener("click", this.handleSubmit.bind(this));
 	}
 
-	async handleSubmit(e) {
-		e.preventDefault();
-		const code = this.input.value;
-		if (code.length !== 6) return Toast.notify({ type: "error", message: "Invalid verification code" });
-		try {
-			this.verify.setAttribute("processing", "true");
-			await Authentication.instance.verifyEmail(code);
-			this.verify.setAttribute("processing", "false");
-			Toast.notify({ type: "success", message: "Email verified successfully" });
-			Router.instance.navigate("/dashboard/home");
-		} catch (error) {
-			this.verify.setAttribute("processing", "false");
-			Toast.notify({ type: "error", message: error.detail });
-		}
-	}
-
 	connectedCallback() {
         this.render();
 
