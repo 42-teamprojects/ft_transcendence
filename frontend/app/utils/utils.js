@@ -138,3 +138,9 @@ export const handleFormSubmitApi = async (
 		}
 	}
 };
+
+export function getMatchUrl(regex) {
+	const url = window.location.pathname;
+	const match = url.match(regex);
+	return match ? match[1] : null;
+}

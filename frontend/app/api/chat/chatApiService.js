@@ -17,7 +17,7 @@ export default class ChatApiService {
 
     async getChatMessages(chatId) {
         try {
-            const response = await this.httpClient.get(`chats/${chatId}/`);
+            const response = await this.httpClient.get(`chats/${chatId}/messages/`);
             return response;
         } catch (error) {
             console.error(error);

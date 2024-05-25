@@ -1,25 +1,28 @@
 import ChatApiService from "../../api/chat/chatApiService.js";
+import Router from "../../router/router.js";
+import { chatService } from "../../state/chatService.js";
 
 export default class Chat extends HTMLElement {
-    constructor() {
+    constructor(params) {
         super();
+        console.log(params);
         document.title = 'Chat | Blitzpong';
-        this.chatService = new ChatApiService();
         this.isEmpty = window.location.href.match(/\/chat\/?$/);
     }
 
     async connectedCallback() {
-        this.render();
-        // const res = await this.chatService.getUserChats();
-        // const messages = await this.chatService.getChatMessages(res[3].id);
-        // console.log(messages);
+        try {
+            await chatService.getChats();
+            this.render();
+        } catch (error) {
+            Router.instance.back();
+        }
     }
 
     disconnectedCallback() {}
 
     render() {
         this.innerHTML = /*html*/`
-
         <div class=${this.isEmpty ? 'chat-page__empty' : 'chat-page'}>
             <c-chat-list></c-chat-list>
             <c-conversation username="msodor" img="https://api.dicebear.com/8.x/thumbs/svg?seed=mouad"></c-conversation>
