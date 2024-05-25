@@ -70,6 +70,7 @@ export default class Components extends HTMLElement {
 
                         <div class="form-group">
                             <input type="text" class="input-field error" placeholder="Username or email"/>
+                            <span class="input-error text-xs ml-3 text-danger">This field is required</span>
                         </div>
 
                         <select class="select-field">

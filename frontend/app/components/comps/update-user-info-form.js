@@ -59,6 +59,9 @@ export default class Updateuserinfoform extends HTMLElement {
                 <label for="email">Email</label>
                 <div className="form-group">
                     <input type="text" id="email" name="email" class="input-field" placeholder="Email" value="${this.user.email}"/>
+					${this.user.is_verified ? "" : /*html*/`
+						<span class="input-error text-xs ml-3 text-danger">Your email is not verified. <a is="c-link" href="" class="underline font-bold text-danger">Verify Now.</a></span>
+					`}
                 </div>
             </div>` : ""}
             <div class="form-group-inline">
