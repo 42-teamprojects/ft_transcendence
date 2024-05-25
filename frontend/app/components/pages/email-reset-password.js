@@ -2,6 +2,7 @@ import { validateEmail } from '../../utils/validations.js';
 import Toast from '../comps/toast.js';
 import Authentication from '../../auth/authentication.js';
 import { handleFormSubmitApi } from '../../utils/utils.js';
+import Router from '../../router/router.js';
 
 export default class Emailresetpassword extends HTMLElement {
     constructor() {

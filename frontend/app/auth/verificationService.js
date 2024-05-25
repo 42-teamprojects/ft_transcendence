@@ -18,8 +18,8 @@ export default class VerificationService {
 	}
 
 	// End-point not implemented yet
-	async sendVerificationEmail(data) {
-		return this.httpClient.post("auth/verification/send/", data);
+	async resendVerificationEmail() {
+		return this.httpClient.post("auth/resend-verify-email/");
 	}
 
 	// 2FA

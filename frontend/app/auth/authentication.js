@@ -67,6 +67,14 @@ export default class Authentication {
 		}
 	}
 
+	async resendVerificationEmail() {
+		try {
+			return await this.verificationService.resendVerificationEmail();
+		} catch (error) {
+			throw error;
+		}
+	}
+
 	// OAuth2
 	async continueWithOAuth(provider) {
 		try {

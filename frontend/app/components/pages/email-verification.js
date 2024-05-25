@@ -21,7 +21,16 @@ export default class EmailVerification extends HTMLElement {
         this.render();
 
         this.form = this.querySelector('form');
+		this.resendEmail = this.querySelector('#resend-email');
 
+		this.resendEmail.addEventListener('click', async () => {
+			try {
+				await Authentication.instance.resendVerificationEmail();
+				Toast.notify({ type: "success", message: "Email sent successfully" });
+			} catch (error) {
+				Toast.notify({ type: "error", message: error.detail });
+			}
+		});
         this.form.addEventListener('submit', this.handleSubmit.bind(this));
     }
 
@@ -50,7 +59,7 @@ export default class EmailVerification extends HTMLElement {
             <form method="post">
             <div class="form-group">
                 <input type="text" name="otp" class="input-field" placeholder="Verification code" maxlength="6" />
-                <p>Didn't get the email? <a is="c-link" href=""> Resend</a>.</p>
+                <p>Didn't get the email? <span id="resend-email" class="cursor-pointer text-secondary">Resend</span>.</p>
             </div>
             <button is="c-button" type="submit" class="btn-secondary">Verify</button>
             </form>

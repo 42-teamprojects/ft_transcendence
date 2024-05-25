@@ -7,10 +7,11 @@ from accounts.models import OneTimePassword
 from accounts.throttling_me import EmailVerificationThrottle
 from django.utils import timezone
 
+from accounts.utils import send_verification
+
 
 class EmailVerificationView(GenericAPIView):
     permission_classes = [IsAuthenticated]
-    throttle_classes = [EmailVerificationThrottle]
 
     def post(self, request):
         otp = request.data.get('otp')
@@ -21,9 +22,9 @@ class EmailVerificationView(GenericAPIView):
             otp_object = OneTimePassword.objects.get(otp=otp, user=request.user)
             # Verify the OTP
             if otp_object: # If OTP is valid
+                otp_object.delete()
                 if timezone.now() > otp_object.expire_at:
                     return Response({'detail': 'OTP has expired'}, status=status.HTTP_400_BAD_REQUEST)
-                otp_object.delete()
                 request.user.is_verified = True
                 request.user.save()
                 return Response({'detail': 'Email verified successfully'}, status=status.HTTP_200_OK)
@@ -34,3 +35,13 @@ class EmailVerificationView(GenericAPIView):
         except Exception as e:
             print(e)
             return Response({'detail': 'Something went wrong'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class EmailVerificationResendView(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    throttle_classes = [EmailVerificationThrottle]
+
+    def post(self, request):
+        is_sent = send_verification(request.user)
+        if is_sent:
+            return Response({'detail': 'Verification email sent successfully'}, status=status.HTTP_200_OK)
+        return Response({'detail': 'Failed to send verification email'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -1,6 +1,6 @@
 from django.urls import path
 from accounts.views.auth_views import JWTRefreshView, JWTVerifyView, LoginView, LogoutView, RegisterView
-from accounts.views.email_views import EmailVerificationView
+from accounts.views.email_views import EmailVerificationResendView, EmailVerificationView
 from accounts.views.password_reset_views import ResetPasswordConfirmView, ResetPasswordRequestView
 
 urlpatterns = [
@@ -10,6 +10,7 @@ urlpatterns = [
     path('jwt/verify/', JWTVerifyView.as_view()),
     path('logout/', LogoutView.as_view()),
     path('verify-email/', EmailVerificationView.as_view(), name='verify-email'),
+    path('resend-verify-email/', EmailVerificationResendView.as_view(), name='resend-verify-email'),
     path('reset-password/', ResetPasswordRequestView.as_view(), name='reset-password'),
     path('reset-password-confirm/', ResetPasswordConfirmView().as_view(), name='reset-password-confirm')
 ]
