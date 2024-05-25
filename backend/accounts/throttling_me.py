@@ -15,6 +15,7 @@ class PasswordResetThrottle(UserRateThrottle):
         
         # Allow all other requests without throttling
         return True
+  
 class EmailVerificationThrottle(UserRateThrottle):
     scope = 'email_verification'
 
