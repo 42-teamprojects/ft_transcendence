@@ -52,6 +52,11 @@ export default class Conversationbody extends HTMLElement {
     chatSocket.onerror = function(e) {
       console.error("WebSocket error: ", e);
     }
+    let message = "hello test"
+    console.log(message)
+    chatSocket.send(JSON.stringify({
+        'message': message
+    }))
   }
 
   render() {
