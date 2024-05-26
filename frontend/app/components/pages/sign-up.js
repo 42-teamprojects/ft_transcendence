@@ -18,14 +18,14 @@ export default class SignUp extends HTMLElement {
 		this.form.addEventListener("submit", this.handleSubmit.bind(this));
 	}
 
-	handleSubmit(e) {
+	async handleSubmit(e) {
 		e.preventDefault();
 
 		const formValidations = (data) => {
 			return validateRegister(data);
 		};
 
-		handleFormSubmitApi(
+		await handleFormSubmitApi(
 			this.form,
 			Authentication.instance.register.bind(Authentication.instance),
 			formValidations,

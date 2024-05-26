@@ -48,12 +48,12 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_THROTTLE_CLASSES': [
-        'accounts.throttling_me.PasswordResetThrottle',
-        'accounts.throttling_me.EmailVerificationResendThrottle',
+        'accounts.custom_throttles.CustomAnonRateThrottle',
+        'accounts.custom_throttles.ResendRateThrottle',
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'password_reset': '1/min',
-        'email_verification_resend': '1/min',
+        'anon': '1/min',
+        'resend': '1/min',
     }
 }
 

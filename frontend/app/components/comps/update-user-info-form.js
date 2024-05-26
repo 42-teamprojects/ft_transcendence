@@ -17,10 +17,10 @@ export default class Updateuserinfoform extends HTMLElement {
 		this.form.addEventListener("submit", this.handleSubmit.bind(this));
 	}
 
-	handleSubmit(e) {
+	async handleSubmit(e) {
 		e.preventDefault();
 
-		handleFormSubmitApi(
+		await handleFormSubmitApi(
 			this.form,
 			(data) => alert("Replace this with the actual api call\n" + JSON.stringify(data)), // Replace with the actual function api
 			(data) => {
@@ -60,7 +60,7 @@ export default class Updateuserinfoform extends HTMLElement {
                 <div className="form-group">
                     <input type="text" id="email" name="email" class="input-field" placeholder="Email" value="${this.user.email}"/>
 					${this.user.is_verified ? "" : /*html*/`
-						<span class="input-error text-xs ml-3 text-danger">Your email is not verified. <a is="c-link" href="" class="underline font-bold text-danger">Verify Now.</a></span>
+						<span class="input-error text-xs ml-3 text-danger">Your email is not verified. <a is="c-link" href="/resend-verification-email" class="underline font-bold text-danger">Verify Now.</a></span>
 					`}
                 </div>
             </div>` : ""}

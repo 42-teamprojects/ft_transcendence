@@ -128,6 +128,11 @@ export const routes = [
 	{
 		path: "/reset-2fa",
 		canActivate: [LoginGuard],
-		component: () => import("./components/pages/reset-two-factor.js"),
+		component: () => import("./components/pages/email-reset-two-factor.js"),
+	},
+	{
+		path: "/resend-verification-email",
+		canActivate: [AuthGuard],
+		component: () => import("./components/pages/resend-verification-email.js"),
 	},
 ];
