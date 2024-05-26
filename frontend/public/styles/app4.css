@@ -130,10 +130,13 @@ c-match .match-id {
 	color: var(--stroke-color);
 }
 
-/* Tournament card */
+.tournament-cards {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 1.5rem;
+}
 
 .tournament-card {
-	width: 320px;
 	height: 235px;
 	padding: 1.5rem;
 	background: var(--default-color);
@@ -218,6 +221,12 @@ c-match .match-id {
 
 .table-row {
 	border-bottom: 1px solid var(--border-color);
+}
+
+.table-row .table-data:nth-child(2) {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
 }
 
 .table-data {
