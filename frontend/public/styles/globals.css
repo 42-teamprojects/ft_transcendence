@@ -801,7 +801,7 @@
     font-size: 0.875rem !important;
 }
 
-.text-base {
+.text-md {
     font-size: 1rem !important;
 }
 
@@ -827,6 +827,10 @@
 
 .text-5xl {
     font-size: 3rem !important;
+}
+
+.text-6xl {
+    font-size: 4rem !important;
 }
 
 .text-full {

@@ -5,7 +5,6 @@ export default class Chat extends HTMLElement {
         super();
         document.title = 'Chat | Blitzpong';
         this.chatService = new ChatApiService();
-        this.isEmpty = window.location.href.match(/\/chat\/?$/);
     }
 
     async connectedCallback() {
@@ -20,9 +19,9 @@ export default class Chat extends HTMLElement {
     render() {
         this.innerHTML = /*html*/`
 
-        <div class=${this.isEmpty ? 'chat-page__empty' : 'chat-page'}>
+        <div class='chat-page'>
             <c-chat-list></c-chat-list>
-            <c-conversation username="msodor" img="https://api.dicebear.com/8.x/thumbs/svg?seed=mouad"></c-conversation>
+            <c-conversation></c-conversation>
             <c-chat-match-history></c-chat-match-history>
         </div>
         `;

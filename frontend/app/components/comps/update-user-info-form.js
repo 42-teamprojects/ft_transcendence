@@ -67,7 +67,7 @@ export default class Updateuserinfoform extends HTMLElement {
             <div class="form-group-inline">
                 <label></label>
                 <button is="c-button" class="btn-secondary" type="submit">Save changes</button>
-            </div>
+			</div>
         </form>
         `;
 	}

@@ -61,7 +61,7 @@ export default class Chatsearchmodal extends HTMLElement {
                     <button class="btn-secondary py-4" style="width: 0"><i class="fa fa-search"></i></button> 
                 </form>
                 <main>
-                    <div class="flex-center flex-wrap" style="gap: 2rem 3rem;">
+                    <div class="flex-center flex-wrap friends-result" style="gap: 2rem 3rem;">
                         <c-usercard username="HassanOigag" status="offline" img="https://api.dicebear.com/8.x/thumbs/svg?seed=Casper"></c-usercard>
                         <c-usercard username="YusufIsawi" status="online" img="https://api.dicebear.com/8.x/thumbs/svg?seed=Garfield"></c-usercard>
                         <c-usercard username="Jhonesnow" status="playing" img="https://api.dicebear.com/8.x/thumbs/svg?seed=youssef"></c-usercard>

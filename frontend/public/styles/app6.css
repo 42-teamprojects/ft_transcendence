@@ -47,6 +47,17 @@ c-usercard {
     }
 }
 
+.friends-result h3 {
+    font-size: .87rem;
+}
+
+.friends-result p {
+    font-size: .8rem;
+    padding-top: 0.2rem;
+}
+
+
+
 .dashboard-content {
     display: grid;
     grid-template-columns: minmax(580px, 1fr) 400px;
