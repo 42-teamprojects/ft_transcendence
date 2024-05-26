@@ -8,17 +8,19 @@ export default class Conversationbody extends HTMLElement {
     super();
     this.chatApiService = new ChatApiService();
     this.user = userService.getState().user;
+    this.socket = null;
+    this.chatId = getMatchUrl(/^\/dashboard\/chat\/(\w+)$/)
   }
 
   async getChatMessages() {
-    let chatId = getMatchUrl(/^\/dashboard\/chat\/(\w+)$/);
-      if (!chatId) {
+      if (!this.chatId) {
         throw new Error("Chat id not found");
       }
-      await chatService.getChatMessages(chatId);
+      await chatService.getChatMessages(this.chatId);
   }
 
   async connectedCallback() {
+    
     try {
         await this.getChatMessages();
         this.render();
@@ -28,9 +30,29 @@ export default class Conversationbody extends HTMLElement {
     } catch (error) {
         console.log(error);
     }
+    this.setupWebsocket()
   }
 
   disconnectedCallback() {}
+
+  setupWebsocket() {
+    const socketUrl = `ws://localhost:8000/ws/chat/${this.chatId}/`;
+    console.log(socketUrl)
+    const chatSocket = new WebSocket(socketUrl)
+  
+    chatSocket.onopen = function(e) {
+      console.log("Connection established")
+    }
+  
+    chatSocket.onmessage = function(e){
+        const data = JSON.parse(e.data);
+        document.querySelector('#chat-log').value += (data.message + '\n')
+    }
+  
+    chatSocket.onerror = function(e) {
+      console.error("WebSocket error: ", e);
+    }
+  }
 
   render() {
     const messages = chatService.getState().messages;
