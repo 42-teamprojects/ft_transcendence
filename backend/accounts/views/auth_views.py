@@ -1,6 +1,8 @@
 from datetime import datetime
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
+
+from users.serializers import UserMeSerializer
 from ..serializers import MyTokenObtainPairSerializer, RegisterSerializer
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
@@ -18,6 +20,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.tokens import UntypedToken
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from ..models import User
+
 # Register View
 class RegisterView(GenericAPIView):
     serializer_class = RegisterSerializer
@@ -114,15 +117,15 @@ class JWTVerifyView(TokenVerifyView):
 
             # Check if user exists
             try:
-                User.objects.get(id=user_id)
+                user = User.objects.get(id=user_id)
+                user_serializer = UserMeSerializer(user)
+                return Response(user_serializer.data, status=status.HTTP_200_OK)
+
             except User.DoesNotExist:
                 response = Response({'detail': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
                 response.delete_cookie('access')
                 response.delete_cookie('refresh')
                 return response
-
-        return response
-
 
 class LogoutView(APIView):
     def post(self, request, *args, **kwargs):

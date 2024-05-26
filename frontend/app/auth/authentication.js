@@ -1,5 +1,6 @@
 import { config } from "../config.js";
 import HttpClient from "../http/httpClient.js";
+import { userService as userState } from "../state/userService.js";
 import AuthService from "./authService.js";
 import OAuthService from "./oAuthService.js";
 import UserService from "./userService.js";
@@ -53,7 +54,12 @@ export default class Authentication {
 
 	async isAuthenticated() {
 		try {
-			return await this.authService.isAuthenticated();
+			const result = await this.authService.isAuthenticated();
+			if (!result) {
+				return false;
+			}
+			userState.setState({ user: result });
+			return true;
 		} catch (error) {
 			throw error;
 		}
@@ -150,5 +156,4 @@ export default class Authentication {
 			throw error;
 		}
 	}
-
 }
