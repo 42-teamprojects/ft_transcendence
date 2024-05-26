@@ -53,6 +53,8 @@ REST_FRAMEWORK = {
 
 INSTALLED_APPS = [
     # 'daphne',
+    'channels',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -62,13 +64,12 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'djoser',
-    'channels',
     # Apps
+    'chat',
     'accounts',
     'security',
     'game',
     'oauth',
-    'chat',
     'users'
 ]
 
