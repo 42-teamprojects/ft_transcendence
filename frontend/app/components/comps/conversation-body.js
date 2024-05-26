@@ -46,7 +46,7 @@ export default class Conversationbody extends HTMLElement {
   
     chatSocket.onmessage = function(e){
         const data = JSON.parse(e.data);
-        document.querySelector('#chat-log').value += (data.message + '\n')
+        console.log('Data', data);
     }
   
     chatSocket.onerror = function(e) {
