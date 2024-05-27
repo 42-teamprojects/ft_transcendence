@@ -1,6 +1,7 @@
 export default class Dashboardtournament extends HTMLElement {
 	constructor() {
 		super();
+        document.title = "Tournaments | BlitzPong";
 	}
 
 	connectedCallback() {
