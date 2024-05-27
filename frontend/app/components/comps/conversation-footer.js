@@ -29,10 +29,13 @@ export default class Conversationfooter extends HTMLElement {
         };
 
         this.chatSocket.onmessage = (e) => {
-            // console.log("Message received: ");
             const data = JSON.parse(e.data);
             if (data.message) {
-                console.log('Message:', data.message);
+              //check if the message is from the user or the friend
+              let type = "in";
+              if (data.sender === chatService.user.id) {
+                type = "out";
+              }
                 chatService.saveMessage(this.chatId, data.message);
             }
         };
