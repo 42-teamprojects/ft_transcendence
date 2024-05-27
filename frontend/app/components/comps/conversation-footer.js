@@ -1,10 +1,12 @@
 import { config } from "../../config.js";
 import { chatService } from "../../state/chatService.js";
+import { userService } from "../../state/userService.js";
 import { getMatchUrl } from "../../utils/utils.js";
 export default class Conversationfooter extends HTMLElement {
     constructor() {
         super();
         this.chatId = getMatchUrl(/^\/dashboard\/chat\/(\w+)$/);
+        this.user = userService.getState().user
     }
 
     connectedCallback() {
@@ -34,7 +36,7 @@ export default class Conversationfooter extends HTMLElement {
             if (data.message) {
               //check if the message is from the user or the friend
               let type = "in";
-              if (data.sender === chatService.user.id) {
+              if (data.sender === this.user.id) {
                 type = "out";
               }
                 chatService.saveMessage(this.chatId, data.message);
@@ -53,7 +55,8 @@ export default class Conversationfooter extends HTMLElement {
       sendMessage(message) {
         if (this.chatSocket && this.chatSocket.readyState === WebSocket.OPEN) {
           this.chatSocket.send(JSON.stringify({
-            'message': message
+            'message': message,
+            'sender': this.user.id
           }));
         } else {
           console.error("WebSocket is not open. Unable to send message.");

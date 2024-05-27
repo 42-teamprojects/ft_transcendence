@@ -2,6 +2,7 @@ import { chatService } from "../../state/chatService.js";
 import ChatApiService from "../../api/chat/chatApiService.js";
 import { userService } from "../../state/userService.js";
 import { getMatchUrl } from "../../utils/utils.js";
+import Router from "../../router/router.js";
 
 export default class Conversationbody extends HTMLElement {
   constructor() {
@@ -28,6 +29,7 @@ export default class Conversationbody extends HTMLElement {
       });
     } catch (error) {
       console.log(error);
+      Router.instance.back();
     }
 
   }
