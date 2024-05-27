@@ -829,6 +829,10 @@
     font-size: 3rem !important;
 }
 
+.text-6xl {
+    font-size: 4rem !important;
+}
+
 .text-full {
     font-size: 245% !important;
 }
