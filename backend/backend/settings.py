@@ -30,7 +30,7 @@ DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = [
     'localhost',
-    '127.0.0.1'
+    '127.0.0.1',
 ]
 
 AUTH_USER_MODEL = 'accounts.User'
@@ -81,8 +81,6 @@ ASGI_APPLICATION = 'backend.asgi.application'
 #         },
 #     },
 # }
-
-import os
 
 CHANNEL_LAYERS = {
     "default": {
@@ -245,7 +243,7 @@ SIMPLE_JWT = {
 # CORS
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
-    "http://127.0.0.1:8080",   
+    "http://127.0.0.1:8080",
 ]
 CORS_ALLOW_CREDENTIALS = True
 
@@ -271,7 +269,7 @@ if SSL_CERTIFICATE and SSL_KEY:
     # Make sure DEBUG is True and ALLOWED_HOSTS is properly configured
     # SSL must be enabled only for development, not production
     # Use localhost for development
-    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+    ALLOWED_HOSTS += ['localhost', '127.0.0.1']
     # The SSL options
     SSLPORT = 8443  # Choose any available port you prefer
 
