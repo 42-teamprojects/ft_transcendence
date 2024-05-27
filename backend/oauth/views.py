@@ -1,4 +1,5 @@
 from datetime import datetime
+import logging
 from django.conf import settings
 from rest_framework.views import APIView
 from requests_oauthlib import OAuth2Session
@@ -9,8 +10,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 
-# http://localhost:8000/api/oauth2/login/google/
-# http://localhost:8000/api/oauth2/login/fortytwo/
+# http://localhost:8000/api/oauth/login/google/
+# http://localhost:8000/api/oauth/login/fortytwo/
+logger = logging.getLogger(__name__)
 
 class OAuth2LoginView(APIView):
     permission_classes = [AllowAny]
@@ -18,7 +20,7 @@ class OAuth2LoginView(APIView):
     def get(self, request, provider):
         provider_config = settings.OAUTH2_PROVIDERS.get(provider)
         if not provider_config:
-            return Response({"error" : "Unsupported provider"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail" : "Unsupported provider"}, status=status.HTTP_400_BAD_REQUEST)
 
         os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'  # Only for development
         oauth = OAuth2Session(
@@ -31,7 +33,8 @@ class OAuth2LoginView(APIView):
         # Save the state and provider in the session to validate the response later
         request.session['oauth_state'] = state
         request.session['oauth_provider'] = provider
-
+        request.session.modified = True
+        
         return Response({ 'authorization_url': authorization_url }, status=status.HTTP_200_OK)
 
 class OAuth2CallbackView(APIView):
@@ -40,15 +43,16 @@ class OAuth2CallbackView(APIView):
     def get(self, request, provider):
         provider_config = settings.OAUTH2_PROVIDERS.get(provider)
         if not provider_config:
-            return Response({"error" : "Unsupported provider"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail" : "Unsupported provider"}, status=status.HTTP_400_BAD_REQUEST)
 
         os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'  # Only for development
 
         # Ensure 'oauth_state' exists in the session
         state = request.session.get('oauth_state')
         oauth_provider = request.session.get('oauth_provider')
+
         if not state or oauth_provider != provider:
-            return Response({"error" : "State not found or provider mismatch."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail" : "State not found or provider mismatch."}, status=status.HTTP_400_BAD_REQUEST)
 
         oauth = OAuth2Session(
             provider_config['client_id'],
@@ -106,5 +110,5 @@ class OAuth2CallbackView(APIView):
             response = add_cookies(response, access=access_token, refresh=refresh_token)
             return response
         except:
-            return Response({"error" : "Something went wrong, please try again."}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"detail" : "Something went wrong, please try again."}, status=status.HTTP_401_UNAUTHORIZED)
         

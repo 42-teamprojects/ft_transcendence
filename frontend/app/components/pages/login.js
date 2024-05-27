@@ -36,14 +36,14 @@ export default class Login extends HTMLElement {
 		this.form.addEventListener("submit", this.handleSubmit.bind(this));
 	}
 
-	handleSubmit(e) {
+	async handleSubmit(e) {
 		e.preventDefault();
 
 		const formValidations = (data) => {
 			return validateRequire(data, ["username", "password"]);
 		};
 		
-		handleFormSubmitApi(
+		await handleFormSubmitApi(
 			this.form,
 			Authentication.instance.login.bind(Authentication.instance),
 			formValidations,

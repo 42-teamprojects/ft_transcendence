@@ -1,5 +1,6 @@
 import { config } from "../config.js";
 import HttpClient from "../http/httpClient.js";
+import { userService as userState } from "../state/userService.js";
 import AuthService from "./authService.js";
 import OAuthService from "./oAuthService.js";
 import UserService from "./userService.js";
@@ -53,7 +54,12 @@ export default class Authentication {
 
 	async isAuthenticated() {
 		try {
-			return await this.authService.isAuthenticated();
+			const result = await this.authService.isAuthenticated();
+			if (!result) {
+				return false;
+			}
+			userState.setState({ user: result });
+			return true;
 		} catch (error) {
 			throw error;
 		}
@@ -62,6 +68,14 @@ export default class Authentication {
 	async verifyEmail(data) {
 		try {
 			return await this.verificationService.verifyEmail(data);
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	async resendVerificationEmail() {
+		try {
+			return await this.verificationService.resendVerificationEmail();
 		} catch (error) {
 			throw error;
 		}
@@ -105,6 +119,14 @@ export default class Authentication {
 	async getTwoFactorAuthSecret() {
 		try {
 			return await this.verificationService.getTwoFactorAuthSecret();
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	async reset2FA(data) {
+		try {
+			return await this.verificationService.reset2FA(data);
 		} catch (error) {
 			throw error;
 		}

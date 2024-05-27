@@ -18,8 +18,8 @@ export default class VerificationService {
 	}
 
 	// End-point not implemented yet
-	async sendVerificationEmail(data) {
-		return this.httpClient.post("auth/verification/send/", data);
+	async resendVerificationEmail() {
+		return this.httpClient.post("auth/resend-verify-email/");
 	}
 
 	// 2FA
@@ -33,6 +33,10 @@ export default class VerificationService {
 
 	async getTwoFactorAuthSecret() {
 		return this.httpClient.get("security/get-2fa/");
+	}
+
+	async reset2FA(data) {
+		return this.httpClient.post("security/reset-2fa/", data)
 	}
 
 	// Todo: Add other verification-related methods

@@ -1,7 +1,5 @@
 import Authentication from "../../auth/authentication.js";
-import AuthGuard from "../../guards/authGuard.js";
 import Router from "../../router/router.js";
-import { useFormData } from "../../utils/useForm.js";
 import { handleFormSubmitApi, handleInputError, removeErrors } from "../../utils/utils.js";
 import { validateRegister } from "../../utils/validations.js";
 import Toast from "../comps/toast.js";
@@ -20,14 +18,14 @@ export default class SignUp extends HTMLElement {
 		this.form.addEventListener("submit", this.handleSubmit.bind(this));
 	}
 
-	handleSubmit(e) {
+	async handleSubmit(e) {
 		e.preventDefault();
 
 		const formValidations = (data) => {
 			return validateRegister(data);
 		};
 
-		handleFormSubmitApi(
+		await handleFormSubmitApi(
 			this.form,
 			Authentication.instance.register.bind(Authentication.instance),
 			formValidations,

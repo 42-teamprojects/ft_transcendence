@@ -2,6 +2,7 @@ import { validateEmail } from '../../utils/validations.js';
 import Toast from '../comps/toast.js';
 import Authentication from '../../auth/authentication.js';
 import { handleFormSubmitApi } from '../../utils/utils.js';
+import Router from '../../router/router.js';
 
 export default class Emailresetpassword extends HTMLElement {
     constructor() {
@@ -16,15 +17,16 @@ export default class Emailresetpassword extends HTMLElement {
         this.form.addEventListener('submit', this.handleSubmit.bind(this));
     }
 
-    handleSubmit(e) {
+    async handleSubmit(e) {
 		e.preventDefault();
 
-		handleFormSubmitApi(
+		await handleFormSubmitApi(
 			this.form,
 			Authentication.instance.resetPasswordEmail.bind(Authentication.instance),
 			(data) => validateEmail(data['email']),
 			() => {
                 Toast.notify({type: 'success', message: "We sent an email to your inbox"})
+                Router.instance.navigate("/login");
 			}
 		);
 	}
@@ -43,7 +45,7 @@ export default class Emailresetpassword extends HTMLElement {
                 </div>
                 <button is="c-button" type="submit" class="btn-secondary">Request Password Reset</button>
             </form>
-            <p>Forgot your email? <a is="c-link" href="/"> Ydek feh</a>.</p>
+            <p>Forgot your email? <a is="c-link" href="/register"> Ydek feh</a>.</p>
         </div>
         `;
     }

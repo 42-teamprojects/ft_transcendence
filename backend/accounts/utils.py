@@ -16,12 +16,15 @@ def generate_otp():
 def send_verification(user):
     otp = generate_otp()
     subject = 'One Time Password (OTP) for Email Verification'
-    message = f'Hi {user.username},\n\nYour OTP for email verification is {otp}.'
+    message = f'Hi {user.username},\n\nYour OTP for email verification is {otp}.\n\nThis OTP is valid for 5 minutes.'
     email_from = settings.EMAIL_HOST_USER
     recipient_list = [user.email]
 
     # Create OneTimePassword record
-    OneTimePassword.objects.create(user=user, otp=otp)
+    OneTimePassword.objects.create(user=user, 
+                                otp=otp,
+                                created_at=datetime.datetime.now(),
+                                expire_at=datetime.datetime.now() + datetime.timedelta(minutes=5))
 
     try:
         send_mail(subject, message, email_from, recipient_list, fail_silently=False)

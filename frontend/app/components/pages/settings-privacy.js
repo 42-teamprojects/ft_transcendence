@@ -17,10 +17,10 @@ export default class Settingsprivacy extends HTMLElement {
 	}
 
 	handle2FAEnable() {
-		if (!this.isVerified()) {
+		if (!userService.isVerified()) {
 			Toast.notify({ type: "warning", message: "You need to verify your email before enabling 2FA" });
 			return;
-		} else if (this.isVerified() && !this.is2FAEnabled() && this.twoFactorModal) {
+		} else if (userService.isVerified() && !userService.is2FAEnabled() && this.twoFactorModal) {
 			this.twoFactorModal.open();
 		} else {
 			Toast.notify({ type: "warning", message: "2FA is already enabled" });
@@ -44,14 +44,14 @@ export default class Settingsprivacy extends HTMLElement {
         `
 
 		this.innerHTML = /*html*/ `
-        ${this.isVerified() && !this.is2FAEnabled() ? `<c-enable-2fa-modal></c-enable-2fa-modal>` : ""}
+        ${userService.isVerified() && !userService.is2FAEnabled() ? `<c-enable-2fa-modal></c-enable-2fa-modal>` : ""}
         <div class="dashboard-content">
             <main class="flex-col gap-16 mb-12">
                 <div class="settings-header">
                     <h1 class="mb-3">Settings</h1>
                     <h3 class="font-normal text-stroke">Privacy, Password, 2FA...</h3>
                 </div>
-                ${this.user.provider === null ? changePasswordSection : ""}
+                ${!userService.isProvider() ? changePasswordSection : ""}
                 <section class="two-factor-auth">
                     <div class="settings-header mb-9">
                         <h2 class="mb-3">Two-factor authentication</h2>
@@ -72,14 +72,6 @@ export default class Settingsprivacy extends HTMLElement {
             </div>
         </div>
         `;
-	}
-
-	isVerified() {
-        return this.user.provider === 'fortytwo' ? true : this.user.is_verified;
-	}
-
-	is2FAEnabled() {
-		return this.user.two_factor_enabled;
 	}
 }
 

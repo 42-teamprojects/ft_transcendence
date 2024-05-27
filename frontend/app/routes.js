@@ -65,7 +65,7 @@ export const routes = [
 			},
 			{
 				path: "/tournaments",
-				component: () => import("./components/pages/dashboard-home.js"),
+				component: () => import("./components/pages/dashboard-tournament.js"),
 			},
 			{
 				path: "/quests",
@@ -124,5 +124,15 @@ export const routes = [
 		path: "/reset-password",
 		canActivate: [LoginGuard],
 		component: () => import("./components/pages/reset-password.js"),
+	},
+	{
+		path: "/reset-2fa",
+		canActivate: [LoginGuard],
+		component: () => import("./components/pages/email-reset-two-factor.js"),
+	},
+	{
+		path: "/resend-verification-email",
+		canActivate: [AuthGuard],
+		component: () => import("./components/pages/resend-verification-email.js"),
 	},
 ];

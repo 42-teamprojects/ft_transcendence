@@ -1,3 +1,4 @@
+import { config } from "../../config.js";
 import { chatService } from "../../state/chatService.js";
 import { getMatchUrl } from "../../utils/utils.js";
 export default class Conversationfooter extends HTMLElement {
@@ -19,7 +20,7 @@ export default class Conversationfooter extends HTMLElement {
     }
 
     setupWebSocket(callback) {
-        const socketUrl = `ws://localhost:8000/ws/chat/${this.chatId}/`;
+        const socketUrl = `${config.chat_websocket_url}${this.chatId}/`;
         console.log(socketUrl);
         this.chatSocket = new WebSocket(socketUrl);
     

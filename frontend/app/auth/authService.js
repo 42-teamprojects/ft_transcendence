@@ -21,8 +21,8 @@ export default class AuthService {
 
         while (retries > 0) {
             try {
-                await this.httpClient.post('auth/jwt/verify/');
-                return true;
+                const result = await this.httpClient.post('auth/jwt/verify/');
+                return result;
             } catch (error) {
                 if (error.code && error.code === 'token_not_valid') {
                     // Unauthorized, try refreshing token

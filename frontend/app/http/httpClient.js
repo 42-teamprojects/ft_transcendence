@@ -4,38 +4,46 @@ export default class HttpClient {
 	}
 
 	async fetch(endpoint, options) {
-		const response = await fetch(this.baseURL + endpoint, {
-			...options,
-			headers: {
-				Accept: "application/json, text/plain, */*",
-				"Content-Type": "application/json",
-				...options.headers,
-			},
-			credentials: "include",
-		});
+		// Dispatch the custom event to indicate the start of loading
+		document.dispatchEvent(new CustomEvent('httpRequestStart'));
 
-		let data;
-		const contentType = response.headers.get("content-type");
-        const isJson = contentType && contentType.includes("application/json");
-		if (isJson) {
-			data = await response.json();
-		} else {
-			data = await response.text();
-		}
+		try {
+			const response = await fetch(this.baseURL + endpoint, {
+				...options,
+				headers: {
+					Accept: "application/json, text/plain, */*",
+					"Content-Type": "application/json",
+					...options.headers,
+				},
+				credentials: "include",
+			});
 
-		if (!response.ok) {
-			let error = data;
-			// Handle 2fa required
-			if (response.status === 423) {
-				error = {
-					status: response.status,
-					detail: isJson ? data.detail : data,
-				};
+			let data;
+			const contentType = response.headers.get("content-type");
+			const isJson = contentType && contentType.includes("application/json");
+			if (isJson) {
+				data = await response.json();
+			} else {
+				data = await response.text();
 			}
-			throw error;
-		}
 
-		return data;
+			if (!response.ok) {
+				let error = data;
+				// Handle 2fa required
+				if (response.status === 423) {
+					error = {
+						status: response.status,
+						detail: isJson ? data.detail : data,
+					};
+				}
+				throw error;
+			}
+
+			return data;
+		} finally {
+			// Dispatch the custom event to indicate the completion of loading
+			document.dispatchEvent(new CustomEvent('httpRequestEnd'));
+		}
 	}
 	
 	async get(endpoint, options = {}) {

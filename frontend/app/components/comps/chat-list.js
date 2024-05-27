@@ -5,14 +5,12 @@ export default class Chatlist extends HTMLElement {
   constructor() {
     super();
     this.router = Router.instance;
-    this.chats = chatService.getState().chats;
     this.user = userService.getState().user;
-}
-
-connectedCallback() {
     this.chats = chatService.getState().chats;
-    this.user = userService.getState().user;
-    this.render();
+  }
+  
+  connectedCallback() {
+      this.render();
   }
 
   disconnectedCallback() {}

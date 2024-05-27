@@ -20,10 +20,10 @@ export default class Resetpassword extends HTMLElement {
         this.form.addEventListener('submit', this.handleSubmit.bind(this));
     }
 
-    handleSubmit(e) {
+    async handleSubmit(e) {
 		e.preventDefault();
 
-		handleFormSubmitApi(
+		await handleFormSubmitApi(
 			this.form,
 			Authentication.instance.resetPassword.bind(Authentication.instance),
 			(data) => {

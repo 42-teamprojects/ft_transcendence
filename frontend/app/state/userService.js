@@ -18,6 +18,18 @@ class UserService extends Service {
 		}
 	}
 
+	isVerified() {
+        return this.state.user.provider === 'fortytwo' ? true : this.state.user.is_verified;
+	}
+
+	isProvider() {
+		return this.state.user.provider !== null;
+	}
+
+	is2FAEnabled() {
+		return this.state.user.two_factor_enabled;
+	}
+
 	reset() {
 		this.setState({
 			user: {},

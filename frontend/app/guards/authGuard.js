@@ -11,10 +11,7 @@ export default class AuthGuard extends CanActivate {
 
 	async canActivate() {
 		try {
-			const res = await Authentication.instance.isAuthenticated();
-			if (res) {
-				await userService.fetchMe();
-			}
+			await Authentication.instance.isAuthenticated();
 			return true;
 		} catch (error) {
 			console.error(error);

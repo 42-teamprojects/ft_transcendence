@@ -17,10 +17,10 @@ export default class VerifyTwoFactorAuth extends HTMLElement {
         this.form.addEventListener('submit', this.handleSubmit.bind(this));
     }
 
-    handleSubmit(e) {
+    async handleSubmit(e) {
 		e.preventDefault();
 
-		handleFormSubmitApi(
+		await handleFormSubmitApi(
 			this.form,
 			Authentication.instance.verifyTwoFactorAuth.bind(Authentication.instance),
 			(data) => validateCode(data['otp']),
@@ -44,7 +44,7 @@ export default class VerifyTwoFactorAuth extends HTMLElement {
 				</div>
 				<button is="c-button" type="submit" class="btn-secondary">Verify</button>
             </form>
-            <p>Have problems? <a is="c-link" href="/"> Request Reset</a>.</p>
+            <p>Have problems? <a is="c-link" href="/reset-2fa"> Request Reset</a>.</p>
         </div>
         `;
 	}

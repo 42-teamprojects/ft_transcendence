@@ -24,6 +24,12 @@ export default class Settings extends HTMLElement {
                     </div>
                     <c-update-user-info-form></c-update-user-in-form>
                 </section>
+                <form class="settings-form hidden">
+                    <div class="form-group-inline">
+                        <label></label>
+                        <button is="c-button" class="btn-primary">Delete my account</button>
+                    </div>
+                </form>
             </main>
             <div class="widgets flex-col-center gap-5">
                 <c-playerresources></c-playerresources>

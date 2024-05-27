@@ -46,7 +46,15 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
-    ]
+    ],
+    'DEFAULT_THROTTLE_CLASSES': [
+        'accounts.custom_throttles.CustomAnonRateThrottle',
+        'accounts.custom_throttles.ResendRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '1/min',
+        'resend': '1/min',
+    }
 }
 
 # Application definition
@@ -100,6 +108,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.BrokenLinkEmailsMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'

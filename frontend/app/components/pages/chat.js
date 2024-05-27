@@ -1,3 +1,5 @@
+import { chatService } from "../../state/chatService.js";
+
 export default class Chat extends HTMLElement {
 	constructor() {
 		super();
@@ -6,8 +8,13 @@ export default class Chat extends HTMLElement {
 	}
 
 	async connectedCallback() {
-		this.render();
-	}
+        try {
+            await chatService.getChats();
+            this.render();
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
 	disconnectedCallback() {}
 

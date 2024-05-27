@@ -1,10 +1,16 @@
 c-usercard {
     .usercard
     {
+        cursor: pointer;
         width: min-content;
-        /* width: 61px; */
-        /* height: 74px; */
+        width: 90px;
+        height: 100px;
         /* border: 1px solid #000; */
+    }
+
+    &:hover {
+        background-color: var(--default-color);
+        border-radius: 0.75rem;
     }
 
     .username
@@ -46,6 +52,17 @@ c-usercard {
         }
     }
 }
+
+.friends-result h3 {
+    font-size: .87rem;
+}
+
+.friends-result p {
+    font-size: .8rem;
+    padding-top: 0.2rem;
+}
+
+
 
 .dashboard-content {
     display: grid;
