@@ -5,7 +5,7 @@ export default class Usercard extends HTMLElement {
 		this.usernameAtt = this.getAttribute("username") || "none";
 		this.statusAtt = this.getAttribute("status") || "none";
 		this.imgAtt = this.getAttribute("img") || "none";
-		this.maxNameSize = 10;
+		this.maxNameSize = 12;
 	}
 
 	connectedCallback() {
