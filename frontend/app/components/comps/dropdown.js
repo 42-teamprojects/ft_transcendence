@@ -6,15 +6,18 @@ export default class Dropdown extends HTMLElement {
 	connectedCallback() {
 		this.render();
 		this.dropdownContent = this.querySelector(".dropdown-content");
-		this.dropdownButton = this.parentNode.querySelector(".dropdown-button");
+		this.dropdownButton = this.parentElement.querySelector(".dropdown-button");
 
-		this.dropdownButton.addEventListener("click", () => {
-			this.dropdownContent.classList.toggle("show-dropdown");
+		this.dropdownButton.addEventListener("mouseleave", () => {
+			this.dropdownContent.classList.remove("show-dropdown");
 		});
-        this.dropdownContent.addEventListener("mouseover", () => {
-            this.dropdownContent.classList.add("show-dropdown");
-        });
+		this.dropdownButton.addEventListener("mouseover", () => {
+			this.dropdownContent.classList.add("show-dropdown");
+		});
 
+		this.dropdownContent.addEventListener("mouseover", () => {
+			this.dropdownContent.classList.add("show-dropdown");
+		});
 		this.dropdownContent.addEventListener("mouseleave", () => {
 			this.dropdownContent.classList.remove("show-dropdown");
 		});
@@ -27,18 +30,18 @@ export default class Dropdown extends HTMLElement {
             <div class="dropdown-content">
                 <ul class="dropdown__menu">
                 <li class="dropdown__item">
-                    <i class="fa-solid fa-user dropdown__icon"></i>
-                    <span class="dropdown__name">Messages</span>
+                    <i class="fa-solid fa-comment dropdown__icon"></i>
+                    <span class="dropdown__name">Chat</span>
                 </li>
 
                 <li class="dropdown__item">
-                    <i class="fa-solid fa-user dropdown__icon"></i>
-                    <span class="dropdown__name">Accounts</span>
+                    <i class="fa-solid fa-gamepad dropdown__icon"></i>
+                    <span class="dropdown__name">Play</span>
                 </li>
 
                 <li class="dropdown__item">
-                    <i class="fa-solid fa-user dropdown__icon"></i>
-                    <span class="dropdown__name">Settings</span>
+                    <i class="fa-solid fa-xmark dropdown__icon"></i>
+                    <span class="dropdown__name">Unfriend</span>
                 </li>
                 </ul>
             </div>
