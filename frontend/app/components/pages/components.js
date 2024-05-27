@@ -139,9 +139,9 @@ export default class Components extends HTMLElement {
                     </form>
                 </div>
                 <div class="tournaments-card flex gap-3">
-                    <c-tournament-card></c-tournament-card>
-                    <c-tournament-card></c-tournament-card>
-                    <c-tournament-card></c-tournament-card>
+                    <c-tournament-card players="8"></c-tournament-card>
+                    <c-tournament-card players="8"></c-tournament-card>
+                    <c-tournament-card players="8"></c-tournament-card>
                 </div>
 
                 <div>
@@ -154,6 +154,15 @@ export default class Components extends HTMLElement {
 
                 <div>
                     <c-friendscard></c-friendscard>
+                </div>
+
+                <div class="dropdown-component">
+                    <div class="dropdown-wrapper">
+                        <button class="btn-primary dropdown-button"> 
+                            Dropdown
+                        </button>
+                        <c-dropdown></c-dropdown>
+                    </div>
                 </div>
                 `;
 	}

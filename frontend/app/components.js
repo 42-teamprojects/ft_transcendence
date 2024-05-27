@@ -1,3 +1,4 @@
+import Dropdown from "./components/comps/dropdown.js";
 import Leaderboardtable from "./components/comps/leaderboard-table.js";
 import Chatmatchhistory from "./components/comps/chat-match-history.js";
 import Matchhistory from "./components/comps/match-history.js";
@@ -86,4 +87,5 @@ export const components = [
 	{ tagName: 'c-chat-search-modal', component: Chatsearchmodal },
 	{ tagName: 'c-chat-match-history', component: Chatmatchhistory },
 	{ tagName: 'c-leaderboard-table', component: Leaderboardtable },
+	{ tagName: 'c-dropdown', component: Dropdown },
 ];
