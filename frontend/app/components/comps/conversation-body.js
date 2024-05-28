@@ -10,7 +10,7 @@ export default class Conversationbody extends HTMLElement {
     this.chatApiService = new ChatApiService();
     this.user = userService.getState().user;
     this.socket = null;
-    this.chatId = getMatchUrl(/^\/dashboard\/chat\/(\w+)$/);
+    this.chatId = getMatchUrl(/^\/dashboard\/chat\/(\w+)\/?$/);
   }
 
   async getChatMessages() {

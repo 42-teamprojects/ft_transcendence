@@ -1,4 +1,5 @@
 import Toast from "../components/comps/toast.js";
+import Router from "../router/router.js";
 import { useFormData } from "./useForm.js";
 
 export const toCapital = (str) => {
@@ -140,7 +141,7 @@ export const handleFormSubmitApi = async (
 };
 
 export function getMatchUrl(regex) {
-	const url = window.location.pathname;
+	const url = Router.instance.currentRoute;
 	const match = url.match(regex);
 	return match ? match[1] : null;
 }
@@ -148,4 +149,25 @@ export function getMatchUrl(regex) {
 // trim consecutive slashes
 export function trimSlashes(str) {
 	return str.replace(/\/{2,}/g, "/");
+}
+
+// get time passed based on current time and a given time, in a format m, h, d, w, y
+export function getTimePassed(date) {
+	const now = new Date();
+	const timePassed = now - new Date(date);
+	const seconds = timePassed / 1000;
+	const minutes = seconds / 60;
+	const hours = minutes / 60;
+	const days = hours / 24;
+	const weeks = days / 7;
+	const months = days / 30;
+	const years = days / 365;
+
+	if (seconds < 60) return "now";
+	if (minutes < 60) return `${Math.floor(minutes)}m`;
+	if (hours < 24) return `${Math.floor(hours)}h`;
+	if (days < 7) return `${Math.floor(days)}d`;
+	if (weeks < 4) return `${Math.floor(weeks)}w`;
+	if (months < 12) return `${Math.floor(months)}mo`;
+	return `${Math.floor(years)}y`;
 }

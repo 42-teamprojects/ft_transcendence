@@ -18,7 +18,7 @@ export default class Chatlist extends HTMLElement {
   render() {
     const chatCards = this.chats.map((chat) => {
       return /*html*/ `        
-        <c-chat-card id="${chat.id}" username="${chat.friend.username}" img="${chat.friend.avatar}" msg="${chat.lastMessage}" time="${chat.lastMessageTime}" active="${this.router.currentRoute.endsWith(chat.id.toString())}"></c-chat-card>
+        <c-chat-card chat-id="${chat.id}" username="${chat.friend.username}" img="${chat.friend.avatar}" msg="${chat.last_message}" time="${chat.last_message_time}" active="${this.router.currentRouteEndsWith(chat.id.toString())}"></c-chat-card>
         `;
     });
 

@@ -55,6 +55,9 @@ class ChatService extends Service {
 				content: message,
 				sender: this.user.id,
 			});
+			const chatCard = document.querySelector(`c-chat-card[chat-id="${chatId}"]`);
+			chatCard.setAttribute("msg", message);
+			chatCard.setAttribute("time", new Date().toUTCString());
 		} catch (error) {
 			console.error(error);
 		}

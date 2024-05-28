@@ -13,6 +13,11 @@ class ChatSerializer(ModelSerializer):
         representation = super().to_representation(instance)
         user1 = UserSerializer(instance.user1)
         user2 = UserSerializer(instance.user2)
+        last_message = Message.objects.filter(chat=instance).order_by('created_at').last()
+        last_message_content = last_message.content if last_message else None
+        last_message_time = last_message.created_at if last_message else None
+        representation['last_message_time'] = last_message_time
+        representation['last_message'] = last_message_content
         representation['user1'] = user1.data
         representation['user2'] = user2.data
         return representation

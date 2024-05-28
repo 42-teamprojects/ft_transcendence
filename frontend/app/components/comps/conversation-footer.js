@@ -6,7 +6,7 @@ import { getMatchUrl } from "../../utils/utils.js";
 export default class Conversationfooter extends HTMLElement {
 	constructor() {
 		super();
-		this.chatId = getMatchUrl(/^\/dashboard\/chat\/(\w+)$/);
+		this.chatId = getMatchUrl(/^\/dashboard\/chat\/(\w+)\/?$/);
 		this.user = userService.getState().user;
 		this.chatSocket = null;
 	}

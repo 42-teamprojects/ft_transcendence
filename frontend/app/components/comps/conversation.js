@@ -7,7 +7,7 @@ export default class Conversation extends HTMLElement {
         this.isEmpty = window.location.href.match(/\/chat\/?$/);
         
         if (!this.isEmpty) {
-            this.chatId = getMatchUrl(/^\/dashboard\/chat\/(\w+)$/) || "none";
+            this.chatId = getMatchUrl(/^\/dashboard\/chat\/(\w+)\/?$/) || "none";
             if (this.chatId === "none") {
                 throw new Error("Chat id not found");
             }

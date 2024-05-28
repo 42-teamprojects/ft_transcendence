@@ -1,5 +1,6 @@
 import RouterOutler from "./router-outlet.js";
 import Link from "./c-link.js";
+import { trimSlashes } from "../utils/utils.js";
 
 export default class Router {
 	static #instance = null;
@@ -49,7 +50,15 @@ export default class Router {
 	}
 
 	get currentRoute() {
-		return window.location.pathname;
+		return trimSlashes(window.location.pathname);
+	}
+
+	currentRouteEndsWith(string) {
+		return this.currentRoute.endsWith(string) || this.currentRoute.endsWith(string + "/");
+	}
+
+	currentRouteStartsWith(string) {
+		return this.currentRoute.startsWith(string);
 	}
 
 	#findRoute(path, routes = this.routes) {
@@ -121,7 +130,7 @@ export default class Router {
 	}
 
 	async #renderCurrentRoute() {
-		const path = window.location.pathname;
+		const path = trimSlashes(window.location.pathname);
 		const matchedRoute = this.#findRoute(path, this.routes);
 
 		if (!matchedRoute || !matchedRoute.component) {
@@ -130,7 +139,7 @@ export default class Router {
 			return;
 		}
 
-		this.prevPath = window.location.pathname;
+		this.prevPath = path;
 
 		if (matchedRoute.redirectTo) {
 			this.navigate(matchedRoute.redirectTo);
