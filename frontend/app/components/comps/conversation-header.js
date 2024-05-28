@@ -1,3 +1,4 @@
+import { UserStatus } from "../../entities/UserStatus.js";
 export default class Conversationheader extends HTMLElement {
     constructor() {
         super();
@@ -21,8 +22,8 @@ export default class Conversationheader extends HTMLElement {
                 <div class="flex-col gap-2">
                     <div class="conversation-header__username" >${this.usernameAtt}</div>
                     <div class="conversation-header__status gap-2">
-                        <div class="conversation-header__status__dot online"></div>
-                        <div class="conversation-header__status__text capitalize">${this.stateAtt}</div>
+                        <div class="conversation-header__status__dot ${UserStatus[this.stateAtt].toLowerCase()}"></div>
+                        <div class="conversation-header__status__text capitalize">${UserStatus[this.stateAtt]}</div>
                     </div>
                 </div>
             </div>

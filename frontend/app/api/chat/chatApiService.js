@@ -17,7 +17,16 @@ export default class ChatApiService {
 
     async getChatMessages(chatId) {
         try {
-            const response = await this.httpClient.get(`chats/${chatId}/`);
+            const response = await this.httpClient.get(`chats/${chatId}/messages/`);
+            return response;
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    async saveMessage(chatId, message) {
+        try {
+            const response = await this.httpClient.post(`chats/${chatId}/messages/`, { "content": message });
             return response;
         } catch (error) {
             console.error(error);
