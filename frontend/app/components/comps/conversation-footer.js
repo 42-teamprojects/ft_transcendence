@@ -1,5 +1,4 @@
-import ChatWebSocket from "../../socket/ChatWebSocket.js";
-import { chatState } from "../../state/chatState.js";
+import { messageState } from "../../state/messageState.js";
 import { userState } from "../../state/userState.js";
 import { getMatchUrl } from "../../utils/utils.js";
 
@@ -15,18 +14,18 @@ export default class Conversationfooter extends HTMLElement {
 		this.render();
 		this.form = this.querySelector("form.conversation-form");
 		this.form.addEventListener("submit", this.handleSubmit.bind(this));
-		chatState.setupWebSocket(this.chatId);
+		
+		messageState.setupWebSocket(this.chatId);
 	}
 
-  async handleSubmit(e) {
-			e.preventDefault();
-			const message = this.form.content.value;
-      if (!message || message.trim() === "") return;
+	async handleSubmit(e) {
+		e.preventDefault();
+		const message = this.form.content.value;
+		if (!message || message.trim() === "") return;
 
-			await chatState.sendMessage(this.chatId, message);
-			this.form.reset();
-		}
-
+		await messageState.sendMessage(this.chatId, message);
+		this.form.reset();
+	}
 
 	disconnectedCallback() {}
 

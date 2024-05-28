@@ -5,20 +5,27 @@ export default class Conversation extends HTMLElement {
     constructor() {
         super();
         this.isEmpty = window.location.href.match(/\/chat\/?$/);
-        
+        this.chat = null
         if (!this.isEmpty) {
             this.chatId = getMatchUrl(/^\/dashboard\/chat\/(\w+)\/?$/) || "none";
             if (this.chatId === "none") {
                 throw new Error("Chat id not found");
             }
-            this.chat = chatState.getState().chats.find((chat) => {
-                return chat.id === parseInt(this.chatId);
-            });;
         }
+    }
+
+    async getChatMessages(chatId) {
+        await chatState.getChatMessages(chatId);
     }
 
     connectedCallback() {
         this.render();
+        this.unsubscribe = chatState.subscribe(() => {
+            this.chat = chatState.getState().chats.find((chat) => {
+                return chat.id === parseInt(this.chatId);
+            });
+            this.render();
+        });
     }
 
     disconnectedCallback() {}
@@ -26,7 +33,7 @@ export default class Conversation extends HTMLElement {
     render() {
         this.innerHTML = /*html*/`
         <div class="conversation vh-full w-full">
-            ${this.isEmpty
+            ${this.isEmpty || this.chat == null
             ? /*html*/`
                 <div class="flex-center vh-full">
                 <div class="flex-col-center gap-4">

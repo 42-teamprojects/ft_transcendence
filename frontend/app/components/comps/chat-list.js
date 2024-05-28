@@ -2,27 +2,37 @@ import Router from "../../router/router.js";
 import { userState } from "../../state/userState.js";
 import { chatState } from "../../state/chatState.js";
 export default class Chatlist extends HTMLElement {
-  constructor() {
-    super();
-    this.router = Router.instance;
-    this.user = userState.getState().user;
-    this.chats = chatState.getState().chats;
-  }
+	constructor() {
+		super();
+		this.router = Router.instance;
+		this.user = userState.getState().user;
+	}
   
-  connectedCallback() {
+	async connectedCallback() {
+    this.render();
+		this.unsubscribe = chatState.subscribe(() => {
       this.render();
-  }
+		});
 
-  disconnectedCallback() {}
+    await chatState.getChats();
+	}
 
-  render() {
-    const chatCards = this.chats.map((chat) => {
-      return /*html*/ `        
-        <c-chat-card chat-id="${chat.id}" username="${chat.friend.username}" img="${chat.friend.avatar}" msg="${chat.last_message}" time="${chat.last_message_time}" active="${this.router.currentRouteEndsWith(chat.id.toString())}"></c-chat-card>
+	disconnectedCallback() {
+		this.unsubscribe();
+	}
+
+	render() {
+		const chatCards = chatState.getState().chats.map((chat) => {
+			return /*html*/ `        
+        <c-chat-card chat-id="${chat.id}" username="${chat.friend.username}" img="https://api.dicebear.com/8.x/thumbs/svg?seed=yousef" msg="${
+				chat.last_message
+			}" time="${chat.last_message_time}" active="${this.router.currentRouteEndsWith(
+				chat.id.toString()
+			)}"></c-chat-card>
         `;
-    });
+		});
 
-    this.innerHTML = /*html*/ `
+		this.innerHTML = /*html*/ `
         <c-chat-search-modal></c-chat-search-modal>
         <div class="chat-list">
             <div class="chat-list__header">
@@ -39,7 +49,7 @@ export default class Chatlist extends HTMLElement {
             </div>
         </div>
                 `;
-  }
+	}
 }
 
 // <c-chat-card username="msodor" img="https://api.dicebear.com/8.x/thumbs/svg?seed=mouad" msg="hello" time="1h" active="${this.router.currentRoute.endsWith('msodor')}"></c-chat-card>

@@ -1,5 +1,3 @@
-import { chatState } from "../../state/chatState.js";
-
 export default class Chat extends HTMLElement {
 	constructor() {
 		super();
@@ -7,16 +5,12 @@ export default class Chat extends HTMLElement {
 		this.isEmpty = window.location.href.match(/\/chat\/?$/);
 	}
 
-	async connectedCallback() {
-        try {
-            await chatState.getChats();
-            this.render();
-        } catch (error) {
-            console.log(error)
-        }
+	connectedCallback() {
+        this.render();
     }
 
-	disconnectedCallback() {}
+	disconnectedCallback() {
+    }
 
 	render() {
 		this.innerHTML = /*html*/ `
