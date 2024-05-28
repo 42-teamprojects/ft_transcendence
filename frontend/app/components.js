@@ -1,3 +1,4 @@
+import Loadingchatcard from "./components/comps/loading-chat-card.js";
 import Dropdown from "./components/comps/dropdown.js";
 import Leaderboardtable from "./components/comps/leaderboard-table.js";
 import Chatmatchhistory from "./components/comps/chat-match-history.js";
@@ -88,4 +89,5 @@ export const components = [
 	{ tagName: 'c-chat-match-history', component: Chatmatchhistory },
 	{ tagName: 'c-leaderboard-table', component: Leaderboardtable },
 	{ tagName: 'c-dropdown', component: Dropdown },
+	{ tagName: 'c-loading-chat-card', component: Loadingchatcard },
 ];

@@ -164,6 +164,10 @@ export default class Components extends HTMLElement {
                         <c-dropdown></c-dropdown>
                     </div>
                 </div>
+                
+                <div class="skeleton-loading">
+                    <c-loading-chat-card></c-loading-chat-card>
+                </div>
                 `;
 	}
 }

@@ -43,7 +43,7 @@ export default class Chatcard extends HTMLElement {
             <div class="message-card ${this.isActive ? 'active' : ''}">
                 <img class="message-card__img" src="${this.imgAtt}" alt="user">
                 <div class="flex-col gap-2">
-                    <div style="font-weight: bold;" >${this.usernameAtt}</div>
+                    <div class="font-bold">${this.usernameAtt}</div>
                     <div style="font-size: 14px; color: gray">${this.msgAtt}</div>
                 </div>
                 <div class="message-card__time">${getTimePassed(this.timeAtt)}</div>

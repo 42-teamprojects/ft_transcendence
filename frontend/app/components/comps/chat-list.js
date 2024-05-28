@@ -44,7 +44,12 @@ export default class Chatlist extends HTMLElement {
             </div>
             <div class="chat-list__content">
                 <div class="chat-list__items">
-                    ${chatCards.join("")}
+                    ${chatState.getState().loading ? /*html*/`
+                      <c-loading-chat-card></c-loading-chat-card>
+                      <c-loading-chat-card></c-loading-chat-card>
+                      <c-loading-chat-card></c-loading-chat-card>
+                      <c-loading-chat-card></c-loading-chat-card>
+                    ` : chatCards.join("")}
                 </div>
             </div>
         </div>

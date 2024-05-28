@@ -7,6 +7,7 @@ class ChatState extends State {
 	constructor() {
 		super({
 			chats: [],
+			loading: true,
 		});
 		this.user = {};
 		this.chatApiService = new ChatApiService();
@@ -26,7 +27,7 @@ class ChatState extends State {
 				chat.friend = friend;
 				return chat;
 			});
-			this.setState({ chats });
+			this.setState({ chats, loading: false});
 		} catch (error) {
 			console.error(error);
 		}
