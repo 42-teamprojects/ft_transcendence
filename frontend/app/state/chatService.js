@@ -47,21 +47,16 @@ class ChatService extends Service {
 
 	async saveMessage(chatId, message) {
 		try {
-			const response = await this.chatApiService.saveMessage(chatId, message);
-			this.addMessage(response);
+			await this.chatApiService.saveMessage(chatId, message);
 		}
 		catch (error) {
 			console.error(error);
 		}
 	}
-	// {message: string, sender: me|them}
-	addMessage(messageObject) {
+
+	// {content: string, sender: id}
+	appendMessage(messageObject) {
 		const messages = this.getState().messages;
-		// if (messageObject.message.startsWith("me:")) {
-		// 	messageObject.sender = "me";
-		// 	messageObject.message = messageObject.message.replace("me:", "");
-		// }
-		// insert in front of the array
 		messages.unshift(messageObject);
 		this.setState({ messages });
 	}
@@ -69,7 +64,7 @@ class ChatService extends Service {
 	reset() {
 		this.setState({ 
 			messages: [],
-			friend: {},
+			chats: [],
 		});
 	}
 }

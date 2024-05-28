@@ -144,3 +144,8 @@ export function getMatchUrl(regex) {
 	const match = url.match(regex);
 	return match ? match[1] : null;
 }
+
+// trim consecutive slashes
+export function trimSlashes(str) {
+	return str.replace(/\/{2,}/g, "/");
+}

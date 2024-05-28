@@ -1,72 +1,74 @@
-import { config } from "../../config.js";
+import ChatWebSocket from "../../socket/ChatWebSocket.js";
 import { chatService } from "../../state/chatService.js";
 import { userService } from "../../state/userService.js";
 import { getMatchUrl } from "../../utils/utils.js";
+
 export default class Conversationfooter extends HTMLElement {
-    constructor() {
-        super();
-        this.chatId = getMatchUrl(/^\/dashboard\/chat\/(\w+)$/);
-        this.user = userService.getState().user
+	constructor() {
+		super();
+		this.chatId = getMatchUrl(/^\/dashboard\/chat\/(\w+)$/);
+		this.user = userService.getState().user;
+		this.chatSocket = null;
+	}
+
+	connectedCallback() {
+		this.render();
+		this.form = this.querySelector("form.conversation-form");
+		this.form.addEventListener("submit", this.handleSubmit.bind(this));
+		this.setupWebSocket();
+	}
+
+  async handleSubmit(e) {
+			e.preventDefault();
+			const message = this.form.content.value;
+      if (!message || message.trim() === "") return;
+
+			await this.sendMessage(message);
+			this.form.reset();
+		}
+
+	setupWebSocket() {
+		if (!this.chatSocket) {
+			this.chatSocket = new ChatWebSocket(this.chatId);
+
+			this.chatSocket.onOpen(() => {
+				console.log("WebSocket connection opened.");
+			});
+
+			this.chatSocket.onClose(() => {
+				console.log("WebSocket connection closed.");
+			});
+
+			this.chatSocket.onError((error) => {
+				console.error("WebSocket error:", error);
+			});
+
+			this.chatSocket.onChatMessage((data) => {
+        // Append message to the chatService state
+				chatService.appendMessage(data);
+			});
+
+			this.chatSocket.connect();
+		}
+	}
+
+	async sendMessage(message) {
+    try {
+      await chatService.saveMessage(this.chatId, message);
+      this.chatSocket.send({
+        content: message,
+        sender: this.user.id,
+      });
     }
-
-    connectedCallback() {
-        this.render();
-        this.form = this.querySelector("form.conversation-form");
-        this.form.addEventListener("submit", (e) => {
-            e.preventDefault();
-            const message = this.form.content.value;
-            this.sendMessage(message);
-            this.form.reset();
-        });
-        this.setupWebSocket();
+    catch (error) {
+      console.error(error);
     }
+	}
 
-    setupWebSocket(callback) {
-        const socketUrl = `${config.chat_websocket_url}${this.chatId}/`;
-        console.log(socketUrl);
-        this.chatSocket = new WebSocket(socketUrl);
-    
-        this.chatSocket.onopen = (e) => {
-          console.log("Connection established");
-          if (callback) callback();
-        };
+	disconnectedCallback() {}
 
-        this.chatSocket.onmessage = (e) => {
-            const data = JSON.parse(e.data);
-            if (data.message) {
-              //check if the message is from the user or the friend
-              let type = "in";
-              if (data.sender === this.user.id) {
-                type = "out";
-              }
-                chatService.saveMessage(this.chatId, data.message);
-            }
-        };
-    
-        this.chatSocket.onerror = (e) => {
-          console.error("WebSocket error: ", e);
-        };
-    
-        this.chatSocket.onclose = (e) => {
-          console.log("WebSocket closed: ", e);
-        };
-    }
-    
-      sendMessage(message) {
-        if (this.chatSocket && this.chatSocket.readyState === WebSocket.OPEN) {
-          this.chatSocket.send(JSON.stringify({
-            'message': message,
-            'sender': this.user.id
-          }));
-        } else {
-          console.error("WebSocket is not open. Unable to send message.");
-        }
-    }
-
-    disconnectedCallback() {}
-
-    render() {
-        this.innerHTML = /*html*/`
+	render() {
+		this.innerHTML = /*html*/ `
         <div class="conversation-footer">
             <form class="conversation-form" method="POST">
                 <input class="input-field message" name="content" type="text" placeholder="Type a message" autocomplete="off">
@@ -76,5 +78,5 @@ export default class Conversationfooter extends HTMLElement {
             </form>
         </div>
         `;
-    }
+	}
 }
