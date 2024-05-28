@@ -1,4 +1,5 @@
 import ChatApiService from "../api/chat/chatApiService.js";
+import ChatWebSocket from "../socket/ChatWebSocket.js";
 import Service from "./service.js";
 import { userService } from "./userService.js";
 
@@ -6,15 +7,64 @@ class ChatService extends Service {
 	constructor() {
 		super({
 			chats: [],
-            messages: [],
-        });
+			messages: [],
+		});
 		this.user = {};
+		this.chatSockets = {
+			// chatId: ChatWebSocket
+		};
 		this.chatApiService = new ChatApiService();
 	}
 
+	// Sockets start
+
+	setupWebSocket(chatId) {
+		if (!chatId) {
+			throw new Error("Chat id not found");
+		}
+		let chatSocket = this.chatSockets[chatId] || null;
+
+		if (!chatSocket) {
+			chatSocket = new ChatWebSocket(chatId);
+			this.chatSockets[chatId] = chatSocket;
+		}
+
+		chatSocket.onOpen(() => {
+			console.log("WebSocket connection opened.");
+		});
+
+		chatSocket.onClose(() => {
+			console.log("WebSocket connection closed.");
+			delete this.chatSockets[chatId];
+		});
+
+		chatSocket.onError((error) => {
+			console.error("WebSocket error:", error);
+		});
+
+		chatSocket.onChatMessage((data) => {
+			this.appendMessage(data);
+		});
+
+		chatSocket.connect();
+	}
+
+	async sendMessage(chatId, message) {
+		try {
+			await this.saveMessage(chatId, message);
+			this.chatSockets[chatId].send({
+				content: message,
+				sender: this.user.id,
+			});
+		} catch (error) {
+			console.error(error);
+		}
+	}
+
+	// Sockets end
+
 	getFriend(chat) {
-		if (chat.user1.username !== this.user.username)
-			return chat.user1;
+		if (chat.user1.username !== this.user.username) return chat.user1;
 		return chat.user2;
 	}
 
@@ -28,8 +78,7 @@ class ChatService extends Service {
 				return chat;
 			});
 			this.setState({ chats });
-		}
-		catch (error) {
+		} catch (error) {
 			console.error(error);
 		}
 	}
@@ -37,10 +86,8 @@ class ChatService extends Service {
 	async getChatMessages(chatId) {
 		try {
 			let messages = await this.chatApiService.getChatMessages(chatId);
-			messages = messages.reverse();
 			this.setState({ messages });
-		}
-		catch (error) {
+		} catch (error) {
 			console.error(error);
 		}
 	}
@@ -48,8 +95,7 @@ class ChatService extends Service {
 	async saveMessage(chatId, message) {
 		try {
 			await this.chatApiService.saveMessage(chatId, message);
-		}
-		catch (error) {
+		} catch (error) {
 			console.error(error);
 		}
 	}
@@ -62,7 +108,7 @@ class ChatService extends Service {
 	}
 
 	reset() {
-		this.setState({ 
+		this.setState({
 			messages: [],
 			chats: [],
 		});

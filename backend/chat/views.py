@@ -45,7 +45,7 @@ class MessageViewSet(ModelViewSet):
         user = self.request.user
         if user != chat.user1 and user != chat.user2:
             return Message.objects.none()
-        return Message.objects.filter(chat=chat_id).order_by('created_at')
+        return Message.objects.filter(chat=chat_id).order_by('-created_at')
     
     def perform_create(self, serializer):
         sender = self.request.user

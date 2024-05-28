@@ -15,7 +15,7 @@ export default class Conversationfooter extends HTMLElement {
 		this.render();
 		this.form = this.querySelector("form.conversation-form");
 		this.form.addEventListener("submit", this.handleSubmit.bind(this));
-		this.setupWebSocket();
+		chatService.setupWebSocket(this.chatId);
 	}
 
   async handleSubmit(e) {
@@ -23,47 +23,10 @@ export default class Conversationfooter extends HTMLElement {
 			const message = this.form.content.value;
       if (!message || message.trim() === "") return;
 
-			await this.sendMessage(message);
+			await chatService.sendMessage(this.chatId, message);
 			this.form.reset();
 		}
 
-	setupWebSocket() {
-		if (!this.chatSocket) {
-			this.chatSocket = new ChatWebSocket(this.chatId);
-
-			this.chatSocket.onOpen(() => {
-				console.log("WebSocket connection opened.");
-			});
-
-			this.chatSocket.onClose(() => {
-				console.log("WebSocket connection closed.");
-			});
-
-			this.chatSocket.onError((error) => {
-				console.error("WebSocket error:", error);
-			});
-
-			this.chatSocket.onChatMessage((data) => {
-        // Append message to the chatService state
-				chatService.appendMessage(data);
-			});
-
-			this.chatSocket.connect();
-		}
-	}
-
-	async sendMessage(message) {
-    try {
-      await chatService.saveMessage(this.chatId, message);
-      this.chatSocket.send({
-        content: message,
-        sender: this.user.id,
-      });
-    }
-    catch (error) {
-      console.error(error);
-    }
-	}
 
 	disconnectedCallback() {}
 
