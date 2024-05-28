@@ -33,13 +33,10 @@ export default class Chatcard extends HTMLElement {
 
     connectedCallback() {
         this.render();
-        setInterval(() => {
-            this.querySelector(".message-card__time").textContent = getTimePassed(this.timeAtt);
-        }, 1000)
     }
-
+    
     disconnectedCallback() {}
-
+    
     render() {
         this.innerHTML = /*html*/`
         <a is="c-link" href="/dashboard/chat/${this.idAtt}">
@@ -53,6 +50,11 @@ export default class Chatcard extends HTMLElement {
             </div>
         </a>
         `;
+        this.messageTime = this.querySelector(".message-card__time");
+        setInterval(() => {
+            this.messageTime.textContent = getTimePassed(this.timeAtt);
+        }, 1000)
+        
     }
 }
 
