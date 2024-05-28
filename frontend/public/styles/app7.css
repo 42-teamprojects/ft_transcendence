@@ -1,0 +1,37 @@
+p-profile{
+    display: flex;
+    width: 592px;
+    height: 1070px;
+    .info{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: justify;
+        margin-left: 15rem;
+        width: 364px;
+        height: 140px;
+        gap : 1rem;
+        .follow{
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+        p{
+            font-size: 0.8rem;
+            color: var(--stroke-color);
+        }
+    }
+    .profile-image{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 180px;
+        height: 180px;
+        img {
+            border-radius: 50%;
+            margin-bottom: 20rem;
+            margin-left: 3rem;
+            margin-top: 1rem;
+        }
+    }
+
+}
