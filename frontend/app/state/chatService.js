@@ -22,31 +22,30 @@ class ChatService extends Service {
 		if (!chatId) {
 			throw new Error("Chat id not found");
 		}
-		let chatSocket = this.chatSockets[chatId] || null;
 
-		if (!chatSocket) {
-			chatSocket = new ChatWebSocket(chatId);
-			this.chatSockets[chatId] = chatSocket;
+		if (!this.chatSockets[chatId]) {
+			this.chatSockets[chatId] = new ChatWebSocket(chatId);
+
+			this.chatSockets[chatId].onOpen(() => {
+				console.log("WebSocket connection opened.");
+			});
+	
+			this.chatSockets[chatId].onClose(() => {
+				console.log("WebSocket connection closed.");
+				delete this.chatSockets[chatId];
+			});
+	
+			this.chatSockets[chatId].onError((error) => {
+				console.error("WebSocket error:", error);
+			});
+	
+			this.chatSockets[chatId].onChatMessage((data) => {
+				this.appendMessage(data);
+			});
+	
+			this.chatSockets[chatId].connect();
 		}
 
-		chatSocket.onOpen(() => {
-			console.log("WebSocket connection opened.");
-		});
-
-		chatSocket.onClose(() => {
-			console.log("WebSocket connection closed.");
-			delete this.chatSockets[chatId];
-		});
-
-		chatSocket.onError((error) => {
-			console.error("WebSocket error:", error);
-		});
-
-		chatSocket.onChatMessage((data) => {
-			this.appendMessage(data);
-		});
-
-		chatSocket.connect();
 	}
 
 	async sendMessage(chatId, message) {
