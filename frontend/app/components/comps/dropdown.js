@@ -17,8 +17,10 @@ export default class Dropdown extends HTMLElement {
 
 		this.dropdownContent.addEventListener("mouseover", () => {
 			this.dropdownContent.classList.add("show-dropdown");
+			this.dropdownButton.classList.add("active");
 		});
 		this.dropdownContent.addEventListener("mouseleave", () => {
+			this.dropdownButton.classList.remove("active");
 			this.dropdownContent.classList.remove("show-dropdown");
 		});
 	}
