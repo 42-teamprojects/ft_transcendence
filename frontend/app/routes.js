@@ -52,6 +52,11 @@ export const routes = [
 		],
 	},
 	{
+		path: "/online",
+		component: () => import("./components/pages/online.js"),
+		children: [],
+	},
+	{
 		path: "/dashboard",
 		canActivate: [AuthGuard],
 		children: [

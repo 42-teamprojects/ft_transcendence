@@ -22,7 +22,9 @@ export default class Dashboard extends HTMLElement {
                     <a is="c-link" href="/local/">
                         <c-card action='Play' title='Local Match' type="primary"></c-card>
                     </a>
-                    <c-card action='Play' title='Online Match' type="secondary"></c-card>
+                    <a is="c-link" href="/online/">
+                        <c-card action='Play' title='Online Match' type="secondary"></c-card>
+                    </a>
                 </div>
             </main>
             <div class="widgets flex-col-center gap-5">
