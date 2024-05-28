@@ -7,6 +7,7 @@ class MessageState extends State {
 	constructor() {
 		super({
             messages: [],
+			loading: true
         });
         this.chatSockets = {
 			// chatId: ChatWebSocket
@@ -73,7 +74,7 @@ class MessageState extends State {
 			if (!messages) {
 				messages = [];
 			}
-			this.setState({ messages });
+			this.setState({ messages, loading: false});
 		} catch (error) {
 			console.error(error);
 		}
@@ -89,6 +90,7 @@ class MessageState extends State {
 	reset() {
 		this.setState({ 
 			messages: [],
+			loading: true
 		});
 	}
 }

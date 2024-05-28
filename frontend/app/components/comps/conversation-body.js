@@ -27,8 +27,14 @@ export default class Conversationbody extends HTMLElement {
 
   render() {
     const messages = messageState.getState().messages;
+    const loading = messageState.getState().loading;
     this.innerHTML = /*html*/ `
       <div class="conversation-body">
+        ${loading ? /*html*/ `
+          <div class="flex-center vh-full">
+              <h1 class="text-xl font-medium">Loading messages...</h1>
+          </div>
+        ` : ""}
         ${messages
           .map(
             (message) => /*html*/ `
