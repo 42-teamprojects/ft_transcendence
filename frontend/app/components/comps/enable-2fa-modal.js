@@ -1,6 +1,6 @@
 import Authentication from "../../auth/authentication.js";
 import { config } from "../../config.js";
-import { userService } from "../../state/userService.js";
+import { userState } from "../../state/userState.js";
 import Toast from "./toast.js";
 
 export default class Enable2famodal extends HTMLElement {
@@ -127,7 +127,7 @@ export default class Enable2famodal extends HTMLElement {
             }
 			const response = await this.authentication.enableTwoFactorAuth(data);
 			Toast.notify({ type: "success", message: "2FA enabled" });
-			userService.setState({ user: {...userService.getState().user, two_factor_enabled: true}});
+			userState.setState({ user: {...userState.getState().user, two_factor_enabled: true}});
 			return response;
 		} catch (error) {
 			Toast.notify({ type: "error", message: error.detail });

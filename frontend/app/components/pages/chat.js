@@ -1,4 +1,4 @@
-import { chatService } from "../../state/chatService.js";
+import { chatState } from "../../state/chatState.js";
 
 export default class Chat extends HTMLElement {
 	constructor() {
@@ -9,7 +9,7 @@ export default class Chat extends HTMLElement {
 
 	async connectedCallback() {
         try {
-            await chatService.getChats();
+            await chatState.getChats();
             this.render();
         } catch (error) {
             console.log(error)

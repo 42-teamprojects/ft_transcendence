@@ -1,7 +1,7 @@
 import { config } from "../../config.js";
 import Ball from "../../entities/Ball.js";
 import Paddle from "../../entities/Paddle.js";
-import { matchService } from "../../state/matchService.js";
+import { matchState } from "../../state/matchState.js";
 
 // const mouse = {x: 0, y: 0};
 
@@ -27,7 +27,7 @@ export default class Table extends HTMLElement {
 		this.handleKeyDownF = this.handleKeyDown.bind(this);
 		this.handleKeyUpF = this.handleKeyUp.bind(this);
 
-		this.match = matchService.getState().match;
+		this.match = matchState.getState().match;
 		this.theme = this.match.theme;
 
 		this.finalScore = config.finalScore;

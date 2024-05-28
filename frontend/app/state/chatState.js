@@ -1,9 +1,9 @@
 import ChatApiService from "../api/chat/chatApiService.js";
 import ChatWebSocket from "../socket/ChatWebSocket.js";
-import Service from "./service.js";
-import { userService } from "./userService.js";
+import State from "./state.js";
+import { userState } from "./userState.js";
 
-class ChatService extends Service {
+class ChatState extends State {
 	constructor() {
 		super({
 			chats: [],
@@ -72,7 +72,7 @@ class ChatService extends Service {
 
 	async getChats() {
 		try {
-			this.user = await userService.getState().user;
+			this.user = await userState.getState().user;
 			let chats = await this.chatApiService.getUserChats();
 			chats = chats.map((chat) => {
 				const friend = this.getFriend(chat);
@@ -117,4 +117,4 @@ class ChatService extends Service {
 	}
 }
 
-export const chatService = new ChatService();
+export const chatState = new ChatState();

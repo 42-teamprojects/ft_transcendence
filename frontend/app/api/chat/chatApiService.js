@@ -1,7 +1,7 @@
 import HttpClient from "../../http/httpClient.js";
 import { config } from "../../config.js";
 
-export default class ChatApiService {
+export default class ChatApiState {
     constructor() {
         this.httpClient = new HttpClient(config.rest_url);
     }

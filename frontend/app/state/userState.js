@@ -1,8 +1,8 @@
 import { config } from "../config.js";
 import HttpClient from "../http/httpClient.js";
-import Service from "./service.js";
+import State from "./state.js";
 
-class UserService extends Service {
+class UserState extends State {
 	constructor() {
 		super({ user: {} });
 		this.httpClient = new HttpClient(config.rest_url);
@@ -37,4 +37,4 @@ class UserService extends Service {
 	}
 }
 
-export const userService = new UserService();
+export const userState = new UserState();

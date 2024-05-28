@@ -1,5 +1,5 @@
 import Router from '../../router/router.js';
-import { matchService } from '../../state/matchService.js';
+import { matchState } from '../../state/matchState.js';
 
 export default class Gameovermodal extends HTMLElement {
     constructor() {
@@ -30,7 +30,7 @@ export default class Gameovermodal extends HTMLElement {
             countdown--;
 
             if (countdown < 0) {
-                matchService.reset();
+                matchState.reset();
                 Router.instance.navigate('/local/tournament/qualifications');
                 clearInterval(intervalId);
             }
@@ -74,13 +74,13 @@ export default class Gameovermodal extends HTMLElement {
 
     #cancel(event) {
         this.hide();
-        matchService.reset();
+        matchState.reset();
         Router.instance.navigate('/local');
     }
 
     #confirm() {
         this.hide();
-        matchService.getState().match.resetScore();
+        matchState.getState().match.resetScore();
         Router.instance.reload();
     }
 

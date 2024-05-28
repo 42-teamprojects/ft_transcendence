@@ -1,6 +1,6 @@
-import Service from "./service.js";
+import State from "./state.js";
 
-class MatchService extends Service {
+class MatchState extends State {
 	constructor() {
 		super({
             match: null,
@@ -24,4 +24,4 @@ class MatchService extends Service {
 	}
 }
 
-export const matchService = new MatchService();
+export const matchState = new MatchState();

@@ -1,13 +1,13 @@
 import ChatWebSocket from "../../socket/ChatWebSocket.js";
-import { chatService } from "../../state/chatService.js";
-import { userService } from "../../state/userService.js";
+import { chatState } from "../../state/chatState.js";
+import { userState } from "../../state/userState.js";
 import { getMatchUrl } from "../../utils/utils.js";
 
 export default class Conversationfooter extends HTMLElement {
 	constructor() {
 		super();
 		this.chatId = getMatchUrl(/^\/dashboard\/chat\/(\w+)\/?$/);
-		this.user = userService.getState().user;
+		this.user = userState.getState().user;
 		this.chatSocket = null;
 	}
 
@@ -15,7 +15,7 @@ export default class Conversationfooter extends HTMLElement {
 		this.render();
 		this.form = this.querySelector("form.conversation-form");
 		this.form.addEventListener("submit", this.handleSubmit.bind(this));
-		chatService.setupWebSocket(this.chatId);
+		chatState.setupWebSocket(this.chatId);
 	}
 
   async handleSubmit(e) {
@@ -23,7 +23,7 @@ export default class Conversationfooter extends HTMLElement {
 			const message = this.form.content.value;
       if (!message || message.trim() === "") return;
 
-			await chatService.sendMessage(this.chatId, message);
+			await chatState.sendMessage(this.chatId, message);
 			this.form.reset();
 		}
 

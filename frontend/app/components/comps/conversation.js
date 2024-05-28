@@ -1,4 +1,4 @@
-import { chatService } from "../../state/chatService.js";
+import { chatState } from "../../state/chatState.js";
 import { getMatchUrl } from "../../utils/utils.js";
 
 export default class Conversation extends HTMLElement {
@@ -11,7 +11,7 @@ export default class Conversation extends HTMLElement {
             if (this.chatId === "none") {
                 throw new Error("Chat id not found");
             }
-            this.chat = chatService.getState().chats.find((chat) => {
+            this.chat = chatState.getState().chats.find((chat) => {
                 return chat.id === parseInt(this.chatId);
             });;
         }

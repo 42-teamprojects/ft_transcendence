@@ -1,5 +1,5 @@
 import Router from "../../router/router.js";
-import { matchService } from "../../state/matchService.js";
+import { matchState } from "../../state/matchState.js";
 import Toast from "../comps/toast.js";
 
 export default class Gameplay extends HTMLElement {
@@ -7,7 +7,7 @@ export default class Gameplay extends HTMLElement {
         super();
         document.title = "Gameplay | Blitzpong.";
 
-        this.match = matchService.getState().match
+        this.match = matchState.getState().match
         if (this.match === null) {
             Toast.notify({ type: "warning", message: "Please setup your game" })
             Router.instance.navigate('/local/1v1')
@@ -26,7 +26,7 @@ export default class Gameplay extends HTMLElement {
 
     handleGameOver(e) {
         const { winner } = e.detail;
-        matchService.setWinner(winner);
+        matchState.setWinner(winner);
         const modal = document.createElement('c-gameover-modal');
         modal.setAttribute('player', winner.alias);
         this.appendChild(modal);

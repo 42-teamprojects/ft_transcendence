@@ -1,4 +1,4 @@
-import { userService } from "../../state/userService.js";
+import { userState } from "../../state/userState.js";
 
 export default class Dashboard extends HTMLElement {
 	constructor() {
@@ -8,7 +8,7 @@ export default class Dashboard extends HTMLElement {
 
 	connectedCallback() {
 		this.render();
-		const { user } = userService.getState();
+		const { user } = userState.getState();
         console.log(user)
 	}
 

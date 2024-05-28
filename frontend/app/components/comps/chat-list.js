@@ -1,12 +1,12 @@
 import Router from "../../router/router.js";
-import { userService } from "../../state/userService.js";
-import { chatService } from "../../state/chatService.js";
+import { userState } from "../../state/userState.js";
+import { chatState } from "../../state/chatState.js";
 export default class Chatlist extends HTMLElement {
   constructor() {
     super();
     this.router = Router.instance;
-    this.user = userService.getState().user;
-    this.chats = chatService.getState().chats;
+    this.user = userState.getState().user;
+    this.chats = chatState.getState().chats;
   }
   
   connectedCallback() {

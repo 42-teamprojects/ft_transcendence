@@ -1,4 +1,4 @@
-export default class Service {
+export default class State {
   constructor(initialState = {}) {
     this.state = initialState;
     this.listeners = new Set();

@@ -1,6 +1,6 @@
-import { chatService } from "../../state/chatService.js";
+import { chatState } from "../../state/chatState.js";
 import ChatApiService from "../../api/chat/chatApiService.js";
-import { userService } from "../../state/userService.js";
+import { userState } from "../../state/userState.js";
 import { getMatchUrl } from "../../utils/utils.js";
 import Router from "../../router/router.js";
 
@@ -8,7 +8,7 @@ export default class Conversationbody extends HTMLElement {
   constructor() {
     super();
     this.chatApiService = new ChatApiService();
-    this.user = userService.getState().user;
+    this.user = userState.getState().user;
     this.socket = null;
     this.chatId = getMatchUrl(/^\/dashboard\/chat\/(\w+)\/?$/);
   }
@@ -17,14 +17,14 @@ export default class Conversationbody extends HTMLElement {
     if (!this.chatId) {
       throw new Error("Chat id not found");
     }
-    await chatService.getChatMessages(this.chatId);
+    await chatState.getChatMessages(this.chatId);
   }
 
   async connectedCallback() {
     try {
       await this.getChatMessages();
       this.render();
-      this.unsubscribe = chatService.subscribe(() => {
+      this.unsubscribe = chatState.subscribe(() => {
         this.render();
       });
     } catch (error) {
@@ -41,7 +41,7 @@ export default class Conversationbody extends HTMLElement {
   }
 
   render() {
-    const messages = chatService.getState().messages;
+    const messages = chatState.getState().messages;
     this.innerHTML = /*html*/ `
       <div class="conversation-body">
         ${messages

@@ -1,6 +1,6 @@
 import Router from "../../router/router.js";
-import { matchService } from "../../state/matchService.js";
-import { tournamentService } from "../../state/tournamentService.js";
+import { matchState } from "../../state/matchState.js";
+import { tournamentState } from "../../state/tournamentState.js";
 import Toast from "../comps/toast.js";
 
 export default class Qualifications extends HTMLElement {
@@ -18,15 +18,15 @@ export default class Qualifications extends HTMLElement {
 	}
 
 	connectedCallback() {
-		this.tournamentDetails = tournamentService.getState();
+		this.tournamentDetails = tournamentState.getState();
 		if (!this.tournamentDetails.playersNumber || this.tournamentDetails.playersNumber === 0) {
 			Toast.notify({ type: "error", message: "Please make sure all the players are registred" });
 			Router.instance.navigate("/local/tournament");
 			return;
 		}
 		this.update();
-		this.unsubscribe = tournamentService.subscribe(() => {
-			this.tournamentDetails = tournamentService.getState();
+		this.unsubscribe = tournamentState.subscribe(() => {
+			this.tournamentDetails = tournamentState.getState();
 			this.update();
 		});
 	}
@@ -37,12 +37,12 @@ export default class Qualifications extends HTMLElement {
 		form.addEventListener("submit", (e) => {
 			e.preventDefault();
 			if (e.submitter.id === "start-match") {
-				const currentMatch = tournamentService.startNextMatch();
-				matchService.setMatch(currentMatch);
+				const currentMatch = tournamentState.startNextMatch();
+				matchState.setMatch(currentMatch);
 				Router.instance.navigate("/local/tournament/game");
 			}
 			else if (e.submitter.id === "end-tournament") {
-				tournamentService.reset();
+				tournamentState.reset();
 				Router.instance.navigate("/local/tournament");
 			}
 		});
