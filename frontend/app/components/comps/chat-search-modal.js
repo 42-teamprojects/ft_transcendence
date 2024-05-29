@@ -23,11 +23,22 @@ export default class Chatsearchmodal extends HTMLElement {
 
 	async handleSearch(e) {
 		e.preventDefault();
+        
 		const keyword = this.searchFriends.keyword.value;
+        // check if keyword only have characters and numbers and @ and . only
+        if (!/^[a-zA-Z0-9@.]*$/.test(keyword)) {
+            Toast.notify({ type: "error", message: "Invalid search keyword" });
+            return;
+        }
 		if (!keyword || keyword.trim() === "") return;
 		try {
 			const result = await this.httpClient.get(`users/${keyword}`);
-			this.searchFriends.keyword.value = "";
+            if (result.length === 0) {
+                Toast.notify({ type: "info", message: "No user found" });
+                return;
+            }
+
+			this.searchFriends.reset();
 			this.friendsResult.innerHTML = result
 				.map(
 					(user) =>

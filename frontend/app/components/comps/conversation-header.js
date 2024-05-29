@@ -2,9 +2,9 @@ import { UserStatus } from "../../entities/UserStatus.js";
 export default class Conversationheader extends HTMLElement {
     constructor() {
         super();
-        this.imgAtt = this.getAttribute("img") || "none";
-        this.usernameAtt = this.getAttribute("username") || "none";
-        this.stateAtt = this.getAttribute("state") || "none";
+        this.imgAtt = this.getAttribute("img") || "null";
+        this.usernameAtt = this.getAttribute("username") || "null";
+        this.stateAtt = this.getAttribute("state") || "null";
 
     }
 

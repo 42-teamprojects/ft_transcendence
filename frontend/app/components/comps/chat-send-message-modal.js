@@ -6,8 +6,8 @@ export default class Chatsendmessagemodal extends HTMLElement {
 	constructor() {
 		super();
 		this.isOpen = false;
-        this.username = this.getAttribute("username") || "none";
-        this.userId = this.getAttribute("user-id") || "none";
+        this.username = this.getAttribute("username") || "null";
+        this.userId = this.getAttribute("user-id") || "null";
 	}
 
 	connectedCallback() {
@@ -15,13 +15,19 @@ export default class Chatsendmessagemodal extends HTMLElement {
 		const backdrop = this.querySelector("#backdrop");
 		const cancelButton = this.querySelector("#cancel-btn");
         this.form = this.querySelector("form");
+        this.btnSubmit = this.querySelector("button.btn-send");
 
         this.form.addEventListener("submit", async (e) => {
             e.preventDefault();
             const content = this.form.content.value;
             if (!content || content.trim() === "") return;
+            
+            this.btnSubmit.setAttribute("processing", "true")
+		    this.form.content.disabled = true;
             await this.openChat(content);
-            this.form.content.value = "";
+		    this.btnSubmit.setAttribute("processing", "false")
+		    this.form.content.disabled = false;
+            this.form.reset();
         });
 
 		backdrop.addEventListener("click", this.hide.bind(this));
@@ -93,7 +99,7 @@ export default class Chatsendmessagemodal extends HTMLElement {
                 <main class="p-1">
                     <form class="flex items-center gap-2 mt-6">
                         <input class="input-field" name="content" type="text" placeholder="Type a message" autocomplete="off">
-                        <button type="submit" class="btn-send">
+                        <button is="c-button" type="submit" class="btn-send">
                             <img src="public/assets/icons/send.svg" alt="send">
                         </button>
                     </form>
