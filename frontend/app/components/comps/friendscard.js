@@ -17,12 +17,12 @@ export default class Friendscard extends HTMLElement {
                     <a is="c-link" href="/" class="uppercase font-extrabold spacing-1">view all</a>
                 </div>
                 <div class="grid grid-cols-4 grid-center gap-8">
-                    <c-usercard username="HassanOigag" status="offline" img="https://api.dicebear.com/8.x/thumbs/svg?seed=Casper"></c-usercard>
-                    <c-usercard username="YusufIsawi" status="online" img="https://api.dicebear.com/8.x/thumbs/svg?seed=Garfield"></c-usercard>
-                    <c-usercard username="Jhonesnow" status="playing" img="https://api.dicebear.com/8.x/thumbs/svg?seed=youssef"></c-usercard>
-                    <c-usercard username="msodor" status="playing" img="https://api.dicebear.com/8.x/thumbs/svg?seed=mouad"></c-usercard>
-                    <c-usercard username="hassssan" status="playing" img="https://api.dicebear.com/8.x/thumbs/svg?seed=hassan"></c-usercard>
-                    <c-usercard username="hamzaaa" status="playing" img="https://api.dicebear.com/8.x/thumbs/svg?seed=hamza"></c-usercard>
+                    <c-usercard username="HassanOigag" status="OF" img="https://api.dicebear.com/8.x/thumbs/svg?seed=Casper"></c-usercard>
+                    <c-usercard username="YusufIsawi" status="ON" img="https://api.dicebear.com/8.x/thumbs/svg?seed=Garfield"></c-usercard>
+                    <c-usercard username="Jhonesnow" status="PL" img="https://api.dicebear.com/8.x/thumbs/svg?seed=youssef"></c-usercard>
+                    <c-usercard username="msodor" status="PL" img="https://api.dicebear.com/8.x/thumbs/svg?seed=mouad"></c-usercard>
+                    <c-usercard username="hassssan" status="OF" img="https://api.dicebear.com/8.x/thumbs/svg?seed=hassan"></c-usercard>
+                    <c-usercard username="hamzaaa" status="ON" img="https://api.dicebear.com/8.x/thumbs/svg?seed=hamza"></c-usercard>
                 </div>
             </div>
         `;

@@ -16,14 +16,17 @@ export default class Dropdown extends HTMLElement {
 	}
 
 	handleChatClick() {
+		const userCard = this.parentElement.parentElement;
 		const searchModal = document.querySelector("c-chat-search-modal");
-		if (searchModal) {
-			searchModal.hide();
-		}
 		const chatModal = document.createElement("c-chat-send-message-modal");
+		chatModal.setAttribute("user-id", userCard.getAttribute("user-id"));
+		chatModal.setAttribute("username", userCard.getAttribute("username"));
 		document.body.appendChild(chatModal);
 		setTimeout(() => {
 			chatModal.open();
+			if (searchModal) {
+				searchModal.hide();
+			}
 		}, 100);
 	}
 
@@ -51,9 +54,9 @@ export default class Dropdown extends HTMLElement {
 		this.innerHTML = /*html*/ `
             <div class="dropdown-content">
                 <ul class="dropdown__menu">
-					<li class="dropdown__item">
+					<li class="dropdown__item" id="dropdown-chat">
 						<i class="fa-solid fa-comment dropdown__icon"></i>
-						<span class="dropdown__name" id="dropdown-chat">Chat</span>
+						<span class="dropdown__name">Chat</span>
 					</li>
 
 					<li class="dropdown__item">

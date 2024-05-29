@@ -1,6 +1,7 @@
+import {config} from '../config.js';
 export default class HttpClient {
 	constructor(baseURL) {
-		this.baseURL = baseURL;
+		this.baseURL = baseURL || config.rest_url;
 	}
 
 	async fetch(endpoint, options) {

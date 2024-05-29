@@ -1,9 +1,11 @@
+import { UserStatus } from "../../entities/UserStatus.js";
 import { truncate } from "../../utils/utils.js";
 export default class Usercard extends HTMLElement {
 	constructor() {
 		super();
+		this.userId = this.getAttribute("user-id") || "none";
 		this.usernameAtt = this.getAttribute("username") || "none";
-		this.statusAtt = this.getAttribute("status") || "none";
+		this.statusAtt = UserStatus[this.getAttribute("status")] || "none";
 		this.imgAtt = this.getAttribute("img") || "none";
 		this.maxNameSize = 10;
 	}
@@ -22,7 +24,7 @@ export default class Usercard extends HTMLElement {
 					<h3 class="username white-space pt-1 cursor-pointer" ${
 						this.usernameAtt.length > this.maxNameSize ? `tooltip="${this.usernameAtt}" flow="up"` : ""
 					}>${truncate(this.usernameAtt, this.maxNameSize)}</h3>
-					<p class="user-status ${this.statusAtt}">${this.statusAtt}</p>
+					<p class="user-status ${this.statusAtt.toLowerCase()}">${this.statusAtt}</p>
 				</div>
 				<c-dropdown></c-dropdown>
 			</div>

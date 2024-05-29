@@ -2,16 +2,26 @@ export default class Chatsendmessagemodal extends HTMLElement {
 	constructor() {
 		super();
 		this.isOpen = false;
+        this.username = this.getAttribute("username") || "none";
+        this.userId = this.getAttribute("user-id") || "none";
 	}
 
 	connectedCallback() {
 		this.render();
 		const backdrop = this.querySelector("#backdrop");
 		const cancelButton = this.querySelector("#cancel-btn");
-		// const confirmButton = this.querySelector('#confirm-btn');
+        this.form = this.querySelector("form");
+
+        this.form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const content = this.form.content.value;
+            if (!content || content.trim() === "") return;
+            console.log(content);
+            this.form.content.value = "";
+        });
+
 		backdrop.addEventListener("click", this.hide.bind(this));
 		cancelButton.addEventListener("click", this.#cancel.bind(this));
-		// confirmButton.addEventListener('click', this.#confirm.bind(this));
 	}
 
 	disconnectedCallback() {}
@@ -22,10 +32,18 @@ export default class Chatsendmessagemodal extends HTMLElement {
 		} else {
 			this.isOpen = false;
 		}
+
+        if (name === "username") {
+            this.username = newValue;
+        }
+
+        if (name === "user-id") {
+            this.userId = newValue;
+        }
 	}
 
 	static get observedAttributes() {
-		return ["opened"];
+		return ["opened", "username", "user-id"];
 	}
 
 	open() {
@@ -53,7 +71,7 @@ export default class Chatsendmessagemodal extends HTMLElement {
             <div class="modal">
                 <i id="cancel-btn" class="fa fa-times close-icon text-2xl cursor-pointer hover absolute" style="top: 1.25rem; right: 1.5rem"></i>
                 <header class="text-center">
-                    <h1 id="title" class="text-3xl font-bold mb-2">Chat with yelaissa</h1>
+                    <h1 id="title" class="text-3xl font-bold mb-2">Chat with ${this.username}</h1>
                     <h2 id="subtitle" class="text-xl font-normal text-stroke spacing-2">Send a message to start chatting</h2>
                 </header>
                 <main class="p-1">
