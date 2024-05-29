@@ -56,12 +56,8 @@ class ChatState extends State {
 	}
 
 	replaceChat(chat) {
-		const chats = this.state.chats.map((c) => {
-			if (c.id === chat.id) {
-				return chat;
-			}
-			return c;
-		});
+		const chats = this.state.chats.filter((c) => c.id !== chat.id);
+		chats.unshift(chat);
 		this.setState({ chats });
 	}
 
