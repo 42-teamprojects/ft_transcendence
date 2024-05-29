@@ -47,6 +47,15 @@ class ChatViewSet(ModelViewSet):
         user2 = User.objects.get(pk=user2_id)
         serializer.save(user1=user1, user2=user2)
 
+    @action(detail=False, methods=['get'])
+    def get_chat_by_user(self, request, user_id):
+        user = get_object_or_404(User, pk=user_id)
+        chat = Chat.objects.filter(Q(user1=request.user, user2=user) | Q(user1=user, user2=request.user)).first()
+        if chat is None:
+            return Response({'detail': 'Chat does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = self.get_serializer(chat)
+        return Response(serializer.data)
+
 
 class MessageViewSet(ModelViewSet):
     serializer_class = MessageSerializer

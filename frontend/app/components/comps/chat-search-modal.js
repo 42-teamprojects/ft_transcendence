@@ -6,7 +6,7 @@ export default class Chatsearchmodal extends HTMLElement {
 	constructor() {
 		super();
 		this.isOpen = false;
-		this.httpClient = new HttpClient();
+		this.httpClient = HttpClient.instance;
 	}
 
 	connectedCallback() {

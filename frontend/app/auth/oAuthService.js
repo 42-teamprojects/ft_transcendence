@@ -1,6 +1,8 @@
+import HttpClient from "../http/httpClient.js";
+
 export default class OAuthService {
-    constructor(httpClient) {
-        this.httpClient = httpClient;
+    constructor() {
+        this.httpClient = HttpClient.instance;
     }
 
     async continueWithOAuth(provider) {

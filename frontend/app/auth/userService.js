@@ -1,7 +1,9 @@
+import HttpClient from "../http/httpClient.js";
+
 export default class UserService {
-	constructor(httpClient) {
-		this.httpClient = httpClient;
-	}
+	constructor() {
+        this.httpClient = HttpClient.instance;
+    }
 
 	async changePassword(new_password, current_password) {
         const data = {
