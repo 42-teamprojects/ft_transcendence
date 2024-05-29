@@ -10,6 +10,7 @@ from rest_framework.viewsets import ModelViewSet
 from django.db.models import Q
 from accounts.models import User
 from rest_framework.decorators import action
+from django.db.models import Subquery, OuterRef
 
 class ChatViewSet(ModelViewSet):
     serializer_class = ChatSerializer
@@ -18,7 +19,20 @@ class ChatViewSet(ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return Chat.objects.filter(Q(user1=user) | Q(user2=user)).order_by('-message__created_at')
+        
+        # Get the latest message time for each chat
+        latest_message_time = Message.objects.filter(
+            chat=OuterRef('pk')
+        ).order_by('-created_at')
+        
+        # Annotate each chat with the latest message time
+        chats = Chat.objects.filter(
+            Q(user1=user) | Q(user2=user)
+        ).annotate(
+            latest_message_time=Subquery(latest_message_time.values('created_at')[:1])
+        ).order_by('-latest_message_time')
+
+        return chats.distinct()
 
     def perform_create(self, serializer):
         user1 = self.request.user

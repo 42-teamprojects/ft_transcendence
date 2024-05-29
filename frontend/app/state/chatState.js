@@ -23,9 +23,8 @@ class ChatState extends State {
 			const chat = await this.chatApiService.createChat(friendId);
 			const friend = this.getFriend(chat);
 			chat.friend = friend;
-			let newChats = new Set([chat, ...this.state.chats]);
-			console.log(newChats)
-			this.setState({ chats: [...newChats] });
+			console.log([chat, ...this.state.chats])
+			this.setState({ chats: [chat, ...this.state.chats] });
 			return chat;
 		} catch (error) {
 			console.error(error);
