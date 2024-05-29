@@ -8,6 +8,26 @@ export default class Dropdown extends HTMLElement {
 		this.dropdownContent = this.querySelector(".dropdown-content");
 		this.dropdownButton = this.parentElement.querySelector(".dropdown-button");
 
+		this.addEventListeners();
+
+		this.dropdownChat = this.querySelector("#dropdown-chat");
+
+		this.dropdownChat.addEventListener("click", this.handleChatClick.bind(this));
+	}
+
+	handleChatClick() {
+		const searchModal = document.querySelector("c-chat-search-modal");
+		if (searchModal) {
+			searchModal.hide();
+		}
+		const chatModal = document.createElement("c-chat-send-message-modal");
+		document.body.appendChild(chatModal);
+		setTimeout(() => {
+			chatModal.open();
+		}, 100);
+	}
+
+	addEventListeners() {
 		this.dropdownButton.addEventListener("mouseleave", () => {
 			this.dropdownContent.classList.remove("show-dropdown");
 		});
@@ -33,7 +53,7 @@ export default class Dropdown extends HTMLElement {
                 <ul class="dropdown__menu">
 					<li class="dropdown__item">
 						<i class="fa-solid fa-comment dropdown__icon"></i>
-						<span class="dropdown__name">Chat</span>
+						<span class="dropdown__name" id="dropdown-chat">Chat</span>
 					</li>
 
 					<li class="dropdown__item">

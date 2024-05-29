@@ -52,6 +52,7 @@ export default class Chatsearchmodal extends HTMLElement {
         this.innerHTML = /*html*/`
             <div id="backdrop"></div>
             <div class="modal">
+                <i id="cancel-btn" class="fa fa-times close-icon text-2xl cursor-pointer hover absolute" style="top: 1.25rem; right: 1.5rem"></i>
                 <header class="text-center">
                     <h1 id="title" class="text-3xl font-bold mb-2">Search for friends   </h1>
                     <h2 id="subtitle" class="text-xl font-normal text-stroke spacing-2">find your friends or new ones</h2>
@@ -70,9 +71,6 @@ export default class Chatsearchmodal extends HTMLElement {
                         <c-usercard username="hamzaaa" status="playing" img="https://api.dicebear.com/8.x/thumbs/svg?seed=hamza"></c-usercard>
                     </div>
                 </main>
-                <section class="actions mt-6">
-                    <button id="cancel-btn" class="btn-default text-secondary w-full">Cancel</button>
-                </section>
             </div>
         `;
     }
