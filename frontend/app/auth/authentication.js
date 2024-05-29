@@ -15,12 +15,11 @@ export default class Authentication {
 		}
 		Authentication.#instance = this;
 
-		this.httpClient = new HttpClient(config.rest_url);
 		// Initialize services
-		this.authService = new AuthService(this.httpClient);
-		this.oauthService = new OAuthService(this.httpClient);
-		this.verificationService = new VerificationService(this.httpClient);
-		this.userService = new UserService(this.httpClient);
+		this.authService = new AuthService();
+		this.oauthService = new OAuthService();
+		this.verificationService = new VerificationService();
+		this.userService = new UserService();
 	}
 
 	static get instance() {
@@ -54,14 +53,11 @@ export default class Authentication {
 
 	async isAuthenticated() {
 		try {
-			// if (userState.getState().last_token_verified === null || new Date() >= userState.getState().last_token_verified) {
-				const result = await this.authService.isAuthenticated();
-				if (!result) {
-					return false;
-				}
-				const timestampOffset = 1000 * 60 * 1; // 5 minutes in milliseconds
-				userState.setState({ user: result, last_token_verified: new Date(Date.now() + timestampOffset) });
-			// }
+			const result = await this.authService.isAuthenticated();
+			if (!result) {
+				return false;
+			}
+			userState.setState({ user: result });
 			return true;
 		} catch (error) {
 			throw error;

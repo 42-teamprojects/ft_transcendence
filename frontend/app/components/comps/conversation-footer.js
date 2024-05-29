@@ -14,7 +14,8 @@ export default class Conversationfooter extends HTMLElement {
 		this.render();
 		this.form = this.querySelector("form.conversation-form");
 		this.form.addEventListener("submit", this.handleSubmit.bind(this));
-		
+		this.btnSubmit = this.querySelector("button.btn-send");
+
 		messageState.setupWebSocket(this.chatId);
 	}
 
@@ -23,7 +24,11 @@ export default class Conversationfooter extends HTMLElement {
 		const message = this.form.content.value;
 		if (!message || message.trim() === "") return;
 
+		this.btnSubmit.setAttribute("processing", "true")
+		this.form.content.disabled = true;
 		await messageState.sendMessage(this.chatId, message);
+		this.btnSubmit.setAttribute("processing", "false")
+		this.form.content.disabled = false;
 		this.form.reset();
 	}
 
@@ -34,7 +39,7 @@ export default class Conversationfooter extends HTMLElement {
         <div class="conversation-footer">
             <form class="conversation-form" method="POST">
                 <input class="input-field message" name="content" type="text" placeholder="Type a message" autocomplete="off">
-                <button type="submit" class="btn-send">
+                <button is="c-button" type="submit" class="btn-send">
                     <img src="public/assets/icons/send.svg" alt="send">
                 </button>
             </form>

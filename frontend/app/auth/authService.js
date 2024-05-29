@@ -1,6 +1,8 @@
+import HttpClient from "../http/httpClient.js";
+
 export default class AuthService {
-    constructor(httpClient) {
-        this.httpClient = httpClient;
+    constructor() {
+        this.httpClient = HttpClient.instance;
     }
 
     async login(username, password) {

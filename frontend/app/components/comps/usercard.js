@@ -3,10 +3,10 @@ import { truncate } from "../../utils/utils.js";
 export default class Usercard extends HTMLElement {
 	constructor() {
 		super();
-		this.userId = this.getAttribute("user-id") || "none";
-		this.usernameAtt = this.getAttribute("username") || "none";
-		this.statusAtt = UserStatus[this.getAttribute("status")] || "none";
-		this.imgAtt = this.getAttribute("img") || "none";
+		this.userId = this.getAttribute("user-id") || "null";
+		this.usernameAtt = this.getAttribute("username") || "null";
+		this.statusAtt = UserStatus[this.getAttribute("status")] || "null";
+		this.imgAtt = this.getAttribute("img") || "null";
 		this.maxNameSize = 10;
 	}
 

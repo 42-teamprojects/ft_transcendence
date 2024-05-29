@@ -1,8 +1,9 @@
-import ChatApiService from "../api/chat/chatApiService.js";
 import ChatWebSocket from "../socket/ChatWebSocket.js";
 import State from "./state.js";
 import { userState } from "./userState.js";
 import Authentication from "../auth/authentication.js";
+import HttpClient from "../http/httpClient.js";
+import { chatState } from "./chatState.js";
 
 class MessageState extends State {
 	constructor() {
@@ -13,7 +14,7 @@ class MessageState extends State {
         this.chatSockets = {
 			// chatId: ChatWebSocket
 		};
-        this.chatApiService = new ChatApiService();
+        this.httpClient = HttpClient.instance;
 	}
 
     // Sockets start
@@ -39,12 +40,14 @@ class MessageState extends State {
 				console.error("WebSocket error:", error);
 			});
 	
-			this.chatSockets[chatId].onChatMessage((data) => {
+			this.chatSockets[chatId].onChatMessage(async (data) => {
 				this.appendMessage(data);
 				// Update the chat card last message
-				const chatCard = document.querySelector(`c-chat-card[chat-id="${chatId}"]`);
-				chatCard.setAttribute("msg", data.content);
-				chatCard.setAttribute("time", new Date().toUTCString());
+				const chat = await chatState.getChat(chatId);
+
+				chat.last_message = data.content;
+				chat.last_message_time = new Date().toUTCString();
+				chatState.replaceChat(chat);
 			});
 	
 			this.chatSockets[chatId].connect();
@@ -52,10 +55,10 @@ class MessageState extends State {
 
 	}
 
-	async sendMessage(chatId, message, retryCount = 0) {
+	async sendMessage(chatId, message) {
 		try {
 			// Save message to the database
-            await this.chatApiService.saveMessage(chatId, message);
+			await this.httpClient.post(`chats/${chatId}/messages/`, { "content": message });
 			
             // Send message to the WebSocket
 			this.chatSockets[chatId].send({
@@ -63,14 +66,6 @@ class MessageState extends State {
 				sender: userState.getState().user.id,
 			});
 		} catch (error) {
-			if (error.detail.includes("Authentication") && retryCount < 1) {
-				// Unauthorized, try refreshing token
-				const isAuthenticated = await Authentication.instance.isAuthenticated();
-				if (isAuthenticated) {
-					this.sendMessage(chatId, message, retryCount + 1);
-					return;
-				}
-			}
 			console.error(error);
 		}
 	}
@@ -79,7 +74,7 @@ class MessageState extends State {
 
     async getMessages(chatId) {
 		try {
-			let messages = await this.chatApiService.getChatMessages(chatId);
+			let messages = await this.httpClient.get(`chats/${chatId}/messages/`);
 			if (!messages) {
 				messages = [];
 			}

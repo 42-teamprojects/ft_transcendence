@@ -1,6 +1,11 @@
+import HttpClient from "../../http/httpClient.js";
+import Router from "../../router/router.js";
+import { chatState } from "../../state/chatState.js";
+
 export default class Dropdown extends HTMLElement {
 	constructor() {
 		super();
+		this.httpClient = HttpClient.instance;
 	}
 
 	connectedCallback() {
@@ -15,12 +20,24 @@ export default class Dropdown extends HTMLElement {
 		this.dropdownChat.addEventListener("click", this.handleChatClick.bind(this));
 	}
 
-	handleChatClick() {
+	async handleChatClick() {
+		// Get the user id and username from the user card
 		const userCard = this.parentElement.parentElement;
+		const userId = userCard.getAttribute("user-id");
+		const username = userCard.getAttribute("username");
+
+		// Check if the chat already exists
+		const chat = chatState.getState().chats.find((c) => c.friend.id === parseInt(userId))
+		// If the chat exists, navigate to the chat
+		if (chat) {
+			Router.instance.navigate(`/dashboard/chat/${chat.id}`);
+			return;
+		}
+		// If the chat does not exist, open direct message modal to create a chat
 		const searchModal = document.querySelector("c-chat-search-modal");
 		const chatModal = document.createElement("c-chat-send-message-modal");
-		chatModal.setAttribute("user-id", userCard.getAttribute("user-id"));
-		chatModal.setAttribute("username", userCard.getAttribute("username"));
+		chatModal.setAttribute("user-id", userId);
+		chatModal.setAttribute("username", username);
 		document.body.appendChild(chatModal);
 		setTimeout(() => {
 			chatModal.open();

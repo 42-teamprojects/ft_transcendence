@@ -1,3 +1,4 @@
+import Chatlistitems from "./components/comps/chat-list-items.js";
 import Chatsendmessagemodal from "./components/comps/chat-send-message-modal.js";
 import Loadingchatcard from "./components/comps/loading-chat-card.js";
 import Dropdown from "./components/comps/dropdown.js";
@@ -92,4 +93,5 @@ export const components = [
 	{ tagName: 'c-dropdown', component: Dropdown },
 	{ tagName: 'c-loading-chat-card', component: Loadingchatcard },
 	{ tagName: 'c-chat-send-message-modal', component: Chatsendmessagemodal },
+	{ tagName: 'c-chat-list-items', component: Chatlistitems },
 ];

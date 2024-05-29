@@ -3,8 +3,8 @@ import { isThere } from "../../utils/utils.js";
 export default class Card extends HTMLElement {
     constructor() {
         super();
-        this.actionAtt = this.getAttribute('action') || 'none'
-        this.titleAtt = this.getAttribute("title") || 'none'
+        this.actionAtt = this.getAttribute('action') || 'null'
+        this.titleAtt = this.getAttribute("title") || 'null'
         this.typeAtt = isThere(["primary", "secondary", "default"], this.getAttribute("type"), 'default')
     }
 

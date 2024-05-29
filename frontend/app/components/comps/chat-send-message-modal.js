@@ -1,9 +1,13 @@
+import Router from "../../router/router.js";
+import { chatState } from "../../state/chatState.js";
+import { messageState } from "../../state/messageState.js";
+
 export default class Chatsendmessagemodal extends HTMLElement {
 	constructor() {
 		super();
 		this.isOpen = false;
-        this.username = this.getAttribute("username") || "none";
-        this.userId = this.getAttribute("user-id") || "none";
+        this.username = this.getAttribute("username") || "null";
+        this.userId = this.getAttribute("user-id") || "null";
 	}
 
 	connectedCallback() {
@@ -11,18 +15,36 @@ export default class Chatsendmessagemodal extends HTMLElement {
 		const backdrop = this.querySelector("#backdrop");
 		const cancelButton = this.querySelector("#cancel-btn");
         this.form = this.querySelector("form");
+        this.btnSubmit = this.querySelector("button.btn-send");
 
-        this.form.addEventListener("submit", (e) => {
+        this.form.addEventListener("submit", async (e) => {
             e.preventDefault();
             const content = this.form.content.value;
             if (!content || content.trim() === "") return;
-            console.log(content);
-            this.form.content.value = "";
+            
+            this.btnSubmit.setAttribute("processing", "true")
+		    this.form.content.disabled = true;
+            await this.openChat(content);
+		    this.btnSubmit.setAttribute("processing", "false")
+		    this.form.content.disabled = false;
+            this.form.reset();
         });
 
 		backdrop.addEventListener("click", this.hide.bind(this));
 		cancelButton.addEventListener("click", this.#cancel.bind(this));
 	}
+
+    async openChat(content) {
+        try {
+            const chat = await chatState.createChat(this.userId);
+            messageState.setupWebSocket(chat.id);
+            await messageState.sendMessage(chat.id, content);
+            Router.instance.navigate(`/dashboard/chat/${chat.id}`);
+            this.hide();
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
 	disconnectedCallback() {}
 
@@ -77,7 +99,7 @@ export default class Chatsendmessagemodal extends HTMLElement {
                 <main class="p-1">
                     <form class="flex items-center gap-2 mt-6">
                         <input class="input-field" name="content" type="text" placeholder="Type a message" autocomplete="off">
-                        <button type="submit" class="btn-send">
+                        <button is="c-button" type="submit" class="btn-send">
                             <img src="public/assets/icons/send.svg" alt="send">
                         </button>
                     </form>

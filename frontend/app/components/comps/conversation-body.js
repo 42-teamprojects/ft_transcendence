@@ -13,16 +13,13 @@ export default class Conversationbody extends HTMLElement {
   async connectedCallback() {
       this.render();
       this.unsubscribe = messageState.subscribe(() => this.render());
-
-      if (this.chatId) {
-        await messageState.getMessages(this.chatId);
-      }
   }
 
   disconnectedCallback() {
       if (this.unsubscribe) {
         this.unsubscribe();
       }
+      messageState.reset();
   }
 
   render() {
