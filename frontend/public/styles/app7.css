@@ -7,31 +7,46 @@ p-profile{
         flex-direction: column;
         justify-content: center;
         align-items: justify;
-        margin-left: 15rem;
+        margin-left: 20rem;
+        margin-top: 1rem;
         width: 364px;
         height: 140px;
-        gap : 1rem;
-        .follow{
-            font-weight: bold;
-            color: var(--secondary-color);
-        }
         p{
             font-size: 0.8rem;
             color: var(--stroke-color);
+            margin-bottom: 1rem;
+            margin-top: .25rem;
+        }
+        h3{
+            color: var(--stroke-color);
+            margin-bottom: 1rem;
+            margin-top: .25rem;
+        
         }
     }
     .profile-image{
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 180px;
-        height: 180px;
+        width: 250px;
+        height: 250px;
         img {
             border-radius: 50%;
-            margin-bottom: 20rem;
+            margin-bottom: 25rem;
             margin-left: 3rem;
             margin-top: 1rem;
         }
     }
+    hr{
+        width: 100%;
+        background-color: var(--stroke-color);
+        margin-left: 2rem;
+        margin-top: -12rem;
+    }
 
+}
+
+.profile_icon{
+    width: 30px;
+    border-radius: 30%;
 }
