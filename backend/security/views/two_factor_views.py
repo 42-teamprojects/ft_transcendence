@@ -9,6 +9,7 @@ from django.conf import settings
 from accounts.models import User
 from accounts.utils import add_cookies
 from django.utils import timezone
+import os
 
 # Create your views here.
 class GetTwoFactorAuthView(APIView):
@@ -21,8 +22,12 @@ class GetTwoFactorAuthView(APIView):
         # Generate a URL for a QR code
         otpauth_url = totp.provisioning_uri(name=request.user.email, issuer_name="Blitzpong")
         
+        # check if the directory for storing the QR code exists
+        if not os.path.exists(settings.MEDIA_ROOT + 'qrcodes'):
+            os.makedirs(settings.MEDIA_ROOT + 'qrcodes')
+        
         # Generate the QR code
-        qr = qrcode.make(otpauth_url).save(settings.MEDIA_ROOT + f'qrcodes/{request.user.username}-qr.png')
+        qr = qrcode.make(otpauth_url).save(settings.MEDIA_ROOT + f'qrcodes/{request.user.username}-qr.png')        
 
         return Response({
             'qr_code': f'{settings.MEDIA_URL}qrcodes/{request.user.username}-qr.png',
