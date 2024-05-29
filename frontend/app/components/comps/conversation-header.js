@@ -27,10 +27,15 @@ export default class Conversationheader extends HTMLElement {
                     </div>
                 </div>
             </div>
-            <button is="c-button" class="btn-primary gap-3">
-                <i class="fa-solid fa-gamepad text-xl"></i>
-                play
-            </button>
+            <div class="flex gap-2">
+                <button is="c-button" class="btn-primary gap-3">
+                    <i class="fa-solid fa-gamepad text-xl"></i>
+                    play
+                </button>
+                <button is="c-button" class="btn-secondary w-0">
+                    <i class="fa-solid fa-circle-info text-xl"></i>
+                </button>
+            </div> 
         </div>
         `;
     }

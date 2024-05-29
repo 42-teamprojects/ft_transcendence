@@ -95,7 +95,9 @@ export default class Chatsearchmodal extends HTMLElement {
                 </header>
                 <form class="flex items-center gap-2 mt-6 mb-6" id="search-friends">
                     <input type="text" class="input-field" name="keyword" placeholder="Search username, Email..." />
-                    <button class="btn-secondary py-4" style="width: 0"><i class="fa fa-search"></i></button> 
+                    <button class="btn-secondary py-4 w-0">
+                        <i class="fa fa-search"></i>
+                    </button> 
                 </form>
                 <main>
                     <div class="flex-center flex-wrap friends-result" style="gap: 2rem 3rem;">
