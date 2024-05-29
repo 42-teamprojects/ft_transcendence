@@ -8,6 +8,7 @@ export default class Dashboard extends HTMLElement {
 
 	connectedCallback() {
 		this.render();
+        console.log(userState.getState());
 	}
 
 	disconnectedCallback() {}

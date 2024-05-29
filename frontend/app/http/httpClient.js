@@ -82,7 +82,7 @@ export default class HttpClient {
 	}
 
 	async #refreshToken() {
-        return this.httpClient.post('auth/jwt/refresh/');
+        return this.post('auth/jwt/refresh/');
     }
 	// Todo: Implement the rest of the HTTP methods
 }

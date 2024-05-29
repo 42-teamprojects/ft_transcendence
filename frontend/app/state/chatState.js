@@ -45,11 +45,10 @@ class ChatState extends State {
 
 	async getChat(chatId) {
 		try {
-			let chat = this.state.chats.find((chat) => chat.id === chatId);
+			let chat = this.state.chats.find((chat) => chat.id === parseInt(chatId));
 			if (chat) return chat;
 			chat = await this.httpClient.get(`chats/${chatId}/`);
 			chat.friend = this.getFriend(chat);
-			this.setState({ chats: [chat, ...this.state.chats] });
 			return chat;
 		} catch (error) {
 			console.error(error);

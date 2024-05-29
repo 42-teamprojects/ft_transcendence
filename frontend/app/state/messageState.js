@@ -40,14 +40,13 @@ class MessageState extends State {
 				console.error("WebSocket error:", error);
 			});
 	
-			this.chatSockets[chatId].onChatMessage((data) => {
+			this.chatSockets[chatId].onChatMessage(async (data) => {
 				this.appendMessage(data);
 				// Update the chat card last message
-				const chat = chatState.getChat(chatId);
+				const chat = await chatState.getChat(chatId);
 
 				chat.last_message = data.content;
 				chat.last_message_time = new Date().toUTCString();
-
 				chatState.replaceChat(chat);
 			});
 	
