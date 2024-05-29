@@ -23,6 +23,7 @@ export default class Conversationbody extends HTMLElement {
       if (this.unsubscribe) {
         this.unsubscribe();
       }
+      messageState.reset();
   }
 
   render() {

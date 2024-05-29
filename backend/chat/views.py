@@ -18,14 +18,14 @@ class ChatViewSet(ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return Chat.objects.filter(Q(user1=user) | Q(user2=user))
+        return Chat.objects.filter(Q(user1=user) | Q(user2=user)).order_by('-message__created_at')
 
     def perform_create(self, serializer):
         user1 = self.request.user
         user2_id = self.request.data.get('user2')
-        chat_exists = Chat.objects.filter(Q(user1=user1.id) & Q(user2=user2_id))
+        chat_exists = Chat.objects.filter(Q(user1=user1.id) & Q(user2=user2_id) | Q(user1=user2_id) & Q(user2=user1.id))
         if chat_exists:
-            raise serializers.ValidationError("chat already exist.")
+            raise serializers.ValidationError({'detail': "Chat already exists", 'chat_id': chat_exists[0].id})
         if not user2_id:
             raise serializers.ValidationError("user2 field is required.")
         if user1.id == int(user2_id):

@@ -32,4 +32,25 @@ export default class ChatApiService {
             console.error(error);
         }
     }
+
+    async createChat(friendId) {
+        try {
+            const response = await this.httpClient.post('chats/', { "user2": friendId });
+            return response;
+        } catch (error) {
+            if (error.status === 400 && error.detail === "Chat already exists") {
+                return await this.getChat(error.more.chat_id);
+            }
+            console.error(error);
+        }
+    }
+
+    async getChat(chatId) {
+        try {
+            const response = await this.httpClient.get(`chats/${chatId}/`);
+            return response;
+        } catch (error) {
+            console.error(error);
+        }
+    }
 }

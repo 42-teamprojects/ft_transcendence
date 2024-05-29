@@ -63,7 +63,7 @@ class MessageState extends State {
 				sender: userState.getState().user.id,
 			});
 		} catch (error) {
-			if (error.detail.includes("Authentication") && retryCount < 1) {
+			if (error.detail && error.detail.includes("Authentication") && retryCount < 1) {
 				// Unauthorized, try refreshing token
 				const isAuthenticated = await Authentication.instance.isAuthenticated();
 				if (isAuthenticated) {

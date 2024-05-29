@@ -1,3 +1,7 @@
+import Router from "../../router/router.js";
+import { chatState } from "../../state/chatState.js";
+import { messageState } from "../../state/messageState.js";
+
 export default class Chatsendmessagemodal extends HTMLElement {
 	constructor() {
 		super();
@@ -12,17 +16,29 @@ export default class Chatsendmessagemodal extends HTMLElement {
 		const cancelButton = this.querySelector("#cancel-btn");
         this.form = this.querySelector("form");
 
-        this.form.addEventListener("submit", (e) => {
+        this.form.addEventListener("submit", async (e) => {
             e.preventDefault();
             const content = this.form.content.value;
             if (!content || content.trim() === "") return;
-            console.log(content);
+            await this.openChat(content);
             this.form.content.value = "";
         });
 
 		backdrop.addEventListener("click", this.hide.bind(this));
 		cancelButton.addEventListener("click", this.#cancel.bind(this));
 	}
+
+    async openChat(content) {
+        try {
+            const chat = await chatState.createChat(this.userId);
+            messageState.setupWebSocket(chat.id);
+            await messageState.sendMessage(chat.id, content);
+            Router.instance.navigate(`/dashboard/chat/${chat.id}`);
+            this.hide();
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
 	disconnectedCallback() {}
 

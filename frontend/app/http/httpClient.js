@@ -29,14 +29,15 @@ export default class HttpClient {
 			}
 
 			if (!response.ok) {
-				let error = data;
+				// let error = data;
 				// Handle 2fa required
-				if (response.status === 423) {
-					error = {
+				// if (response.status === 423) {
+					let error = {
 						status: response.status,
-						detail: isJson ? data.detail : data,
+						detail: isJson ? data.detail || data : data,
+						more: data,
 					};
-				}
+				// }
 				throw error;
 			}
 
