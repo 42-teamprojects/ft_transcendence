@@ -2,6 +2,7 @@ import ChatApiService from "../api/chat/chatApiService.js";
 import ChatWebSocket from "../socket/ChatWebSocket.js";
 import State from "./state.js";
 import { userState } from "./userState.js";
+import Authentication from "../auth/authentication.js";
 
 class MessageState extends State {
 	constructor() {
@@ -51,17 +52,25 @@ class MessageState extends State {
 
 	}
 
-	async sendMessage(chatId, message) {
+	async sendMessage(chatId, message, retryCount = 0) {
 		try {
-            // Save message to the database
+			// Save message to the database
             await this.chatApiService.saveMessage(chatId, message);
-
+			
             // Send message to the WebSocket
 			this.chatSockets[chatId].send({
 				content: message,
 				sender: userState.getState().user.id,
 			});
 		} catch (error) {
+			if (error.detail.includes("Authentication") && retryCount < 1) {
+				// Unauthorized, try refreshing token
+				const isAuthenticated = await Authentication.instance.isAuthenticated();
+				if (isAuthenticated) {
+					this.sendMessage(chatId, message, retryCount + 1);
+					return;
+				}
+			}
 			console.error(error);
 		}
 	}

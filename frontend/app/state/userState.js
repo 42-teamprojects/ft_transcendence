@@ -4,7 +4,7 @@ import State from "./state.js";
 
 class UserState extends State {
 	constructor() {
-		super({ user: {} });
+		super({ user: {}, last_token_verified: null });
 		this.httpClient = new HttpClient(config.rest_url);
 	}
 
