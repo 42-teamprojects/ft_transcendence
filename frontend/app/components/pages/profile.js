@@ -27,8 +27,13 @@ export default class Profile extends HTMLElement {
                 </section>
                 <hr class="divider">
                 <section class="profile-bio">
-                <div class="settings-header mb-9">
+                    <div class="settings-header mb-9">
                         <h2 class="mb-3">Statistics</h2>
+                    </div>
+                    <div class="statistics flex-row-center gap-5">
+                        <c-statistics-card img="frontend/assets/icons/medal.svg" number="1" text="Win Streak"></c-statistics-card>
+                        <c-statistics-card img="frontend/assets/icons/medal.svg" number="8" text="Wins"></c-statistics-card>
+                        <c-statistics-card img="frontend/assets/icons/medal.svg" number="3" text="Losses"></c-statistics-card>
                     </div>
                 </section>
             </main>

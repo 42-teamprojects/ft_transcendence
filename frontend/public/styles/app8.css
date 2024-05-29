@@ -1,0 +1,7 @@
+c-statistics-card{
+    display: grid;
+    padding: 1.5rem;
+    border-radius: 10px;
+    cursor: pointer;
+    border: 1px solid var(--stroke-color);
+}
