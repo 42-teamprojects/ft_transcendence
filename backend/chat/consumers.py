@@ -3,6 +3,9 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from rest_framework_simplejwt.tokens import UntypedToken
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+from .models import Chat
+from channels.db import database_sync_to_async
+
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -19,12 +22,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
             return
 
         self.user_id = UntypedToken(self.access_token).payload['user_id']
-        print("--------------User ID: ", self.user_id)
-         
 
+        if not await self.is_user_in_room(self.user_id, self.room_name):
+            await self.close()
+            return
 
-        # self.user_id = UntypedToken(self.access_token).payload['user_id']
-        # print("--------------User ID: ", self.user_id)
         await self.channel_layer.group_add(
             self.room_name,
             self.channel_name
@@ -55,3 +57,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "content": content,
             "sender": sender,
         }))
+
+    @database_sync_to_async
+    def is_user_in_room(self, user, chat_id):
+        chat = Chat.objects.get(id=chat_id)
+        if user == chat.user1.id or user == chat.user2.id:
+            return True
+        return False
+
