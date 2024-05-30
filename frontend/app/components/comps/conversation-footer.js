@@ -12,7 +12,7 @@ export default class Conversationfooter extends HTMLElement {
 	async connectedCallback() {
 		this.render();
 		this.form = this.querySelector("form.conversation-form");
-		this.btnSubmit = this.querySelector("button.btn-send");
+		this.btnSubmit = this.querySelector("button.chat-btn");
 
 		this.form.addEventListener("submit", this.handleSubmit.bind(this));
 	}
@@ -38,7 +38,7 @@ export default class Conversationfooter extends HTMLElement {
         <div class="conversation-footer">
             <form class="conversation-form" method="POST">
                 <input class="input-field message" name="content" type="text" placeholder="Type a message" autocomplete="off">
-                <button is="c-button" type="submit" class="btn-send">
+                <button is="c-button" type="submit" class="chat-btn">
                     <img src="public/assets/icons/send.svg" alt="send">
                 </button>
             </form>

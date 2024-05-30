@@ -15,7 +15,7 @@ export default class Chatsendmessagemodal extends HTMLElement {
 		const backdrop = this.querySelector("#backdrop");
 		const cancelButton = this.querySelector("#cancel-btn");
         this.form = this.querySelector("form");
-        this.btnSubmit = this.querySelector("button.btn-send");
+        this.btnSubmit = this.querySelector("button.chat-btn");
 
         this.form.addEventListener("submit", async (e) => {
             e.preventDefault();
@@ -99,7 +99,7 @@ export default class Chatsendmessagemodal extends HTMLElement {
                 <main class="p-1">
                     <form class="flex items-center gap-2 mt-6">
                         <input class="input-field" name="content" type="text" placeholder="Type a message" autocomplete="off">
-                        <button is="c-button" type="submit" class="btn-send">
+                        <button is="c-button" type="submit" class="chat-btn">
                             <img src="public/assets/icons/send.svg" alt="send">
                         </button>
                     </form>
