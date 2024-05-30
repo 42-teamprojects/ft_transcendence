@@ -65,6 +65,11 @@ class ChatState extends State {
 		this.setState({ chats });
 	}
 
+	deleteChat(chatId) {
+		const chats = this.state.chats.filter((c) => c.id !== +chatId);
+		this.setState({ chats });
+	}
+
 	resetLoading() {
 		this.setState({ loading: true });
 	}
