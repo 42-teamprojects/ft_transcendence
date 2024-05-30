@@ -37,7 +37,6 @@ export default class Chatsendmessagemodal extends HTMLElement {
     async openChat(content) {
         try {
             const chat = await chatState.createChat(this.userId);
-            await messageState.setupWebSocket(chat.id);
             await messageState.sendMessage(chat.id, content);
             Router.instance.navigate(`/dashboard/chat/${chat.id}`);
             this.hide();

@@ -16,6 +16,7 @@ export default class Conversation extends HTMLElement {
                 <h1 class="text-xl font-medium">Loading conversation...</h1>
             </div>
             `;
+
 		this.chat = await chatState.getChat(this.chatId);
 		if (!this.chat) {
 			Toast.notify({ message: "Chat not found", type: "error" })
@@ -24,8 +25,8 @@ export default class Conversation extends HTMLElement {
 		};
 
 		this.render();
-		
-		await messageState.setupWebSocket(this.chatId);
+
+		await messageState.setup(this.chatId);
 	}
 
 	disconnectedCallback() {}

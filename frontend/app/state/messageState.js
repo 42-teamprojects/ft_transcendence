@@ -1,10 +1,12 @@
-import ChatWebSocket from "../socket/ChatWebSocket.js";
 import State from "./state.js";
 import { userState } from "./userState.js";
 import HttpClient from "../http/httpClient.js";
 import { chatState } from "./chatState.js";
+import WebSocketManager from "../socket/WebSocketManager.js";
+import { config } from "../config.js";
+import Router from "../router/router.js";
 
-const socketTimeout = 60000 * 15; // 15 minute
+const socketTimeout = 60000 * 5; // 5 minute
 
 class MessageState extends State {
 	constructor() {
@@ -12,91 +14,72 @@ class MessageState extends State {
 			messages: {},
 			loading: true,
 		});
-		this.chatSockets = {
-			// chatId: ChatWebSocket
-		};
+		this.webSocketManager = new WebSocketManager(config.chat_websocket_url);
 		this.httpClient = HttpClient.instance;
 		this.messagesFetched = {};
-		this.lastUseTimes = {};
 	}
 
 	// Sockets start
-
-	async setupWebSocket(chatId) {
+	async setup(chatId) {
 		if (!chatId) {
 			throw new Error("Chat id not provided");
 		}
 
-		if (!this.chatSockets[chatId]) {
-			this.chatSockets[chatId] = new ChatWebSocket(chatId);
-			this.lastUseTimes[chatId] = Date.now();
-
-			this.chatSockets[chatId].onOpen(() => {
-				console.log("WebSocket connection opened.");
-			});
-
-			this.chatSockets[chatId].onClose(() => {
-				console.log("WebSocket connection closed.");
-				delete this.chatSockets[chatId];
-			});
-
-			this.chatSockets[chatId].onError((error) => {
-				console.error("WebSocket error:", error);
-			});
-
-			this.chatSockets[chatId].onChatMessage(async (data) => {
-				this.appendMessage(chatId, data);
-				// Update the chat card last message
-				const chat = await chatState.getChat(chatId);
-
-				chat.last_message = data.content;
-				chat.last_message_time = new Date().toUTCString();
-				chatState.replaceChat(chat);
-
-				this.lastUseTimes[chatId] = Date.now();
-			});
-
-			this.chatSockets[chatId].connect();
-		}
 		// Get messages from the server if needed
 		await this.getMessages(chatId);
 
-		// Remove previous event listeners
-		window.removeEventListener("blur", this.blurListener);
+		// If the socket is already open, don't open it again
+		if (this.webSocketManager.sockets[chatId]) return;
+
+		// Setup the WebSocket connection
+		this.webSocketManager.setupWebSocket(
+			chatId,
+			// On message callback
+			async (event) => {
+				const message = JSON.parse(event.data); // Parse the message from the server
+				this.appendMessage(chatId, message);
+
+				// Update the chat card last message
+				await this.updateCardLastMessage(chatId, message.content);
+			},
+			// Options
+			{
+				shouldCloseOnTimeout: true,
+				timeoutDuration: socketTimeout,
+			}
+		);
+
+		/* Setup the focus listener, 
+		to reopen the WebSocket connection when the window gains focus,
+		only when the chat is open and the user is logged in */
+		this.focusListener = async () => {
+			if (!userState.state.user || this.webSocketManager.sockets[chatId]) return;
+			if (
+				Router.instance.currentRouteStartsWith("/dashboard/chat") &&
+				Router.instance.currentRouteEndsWith(chatId)
+			) {
+				this.messagesFetched[chatId] = false;
+				this.setup(chatId);
+			}
+		};
+
+		// Remove previous event listeners if exists
 		window.removeEventListener("focus", this.focusListener);
 
-		// Close the WebSocket connection when the window loses focus
-		this.blurListener = () => {
-			if (!this.chatSockets[chatId]) return;
-			this.timeoutId = setTimeout(() => {
-				// Only close the connection if it hasn't been used for 5 minutes
-                if (Date.now() - this.lastUseTimes[chatId] >= 5 * 60 * 1000) {
-                    this.closeConnection(chatId);
-                }
-            }, 5 * 60 * 1000); // 5 minutes
-		};
-		window.addEventListener("blur", this.blurListener);
-
 		// Reopen the WebSocket connection when the window gains focus
-		this.focusListener = async () => {
-			clearTimeout(this.timeoutId);
-			if (this.chatSockets[chatId]) return;
-			this.messagesFetched[chatId] = false;
-			await this.setupWebSocket(chatId);
-		};
 		window.addEventListener("focus", this.focusListener);
 	}
 
 	async sendMessage(chatId, message) {
-		if (!this.chatSockets[chatId]) {
-            await this.setupWebSocket(chatId);
-        }
+		if (!this.webSocketManager.sockets[chatId]) {
+			await this.setup(chatId);
+		}
 		try {
 			// Save message to the database
 			await this.httpClient.post(`chats/${chatId}/messages/`, { content: message });
 
 			// Send message to the WebSocket
-			this.chatSockets[chatId].send({
+			this.webSocketManager.send(chatId, {
 				content: message,
 				sender: userState.state.user.id,
 			});
@@ -104,30 +87,12 @@ class MessageState extends State {
 			console.error(error);
 		}
 	}
-
-	closeConnection(chatId) {
-		if (this.chatSockets[chatId]) {
-			this.chatSockets[chatId].close();
-			delete this.chatSockets[chatId];
-		}
-	}
-
-	closeUnusedConnections() {
-		const now = Date.now();
-		const timeout = socketTimeout;
-
-		for (const chatId in this.chatSockets) {
-			if (now - this.lastUseTimes[chatId] > timeout) {
-				this.chatSockets[chatId].close();
-				delete this.chatSockets[chatId];
-				delete this.lastUseTimes[chatId];
-			}
-		}
-	}
-
 	// Sockets end
 
 	async getMessages(chatId) {
+		if (!chatId) {
+			throw new Error("Chat id not provided");
+		}
 		if (this.messagesFetched[chatId]) return;
 		try {
 			this.resetLoading();
@@ -136,6 +101,7 @@ class MessageState extends State {
 			if (!messages[chatId]) {
 				messages[chatId] = [];
 			}
+			this.updateCardLastMessage(chatId, messages[chatId][0]?.content);
 			this.setState({ messages, loading: false });
 			this.messagesFetched[chatId] = true;
 		} catch (error) {
@@ -153,6 +119,13 @@ class MessageState extends State {
 		this.setState({ messages });
 	}
 
+	async updateCardLastMessage(chatId, messageContent) {
+		const chat = await chatState.getChat(chatId);
+		chat.last_message = messageContent;
+		chat.last_message_time = new Date().toUTCString();
+		chatState.replaceChat(chat);
+	}
+
 	resetLoading() {
 		this.setState({ loading: true });
 	}
@@ -167,5 +140,3 @@ class MessageState extends State {
 }
 
 export const messageState = new MessageState();
-
-setInterval(() => messageState.closeUnusedConnections(), socketTimeout);
