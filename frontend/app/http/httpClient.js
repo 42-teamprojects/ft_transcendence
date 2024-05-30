@@ -81,6 +81,18 @@ export default class HttpClient {
 		return this.fetch(endpoint, { ...options, method: "POST", body: JSON.stringify(body) });
 	}
 
+	async put(endpoint, body, options = {}) {
+		return this.fetch(endpoint, { ...options, method: "PUT", body: JSON.stringify(body) });
+	}
+
+	async patch(endpoint, body, options = {}) {
+		return this.fetch(endpoint, { ...options, method: "PATCH", body: JSON.stringify(body) });
+	}
+
+	async delete(endpoint, options = {}) {
+		return this.fetch(endpoint, { ...options, method: "DELETE" });
+	}
+
 	async #refreshToken() {
         return this.post('auth/jwt/refresh/');
     }
