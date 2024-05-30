@@ -1,6 +1,7 @@
 import { userState } from "../../state/userState.js";
 import { chatState } from "../../state/chatState.js";
 export default class Chatlist extends HTMLElement {
+
 	constructor() {
 		super();
 		this.user = userState.getState().user;
@@ -8,7 +9,8 @@ export default class Chatlist extends HTMLElement {
 
 	async connectedCallback() {
 		this.render();
-		await chatState.getChats();
+        // This should only run once
+        await chatState.getChats();
 	}
 
 	disconnectedCallback() {

@@ -9,6 +9,7 @@ class ChatState extends State {
 			loading: true,
 		});
 		this.user = {};
+		this.chatsFetched = false;
 		this.httpClient = HttpClient.instance;
 	}
 
@@ -30,7 +31,9 @@ class ChatState extends State {
 	}
 
 	async getChats() {
+		if (this.chatsFetched) return;
 		try {
+			this.resetLoading();
 			this.user = userState.getState().user;
 			let chats = await this.httpClient.get('chats/');
 			chats = chats.map((chat) => {
@@ -38,6 +41,7 @@ class ChatState extends State {
 				return chat;
 			});
 			this.setState({ chats, loading: false});
+			this.chatsFetched = true;
 		} catch (error) {
 			console.error(error);
 		}
@@ -69,6 +73,7 @@ class ChatState extends State {
 		this.setState({
 			chats: [],
 		});
+		this.chatsFetched = false;
 	}
 }
 

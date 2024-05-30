@@ -42,7 +42,7 @@ export default class Chatsearchmodal extends HTMLElement {
 			this.friendsResult.innerHTML = result
 				.map(
 					(user) =>
-						`<c-usercard user-id="${user.id}" username="${user.username}" status="${user.status}" img="https://api.dicebear.com/8.x/thumbs/svg?seed=Casper"></c-usercard>`
+						/*html*/`<c-usercard user-id="${user.id}" username="${user.username}" status="${user.status}" img="https://api.dicebear.com/8.x/thumbs/svg?seed=Casper"></c-usercard>`
 				)
 				.join("");
 		} catch (error) {

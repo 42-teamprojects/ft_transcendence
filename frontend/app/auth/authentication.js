@@ -1,5 +1,3 @@
-import { config } from "../config.js";
-import HttpClient from "../http/httpClient.js";
 import { userState as userState } from "../state/userState.js";
 import AuthService from "./authService.js";
 import OAuthService from "./oAuthService.js";

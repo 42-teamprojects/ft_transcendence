@@ -16,14 +16,12 @@ export default class Conversationbody extends HTMLElement {
   }
 
   disconnectedCallback() {
-      if (this.unsubscribe) {
-        this.unsubscribe();
-      }
-      messageState.reset();
+      this.unsubscribe();
+      // messageState.reset();
   }
 
   render() {
-    const messages = messageState.getState().messages;
+    const messages = messageState.getState().messages[this.chatId] || [];
     const loading = messageState.getState().loading;
     this.innerHTML = /*html*/ `
       <div class="conversation-body">

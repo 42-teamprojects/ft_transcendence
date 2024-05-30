@@ -13,9 +13,10 @@ export default class Conversationfooter extends HTMLElement {
 	connectedCallback() {
 		this.render();
 		this.form = this.querySelector("form.conversation-form");
-		this.form.addEventListener("submit", this.handleSubmit.bind(this));
 		this.btnSubmit = this.querySelector("button.btn-send");
 
+		this.form.addEventListener("submit", this.handleSubmit.bind(this));
+		
 		messageState.setupWebSocket(this.chatId);
 	}
 
@@ -23,13 +24,14 @@ export default class Conversationfooter extends HTMLElement {
 		e.preventDefault();
 		const message = this.form.content.value;
 		if (!message || message.trim() === "") return;
-
+		this.form.reset();
+		
 		this.btnSubmit.setAttribute("processing", "true")
 		this.form.content.disabled = true;
+		// Send message to the socket and server
 		await messageState.sendMessage(this.chatId, message);
 		this.btnSubmit.setAttribute("processing", "false")
 		this.form.content.disabled = false;
-		this.form.reset();
 	}
 
 	disconnectedCallback() {}

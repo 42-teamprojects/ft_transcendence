@@ -1,6 +1,8 @@
+import Router from "../../router/router.js";
 import { chatState } from "../../state/chatState.js";
 import { messageState } from "../../state/messageState.js";
 import { getMatchUrl } from "../../utils/utils.js";
+import Toast from "./toast.js";
 
 export default class Conversation extends HTMLElement {
 	constructor() {
@@ -15,7 +17,11 @@ export default class Conversation extends HTMLElement {
             </div>
             `;
 		this.chat = await chatState.getChat(this.chatId);
-		if (!this.chat) return;
+		if (!this.chat) {
+			Toast.notify({ message: "Chat not found", type: "error" })
+			Router.instance.navigate("/dashboard/chat");
+			return;
+		};
 
 		this.render();
 
