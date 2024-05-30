@@ -10,9 +10,8 @@ class App {
 		const router = new Router(routes);
 		new Core();
 		new Authentication(config.rest_url);
-		HttpClient.instance;
-		router.init();
-  
+		new HttpClient();
+		router.init();  
 		this.setupLoadingBar();
 	}
 

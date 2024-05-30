@@ -44,6 +44,7 @@ export default class Authentication {
 	async logout() {
 		try {
 			await this.authService.logout();
+			userState.setState({ user: null, token_verified_at: null });
 		} catch (error) {
 			throw error;
 		}

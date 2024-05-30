@@ -1,72 +1,75 @@
 from datetime import datetime
-import logging
+import secrets
+from django.shortcuts import redirect
 from django.conf import settings
 from rest_framework.views import APIView
-from requests_oauthlib import OAuth2Session
-import os
-from accounts.models import User
-from accounts.utils import add_cookies, generate_2fa_token
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
+import requests
+from urllib.parse import urlencode
 
-# http://localhost:8000/api/oauth/login/google/
-# http://localhost:8000/api/oauth/login/fortytwo/
-logger = logging.getLogger(__name__)
+from accounts.models import User
+from accounts.utils import add_cookies, generate_2fa_token
 
 class OAuth2LoginView(APIView):
     permission_classes = [AllowAny]
-    
+
     def get(self, request, provider):
         provider_config = settings.OAUTH2_PROVIDERS.get(provider)
         if not provider_config:
             return Response({"detail" : "Unsupported provider"}, status=status.HTTP_400_BAD_REQUEST)
 
-        os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'  # Only for development
-        oauth = OAuth2Session(
-            provider_config['client_id'],
-            redirect_uri=provider_config['redirect_uri'],
-            scope=provider_config['scope']
-        )
-        authorization_url, state = oauth.authorization_url(provider_config['authorization_url'])
+        state = secrets.token_hex(16)
 
-        # Save the state and provider in the session to validate the response later
-        request.session['oauth_state'] = state
+        params = {
+            'client_id': provider_config['client_id'],
+            'redirect_uri': provider_config['redirect_uri'],
+            'scope': ' '.join(provider_config['scope']),
+            'response_type': 'code',
+            'state': state
+        }
+
+        authorization_url = provider_config['authorization_url'] + '?' + urlencode(params)
+
+        request.session['oauth_state'] = params['state']
         request.session['oauth_provider'] = provider
-        request.session.modified = True
-        
-        return Response({ 'authorization_url': authorization_url }, status=status.HTTP_200_OK)
+
+        return redirect(authorization_url)
 
 class OAuth2CallbackView(APIView):
     permission_classes = [AllowAny]
-    
+
     def get(self, request, provider):
         provider_config = settings.OAUTH2_PROVIDERS.get(provider)
         if not provider_config:
             return Response({"detail" : "Unsupported provider"}, status=status.HTTP_400_BAD_REQUEST)
 
-        os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'  # Only for development
-
-        # Ensure 'oauth_state' exists in the session
         state = request.session.get('oauth_state')
         oauth_provider = request.session.get('oauth_provider')
 
         if not state or oauth_provider != provider:
             return Response({"detail" : "State not found or provider mismatch."}, status=status.HTTP_400_BAD_REQUEST)
 
-        oauth = OAuth2Session(
-            provider_config['client_id'],
-            redirect_uri=provider_config['redirect_uri'],
-            state=state
-        )
-        token = oauth.fetch_token(
-            provider_config['token_url'],
-            authorization_response=request.build_absolute_uri(),
-            client_secret=provider_config['client_secret']
-        )
+        code = request.GET.get('code')
 
-        # Fetch user profile
-        response = oauth.get(provider_config['profile_url'])
+        data = {
+            'grant_type': 'authorization_code',
+            'code': code,
+            'redirect_uri': provider_config['redirect_uri'],
+            'client_id': provider_config['client_id'],
+            'client_secret': provider_config['client_secret']
+        }
+
+        response = requests.post(provider_config['token_url'], data=data)
+        response.raise_for_status()
+
+        token = response.json().get('access_token')
+
+        headers = {'Authorization': f'Bearer {token}'}
+        response = requests.get(provider_config['profile_url'], headers=headers)
+        response.raise_for_status()
+
         profile = response.json()
 
         # Clear session state
