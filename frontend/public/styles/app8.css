@@ -1,22 +1,25 @@
 c-statistics-card {
     display: inline-grid;
-    grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
     padding: 1rem;
     border-radius: 10px;
     border: 1px solid var(--stroke-color);
-    margin: 10px;
-    background-color: green;
-    /* .statistics-card{
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        padding: 1rem;
-    } */
+    margin: 2px;
+    h3{
+        color: var(--text-color);
+        display: inline-block;
+        margin: 5px;
+        padding: 5px;
+    }
+    p {
+        color: var(--stroke-color);
+    }
+    img {
+        margin-top: 0px;
+    }
 }
 
 .statistics{
-    background-color: red;
     display: inline-grid;
     grid-template-columns: 1fr 1fr;
 }
