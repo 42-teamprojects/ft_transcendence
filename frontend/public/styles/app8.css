@@ -14,9 +14,6 @@ c-statistics-card {
     p {
         color: var(--stroke-color);
     }
-    img {
-        margin-top: 0px;
-    }
 }
 
 .statistics{
