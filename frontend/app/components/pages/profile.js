@@ -30,7 +30,7 @@ export default class Profile extends HTMLElement {
                     <div class="settings-header mb-9">
                         <h2 class="mb-3">Statistics</h2>
                     </div>
-                    <div class="statistics grid-3">
+                    <div class="statistics">
                         <c-statistics-card img="/public/assets/icons/cho3la.svg" number="5" text="Games Played"></c-statistics-card>
                         <c-statistics-card img="/public/assets/icons/bar9.svg" number="8" text="Wins"></c-statistics-card>
                         <c-statistics-card img="/public/assets/icons/camera.svg" number="3" text="Losses"></c-statistics-card>

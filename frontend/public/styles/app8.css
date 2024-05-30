@@ -1,14 +1,22 @@
 c-statistics-card {
     display: inline-grid;
     grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
-    /* grid-gap: 1rem; */
-    padding: 1.5rem;
+    padding: 1rem;
     border-radius: 10px;
     border: 1px solid var(--stroke-color);
     margin: 10px;
-    .statistics-card{
-        display: grid;
-        grid-template-columns: 1fr;
-        grid-template-rows: 1fr 1fr;
-    }
+    background-color: green;
+    /* .statistics-card{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 1rem;
+    } */
+}
+
+.statistics{
+    background-color: red;
+    display: inline-grid;
+    grid-template-columns: 1fr 1fr;
 }
