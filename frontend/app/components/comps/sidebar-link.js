@@ -11,6 +11,7 @@ export default class SidebarLink extends HTMLElement {
           tournaments: "/public/assets/game/sidebar-icons/leaderboard.svg",
           settings: "/public/assets/game/sidebar-icons/settings.svg",
           shop: "/public/assets/game/sidebar-icons/shop.svg",
+          profile: "https://api.dicebear.com/8.x/thumbs/svg?seed=hamza"
       };
       this.isActive = isThere(["true", ""], this.getAttribute("active"), false);
     }
@@ -36,7 +37,7 @@ export default class SidebarLink extends HTMLElement {
     render() {
       this.innerHTML = /*html*/`
         <a is="c-link" href="/dashboard/${this.link}" class="sidebar-link ${this.isActive && 'active'}">
-          <img src="${this.icons[this.link]}" alt="${this.link}"/>
+          <img class="${this.link === "profile" ? "profile_icon" : ""}" src="${this.icons[this.link]}" alt="${this.link}"/>
           <div class="font-bold uppercase spacing-1">${this.textContent}</div>
         </a>
       `;
