@@ -24,8 +24,8 @@ export default class Conversation extends HTMLElement {
 		};
 
 		this.render();
-
-		await messageState.getMessages(this.chatId);
+		
+		await messageState.setupWebSocket(this.chatId);
 	}
 
 	disconnectedCallback() {}

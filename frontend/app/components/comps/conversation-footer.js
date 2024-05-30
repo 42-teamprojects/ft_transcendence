@@ -7,19 +7,16 @@ export default class Conversationfooter extends HTMLElement {
 		super();
 		this.chatId = getMatchUrl(/^\/dashboard\/chat\/(\w+)\/?$/);
 		this.user = userState.state.user;
-		this.chatSocket = null;
 	}
 
-	connectedCallback() {
+	async connectedCallback() {
 		this.render();
 		this.form = this.querySelector("form.conversation-form");
 		this.btnSubmit = this.querySelector("button.btn-send");
 
 		this.form.addEventListener("submit", this.handleSubmit.bind(this));
-		
-		messageState.setupWebSocket(this.chatId);
 	}
-
+	
 	async handleSubmit(e) {
 		e.preventDefault();
 		const message = this.form.content.value;
