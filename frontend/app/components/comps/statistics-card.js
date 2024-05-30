@@ -19,7 +19,6 @@ export default class Statisticscard extends HTMLElement {
             <h3 class="stat-number">${this.numberAtt}</h3>
             <p class="stat-text">${this.textAtt}</p>
         </div>
-
         `;
     }
 }
