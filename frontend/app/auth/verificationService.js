@@ -1,7 +1,9 @@
+import HttpClient from "../http/httpClient.js";
+
 export default class VerificationService {
-	constructor(httpClient) {
-		this.httpClient = httpClient;
-	}
+	constructor() {
+        this.httpClient = HttpClient.instance;
+    }
 
 	// Password reset
 	async sendPasswordResetEmail(data) {

@@ -1,6 +1,4 @@
-import { config } from "../config.js";
-import HttpClient from "../http/httpClient.js";
-import { userService as userState } from "../state/userService.js";
+import { userState as userState } from "../state/userState.js";
 import AuthService from "./authService.js";
 import OAuthService from "./oAuthService.js";
 import UserService from "./userService.js";
@@ -15,12 +13,11 @@ export default class Authentication {
 		}
 		Authentication.#instance = this;
 
-		this.httpClient = new HttpClient(config.rest_url);
 		// Initialize services
-		this.authService = new AuthService(this.httpClient);
-		this.oauthService = new OAuthService(this.httpClient);
-		this.verificationService = new VerificationService(this.httpClient);
-		this.userService = new UserService(this.httpClient);
+		this.authService = new AuthService();
+		this.oauthService = new OAuthService();
+		this.verificationService = new VerificationService();
+		this.userService = new UserService();
 	}
 
 	static get instance() {
@@ -46,6 +43,7 @@ export default class Authentication {
 
 	async logout() {
 		try {
+			userState.setState({ user: null, token_verified_at: null });
 			await this.authService.logout();
 		} catch (error) {
 			throw error;
@@ -54,11 +52,21 @@ export default class Authentication {
 
 	async isAuthenticated() {
 		try {
+			const now = Date.now();
+			const fiveMinutes = 5 * 60 * 1000; // 5 minutes in milliseconds
+
+			// If it's been less than 5 minutes since the last verification, skip the call
+			if (userState.state.token_verified_at && now - userState.state.token_verified_at < fiveMinutes) {
+				return true;
+			}
+
 			const result = await this.authService.isAuthenticated();
 			if (!result) {
 				return false;
 			}
-			userState.setState({ user: result });
+
+			// Update the token_verified_at timestamp in the userState
+			userState.setState({ user: result, token_verified_at: now });
 			return true;
 		} catch (error) {
 			throw error;

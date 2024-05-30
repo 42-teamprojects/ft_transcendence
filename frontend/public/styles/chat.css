@@ -128,9 +128,11 @@
 }
 
 .message-card__img{
-    border-radius: 100%;
     width: 50px;
-    /* align-self: flex-start; */
+	height: 50px;
+	object-fit: cover;
+	border-radius: 100%;
+	flex-shrink: 0;
 }
 
 .message-card__content {
@@ -209,7 +211,7 @@
     gap: 1rem;
 }
 
-.btn-send {
+.chat-btn {
     background: none;
     border: none;
     cursor: pointer;

@@ -9,6 +9,7 @@ export default class Components extends HTMLElement {
 
 	connectedCallback() {
 		this.render();
+        // Handling Modal events
 		const modal = this.querySelector("c-modal");
 
 		modal.addEventListener("confirm", () => {
@@ -19,6 +20,7 @@ export default class Components extends HTMLElement {
 			console.log("Cancelled...");
 		});
 
+        // Handling Toast events
 		document.getElementById("notify").addEventListener("click", () => {
 			Toast.notify({ type: "success", message: "Your changes have been saved" });
 		});
@@ -32,12 +34,14 @@ export default class Components extends HTMLElement {
 			Toast.notify({ type: "info", message: "Some thing went wrong" });
 		});
 
+        // Handling Paddle Options form
 		this.querySelector("#paddlesForm").addEventListener("submit", (e) => {
 			e.preventDefault();
 			this.querySelector("#selected-paddle").innerText = `Selected paddle: ${
 				useFormData(e.target).getObject()["paddle-option"]
 			}`;
 		});
+        // Handling Table Themes form
 		this.querySelector("#themesForm").addEventListener("submit", (e) => {
 			e.preventDefault();
 			this.querySelector("#selected-theme").innerText = `Selected theme: ${
@@ -102,7 +106,7 @@ export default class Components extends HTMLElement {
                         </div>
                     </div>
                 </div>
-                <div class="modal my-8">
+                <div class="confirm-modal my-8">
                     <h2 class="pb-3">Modal</h2>
                     <c-modal title="Delete record" subtitle="Are you sure you want to accept?"></c-modal>
                     <button class="btn-secondary" onclick="document.querySelector('c-modal').open()">Open modal</button>
@@ -139,9 +143,9 @@ export default class Components extends HTMLElement {
                     </form>
                 </div>
                 <div class="tournaments-card flex gap-3">
-                    <c-tournament-card></c-tournament-card>
-                    <c-tournament-card></c-tournament-card>
-                    <c-tournament-card></c-tournament-card>
+                    <c-tournament-card players="8"></c-tournament-card>
+                    <c-tournament-card players="8"></c-tournament-card>
+                    <c-tournament-card players="8"></c-tournament-card>
                 </div>
 
                 <div>
@@ -154,6 +158,19 @@ export default class Components extends HTMLElement {
 
                 <div>
                     <c-friendscard></c-friendscard>
+                </div>
+
+                <div class="dropdown-component">
+                    <div class="dropdown-wrapper">
+                        <button class="btn-primary dropdown-button"> 
+                            Dropdown
+                        </button>
+                        <c-dropdown></c-dropdown>
+                    </div>
+                </div>
+                
+                <div class="skeleton-loading">
+                    <c-loading-chat-card></c-loading-chat-card>
                 </div>
                 `;
 	}

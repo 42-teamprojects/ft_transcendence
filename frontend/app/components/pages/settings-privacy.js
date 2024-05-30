@@ -1,11 +1,11 @@
-import { userService } from "../../state/userService.js";
+import { userState } from "../../state/userState.js";
 import Toast from "../comps/toast.js";
 
 export default class Settingsprivacy extends HTMLElement {
 	constructor() {
 		super();
 		document.title = "Settings | Privacy";
-		this.user = userService.getState().user;
+		this.user = userState.state.user;
 	}
 
 	connectedCallback() {
@@ -17,10 +17,10 @@ export default class Settingsprivacy extends HTMLElement {
 	}
 
 	handle2FAEnable() {
-		if (!userService.isVerified()) {
+		if (!userState.isVerified()) {
 			Toast.notify({ type: "warning", message: "You need to verify your email before enabling 2FA" });
 			return;
-		} else if (userService.isVerified() && !userService.is2FAEnabled() && this.twoFactorModal) {
+		} else if (userState.isVerified() && !userState.is2FAEnabled() && this.twoFactorModal) {
 			this.twoFactorModal.open();
 		} else {
 			Toast.notify({ type: "warning", message: "2FA is already enabled" });
@@ -44,14 +44,14 @@ export default class Settingsprivacy extends HTMLElement {
         `
 
 		this.innerHTML = /*html*/ `
-        ${userService.isVerified() && !userService.is2FAEnabled() ? `<c-enable-2fa-modal></c-enable-2fa-modal>` : ""}
+        ${userState.isVerified() && !userState.is2FAEnabled() ? `<c-enable-2fa-modal></c-enable-2fa-modal>` : ""}
         <div class="dashboard-content">
             <main class="flex-col gap-16 mb-12">
                 <div class="settings-header">
                     <h1 class="mb-3">Settings</h1>
                     <h3 class="font-normal text-stroke">Privacy, Password, 2FA...</h3>
                 </div>
-                ${!userService.isProvider() ? changePasswordSection : ""}
+                ${!userState.isProvider() ? changePasswordSection : ""}
                 <section class="two-factor-auth">
                     <div class="settings-header mb-9">
                         <h2 class="mb-3">Two-factor authentication</h2>

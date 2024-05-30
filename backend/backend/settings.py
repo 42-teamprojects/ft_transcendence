@@ -60,6 +60,7 @@ REST_FRAMEWORK = {
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -70,13 +71,33 @@ INSTALLED_APPS = [
     'corsheaders',
     'djoser',
     # Apps
+    'chat',
     'accounts',
     'security',
     'game',
     'oauth',
-    'chat',
     'users'
 ]
+
+ASGI_APPLICATION = 'backend.asgi.application'
+
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels_redis.core.RedisChannelLayer",
+#         "CONFIG": {
+#             "hosts": [('127.0.0.1', 6379)],
+#         },
+#     },
+# }
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [(os.getenv('REDIS_HOST', 'redis'), int(os.getenv('REDIS_PORT', 6379)))],
+        },
+    },
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -179,7 +200,7 @@ EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 
 # JWT
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': False,
@@ -231,9 +252,7 @@ SIMPLE_JWT = {
 # CORS
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
-    "http://127.0.0.1:8080",    
-    "https://localhost",
-    "https://127.0.0.1",   
+    "http://127.0.0.1:8080",
 ]
 CORS_ALLOW_CREDENTIALS = True
 
@@ -259,7 +278,7 @@ if SSL_CERTIFICATE and SSL_KEY:
     # Make sure DEBUG is True and ALLOWED_HOSTS is properly configured
     # SSL must be enabled only for development, not production
     # Use localhost for development
-    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+    ALLOWED_HOSTS += ['localhost', '127.0.0.1']
     # The SSL options
     SSLPORT = 8443  # Choose any available port you prefer
 

@@ -1,4 +1,4 @@
-import { userService } from "../../state/userService.js";
+import { userState } from "../../state/userState.js";
 import { handleFormSubmitApi } from "../../utils/utils.js";
 import { validateEmail, validateFullName, validateRequire, validateUsername } from "../../utils/validations.js";
 import Toast from "./toast.js";
@@ -6,7 +6,7 @@ import Toast from "./toast.js";
 export default class Updateuserinfoform extends HTMLElement {
 	constructor() {
 		super();
-		this.user = userService.getState().user;
+		this.user = userState.state.user;
 	}
 
 	connectedCallback() {

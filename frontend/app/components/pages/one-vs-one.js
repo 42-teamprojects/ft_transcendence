@@ -1,7 +1,7 @@
 import { useFormData } from "../../utils/useForm.js";
 import Toast from "../comps/toast.js";
 import Router from "../../router/router.js";
-import { matchService } from "../../state/matchService.js";
+import { matchState } from "../../state/matchState.js";
 import LocalMatch from "../../entities/LocalMatch.js";
 
 export default class Onevsone extends HTMLElement {
@@ -49,7 +49,7 @@ export default class Onevsone extends HTMLElement {
         const localMatch = new LocalMatch(p1, p2);
         localMatch.setTheme(selectedTheme);
 
-        matchService.setMatch(localMatch);
+        matchState.setMatch(localMatch);
 
         Router.instance.navigate(`/local/1v1/game`);
     }

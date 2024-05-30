@@ -1,11 +1,11 @@
 import { config } from "../config.js";
 import HttpClient from "../http/httpClient.js";
-import Service from "./service.js";
+import State from "./state.js";
 
-class UserService extends Service {
+class UserState extends State {
 	constructor() {
-		super({ user: {} });
-		this.httpClient = new HttpClient(config.rest_url);
+		super({ user: {}, token_verified_at: null });
+		this.httpClient = HttpClient.instance;
 	}
 
 	async fetchMe() {
@@ -33,8 +33,9 @@ class UserService extends Service {
 	reset() {
 		this.setState({
 			user: {},
+			token_verified_at: null
 		});
 	}
 }
 
-export const userService = new UserService();
+export const userState = new UserState();

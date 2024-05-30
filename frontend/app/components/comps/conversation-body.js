@@ -1,27 +1,45 @@
-import { chatService } from "../../state/chatService.js";
+import { messageState } from "../../state/messageState.js";
+import { userState } from "../../state/userState.js";
+import { getMatchUrl } from "../../utils/utils.js";
 
 export default class Conversationbody extends HTMLElement {
-    constructor() {
-        super();
-    }
+  constructor() {
+    super();
+    this.user = userState.state.user;
+    this.chatId = getMatchUrl(/^\/dashboard\/chat\/(\w+)\/?$/);
+  }
 
-    connectedCallback() {
-        this.render();
-        this.unsubscribe = chatService.subscribe(() => {
-            this.render();
-        });
-    }
 
-    disconnectedCallback() {}
+  async connectedCallback() {
+      this.render();
+      this.unsubscribe = messageState.subscribe(() => this.render());
+  }
 
-    render() {
-        const messages = chatService.getState().messages;
-        this.innerHTML = /*html*/`
-        <div class="conversation-body">
-            ${messages.map((message) => /*html*/`
-                <c-message-bubble type="${message.sender === 'me' ? 'out' : 'in'}" message="${message.message}"></c-message-bubble>
-            `).join("")}
-        </div>
-        `;
-    }
+  disconnectedCallback() {
+      this.unsubscribe();
+      // messageState.reset();
+  }
+
+  render() {
+    const messages = messageState.state.messages[this.chatId] || [];
+    const loading = messageState.state.loading;
+    this.innerHTML = /*html*/ `
+      <div class="conversation-body">
+        ${loading ? /*html*/ `
+          <div class="flex-center vh-full">
+              <h1 class="text-xl font-medium">Loading messages...</h1>
+          </div>
+        ` : ""}
+        ${messages
+          .map(
+            (message) => /*html*/ `
+              <c-message-bubble type="${
+                message.sender === this.user.id ? "out" : "in"
+              }" message="${message.content}"></c-message-bubble>
+            `
+          )
+          .join("")}
+      </div>
+    `;
+  }
 }

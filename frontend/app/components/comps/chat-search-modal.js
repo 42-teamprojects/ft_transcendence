@@ -1,80 +1,109 @@
+import HttpClient from "../../http/httpClient.js";
+import { UserStatus } from "../../entities/UserStatus.js";
+import Toast from "./toast.js";
 
 export default class Chatsearchmodal extends HTMLElement {
-    constructor() {
-        super();
-        this.isOpen = false;
-    }
+	constructor() {
+		super();
+		this.isOpen = false;
+		this.httpClient = HttpClient.instance;
+	}
 
-    connectedCallback() {
-        this.render();
-        const backdrop = this.querySelector('#backdrop');
-        const cancelButton = this.querySelector('#cancel-btn');
-        // const confirmButton = this.querySelector('#confirm-btn');
-        backdrop.addEventListener('click', this.hide.bind(this));
-        cancelButton.addEventListener('click', this.#cancel.bind(this));
-        // confirmButton.addEventListener('click', this.#confirm.bind(this));
-    }
+	connectedCallback() {
+		this.render();
+		const backdrop = this.querySelector("#backdrop");
+		const cancelButton = this.querySelector("#cancel-btn");
+		this.searchFriends = this.querySelector("#search-friends");
+		this.friendsResult = this.querySelector(".friends-result");
 
-    disconnectedCallback() {}
+		this.searchFriends.addEventListener("submit", this.handleSearch.bind(this));
+		backdrop.addEventListener("click", this.hide.bind(this));
+		cancelButton.addEventListener("click", this.#cancel.bind(this));
+	}
 
-    attributeChangedCallback(name, oldValue, newValue) {
-        if (this.hasAttribute('opened')) {
-            this.isOpen = true;
-        } else {
-            this.isOpen = false;
+	async handleSearch(e) {
+		e.preventDefault();
+        
+		const keyword = this.searchFriends.keyword.value;
+        // check if keyword only have characters and numbers and @ and . only
+        if (!/^[a-zA-Z0-9@.]*$/.test(keyword)) {
+            Toast.notify({ type: "error", message: "Invalid search keyword" });
+            return;
         }
-    }
+		if (!keyword || keyword.trim() === "") return;
+		try {
+			const result = await this.httpClient.get(`users/${keyword}`);
+            if (result.length === 0) {
+                Toast.notify({ type: "info", message: "No user found" });
+                return;
+            }
 
-    static get observedAttributes() {
-        return ['opened'];
-    }
+			this.searchFriends.reset();
+			this.friendsResult.innerHTML = result
+				.map(
+					(user) =>
+						/*html*/`<c-usercard user-id="${user.id}" username="${user.username}" status="${user.status}" img="https://api.dicebear.com/8.x/thumbs/svg?seed=Casper"></c-usercard>`
+				)
+				.join("");
+		} catch (error) {
+			console.error(error);
+			Toast.notify({ type: "error", message: "An error occurred while searching for friends" });
+		}
+	}
 
-    open() {
-        this.setAttribute('opened', '');
-        this.isOpen = true;
-    }
+	disconnectedCallback() {}
 
-    hide() {
-        if (this.hasAttribute('opened')) {
-            this.removeAttribute('opened');
-        }
-        this.isOpen = false;
-    }
+	attributeChangedCallback(name, oldValue, newValue) {
+		if (this.hasAttribute("opened")) {
+			this.isOpen = true;
+		} else {
+			this.isOpen = false;
+		}
+	}
 
-    #cancel(event) {
-        this.hide();
-    }
+	static get observedAttributes() {
+		return ["opened"];
+	}
 
-    #confirm() {
-        this.hide();
-    }
-    render() {
-        this.innerHTML = /*html*/`
+	open() {
+		this.setAttribute("opened", "");
+		this.isOpen = true;
+	}
+
+	hide() {
+		if (this.hasAttribute("opened")) {
+			this.removeAttribute("opened");
+		}
+		this.isOpen = false;
+	}
+
+	#cancel(event) {
+		this.hide();
+	}
+
+	#confirm() {
+		this.hide();
+	}
+	render() {
+		this.innerHTML = /*html*/ `
             <div id="backdrop"></div>
             <div class="modal">
+                <i id="cancel-btn" class="fa fa-times close-icon text-2xl cursor-pointer hover absolute" style="top: 1.25rem; right: 1.5rem"></i>
                 <header class="text-center">
                     <h1 id="title" class="text-3xl font-bold mb-2">Search for friends   </h1>
                     <h2 id="subtitle" class="text-xl font-normal text-stroke spacing-2">find your friends or new ones</h2>
                 </header>
-                <form class="flex items-center gap-2 mt-6 mb-6">
-                    <input type="text" class="input-field" placeholder="Search username, Email..." />
-                    <button class="btn-secondary py-4" style="width: 0"><i class="fa fa-search"></i></button> 
+                <form class="flex items-center gap-2 mt-6 mb-6" id="search-friends">
+                    <input type="text" class="input-field" name="keyword" placeholder="Search username, Email..." />
+                    <button class="btn-secondary py-4 w-0">
+                        <i class="fa fa-search"></i>
+                    </button> 
                 </form>
                 <main>
                     <div class="flex-center flex-wrap friends-result" style="gap: 2rem 3rem;">
-                        <c-usercard username="HassanOigag" status="offline" img="https://api.dicebear.com/8.x/thumbs/svg?seed=Casper"></c-usercard>
-                        <c-usercard username="YusufIsawi" status="online" img="https://api.dicebear.com/8.x/thumbs/svg?seed=Garfield"></c-usercard>
-                        <c-usercard username="Jhonesnow" status="playing" img="https://api.dicebear.com/8.x/thumbs/svg?seed=youssef"></c-usercard>
-                        <c-usercard username="msodor" status="playing" img="https://api.dicebear.com/8.x/thumbs/svg?seed=mouad"></c-usercard>
-                        <c-usercard username="hassssan" status="playing" img="https://api.dicebear.com/8.x/thumbs/svg?seed=hassan"></c-usercard>
-                        <c-usercard username="hamzaaa" status="playing" img="https://api.dicebear.com/8.x/thumbs/svg?seed=hamza"></c-usercard>
                     </div>
                 </main>
-                <section class="actions mt-6">
-                    <button id="cancel-btn" class="btn-default text-secondary w-full">Cancel</button>
-                </section>
             </div>
         `;
-    }
+	}
 }
-
