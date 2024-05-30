@@ -67,7 +67,7 @@ class MessageState extends State {
             // Send message to the WebSocket
 			this.chatSockets[chatId].send({
 				content: message,
-				sender: userState.getState().user.id,
+				sender: userState.state.user.id,
 			});
 		} catch (error) {
 			console.error(error);

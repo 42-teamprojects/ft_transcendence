@@ -8,7 +8,7 @@ export default class Tournamentgame extends HTMLElement {
         super();
         document.title = "Tournament Gameplay | Blitzpong.";
 
-        this.match = matchState.getState().match
+        this.match = matchState.state.match
         if (this.match === null) {
             Toast.notify({ type: "warning", message: "Please setup your game" })
             Router.instance.navigate('/local/tournament')

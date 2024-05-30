@@ -51,11 +51,21 @@ export default class Authentication {
 
 	async isAuthenticated() {
 		try {
+			const now = Date.now();
+			const fiveMinutes = 5 * 60 * 1000; // 5 minutes in milliseconds
+
+			// If it's been less than 5 minutes since the last verification, skip the call
+			if (userState.state.token_verified_at && now - userState.state.token_verified_at < fiveMinutes) {
+				return true;
+			}
+
 			const result = await this.authService.isAuthenticated();
 			if (!result) {
 				return false;
 			}
-			userState.setState({ user: result });
+
+			// Update the token_verified_at timestamp in the userState
+			userState.setState({ user: result, token_verified_at: now });
 			return true;
 		} catch (error) {
 			throw error;

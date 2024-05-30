@@ -47,7 +47,7 @@ export default class Match extends HTMLElement {
     }
     
     findMatch() {
-        const { matches } = tournamentState.getState();
+        const { matches } = tournamentState.state;
         const match = matches.find(match => match.id === this.matchId);
         this.match = match;
     }

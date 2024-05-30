@@ -12,7 +12,7 @@ class MatchState extends State {
 	}
 
 	setWinner(winner) {
-		const newMatch = this.getState().match;
+		const newMatch = this.state.match;
 		newMatch.winner = winner;
 		this.setMatch(newMatch);
 	}

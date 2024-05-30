@@ -6,7 +6,7 @@ export default class Conversationfooter extends HTMLElement {
 	constructor() {
 		super();
 		this.chatId = getMatchUrl(/^\/dashboard\/chat\/(\w+)\/?$/);
-		this.user = userState.getState().user;
+		this.user = userState.state.user;
 		this.chatSocket = null;
 	}
 

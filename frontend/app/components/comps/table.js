@@ -27,7 +27,7 @@ export default class Table extends HTMLElement {
 		this.handleKeyDownF = this.handleKeyDown.bind(this);
 		this.handleKeyUpF = this.handleKeyUp.bind(this);
 
-		this.match = matchState.getState().match;
+		this.match = matchState.state.match;
 		this.theme = this.match.theme;
 
 		this.finalScore = config.finalScore;

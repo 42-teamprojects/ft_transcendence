@@ -34,7 +34,7 @@ class ChatState extends State {
 		if (this.chatsFetched) return;
 		try {
 			this.resetLoading();
-			this.user = userState.getState().user;
+			this.user = userState.state.user;
 			let chats = await this.httpClient.get('chats/');
 			chats = chats.map((chat) => {
 				chat.friend = this.getFriend(chat);

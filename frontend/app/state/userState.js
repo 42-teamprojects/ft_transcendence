@@ -4,7 +4,7 @@ import State from "./state.js";
 
 class UserState extends State {
 	constructor() {
-		super({ user: {}, last_token_verified: null });
+		super({ user: {}, token_verified_at: null });
 		this.httpClient = HttpClient.instance;
 	}
 
@@ -33,6 +33,7 @@ class UserState extends State {
 	reset() {
 		this.setState({
 			user: {},
+			token_verified_at: null
 		});
 	}
 }

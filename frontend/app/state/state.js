@@ -1,15 +1,26 @@
 export default class State {
+  #state;
   constructor(initialState = {}) {
-    this.state = initialState;
+    this.#state = initialState;
     this.listeners = new Set();
   }
 
-  getState() {
-    return this.state;
+  get state() {
+    return this.#state;
   }
 
+  
+  getState() {
+    return this.#state;
+  }
+  
+  set state(newState) {
+    this.#state = { ...this.#state, ...newState };
+    this.notify();
+  }
+  
   setState(newState) {
-    this.state = { ...this.state, ...newState };
+    this.#state = { ...this.#state, ...newState };
     this.notify();
   }
 

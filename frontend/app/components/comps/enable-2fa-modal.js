@@ -127,7 +127,7 @@ export default class Enable2famodal extends HTMLElement {
             }
 			const response = await this.authentication.enableTwoFactorAuth(data);
 			Toast.notify({ type: "success", message: "2FA enabled" });
-			userState.setState({ user: {...userState.getState().user, two_factor_enabled: true}});
+			userState.setState({ user: {...userState.state.user, two_factor_enabled: true}});
 			return response;
 		} catch (error) {
 			Toast.notify({ type: "error", message: error.detail });

@@ -5,7 +5,7 @@ import { getMatchUrl } from "../../utils/utils.js";
 export default class Conversationbody extends HTMLElement {
   constructor() {
     super();
-    this.user = userState.getState().user;
+    this.user = userState.state.user;
     this.chatId = getMatchUrl(/^\/dashboard\/chat\/(\w+)\/?$/);
   }
 
@@ -21,8 +21,8 @@ export default class Conversationbody extends HTMLElement {
   }
 
   render() {
-    const messages = messageState.getState().messages[this.chatId] || [];
-    const loading = messageState.getState().loading;
+    const messages = messageState.state.messages[this.chatId] || [];
+    const loading = messageState.state.loading;
     this.innerHTML = /*html*/ `
       <div class="conversation-body">
         ${loading ? /*html*/ `

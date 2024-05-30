@@ -27,7 +27,7 @@ export default class Dropdown extends HTMLElement {
 		const username = userCard.getAttribute("username");
 
 		// Check if the chat already exists
-		const chat = chatState.getState().chats.find((c) => c.friend.id === parseInt(userId))
+		const chat = chatState.state.chats.find((c) => c.friend.id === parseInt(userId))
 		// If the chat exists, navigate to the chat
 		if (chat) {
 			Router.instance.navigate(`/dashboard/chat/${chat.id}`);

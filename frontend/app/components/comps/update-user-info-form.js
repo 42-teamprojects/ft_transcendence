@@ -6,7 +6,7 @@ import Toast from "./toast.js";
 export default class Updateuserinfoform extends HTMLElement {
 	constructor() {
 		super();
-		this.user = userState.getState().user;
+		this.user = userState.state.user;
 	}
 
 	connectedCallback() {

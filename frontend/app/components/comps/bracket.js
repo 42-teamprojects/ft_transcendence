@@ -7,7 +7,7 @@ export default class Bracket extends HTMLElement {
 	}
 
 	connectedCallback() {
-		this.tournamentDetails = tournamentState.getState();
+		this.tournamentDetails = tournamentState.state;
 
 		this.render();
 

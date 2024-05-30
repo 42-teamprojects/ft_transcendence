@@ -20,7 +20,7 @@ export default class Chatlistitems extends HTMLElement {
     }
 
     render() {
-        const chatCards = chatState.getState().chats.map((chat) => /*html*/ `        
+        const chatCards = chatState.state.chats.map((chat) => /*html*/ `        
         <c-chat-card chat-id="${chat.id}" username="${
 				chat.friend.username
 			}" img="https://api.dicebear.com/8.x/thumbs/svg?seed=yousef" msg="${chat.last_message}" time="${
@@ -30,7 +30,7 @@ export default class Chatlistitems extends HTMLElement {
 
         this.innerHTML = /*html*/`
         ${
-            chatState.getState().loading
+            chatState.state.loading
                 ? /*html*/ `
           <c-loading-chat-card></c-loading-chat-card>
           <c-loading-chat-card></c-loading-chat-card>

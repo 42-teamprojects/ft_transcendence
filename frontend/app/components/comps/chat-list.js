@@ -4,7 +4,7 @@ export default class Chatlist extends HTMLElement {
 
 	constructor() {
 		super();
-		this.user = userState.getState().user;
+		this.user = userState.state.user;
 	}
 
 	async connectedCallback() {

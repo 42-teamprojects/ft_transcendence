@@ -7,7 +7,7 @@ export default class Gameplay extends HTMLElement {
         super();
         document.title = "Gameplay | Blitzpong.";
 
-        this.match = matchState.getState().match
+        this.match = matchState.state.match
         if (this.match === null) {
             Toast.notify({ type: "warning", message: "Please setup your game" })
             Router.instance.navigate('/local/1v1')

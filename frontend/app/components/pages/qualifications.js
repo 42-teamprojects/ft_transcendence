@@ -18,7 +18,7 @@ export default class Qualifications extends HTMLElement {
 	}
 
 	connectedCallback() {
-		this.tournamentDetails = tournamentState.getState();
+		this.tournamentDetails = tournamentState.state;
 		if (!this.tournamentDetails.playersNumber || this.tournamentDetails.playersNumber === 0) {
 			Toast.notify({ type: "error", message: "Please make sure all the players are registred" });
 			Router.instance.navigate("/local/tournament");
@@ -26,7 +26,7 @@ export default class Qualifications extends HTMLElement {
 		}
 		this.update();
 		this.unsubscribe = tournamentState.subscribe(() => {
-			this.tournamentDetails = tournamentState.getState();
+			this.tournamentDetails = tournamentState.state;
 			this.update();
 		});
 	}

@@ -80,7 +80,7 @@ export default class Gameovermodal extends HTMLElement {
 
     #confirm() {
         this.hide();
-        matchState.getState().match.resetScore();
+        matchState.state.match.resetScore();
         Router.instance.reload();
     }
 

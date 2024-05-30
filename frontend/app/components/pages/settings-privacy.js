@@ -5,7 +5,7 @@ export default class Settingsprivacy extends HTMLElement {
 	constructor() {
 		super();
 		document.title = "Settings | Privacy";
-		this.user = userState.getState().user;
+		this.user = userState.state.user;
 	}
 
 	connectedCallback() {
