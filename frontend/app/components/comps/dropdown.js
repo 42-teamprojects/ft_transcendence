@@ -71,6 +71,11 @@ export default class Dropdown extends HTMLElement {
 		this.innerHTML = /*html*/ `
             <div class="dropdown-content">
                 <ul class="dropdown__menu">
+					<li class="dropdown__item">
+						<i class="fa-solid fa-eye dropdown__icon"></i>
+						<span class="dropdown__name">Profile</span>
+					</li>
+				
 					<li class="dropdown__item" id="dropdown-chat">
 						<i class="fa-solid fa-comment dropdown__icon"></i>
 						<span class="dropdown__name">Chat</span>
@@ -81,10 +86,6 @@ export default class Dropdown extends HTMLElement {
 						<span class="dropdown__name">Play</span>
 					</li>
 
-					<li class="dropdown__item">
-						<i class="fa-solid fa-xmark dropdown__icon"></i>
-						<span class="dropdown__name">Unfriend</span>
-					</li>
                 </ul>
             </div>
         `;

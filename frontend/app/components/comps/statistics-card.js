@@ -14,10 +14,12 @@ export default class Statisticscard extends HTMLElement {
 
     render() {
         this.innerHTML = /*html*/`
-        <div class="statistics-card">
-            <img src="${this.imgAtt}" alt="icon">
-            <h3 class="stat-number">${this.numberAtt}</h3>
-            <p class="stat-text">${this.textAtt}</p>
+        <div class="flex gap-8 p-4 border-dark rounded-xl">
+            <img src="${this.imgAtt}" alt="icon" >
+            <div class="flex-col gap-2">
+                <h3 class="font-bold">${this.numberAtt}</h3>
+                <p class="text-stroke">${this.textAtt}</p>
+            </div>
         </div>
         `;
     }

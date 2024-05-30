@@ -1,22 +1,5 @@
-c-statistics-card {
-    display: inline-grid;
-    grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
-    padding: 1rem;
-    border-radius: 10px;
-    border: 1px solid var(--stroke-color);
-    margin: 2px;
-    h3{
-        color: var(--text-color);
-        display: inline-block;
-        margin: 5px;
-        padding: 5px;
-    }
-    p {
-        color: var(--stroke-color);
-    }
-}
-
-.statistics{
-    display: inline-grid;
-    grid-template-columns: 1fr 1fr;
+.statistics {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: .75rem;
 }
