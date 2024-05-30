@@ -5,7 +5,7 @@ from django.db.models import Q
 from accounts.models import User
 from .serializers import UserMeSerializer, UserSerializer, ChangePasswordSerializer
 from rest_framework import status
-from django.contrib.auth.models import User
+from accounts.models import User
 from rest_framework.generics import UpdateAPIView
 
 @api_view(['GET'])
