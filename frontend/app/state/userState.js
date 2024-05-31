@@ -3,6 +3,7 @@ import { config } from "../config.js";
 import HttpClient from "../http/httpClient.js";
 import WebSocketManager from "../socket/WebSocketManager.js";
 import { truncate } from "../utils/utils.js";
+import { messageState } from "./messageState.js";
 import State from "./state.js";
 
 class UserState extends State {
@@ -43,6 +44,7 @@ class UserState extends State {
 
 					// alert("you got message from " + message.sender_name + " : " + message.message);
 					Toast.notify({type: "info", message: /*html*/`you got message from <a is="c-link" href="/dashboard/chat/${message.chat_id}" class='font-bold text-secondary'>${message.sender_name}:</a><br/>${truncate(message.message, 30)}`});
+					messageState.updateCardLastMessage(message.chat_id, message.message);
 					console.log("after toast");
 			}
 		)
