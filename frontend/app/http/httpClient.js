@@ -93,6 +93,30 @@ export default class HttpClient {
 		return this.fetch(endpoint, { ...options, method: "DELETE" });
 	}
 
+	async upload(endpoint, formData, retries = 0) {
+		try {
+			const response = await fetch(this.baseURL + endpoint, {
+                    method: "POST",
+                    body: formData,
+                    credentials: "include",
+                })
+			const data = await response.json();
+			if (!response.ok) {
+				if (response.status === 401 && retries < 3) {
+					// Unauthorized, try refreshing token
+					await this.#refreshToken();
+					return this.upload(endpoint, formData, retries + 1);
+				}
+				let error = data;
+				error.status = response.status;
+				throw error;
+			}
+			return data;
+		} catch (error) {
+			throw error;
+		}
+	}
+
 	async #refreshToken() {
         return this.post('auth/jwt/refresh/');
     }

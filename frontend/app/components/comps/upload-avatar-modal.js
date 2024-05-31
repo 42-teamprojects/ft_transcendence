@@ -1,11 +1,13 @@
 import HttpClient from "../../http/httpClient.js";
 import { userState } from "../../state/userState.js";
+import Toast from "./toast.js";
 
 export default class Uploadavatarmodal extends HTMLElement {
 	constructor() {
 		super();
 		this.isOpen = false;
         this.httpClient = new HttpClient();
+        this.defaultImg = "/public/assets/icons/upload.png";
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -30,6 +32,7 @@ export default class Uploadavatarmodal extends HTMLElement {
 			this.removeAttribute("opened");
 		}
 		this.isOpen = false;
+        this.querySelector("#avatar").src = this.defaultImg;
 	}
 
 	#cancel(event) {
@@ -46,14 +49,7 @@ export default class Uploadavatarmodal extends HTMLElement {
 			formData.append("avatar", file);
 			try {
                 this.confirmButton.setAttribute("processing", "true");
-				const response = await fetch("http://localhost:8000/api/users/avatar/", {
-                    method: "POST",
-                    body: formData,
-                    credentials: "include",
-                })
-                const data = await response.json();
-
-                // const data = await this.httpClient.post("users/avatar/", formData);
+                const data = await this.httpClient.upload("users/avatar/", formData);
                 this.confirmButton.setAttribute("processing", "false");
 				if (data.avatar) {
                     const tmpUser = userState.state.user;
@@ -63,15 +59,16 @@ export default class Uploadavatarmodal extends HTMLElement {
 							avatar: data.avatar,
 						},
 					});
+                    Toast.notify({message: "Avatar updated successfully", type: "success"})
 				}
 				this.hide();
 			} catch (error) {
                 this.confirmButton.setAttribute("processing", "false");
 				console.error(error);
 			}
-		}
-		// const confirmEvent = new Event("confirm");
-		// this.dispatchEvent(confirmEvent);
+		} else {
+            Toast.notify({ message: "Please select an image", type: "error" });
+        }
 	}
 
 	connectedCallback() {
@@ -106,9 +103,9 @@ export default class Uploadavatarmodal extends HTMLElement {
                     </header>
                     <main class="my-6">
                         <div class="flex-col-center gap-4">
-                            <img id="avatar" src="" class="cursor-pointer rounded-full object-cover" style="width: 200px; height: 200px" onclick="document.querySelector('#avatar-input').click()">
+                            <img id="avatar" src="${this.defaultImg}" class="cursor-pointer rounded-full object-cover" style="width: 200px; height: 200px" onclick="document.querySelector('#avatar-input').click()">
                             <input type="file" name="avatar" id="avatar-input" class="hidden" accept="image/*">
-                            <button class="btn-primary" onclick="document.querySelector('#avatar-input').click()">Add avatar</button>
+                            <button class="btn-default text-secondary" onclick="document.querySelector('#avatar-input').click()">Add avatar</button>
                         </div>
                     </main>
                     <section class="actions">
