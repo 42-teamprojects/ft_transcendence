@@ -78,6 +78,7 @@ INSTALLED_APPS = [
     'oauth',
     'users',
     'notifications',
+    'django_crontab',
 ]
 
 ASGI_APPLICATION = 'backend.asgi.application'
@@ -332,3 +333,7 @@ OAUTH2_PROVIDERS = {
         }
     }
 }
+
+CRONJOBS = [
+    # ('*/30 * * * * *', 'accounts.cron.delete_orphaned_avatars')
+]

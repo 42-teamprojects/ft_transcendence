@@ -763,10 +763,10 @@ button:active:not([disabled]) {
 
 @keyframes skeleton-loading {
 	0% {
-		background-color: var(--border-color);
+		background-color: var(--default-color);
 	}
 
 	100% {
-		background-color: var(--stroke-color);
+		background-color: var(--border-color);
 	}
 }

@@ -1,3 +1,4 @@
+import os
 import datetime
 from django.core.mail import send_mail
 from django.conf import settings
@@ -68,6 +69,10 @@ def generate_2fa_token(username):
     return response 
 
 def get_default_avatar(username):
+    if not os.path.exists('storage'):
+        os.makedirs('storage')
+    if not os.path.exists('storage/avatars'):
+        os.makedirs('storage/avatars')
     image_url = f'https://api.dicebear.com/8.x/thumbs/svg?seed={username}'
     image = requests.get(image_url)
     avatar_path = f'avatars/{username}.svg'
