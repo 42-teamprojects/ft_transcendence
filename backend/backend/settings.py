@@ -76,7 +76,8 @@ INSTALLED_APPS = [
     'security',
     'game',
     'oauth',
-    'users'
+    'users',
+    'notifications',
 ]
 
 ASGI_APPLICATION = 'backend.asgi.application'

@@ -13,7 +13,7 @@ export default class WebSocketManager {
             onClose = () => console.log(`WebSocket connection closed for id: ${id}`),
             onError = (error) => console.error(`WebSocket error for id: ${id}`, error),
         } = options;
-        
+
         
         if (this.sockets[id]) return;
        

@@ -742,6 +742,10 @@
     width: 3rem !important;
 }
 
+.w-15 {
+    width: 4rem !important;
+}
+
 .w-75 {
     width: 75% !important;
 }
