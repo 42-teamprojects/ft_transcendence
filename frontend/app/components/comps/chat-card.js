@@ -50,7 +50,7 @@ export default class Chatcard extends HTMLElement {
                       <div class="skeleton skeleton-text"></div>
                       `
 							: /*html*/ `
-                      <div style="font-size: 14px; color: gray">${this.msgAtt}</div>
+                      <div style="font-size: 14px; color: gray">${truncate(this.msgAtt, 23)}</div>
                       `
 					}
                 </div>

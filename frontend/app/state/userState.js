@@ -1,6 +1,8 @@
+import Toast from "../components/comps/toast.js";
 import { config } from "../config.js";
 import HttpClient from "../http/httpClient.js";
 import WebSocketManager from "../socket/WebSocketManager.js";
+import { truncate } from "../utils/utils.js";
 import State from "./state.js";
 
 class UserState extends State {
@@ -39,8 +41,9 @@ class UserState extends State {
 				// console.log(this.state.user.id, message.sender_id);
 				// if (message.sender_id !== this.state.user.id) return;
 
-					alert("you got message from " + message.sender_name + " : " + message.message);
-				// console.log(message);
+					// alert("you got message from " + message.sender_name + " : " + message.message);
+					Toast.notify({type: "info", message: /*html*/`you got message from <a is="c-link" href="/dashboard/chat/${message.chat_id}" class='font-bold text-secondary'>${message.sender_name}:</a><br/>${truncate(message.message, 30)}`});
+					console.log("after toast");
 			}
 		)
 

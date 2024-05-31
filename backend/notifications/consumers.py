@@ -37,11 +37,12 @@ class NotificationConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         data = json.loads(text_data)
         print("got notification: ", data)
-        message = data['message']
         noti_type = data['noti_type']
-        chat_id = data['chat_id']
-        sender_id = data['sender_id']
-        sender_name = data['sender_name']
+        info = data['data']
+        message = info['message']
+        chat_id = info['chat_id']
+        sender_id = info['sender_id']
+        sender_name = info['sender_name']
         recipient_id = await self.get_recpient_id(chat_id, sender_id)
         self.group_name = f"notifications_{recipient_id}"
         print("recipient_id:-------------------- ", recipient_id)
