@@ -7,6 +7,8 @@ from .serializers import UserMeSerializer, UserSerializer, ChangePasswordSeriali
 from rest_framework import status
 from accounts.models import User
 from rest_framework.generics import UpdateAPIView
+from rest_framework.response import Response
+from django.contrib.auth.decorators import login_required
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -61,3 +63,7 @@ class ChangePasswordView(UpdateAPIView):
 
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+@login_required
+def profile(request):
+    return Response({'detail' : 'Profile page'}, status=status.HTTP_200_OK)
