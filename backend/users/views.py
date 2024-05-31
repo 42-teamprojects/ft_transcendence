@@ -14,9 +14,19 @@ from .serializers import AvatarSerializer
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def get_user_data(request):
+def get_my_data(request):
     user = request.user
     serializer = UserMeSerializer(user)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_data(request, username):
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+    serializer = UserSerializer(user)
     return Response(serializer.data)
 
 @api_view(['GET'])

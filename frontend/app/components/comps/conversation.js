@@ -1,3 +1,4 @@
+import { config } from "../../config.js";
 import Router from "../../router/router.js";
 import { chatState } from "../../state/chatState.js";
 import { messageState } from "../../state/messageState.js";
@@ -34,8 +35,8 @@ export default class Conversation extends HTMLElement {
 	render() {
 		this.innerHTML = /*html*/ `
         <div class="conversation vh-full w-full">
-            <c-conversation-header img="https://api.dicebear.com/8.x/thumbs/svg?seed=mouad" username="${this.chat.friend.username}" state="${this.chat.friend.status}"></c-conversation-header>
-            <c-conversation-body></c-conversation-body>
+            <c-conversation-header img="${config.backend_domain}${this.chat.friend.avatar}" username="${this.chat.friend.username}" state="${this.chat.friend.status}"></c-conversation-header>
+            <c-conversation-body friend-img="${config.backend_domain}${this.chat.friend.avatar}"></c-conversation-body>
             <c-conversation-footer></c-conversation-footer>
         </div>
         `;

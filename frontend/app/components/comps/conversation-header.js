@@ -35,9 +35,13 @@ export default class Conversationheader extends HTMLElement {
         <c-modal id="delete-modal"></c-modal>
         <div class="chat-header conversation-header">
             <div class="flex-center gap-4">
-                <img class="message-card__img" src="${this.imgAtt}" alt="user">
+                <a is="c-link" href="/dashboard/profile?username=${this.usernameAtt}">
+                    <img class="message-card__img" src="${this.imgAtt}" alt="user">
+                </a>
                 <div class="flex-col gap-2">
-                    <div class="conversation-header__username" >${this.usernameAtt}</div>
+                    <a is="c-link" href="/dashboard/profile?username=${this.usernameAtt}">
+                        <div class="conversation-header__username" >${this.usernameAtt}</div>
+                    </a>
                     <div class="conversation-header__status gap-2">
                         <div class="conversation-header__status__dot ${UserStatus[this.stateAtt].toLowerCase()}"></div>
                         <div class="conversation-header__status__text capitalize">${UserStatus[this.stateAtt]}</div>

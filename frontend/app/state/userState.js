@@ -18,6 +18,15 @@ class UserState extends State {
 		}
 	}
 
+	async fetchUser(username) {
+		try {
+			const result = await this.httpClient.get(`users/${username}/`);
+			return result;
+		} catch (error) {
+			console.error(error);
+		}
+	}
+
 	isVerified() {
         return this.state.user.provider === 'fortytwo' ? true : this.state.user.is_verified;
 	}

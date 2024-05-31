@@ -48,7 +48,10 @@ export default class WebSocketManager {
     }
 
     send(id, data) {
-        if (!this.sockets[id]) return;
+        if (!this.sockets[id]) {
+            console.error(`WebSocket connection with id: ${id} does not exist`);
+            return;
+        }
         this.sockets[id].send(JSON.stringify(data));
         this.lastUseTimes[id] = Date.now();
     }
