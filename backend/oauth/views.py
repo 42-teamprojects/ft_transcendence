@@ -1,4 +1,5 @@
 from datetime import datetime
+import re
 import secrets
 from django.shortcuts import redirect
 from django.conf import settings
@@ -110,7 +111,7 @@ class OAuth2CallbackView(APIView):
                 username = username + str(User.objects.count())
             # Download the avatar
             image = requests.get(image_url)
-            avatar_path = f'/avatars/{username}.jpg'
+            avatar_path = f'avatars/{username}.jpg'
             with open('storage/' + avatar_path, 'wb') as f:
                 f.write(image.content)
         
@@ -125,4 +126,5 @@ class OAuth2CallbackView(APIView):
             return response
         except:
             return Response({"detail" : "Something went wrong, please try again."}, status=status.HTTP_401_UNAUTHORIZED)
-        
+
+    
