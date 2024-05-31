@@ -1,18 +1,23 @@
 export default class Friendscard extends HTMLElement {
-    constructor() {
-        super();
+	constructor() {
+		super();
+	}
+
+	connectedCallback() {
+        if (!document.querySelector("c-friends-search-modal")) {
+            this.searchModal = document.createElement("c-friends-search-modal");
+            document.body.appendChild(this.searchModal);
+        }
+		this.render();
+	}
+
+	disconnectedCallback() {
+        if (this.searchModal) this.searchModal.remove();
     }
 
-    connectedCallback() {
-        this.render();
-    }
-
-    disconnectedCallback() {}
-
-    render() {
-        this.innerHTML = /*html*/`
-            <c-friends-search-modal></c-friends-search-modal>
-            <div class="widget-container card-border flex-col gap-4">
+	render() {
+		this.innerHTML = /*html*/ `
+        <div class="widget-container card-border flex-col gap-4">
                 <div class="title-bar flex justify-between items-center mb-3">
                     <h1>Friends</h1>
                     <a is="c-link" href="/" class="uppercase font-extrabold spacing-1">view all</a>
@@ -28,6 +33,5 @@ export default class Friendscard extends HTMLElement {
                 <button is="c-button" class="btn-secondary w-full" onclick="document.querySelector('c-friends-search-modal').open()">Find friends</button>
             </div>
         `;
-    }
+	}
 }
-
