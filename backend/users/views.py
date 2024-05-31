@@ -103,15 +103,14 @@ class FriendshipView(APIView):
 
 
 class BlockFriendshipView(APIView):
-    serializer_class = FriendshipSerializer
+    permission_classes = [IsAuthenticated]
     permission_classes = [AreFriends]
 
     def post(self, request, friendship_id, format=None):
         friendship = Friendship.objects.get(pk=friendship_id)
         if friendship.is_blocked:
-            raise serializers.ValidationError({'detail': "Friendship is already blocked"})
+            raise serializers.ValidationError({'detail': f"Friendship is already blocked by {friendship.blocked_by.username}"})
         friendship.is_blocked = True
         friendship.blocked_by = request.user
         friendship.save()
-        serializer = self.serializer_class(friendship)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({'detail': 'Friendship blocked successfully'}, status=status.HTTP_200_OK)
