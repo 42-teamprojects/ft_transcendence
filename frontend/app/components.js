@@ -1,3 +1,4 @@
+import Statisticscard from "./components/comps/statistics-card.js";
 import Chatlistitems from "./components/comps/chat-list-items.js";
 import Chatsendmessagemodal from "./components/comps/chat-send-message-modal.js";
 import Loadingchatcard from "./components/comps/loading-chat-card.js";
@@ -90,6 +91,7 @@ export const components = [
 	{ tagName: 'c-chat-search-modal', component: Chatsearchmodal },
 	{ tagName: 'c-chat-match-history', component: Chatmatchhistory },
 	{ tagName: 'c-leaderboard-table', component: Leaderboardtable },
+	{ tagName: 'c-statistics-card', component: Statisticscard },
 	{ tagName: 'c-dropdown', component: Dropdown },
 	{ tagName: 'c-loading-chat-card', component: Loadingchatcard },
 	{ tagName: 'c-chat-send-message-modal', component: Chatsendmessagemodal },

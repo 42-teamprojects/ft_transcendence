@@ -6,6 +6,7 @@
     --bg-color: #161D23;
     --stroke-color: #7F8F98;
     --border-color: #313A42;
+    --dark-text-color: #4B5F6A;
     --active-bg-color: #262F35;
     --text-color: #FFFFFF;
     --soft-text-color: #CDD7DF;
@@ -955,8 +956,13 @@
 }
 
 /* Borders */
+
+.border-dark {
+    border: 2px solid var(--border-color) !important;
+}
+
 .border {
-    border: 1px solid var(--stroke-color) !important;
+    border: 1px solid var(--border-color) !important;
 }
 
 .border-primary {
@@ -976,7 +982,7 @@
 }
 
 .border-white {
-    border: 1px solid var(--text-color) !important;
+    border: 2px solid var(--text-color) !important;
 }
 
 .border-none {
@@ -1335,4 +1341,20 @@
 .cursor-pointer
 {
     cursor: pointer !important;
+}
+
+.object-cover
+{
+    object-fit: cover;
+}
+
+.object-contain
+{
+    object-fit: contain;
+}
+
+.background-image
+{
+    background-size: cover;
+    background-position: center;
 }

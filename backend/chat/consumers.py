@@ -15,6 +15,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             return
         self.access_token = self.scope["cookies"]["access"]
         try:
+            #! to replace with access token
             UntypedToken(self.access_token)
         
         except (InvalidToken, TokenError):

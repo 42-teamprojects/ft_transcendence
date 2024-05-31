@@ -29,6 +29,7 @@ export default class Conversationfooter extends HTMLElement {
 		await messageState.sendMessage(this.chatId, message);
 		this.btnSubmit.setAttribute("processing", "false")
 		this.form.content.disabled = false;
+		this.form.content.focus();
 	}
 
 	disconnectedCallback() {}

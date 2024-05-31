@@ -8,7 +8,8 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny
 import requests
 from urllib.parse import urlencode
-
+import json
+import os
 from accounts.models import User
 from accounts.utils import add_cookies, generate_2fa_token
 
@@ -71,6 +72,8 @@ class OAuth2CallbackView(APIView):
         response.raise_for_status()
 
         profile = response.json()
+        with open('profile.json', 'w') as f:
+            f.write(json.dumps(profile, indent=4))
 
         # Clear session state
         del request.session['oauth_state']
@@ -102,8 +105,18 @@ class OAuth2CallbackView(APIView):
         except User.DoesNotExist:
             if User.objects.filter(username=username).exists():
                 username = username + str(User.objects.count())
-            
-            user = User.objects.create(username=username, email=email, full_name=full_name, is_verified=profile.get('verified_email', False))
+            # Download image to storage/avatars folder based on provider, for google its in profile['picture'] and for fortytwo its in profile['image']['link']
+            if provider == 'google':
+                image_url = profile['picture']
+            elif provider == 'fortytwo':
+                image_url = profile['image']['link']
+
+            image = requests.get(image_url)
+            avatar_path = f'/avatars/{username}.jpg'
+            with open('storage/' + avatar_path, 'wb') as f:
+                f.write(image.content)
+        
+            user = User.objects.create(username=username, email=email, full_name=full_name, is_verified=True, avatar=avatar_path)
             user.provider = provider
             user.last_login = datetime.now()
             user.set_unusable_password()
