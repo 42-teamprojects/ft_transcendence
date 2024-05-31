@@ -11,10 +11,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
 from .serializers import AvatarSerializer
-from users.serializers import FriendshipSerializer
-from rest_framework import serializers
-from .permissions import AreFriends
-from .models import Friendship
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -79,66 +75,3 @@ class UploadAvatarView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-
-
-class FriendshipView(APIView):
-    serializer_class = FriendshipSerializer
-
-    def post(self, request, format=None):
-        user1 = request.user
-        user2_id = request.data.get('user2')
-        friendship = Friendship.objects.filter(Q(user1=user1.id) & Q(user2=user2_id) | Q(user1=user2_id) & Q(user2=user1.id))
-        if friendship:
-            raise serializers.ValidationError({'detail': "Friendship already exists", 'friendship_id': friendship[0].id})
-        if not user2_id:
-            raise serializers.ValidationError("user2 field is required.")
-        if user1.id == int(user2_id):
-            raise serializers.ValidationError("user1 and user2 cannot be the same user.")
-        user2 = User.objects.get(pk=user2_id)
-        serializer = self.serializer_class(data=request.data)  # Instantiate the serializer with request data
-        if serializer.is_valid():
-            serializer.save(user1=user1, user2=user2)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    def get(self, request, format=None):
-        serializer_class = FriendshipSerializer
-        friendships = Friendship.objects.filter(Q(user1=request.user) | Q(user2=request.user))
-        serializer = serializer_class(friendships, many=True)
-        return Response(serializer.data)
-
-    def delete(self, request, fromat=None):
-        friendship_id = request.data.get('friendship_id')
-        if not friendship_id:
-            raise serializers.ValidationError("friendship_id field is required.")
-        friendship = Friendship.objects.get(pk=friendship_id)
-        friendship.delete()
-        return Response({'detail': 'Friendship deleted successfully'}, status=status.HTTP_200_OK)
-        
-
-
-
-class BlockFriendshipView(APIView):
-    permission_classes = [IsAuthenticated, AreFriends]
-
-    def post(self, request, friendship_id, format=None):
-        friendship = Friendship.objects.get(pk=friendship_id)
-        if friendship.is_blocked:
-            raise serializers.ValidationError({'detail': f"Friendship is already blocked by {friendship.blocked_by.username}"})
-        friendship.is_blocked = True
-        friendship.blocked_by = request.user
-        friendship.save()
-        return Response({'detail': 'Friendship blocked successfully'}, status=status.HTTP_200_OK)
-    
-
-class UnblockFriendshipView(APIView):
-    permission_classes = [IsAuthenticated, AreFriends]
-
-    def post(self, request, friendship_id, format=None):
-        friendship = Friendship.objects.get(pk=friendship_id)
-        if not friendship.is_blocked:
-            raise serializers.ValidationError({'detail': 'Friendship is not blocked'})
-        friendship.is_blocked = False
-        friendship.blocked_by = None
-        friendship.save()
-        return Response({'detail': 'Friendship unblocked successfully'}, status=status.HTTP_200_OK)
