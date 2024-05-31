@@ -73,8 +73,6 @@ class OAuth2CallbackView(APIView):
         response.raise_for_status()
 
         profile = response.json()
-        with open('profile.json', 'w') as f:
-            f.write(json.dumps(profile, indent=4))
 
         # Clear session state
         del request.session['oauth_state']
