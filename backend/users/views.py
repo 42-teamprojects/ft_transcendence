@@ -11,9 +11,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
 from .serializers import AvatarSerializer
-from users.models import Friendship
 from users.serializers import FriendshipSerializer
 from rest_framework import serializers
+from .permissions import AreFriends
+from .models import Friendship
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -99,3 +100,18 @@ class FriendshipView(APIView):
             serializer.save(user1=user1, user2=user2)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class BlockFriendshipView(APIView):
+    serializer_class = FriendshipSerializer
+    permission_classes = [AreFriends]
+
+    def post(self, request, friendship_id, format=None):
+        friendship = Friendship.objects.get(pk=friendship_id)
+        if friendship.is_blocked:
+            raise serializers.ValidationError({'detail': "Friendship is already blocked"})
+        friendship.is_blocked = True
+        friendship.blocked_by = request.user
+        friendship.save()
+        serializer = self.serializer_class(friendship)
+        return Response(serializer.data, status=status.HTTP_200_OK)
