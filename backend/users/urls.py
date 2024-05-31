@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import ChangePasswordView, get_all_users_excluding_me, get_user_data, get_users_by_keyword_excluding_me
-from .views import UploadAvatarView, FriendshipView, BlockFriendshipView
+from .views import UploadAvatarView, FriendshipView, BlockFriendshipView, UnblockFriendshipView
 
 urlpatterns = [
     path('me/', get_user_data, name='user-data'),
@@ -10,5 +10,6 @@ urlpatterns = [
     path('avatar/', UploadAvatarView.as_view(), name='upload-avatar'),
     path("friendship/", FriendshipView.as_view(), name="friendship"),
     path('block-friendship/<int:friendship_id>/', BlockFriendshipView.as_view(), name='block-friendship'),
+    path('unblock-friendship/<int:friendship_id>/', UnblockFriendshipView.as_view(), name='unblock-friendship'),
 
 ]

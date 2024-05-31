@@ -103,8 +103,7 @@ class FriendshipView(APIView):
 
 
 class BlockFriendshipView(APIView):
-    permission_classes = [IsAuthenticated]
-    permission_classes = [AreFriends]
+    permission_classes = [IsAuthenticated, AreFriends]
 
     def post(self, request, friendship_id, format=None):
         friendship = Friendship.objects.get(pk=friendship_id)
@@ -114,3 +113,16 @@ class BlockFriendshipView(APIView):
         friendship.blocked_by = request.user
         friendship.save()
         return Response({'detail': 'Friendship blocked successfully'}, status=status.HTTP_200_OK)
+    
+
+class UnblockFriendshipView(APIView):
+    permission_classes = [IsAuthenticated, AreFriends]
+
+    def post(self, request, friendship_id, format=None):
+        friendship = Friendship.objects.get(pk=friendship_id)
+        if not friendship.is_blocked:
+            raise serializers.ValidationError({'detail': 'Friendship is not blocked'})
+        friendship.is_blocked = False
+        friendship.blocked_by = None
+        friendship.save()
+        return Response({'detail': 'Friendship unblocked successfully'}, status=status.HTTP_200_OK)
