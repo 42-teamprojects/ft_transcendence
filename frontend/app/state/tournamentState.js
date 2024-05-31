@@ -201,32 +201,8 @@ class TournamentState extends State {
 	}
 }
 
-const tournamentState = new TournamentState();
 
-// const players = [];
-
-// for (let i = 0; i < 8; i++) {
-// 	players.push(new LocalPlayer(i, `Player ${i + 1}`, "basic"));
-// }
-
-// tournamentState.setState({
-// 	players: players,
-// 	theme: "football",
-// 	playersNumber: players.length,
-// });
-
-// tournamentState.generateTournament();
-
-// let currentMatch;
-
-// while (!tournamentState.state.tournamentFinished) {
-// 	currentMatch = tournamentState.startNextMatch();
-// 	tournamentState.finishMatch(currentMatch.player1.id);
-// }
-
-// rounds[round][group][match]
-export { tournamentState };
-
+export const tournamentState = new TournamentState();
 /* 
 [
 

@@ -1,3 +1,4 @@
+import Uploadavatarmodal from "./components/comps/upload-avatar-modal.js";
 import Statisticscard from "./components/comps/statistics-card.js";
 import Chatlistitems from "./components/comps/chat-list-items.js";
 import Chatsendmessagemodal from "./components/comps/chat-send-message-modal.js";
@@ -96,4 +97,5 @@ export const components = [
 	{ tagName: 'c-loading-chat-card', component: Loadingchatcard },
 	{ tagName: 'c-chat-send-message-modal', component: Chatsendmessagemodal },
 	{ tagName: 'c-chat-list-items', component: Chatlistitems },
+	{ tagName: 'c-upload-avatar-modal', component: Uploadavatarmodal },
 ];
