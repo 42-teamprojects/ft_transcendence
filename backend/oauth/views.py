@@ -83,10 +83,13 @@ class OAuth2CallbackView(APIView):
         if (provider == 'google'):
             full_name = profile['name']
             username = profile['email'].split('@')[0]
+            # =s96-c
+            image_url = profile['picture'].replace('s96-c', 's600-c')
         
         if (provider == 'fortytwo'):
             full_name = profile['displayname']
             username = profile['login']
+            image_url = profile['image']['link']
         
         #check if username already exists
         try:
@@ -105,12 +108,7 @@ class OAuth2CallbackView(APIView):
         except User.DoesNotExist:
             if User.objects.filter(username=username).exists():
                 username = username + str(User.objects.count())
-            # Download image to storage/avatars folder based on provider, for google its in profile['picture'] and for fortytwo its in profile['image']['link']
-            if provider == 'google':
-                image_url = profile['picture']
-            elif provider == 'fortytwo':
-                image_url = profile['image']['link']
-
+            # Download the avatar
             image = requests.get(image_url)
             avatar_path = f'/avatars/{username}.jpg'
             with open('storage/' + avatar_path, 'wb') as f:

@@ -61,11 +61,11 @@ export default class Uploadavatarmodal extends HTMLElement {
                         <h2 id="subtitle" class="text-xl font-normal text-stroke">Add a unique and nice picture</h2>
                     </header>
                     <main class="my-6">
-                        <div class="flex-center">
+                        <div class="flex-col-center gap-4">
                             <img id="avatar" src="/public/assets/icons/upload.svg" class="skeleton skeleton-circle" style="width: 150px; height: 150px" onclick="document.querySelector('#avatar-input').click()">
-                        </div>
-                        <div class="flex-center mt-4">
-                            <input type="file" id="avatar-input" class="hidden" accept="image/*">
+                            <form>
+                                <input type="file" id="avatar-input" class="hidden" accept="image/*">
+                            </form>
                             <button id="upload-btn" class="btn-primary" onclick="document.querySelector('#avatar-input').click()">Add avatar</button>
                         </div>
                     </main>

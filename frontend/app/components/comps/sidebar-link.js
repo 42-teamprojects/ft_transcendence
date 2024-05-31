@@ -41,7 +41,7 @@ export default class SidebarLink extends HTMLElement {
       this.innerHTML = /*html*/`
         <a is="c-link" href="/dashboard/${this.link}" class="sidebar-link ${this.isActive && 'active'}">
           ${this.link === "profile"
-            ? /*html*/`<img class="profile_icon" src="${avatar}" alt="profile image">`
+            ? /*html*/`<img class="profile_icon object-cover" src="${avatar}" alt="profile image">`
             : /*html*/`<img src="${this.icons[this.link]}" alt="${this.link}"/>`
           }
           <div class="font-bold uppercase spacing-1">${this.textContent}</div>
