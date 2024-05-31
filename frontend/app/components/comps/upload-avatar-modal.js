@@ -5,6 +5,7 @@ export default class Uploadavatarmodal extends HTMLElement {
 	constructor() {
 		super();
 		this.isOpen = false;
+        this.httpClient = new HttpClient();
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -51,6 +52,8 @@ export default class Uploadavatarmodal extends HTMLElement {
                     credentials: "include",
                 })
                 const data = await response.json();
+
+                // const data = await this.httpClient.post("users/avatar/", formData);
                 this.confirmButton.setAttribute("processing", "false");
 				if (data.avatar) {
                     const tmpUser = userState.state.user;
@@ -63,6 +66,7 @@ export default class Uploadavatarmodal extends HTMLElement {
 				}
 				this.hide();
 			} catch (error) {
+                this.confirmButton.setAttribute("processing", "false");
 				console.error(error);
 			}
 		}
