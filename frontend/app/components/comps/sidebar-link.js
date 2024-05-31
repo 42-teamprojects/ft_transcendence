@@ -15,7 +15,6 @@ export default class SidebarLink extends HTMLElement {
           shop: "/public/assets/game/sidebar-icons/shop.svg",
       };
       this.isActive = isThere(["true", ""], this.getAttribute("active"), false);
-      this.user = userState.state.user;
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -31,13 +30,18 @@ export default class SidebarLink extends HTMLElement {
   
     connectedCallback() {
       this.render();
+      this.unsubscribe = userState.subscribe(() => {
+        if (this.link === "profile") this.render();
+        return;
+      });
     }
 
     disconnectedCallback() {
     }
 
     render() {
-      const avatar = this.user.avatar ? config.backend_domain + this.user.avatar : `https://api.dicebear.com/8.x/thumbs/svg?seed=${this.user.username}`;
+      const user = userState.state.user;
+      const avatar = user.avatar ? config.backend_domain + user.avatar : `https://api.dicebear.com/8.x/thumbs/svg?seed=${user.username}`;
       this.innerHTML = /*html*/`
         <a is="c-link" href="/dashboard/${this.link}" class="sidebar-link ${this.isActive && 'active'}">
           ${this.link === "profile"

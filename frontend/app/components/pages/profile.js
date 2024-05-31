@@ -30,7 +30,7 @@ export default class Profile extends HTMLElement {
             <main>
                 <section class="profile-info">
                     <div class="profile-image relative">
-                        <img src="${avatar}" alt="profile image object-cover skeleton">
+                        <img src="${avatar}" class="profile image object-cover">
                         <div class="absolute bg-secondary p-2 rounded-full border-white cursor-pointer w-8 h-8 flex-center" style="top: 10px; right: 10px" onclick="document.querySelector('c-upload-avatar-modal').open()">
                             <i class="fa-solid fa-camera"></i>
                         </div>
