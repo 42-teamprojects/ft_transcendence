@@ -13,7 +13,6 @@ from rest_framework import serializers
 from .permissions import AreFriends
 from .models import Friendship
 from rest_framework.viewsets import ModelViewSet
-# Create your views here.
 
 class FriendshipViewSet(ModelViewSet):
     serializer_class = FriendshipSerializer
@@ -43,9 +42,8 @@ class FriendshipViewSet(ModelViewSet):
         serializer.save(user1=user1, user2=user2)
 
     def destroy(self, request, *args, **kwargs):
-        friendship_id = request.data.get('friendship_id')
-        if not friendship_id:
-            raise serializers.ValidationError("friendship_id field is required.")
+        # Retrieve the friendship_id from kwargs
+        friendship_id = kwargs.get('pk')
         
         try:
             friendship = Friendship.objects.get(pk=friendship_id)
@@ -55,6 +53,7 @@ class FriendshipViewSet(ModelViewSet):
             return Response({'detail': 'Friendship deleted successfully'}, status=status.HTTP_200_OK)
         except Friendship.DoesNotExist:
             raise serializers.ValidationError("Friendship not found.")
+
 
 
 
