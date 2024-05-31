@@ -52,13 +52,7 @@ export default class Uploadavatarmodal extends HTMLElement {
                 const data = await this.httpClient.upload("users/avatar/", formData);
                 this.confirmButton.setAttribute("processing", "false");
 				if (data.avatar) {
-                    const tmpUser = userState.state.user;
-					userState.setState({
-                        user: {
-                            ...tmpUser,
-							avatar: data.avatar,
-						},
-					});
+                    userState.updateUser("avatar", data.avatar);
                     Toast.notify({message: "Avatar updated successfully", type: "success"})
 				}
 				this.hide();
