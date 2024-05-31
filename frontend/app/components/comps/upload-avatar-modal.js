@@ -106,7 +106,7 @@ export default class Uploadavatarmodal extends HTMLElement {
                     </header>
                     <main class="my-6">
                         <div class="flex-col-center gap-4">
-                            <img id="avatar" src="/public/assets/icons/upload.svg" class="cursor-pointer rounded-full object-cover" style="width: 200px; height: 200px" onclick="document.querySelector('#avatar-input').click()">
+                            <img id="avatar" src="" class="cursor-pointer rounded-full object-cover" style="width: 200px; height: 200px" onclick="document.querySelector('#avatar-input').click()">
                             <input type="file" name="avatar" id="avatar-input" class="hidden" accept="image/*">
                             <button class="btn-primary" onclick="document.querySelector('#avatar-input').click()">Add avatar</button>
                         </div>
