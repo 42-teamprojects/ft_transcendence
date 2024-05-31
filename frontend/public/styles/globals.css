@@ -1342,3 +1342,19 @@
 {
     cursor: pointer !important;
 }
+
+.object-cover
+{
+    object-fit: cover;
+}
+
+.object-contain
+{
+    object-fit: contain;
+}
+
+.background-image
+{
+    background-size: cover;
+    background-position: center;
+}

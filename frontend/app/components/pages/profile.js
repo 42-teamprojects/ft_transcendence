@@ -1,3 +1,4 @@
+import { config } from "../../config.js";
 import { userState } from "../../state/userState.js";
 import { formatDate } from "../../utils/utils.js";
 
@@ -15,6 +16,7 @@ export default class Profile extends HTMLElement {
     disconnectedCallback() {}
 
     render() {
+        const avatar = this.user.avatar ? config.backend_domain + this.user.avatar : `https://api.dicebear.com/8.x/thumbs/svg?seed=${this.user.username}`;
         this.innerHTML = /*html*/`
         <c-upload-avatar-modal></c-upload-avatar-modal>
         <div class="dashboard-content">
