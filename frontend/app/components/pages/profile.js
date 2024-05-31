@@ -23,7 +23,7 @@ export default class Profile extends HTMLElement {
             <main>
                 <section class="profile-info">
                     <div class="profile-image relative">
-                        <img src="https://api.dicebear.com/8.x/thumbs/svg?seed=${this.user.username}" alt="profile image">
+                        <img src="${avatar}" alt="profile image">
                         <div class="absolute bg-secondary p-2 rounded-full border-white cursor-pointer w-8 h-8 flex-center" style="top: 10px; right: 10px" onclick="document.querySelector('c-upload-avatar-modal').open()">
                             <i class="fa-solid fa-camera"></i>
                         </div>
