@@ -67,6 +67,8 @@ export default class Authentication {
 
 			// Update the token_verified_at timestamp in the userState
 			userState.setState({ user: result, token_verified_at: now });
+			userState.socketId = "notifications/" + userState.state.user.username;
+			userState.setup();
 			return true;
 		} catch (error) {
 			throw error;

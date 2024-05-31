@@ -4,13 +4,9 @@ export default class Dashboard extends HTMLElement {
 	constructor() {
 		super();
 		document.title = "Dashboard | Blitzpong.";
-        this.notification = new WebSocket("ws://localhost:8080/ws/notifications/hoigag/");
 	}
 
 	connectedCallback() {
-        this.notification.onmessage = (event) => {
-            console.log("conntected to notification ws");
-        }
 		this.render();
         console.log(userState.state);
 	}
