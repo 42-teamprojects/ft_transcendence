@@ -100,6 +100,19 @@ class FriendshipView(APIView):
             serializer.save(user1=user1, user2=user2)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def get(self, request, format=None):
+        friendships = Friendship.objects.filter(Q(user1=request.user) | Q(user2=request.user))
+        data = []
+        for friendship in friendships:
+            data.append({
+                'id': friendship.id,
+                'user1': friendship.user1.username,
+                'user2': friendship.user2.username,
+                'is_blocked': friendship.is_blocked,
+                'blocked_by': friendship.blocked_by.id if friendship.blocked_by else None
+            })
+            return Response(data, status=status.HTTP_200_OK)
 
 
 class BlockFriendshipView(APIView):
@@ -126,3 +139,4 @@ class UnblockFriendshipView(APIView):
         friendship.blocked_by = None
         friendship.save()
         return Response({'detail': 'Friendship unblocked successfully'}, status=status.HTTP_200_OK)
+    
