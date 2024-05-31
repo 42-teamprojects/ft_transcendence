@@ -11,6 +11,7 @@ export default class Friendscard extends HTMLElement {
 
     render() {
         this.innerHTML = /*html*/`
+            <c-friends-search-modal></c-friends-search-modal>
             <div class="widget-container card-border flex-col gap-4">
                 <div class="title-bar flex justify-between items-center mb-3">
                     <h1>Friends</h1>
@@ -24,7 +25,7 @@ export default class Friendscard extends HTMLElement {
                     <c-usercard username="hassssan" status="OF" img="https://api.dicebear.com/8.x/thumbs/svg?seed=hassan"></c-usercard>
                     <c-usercard username="hamzaaa" status="ON" img="https://api.dicebear.com/8.x/thumbs/svg?seed=hamza"></c-usercard>
                 </div>
-                <button is="c-button" class="btn-secondary w-full">Find friends</button>
+                <button is="c-button" class="btn-secondary w-full" onclick="document.querySelector('c-friends-search-modal').open()">Find friends</button>
             </div>
         `;
     }
