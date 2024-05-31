@@ -59,6 +59,21 @@ class UserState extends State {
 		window.addEventListener('focus', this.focusListener);
 	}
 
+	async fetchUser(username) {
+		try {
+			const result = await this.httpClient.get(`users/${username}/`);
+			return result;
+		} catch (error) {
+			console.error(error);
+		}
+	}
+
+	updateUser(field, value) {
+		const user = this.state.user;
+		user[field] = value;
+		this.setState({ user });
+	}
+
 	isVerified() {
         return this.state.user.provider === 'fortytwo' ? true : this.state.user.is_verified;
 	}
