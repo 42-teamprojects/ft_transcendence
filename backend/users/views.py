@@ -11,6 +11,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
 from .serializers import AvatarSerializer
+from users.models import Friendship
+from users.serializers import FriendshipSerializer
+from rest_framework import serializers
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -72,5 +75,27 @@ class UploadAvatarView(APIView):
         serializer = AvatarSerializer(request.user, data=request.data)
         if serializer.is_valid():
             serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+
+class FriendshipView(APIView):
+    serializer_class = FriendshipSerializer
+
+    def post(self, request, format=None):
+        user1 = request.user
+        user2_id = request.data.get('user2')
+        friendship = Friendship.objects.filter(Q(user1=user1.id) & Q(user2=user2_id) | Q(user1=user2_id) & Q(user2=user1.id))
+        if friendship:
+            raise serializers.ValidationError({'detail': "Friendship already exists", 'friendship_id': friendship[0].id})
+        if not user2_id:
+            raise serializers.ValidationError("user2 field is required.")
+        if user1.id == int(user2_id):
+            raise serializers.ValidationError("user1 and user2 cannot be the same user.")
+        user2 = User.objects.get(pk=user2_id)
+        serializer = self.serializer_class(data=request.data)  # Instantiate the serializer with request data
+        if serializer.is_valid():
+            serializer.save(user1=user1, user2=user2)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
