@@ -14,7 +14,7 @@ export default class Statisticscard extends HTMLElement {
 
     render() {
         this.innerHTML = /*html*/`
-        <div class="flex gap-8 p-4 border-dark rounded-xl">
+        <div class="flex gap-6 py-4 px-6 border-dark rounded-xl">
             <img src="${this.imgAtt}" alt="icon" >
             <div class="flex-col gap-2">
                 <h3 class="font-bold">${this.numberAtt}</h3>
@@ -24,5 +24,3 @@ export default class Statisticscard extends HTMLElement {
         `;
     }
 }
-
-false

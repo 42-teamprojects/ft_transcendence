@@ -1,4 +1,5 @@
 from datetime import datetime
+import re
 import secrets
 from django.shortcuts import redirect
 from django.conf import settings
@@ -8,7 +9,8 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny
 import requests
 from urllib.parse import urlencode
-
+import json
+import os
 from accounts.models import User
 from accounts.utils import add_cookies, generate_2fa_token
 
@@ -71,6 +73,8 @@ class OAuth2CallbackView(APIView):
         response.raise_for_status()
 
         profile = response.json()
+        with open('profile.json', 'w') as f:
+            f.write(json.dumps(profile, indent=4))
 
         # Clear session state
         del request.session['oauth_state']
@@ -80,10 +84,13 @@ class OAuth2CallbackView(APIView):
         if (provider == 'google'):
             full_name = profile['name']
             username = profile['email'].split('@')[0]
+            # =s96-c
+            image_url = profile['picture'].replace('s96-c', 's600-c')
         
         if (provider == 'fortytwo'):
             full_name = profile['displayname']
             username = profile['login']
+            image_url = profile['image']['link']
         
         #check if username already exists
         try:
@@ -102,8 +109,13 @@ class OAuth2CallbackView(APIView):
         except User.DoesNotExist:
             if User.objects.filter(username=username).exists():
                 username = username + str(User.objects.count())
-            
-            user = User.objects.create(username=username, email=email, full_name=full_name, is_verified=profile.get('verified_email', False))
+            # Download the avatar
+            image = requests.get(image_url)
+            avatar_path = f'avatars/{username}.jpg'
+            with open('storage/' + avatar_path, 'wb') as f:
+                f.write(image.content)
+        
+            user = User.objects.create(username=username, email=email, full_name=full_name, is_verified=True, avatar=avatar_path)
             user.provider = provider
             user.last_login = datetime.now()
             user.set_unusable_password()
@@ -114,4 +126,5 @@ class OAuth2CallbackView(APIView):
             return response
         except:
             return Response({"detail" : "Something went wrong, please try again."}, status=status.HTTP_401_UNAUTHORIZED)
-        
+
+    

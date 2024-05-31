@@ -722,7 +722,7 @@ button:active:not([disabled]) {
 /* Skeleton */
 
 .skeleton {
-	opacity: 0.7;
+	/* opacity: 0.7; */
 	animation: skeleton-loading 1s linear infinite alternate;
 }
 

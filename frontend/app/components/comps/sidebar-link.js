@@ -1,3 +1,4 @@
+import { config } from "../../config.js";
 import Router from "../../router/router.js";
 import { userState } from "../../state/userState.js";
 import { isThere } from "../../utils/utils.js";
@@ -14,7 +15,6 @@ export default class SidebarLink extends HTMLElement {
           shop: "/public/assets/game/sidebar-icons/shop.svg",
       };
       this.isActive = isThere(["true", ""], this.getAttribute("active"), false);
-      this.user = userState.state.user;
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -30,17 +30,23 @@ export default class SidebarLink extends HTMLElement {
   
     connectedCallback() {
       this.render();
+      this.unsubscribe = userState.subscribe(() => {
+        if (this.link === "profile" && userState.state.user) this.render();
+        return;
+      });
     }
 
     disconnectedCallback() {
     }
 
     render() {
-      // "https://api.dicebear.com/8.x/thumbs/svg?seed=${this.user.username}"
+      const user = userState.state.user;
+      const defaultImg = `https://api.dicebear.com/8.x/thumbs/svg?seed=${user.username}`;
+      const avatar = user.avatar ? config.backend_domain + user.avatar : defaultImg;
       this.innerHTML = /*html*/`
         <a is="c-link" href="/dashboard/${this.link}" class="sidebar-link ${this.isActive && 'active'}">
           ${this.link === "profile"
-            ? /*html*/`<img class="profile_icon" src="https://api.dicebear.com/8.x/thumbs/svg?seed=${this.user.username}" alt="profile image">`
+            ? /*html*/`<img class="profile_icon object-cover" src="${avatar}" alt="profile image" onerror="this.onerror=null; this.src='${defaultImg}';">`
             : /*html*/`<img src="${this.icons[this.link]}" alt="${this.link}"/>`
           }
           <div class="font-bold uppercase spacing-1">${this.textContent}</div>

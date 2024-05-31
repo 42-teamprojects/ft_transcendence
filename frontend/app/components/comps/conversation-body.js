@@ -1,3 +1,4 @@
+import { chatState } from "../../state/chatState.js";
 import { messageState } from "../../state/messageState.js";
 import { userState } from "../../state/userState.js";
 import { getMatchUrl } from "../../utils/utils.js";
@@ -7,6 +8,7 @@ export default class Conversationbody extends HTMLElement {
     super();
     this.user = userState.state.user;
     this.chatId = getMatchUrl(/^\/dashboard\/chat\/(\w+)\/?$/);
+    this.friendImg = this.getAttribute("friend-img") || "";
   }
 
 
@@ -35,7 +37,7 @@ export default class Conversationbody extends HTMLElement {
             (message) => /*html*/ `
               <c-message-bubble type="${
                 message.sender === this.user.id ? "out" : "in"
-              }" message="${message.content}"></c-message-bubble>
+              }" message="${message.content}" img="${this.friendImg}"></c-message-bubble>
             `
           )
           .join("")}

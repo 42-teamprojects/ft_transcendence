@@ -17,7 +17,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_('Email Address'), unique=True, max_length=255)
     full_name = models.CharField(_('Full Name'), max_length=100)
     status = models.CharField(_('Status'), max_length=2, choices=UserStatus.choices, default=UserStatus.OFFLINE)
-    # avatar = models.ImageField(_('Avatar'), upload_to='avatars/', null=True, blank=True)
     is_active = models.BooleanField(_('Is Active'), default=True)
     is_staff = models.BooleanField(_('Is Staff'), default=False)
     is_superuser = models.BooleanField(_('Is Superuser'), default=False)
@@ -27,6 +26,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     two_factor_enabled = models.BooleanField(_('Two Factor Enabled'), default=False)
     last_2fa_login = models.DateTimeField(_('Last 2FA Login'), blank=True, null=True)
     provider = models.CharField(_('Provider'), max_length=100, blank=True, null=True)
+    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
     
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['full_name', 'email']
