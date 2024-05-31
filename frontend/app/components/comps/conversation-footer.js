@@ -27,6 +27,16 @@ export default class Conversationfooter extends HTMLElement {
 		this.form.content.disabled = true;
 		// Send message to the socket and server
 		await messageState.sendMessage(this.chatId, message);
+		let id  = "notifications/" + userState.state.user.id;
+		let data = {
+			noti_type: "message",
+			chat_id: this.chatId,
+			sender_id: userState.state.user.id,
+			sender_name: userState.state.user.username,
+			message: message,
+		}
+		// console.log(id);
+		userState.notificationSocket.sockets[id].send(JSON.stringify(data));
 		this.btnSubmit.setAttribute("processing", "false")
 		this.form.content.disabled = false;
 		this.form.content.focus();

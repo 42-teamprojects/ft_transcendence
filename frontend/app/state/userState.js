@@ -34,8 +34,13 @@ class UserState extends State {
 
 			//on message callback
 			(event) => {
-				const message = JSON.parse(event.data);
+				const message = JSON.parse(event.data);	
 				console.log(message);
+				// console.log(this.state.user.id, message.sender_id);
+				// if (message.sender_id !== this.state.user.id) return;
+
+					alert("you got message from " + message.sender_name + " : " + message.message);
+				// console.log(message);
 			}
 		)
 
