@@ -59,9 +59,10 @@ export default class Profile extends HTMLElement {
                             <h3>@${this.user.username}</h3>
                         </div>
                         <p>Joined ${formatDate(this.user?.date_joined)}</p>
-                        <div class="profile-user-actions">
+                        <div class="profile-user-actions flex gap-6">
                             ${this.isMine ? /*html*/`<a is="c-link" href="/dashboard/settings" class="text-secondary font-bold uppercase text-sm spacing-1">Edit Profile</a>` : ""}
                             ${!this.isMine ? /*html*/`<a is="c-link" href="" class="text-secondary font-bold uppercase text-sm spacing-1"><i class="fa-solid fa-plus mr-2"></i>Add friend</a>` : ""}
+                            ${!this.isMine ? /*html*/`<a is="c-link" href="" class="text-secondary font-bold uppercase text-sm spacing-1"><i class="fa-regular fa-comment mr-2"></i>Chat</a>` : ""}
                         </div>
                     </div>
                 </section>
