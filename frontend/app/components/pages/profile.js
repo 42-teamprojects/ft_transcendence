@@ -39,8 +39,7 @@ export default class Profile extends HTMLElement {
     }
 
     render() {
-        const defaultImg = `https://api.dicebear.com/8.x/thumbs/svg?seed=${this.user.username}`;
-        const avatar = this.user.avatar ? config.backend_domain + this.user.avatar : defaultImg;
+        const avatar = this.user.avatar ? config.backend_domain + this.user.avatar : `https://api.dicebear.com/8.x/thumbs/svg?seed=${this.user.username}`;
         this.innerHTML = /*html*/`
         ${this.isMine ? /*html*/`<c-upload-avatar-modal></c-upload-avatar-modal>` : ""}
         <div class="dashboard-content">
@@ -48,7 +47,7 @@ export default class Profile extends HTMLElement {
                 ${!this.isMine ? /*html*/`<a is="c-link" href="/dashboard/profile" class="text-secondary font-bold uppercase text-sm spacing-1"><i class="fa-solid fa-angle-left mr-2"></i> Back to my profile</a>` : ""}
                 <section class="profile-info ${!this.isMine ? 'mt-8' : ''}">
                     <div class="profile-image relative">
-                        <img src="${avatar}" class="profile image object-cover" onerror="this.onerror=null; this.src='${defaultImg}';">
+                        <img src="${avatar}" class="profile image object-cover skeleton">
                         ${this.isMine ? /*html*/`
                         <div class="absolute bg-secondary p-2 rounded-full border-white cursor-pointer w-8 h-8 flex-center" style="top: 10px; right: 10px" onclick="document.querySelector('c-upload-avatar-modal').open()">
                             <i class="fa-solid fa-camera"></i>

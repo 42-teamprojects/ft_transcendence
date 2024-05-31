@@ -24,6 +24,7 @@ export default class Friendscard extends HTMLElement {
                     <c-usercard username="hassssan" status="OF" img="https://api.dicebear.com/8.x/thumbs/svg?seed=hassan"></c-usercard>
                     <c-usercard username="hamzaaa" status="ON" img="https://api.dicebear.com/8.x/thumbs/svg?seed=hamza"></c-usercard>
                 </div>
+                <button is="c-button" class="btn-secondary w-full">Find friends</button>
             </div>
         `;
     }

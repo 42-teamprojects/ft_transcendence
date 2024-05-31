@@ -41,12 +41,11 @@ export default class SidebarLink extends HTMLElement {
 
     render() {
       const user = userState.state.user;
-      const defaultImg = `https://api.dicebear.com/8.x/thumbs/svg?seed=${user.username}`;
-      const avatar = user.avatar ? config.backend_domain + user.avatar : defaultImg;
+      const avatar = user.avatar ? config.backend_domain + user.avatar : `https://api.dicebear.com/8.x/thumbs/svg?seed=${user.username}`;
       this.innerHTML = /*html*/`
         <a is="c-link" href="/dashboard/${this.link}" class="sidebar-link ${this.isActive && 'active'}">
           ${this.link === "profile"
-            ? /*html*/`<img class="profile_icon object-cover" src="${avatar}" alt="profile image" onerror="this.onerror=null; this.src='${defaultImg}';">`
+            ? /*html*/`<img class="profile_icon object-cover skeleton" src="${avatar}" alt="profile image">`
             : /*html*/`<img src="${this.icons[this.link]}" alt="${this.link}"/>`
           }
           <div class="font-bold uppercase spacing-1">${this.textContent}</div>
