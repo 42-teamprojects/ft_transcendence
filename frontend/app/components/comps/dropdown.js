@@ -73,7 +73,7 @@ export default class Dropdown extends HTMLElement {
                 <ul class="dropdown__menu">
 					<a is="c-link" href="/dashboard/profile?username=${this.username}">
 						<li class="dropdown__item">
-							<i class="fa-solid fa-eye dropdown__icon"></i>
+							<i class="fa-solid fa-user dropdown__icon"></i>
 							<span class="dropdown__name">Profile</span>
 						</li>
 					</a>

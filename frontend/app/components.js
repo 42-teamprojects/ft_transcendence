@@ -1,3 +1,6 @@
+import Loader from "./components/comps/loader.js";
+import Friendslist from "./components/comps/friends-list.js";
+import Usercardloading from "./components/comps/usercard-loading.js";
 import Uploadavatarmodal from "./components/comps/upload-avatar-modal.js";
 import Statisticscard from "./components/comps/statistics-card.js";
 import Chatlistitems from "./components/comps/chat-list-items.js";
@@ -98,4 +101,7 @@ export const components = [
 	{ tagName: 'c-chat-send-message-modal', component: Chatsendmessagemodal },
 	{ tagName: 'c-chat-list-items', component: Chatlistitems },
 	{ tagName: 'c-upload-avatar-modal', component: Uploadavatarmodal },
+	{ tagName: 'c-usercard-loading', component: Usercardloading },
+	{ tagName: 'c-friends-list', component: Friendslist },
+	{ tagName: 'c-loader', component: Loader },
 ];
