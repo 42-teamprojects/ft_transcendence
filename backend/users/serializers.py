@@ -30,7 +30,6 @@ class ChangePasswordSerializer(serializers.Serializer):
         validate_password(value)
         return value
     
-
 class UpdateUserSerializer(serializers.ModelSerializer):
 
     class Meta:
