@@ -20,7 +20,9 @@ class FriendshipViewSet(ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return Friendship.objects.filter(Q(user1=user) | Q(user2=user)).distinct()
+        return Friendship.objects.filter(
+            (Q(user1=user) | Q(user2=user)) & Q(is_blocked=False)
+        ).distinct()
 
     def perform_create(self, serializer):
         user1 = self.request.user
@@ -67,6 +69,7 @@ class BlockFriendshipView(APIView):
         friendship.is_blocked = True
         friendship.blocked_by = request.user
         friendship.save()
+        
         return Response({'detail': 'Friendship blocked successfully'}, status=status.HTTP_200_OK)
     
 

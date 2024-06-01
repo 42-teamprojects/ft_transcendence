@@ -97,6 +97,11 @@ export default class Profile extends HTMLElement {
     }
     
     addEventListeners() {
+        const chatFriend = this.querySelector("#chat-friend");
+        if (chatFriend) {
+            chatFriend.addEventListener("click", this.handleChatClick.bind(this));
+        }
+
         const addFriend = this.querySelector("#add-friend");
         if (addFriend) {
             addFriend.addEventListener("click", async () => {
@@ -113,6 +118,7 @@ export default class Profile extends HTMLElement {
                 if (result) {
                     Toast.notify({message: "Friend removed successfuly", type: "success"});
                 }
+                this.modal.removeEventListener("confirm", this.removeFriendFunc.bind(this));
             }
 
             removeFriend.addEventListener("click", () => {
@@ -121,40 +127,41 @@ export default class Profile extends HTMLElement {
                     // remove the event listener
                     this.modal.removeEventListener("confirm", this.removeFriendFunc.bind(this));
                 });
-
-                setTimeout(() => {
-                    this.modal.open();
-                }, 100);
+                this.modal.open();
             });
-        }
-        const chatFriend = this.querySelector("#chat-friend");
-        if (chatFriend) {
-            chatFriend.addEventListener("click", this.handleChatClick.bind(this));
         }
 
         const blockFriend = this.querySelector("#block-friend");
         if (blockFriend) {
             this.blockFriendFunc = async () => {
-                console.log("block")
-                // const result = await friendState.blockFriend(this.user.id);
-                // if (result) {
-                //     Toast.notify({message: "User blocked successfuly", type: "success"});
-                // }
-                                   
+                const result = await friendState.blockFriend(this.user.id)
+                if (result) {
+                    Toast.notify({message: "User blocked successfuly", type: "success"});
+                    Router.instance.navigate("/dashboard/profile");
+                }
+                this.modal.removeEventListener("confirm", this.removeFriendFunc.bind(this));              
             }
 
             blockFriend.addEventListener("click", () => {
                 this.modal.addEventListener("confirm", this.blockFriendFunc.bind(this));
                 this.modal.addEventListener("cancel", () => {
-                    // remove the event listener
                     this.modal.removeEventListener("confirm", this.blockFriendFunc.bind(this));
                 });
-
-                setTimeout(() => {
-                    this.modal.open();
-                }, 100);
+                this.modal.open();
             });
         }
+    }
+
+    getActions() {
+        const actions = this.querySelector(".profile-user-actions");
+        if (!actions) return;
+        actions.innerHTML = /*html*/`
+        ${this.isMine ? /*html*/`<a is="c-link" href="/dashboard/settings" class="text-secondary font-bold uppercase text-sm spacing-1">Edit Profile</a>` : ""}
+        ${!this.isMine && !friendState.alreadyFriends(this.user.id) ? /*html*/`<p id="add-friend" href="" class="cursor-pointer text-secondary font-bold uppercase text-sm spacing-1"><i class="fa-solid fa-plus mr-2"></i>Add friend</p>` : ""}
+        ${!this.isMine ? /*html*/`<p id="chat-friend" class="cursor-pointer text-secondary font-bold uppercase text-sm spacing-1"><i class="fa-regular fa-comment mr-2"></i>Chat</p>` : ""}
+        ${!this.isMine && friendState.alreadyFriends(this.user.id) ? /*html*/`<p id="remove-friend" href="" class="cursor-pointer text-warning font-bold uppercase text-sm spacing-1"><i class="fa-solid fa-minus mr-2"></i>Remove friend</p>` : ""}
+        ${!this.isMine && friendState.alreadyFriends(this.user.id) ? /*html*/`<p id="block-friend" href="" class="cursor-pointer text-danger font-bold uppercase text-sm spacing-1"><i class="fa-solid fa-ban mr-2"></i>Block</p>` : ""}
+        `
     }
 
     async handleChatClick() {
@@ -179,18 +186,6 @@ export default class Profile extends HTMLElement {
 			}
 		}, 100);
 	}
-
-    getActions() {
-        const actions = this.querySelector(".profile-user-actions");
-        if (!actions) return;
-        actions.innerHTML = /*html*/`
-        ${this.isMine ? /*html*/`<a is="c-link" href="/dashboard/settings" class="text-secondary font-bold uppercase text-sm spacing-1">Edit Profile</a>` : ""}
-        ${!this.isMine && !friendState.alreadyFriends(this.user.id) ? /*html*/`<p id="add-friend" href="" class="cursor-pointer text-secondary font-bold uppercase text-sm spacing-1"><i class="fa-solid fa-plus mr-2"></i>Add friend</p>` : ""}
-        ${!this.isMine ? /*html*/`<p id="chat-friend" class="cursor-pointer text-secondary font-bold uppercase text-sm spacing-1"><i class="fa-regular fa-comment mr-2"></i>Chat</p>` : ""}
-        ${!this.isMine && friendState.alreadyFriends(this.user.id) ? /*html*/`<p id="remove-friend" href="" class="cursor-pointer text-warning font-bold uppercase text-sm spacing-1"><i class="fa-solid fa-minus mr-2"></i>Remove friend</p>` : ""}
-        ${!this.isMine && friendState.alreadyFriends(this.user.id) ? /*html*/`<p id="block-friend" href="" class="cursor-pointer text-danger font-bold uppercase text-sm spacing-1"><i class="fa-solid fa-ban mr-2"></i>Block</p>` : ""}
-        `
-    }
 }
 
 customElements.define('p-profile', Profile);

@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q
 from accounts.models import User
+from friends.models import Friendship
 from .serializers import UserMeSerializer, UserSerializer, ChangePasswordSerializer
 from rest_framework import status
 from accounts.models import User
@@ -30,8 +31,14 @@ def get_my_data(request):
 def get_user_data(request, username):
     try:
         user = User.objects.get(username=username)
+        blocked_friendship_exists = Friendship.objects.filter(
+            Q(user1=request.user, user2=user, is_blocked=True) | 
+            Q(user1=user, user2=request.user, is_blocked=True)
+        ).exists()
+        if blocked_friendship_exists:
+            raise User.DoesNotExist
     except User.DoesNotExist:
-        return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'detail': 'User not found or you have a blocked friendship with this user'}, status=status.HTTP_404_NOT_FOUND)
     serializer = UserSerializer(user)
     return Response(serializer.data)
 
@@ -45,11 +52,22 @@ def get_all_users_excluding_me(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_users_by_keyword_excluding_me(request, keyword):
+    blocked_users1 = Friendship.objects.filter(
+        Q(user1=request.user, is_blocked=True)
+    ).values_list('user2', flat=True)
+
+    blocked_users2 = Friendship.objects.filter(
+        Q(user2=request.user, is_blocked=True)
+    ).values_list('user1', flat=True)
+
+    blocked_users = list(blocked_users1) + list(blocked_users2)
+
     users = User.objects.filter(
         Q(username__icontains=keyword) |
         Q(email__icontains=keyword) |
         Q(full_name__icontains=keyword)
-    ).exclude(id=request.user.id)
+    ).exclude(id__in=blocked_users).exclude(id=request.user.id)
+
     serializer = UserSerializer(users, many=True)
     return Response(serializer.data)
 

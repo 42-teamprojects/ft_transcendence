@@ -73,6 +73,53 @@ class FriendState extends State {
 		}
 	}
 
+	async blockFriend(userId) {
+		try {
+			const friendshipObject = this.getFriendshipObject(userId);
+			const result = await this.httpClient.post(`friends/block/${friendshipObject.id}/`);
+			const notification = {
+				type: "FAL",
+				data: {
+					type: "BLOCK",
+					sender_id: userState.state.user.id,
+					sender_name: userState.state.user.username,
+				},
+				recipient: userId,
+			}
+
+			await notificationState.sendNotification(notification);
+
+			this.setState({ friends: this.state.friends.filter((friendshipObject) => friendshipObject.user1.id !== userId && friendshipObject.user2.id !== userId) });
+			return result;
+		} catch (error) {
+			console.error(error);
+		}
+	}
+
+	async unblockFriend(userId) {
+		try {
+			const friendshipObject = this.getFriendshipObject(userId);
+			const result = await this.httpClient.post(`friends/unblock/${friendshipObject.id}/`);
+			const notification = {
+				type: "FAL",
+				data: {
+					type: "UNBLOCK",
+					sender_id: userState.state.user.id,
+					sender_name: userState.state.user.username,
+				},
+				recipient: userId,
+			}
+
+			await notificationState.sendNotification(notification);
+			this.setState({ friends: this.state.friends.filter((friendshipObject) => friendshipObject.user1.id !== userId && friendshipObject.user2.id !== userId) });
+			return result;
+		} catch (error) {
+			console.error(error);
+		}
+	}
+
+
+
 	getFriend(friendshipObject) {
 		const friend = friendshipObject.user1.id === userState.state.user.id ? friendshipObject.user2 : friendshipObject.user1;
 		return friend;
