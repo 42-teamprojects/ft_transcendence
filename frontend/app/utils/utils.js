@@ -121,7 +121,8 @@ export const handleFormSubmitApi = async (
 	const data = useFormData(form).getObject(); // Get the form data as an object using the useFormData utility function
 
 	const errors = formValidations(data); // Validate the form data using the provided formValidations function
-
+	if (!errors) return; // Stop further execution if there are no validation errors
+	
 	if (Object.keys(errors).length > 0) {
 		// If there are validation errors
 		Object.keys(errors).forEach((key) => {

@@ -22,18 +22,23 @@ export default class Updateuserinfoform extends HTMLElement {
 	async handleSubmit(e) {
 		e.preventDefault();
 
+		const validations = (data) => {
+			const errors = {
+				...validateRequire(data),
+				...validateEmail(data["email"]),
+				...validateFullName(data["full_name"]),
+				...validateUsername(data["username"]),
+			};
+			if (this.user.provider !== null) {
+				delete errors.email
+			}
+			return errors;
+		}
+
 		await handleFormSubmitApi(
 			this.form,
 			Authentication.instance.changeUserData.bind(Authentication.instance),
-			
-			(data) => {
-				return {
-					...validateRequire(data),
-					...validateEmail(data["email"]),
-					...validateFullName(data["full_name"]),
-					...validateUsername(data["username"]),
-				};
-			},
+			validations,
 			() => {
 				Toast.notify({ type: "success", message: "Changes saved successfully" });
 			},
