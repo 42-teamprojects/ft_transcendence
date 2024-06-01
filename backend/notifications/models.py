@@ -1,7 +1,6 @@
 from django.db import models
 from accounts.models import User
 
-
 class Notification(models.Model):
     MESSAGE = 'MSG'
     TOURNAMENT = 'TRN'
@@ -23,3 +22,4 @@ class Notification(models.Model):
 
     def __str__(self):
         return f'{self.type} notification for {self.recipient}'
+

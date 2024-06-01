@@ -29,3 +29,16 @@ class ChangePasswordSerializer(serializers.Serializer):
     def validate_new_password(self, value):
         validate_password(value)
         return value
+    
+class UpdateUserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ['username', 'full_name', 'email']
+        #make the change pf the fields optional
+        extra_kwargs = {
+            'username': {'required': False},
+            'full_name': {'required': False},
+            'email': {'required': False}
+        }
+        

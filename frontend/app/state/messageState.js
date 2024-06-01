@@ -82,6 +82,19 @@ class MessageState extends State {
 				content: message,
 				sender: userState.state.user.id,
 			});
+
+			// Send notification to the socket
+			let id  = "notifications/" + userState.state.user.id;
+			let toSend = {
+				notification_type: "message",
+				data:{
+					chat_id: chatId,
+					sender_id: userState.state.user.id,
+					sender_name: userState.state.user.username,
+					message: message,
+				}
+			}
+			userState.notificationSocket.send(id, toSend);
 		} catch (error) {
 			console.error(error);
 		}

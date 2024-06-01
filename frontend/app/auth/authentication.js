@@ -171,4 +171,13 @@ export default class Authentication {
 			throw error;
 		}
 	}
+
+	async changeUserData(data) {
+		try {
+			const { username, full_name, email } = data;
+			return await this.userService.changeUserData(username, full_name, email);
+		} catch (error) {
+			throw error;
+		}
+	}
 }

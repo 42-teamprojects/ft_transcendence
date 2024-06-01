@@ -43,15 +43,16 @@ class UserState extends State {
 				// if (message.sender_id !== this.state.user.id) return;
 
 				// alert("you got message from " + message.sender_name + " : " + message.message);
-				Toast.notify({
-					type: "info",
-					message: /*html*/ `you got message from <a is="c-link" href="/dashboard/chat/${
-						message.chat_id
-					}" class='font-bold text-secondary'>${message.sender_name}:</a><br/>${truncate(
-						message.message,
-						30
-					)}`,
-				});
+				if (!location.pathname.includes("/dashboard/chat"))
+					Toast.notify({
+						type: "info",
+						message: /*html*/ `you got message from <a is="c-link" href="/dashboard/chat/${
+							message.chat_id
+						}" class='font-bold text-secondary'>${message.sender_name}:</a><br/>${truncate(
+							message.message,
+							30
+						)}`,
+					});
 				messageState.updateCardLastMessage(message.chat_id, message.message);
 				console.log("after toast");
 			}

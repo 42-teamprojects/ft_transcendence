@@ -1,7 +1,9 @@
+import Authentication from "../../auth/authentication.js";
 import { userState } from "../../state/userState.js";
 import { handleFormSubmitApi } from "../../utils/utils.js";
 import { validateEmail, validateFullName, validateRequire, validateUsername } from "../../utils/validations.js";
 import Toast from "./toast.js";
+import { useFormData } from "../../utils/useForm.js";
 
 export default class Updateuserinfoform extends HTMLElement {
 	constructor() {
@@ -22,7 +24,8 @@ export default class Updateuserinfoform extends HTMLElement {
 
 		await handleFormSubmitApi(
 			this.form,
-			(data) => alert("Replace this with the actual api call\n" + JSON.stringify(data)), // Replace with the actual function api
+			Authentication.instance.changeUserData.bind(Authentication.instance),
+			
 			(data) => {
 				return {
 					...validateRequire(data),
@@ -35,6 +38,7 @@ export default class Updateuserinfoform extends HTMLElement {
 				Toast.notify({ type: "success", message: "Changes saved successfully" });
 			},
 		);
+
 	}
 
 	disconnectedCallback() {}
