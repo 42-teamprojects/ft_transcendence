@@ -29,7 +29,7 @@ export default class Conversationfooter extends HTMLElement {
 		await messageState.sendMessage(this.chatId, message);
 		let id  = "notifications/" + userState.state.user.id;
 		let toSend = {
-			noti_type: "message",
+			notification_type: "message",
 			data:{
 				chat_id: this.chatId,
 				sender_id: userState.state.user.id,
