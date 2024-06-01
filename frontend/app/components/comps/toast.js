@@ -39,6 +39,21 @@ export default class Toast extends HTMLElement {
             case 'info':
                 iconClass = 'fa-info-circle';
                 break;
+            case 'message':
+                iconClass = 'fa-envelope';
+                break;
+            case 'play':
+                iconClass = 'fa-gamepad';
+                break;
+            case 'tournament':
+                iconClass = 'fa-trophy';
+                break;
+            case 'friend':
+                iconClass = 'fa-person-circle-plus';
+                break;
+            case 'notification':
+                iconClass = 'fa-bell';
+                break;
             default:
                 iconClass = 'fa-check';
         }
@@ -46,7 +61,7 @@ export default class Toast extends HTMLElement {
         this.innerHTML = /*html*/`
         <div class="toast">
             <div class="toast-content">
-                <i class="fas ${iconClass} ${type}"></i>
+                <i class="fa-solid ${iconClass} ${type}"></i>
                 <div class="message">
                     <span class="text text-1">${toCapital(type)}</span>
                     <span class="text text-2">${message}</span>

@@ -13,8 +13,8 @@ class UserState extends State {
 			token_verified_at: null,
 		});
 		this.httpClient = HttpClient.instance;
-		this.notificationSocket = new WebSocketManager(config.websocket_url);
-		this.socketId = null;
+		// this.notificationSocket = new WebSocketManager(config.websocket_url);
+		// this.socketId = null;
 	}
 
 	async fetchMe() {
@@ -27,46 +27,46 @@ class UserState extends State {
 		}
 	}
 
-	setup() {
-		//check if the socket is already open
-		if (this.notificationSocket.sockets[this.socketId]) return;
+	// setup() {
+	// 	//check if the socket is already open
+	// 	if (this.notificationSocket.sockets[this.socketId]) return;
 
-		//setup the websocket connection
-		this.notificationSocket.setupWebSocket(
-			this.socketId,
+	// 	//setup the websocket connection
+	// 	this.notificationSocket.setupWebSocket(
+	// 		this.socketId,
 
-			//on message callback
-			(event) => {
-				const message = JSON.parse(event.data);
-				console.log(message);
-				// console.log(this.state.user.id, message.sender_id);
-				// if (message.sender_id !== this.state.user.id) return;
+	// 		//on message callback
+	// 		(event) => {
+	// 			const message = JSON.parse(event.data);
+	// 			console.log(message);
+	// 			// console.log(this.state.user.id, message.sender_id);
+	// 			// if (message.sender_id !== this.state.user.id) return;
 
-				// alert("you got message from " + message.sender_name + " : " + message.message);
-				if (!location.pathname.includes("/dashboard/chat"))
-					Toast.notify({
-						type: "info",
-						message: /*html*/ `you got message from <a is="c-link" href="/dashboard/chat/${
-							message.chat_id
-						}" class='font-bold text-secondary'>${message.sender_name}:</a><br/>${truncate(
-							message.message,
-							30
-						)}`,
-					});
-				messageState.updateCardLastMessage(message.chat_id, message.message);
-				console.log("after toast");
-			}
-		);
+	// 			// alert("you got message from " + message.sender_name + " : " + message.message);
+	// 			if (!location.pathname.includes("/dashboard/chat"))
+	// 				Toast.notify({
+	// 					type: "info",
+	// 					message: /*html*/ `you got message from <a is="c-link" href="/dashboard/chat/${
+	// 						message.chat_id
+	// 					}" class='font-bold text-secondary'>${message.sender_name}:</a><br/>${truncate(
+	// 						message.message,
+	// 						30
+	// 					)}`,
+	// 				});
+	// 			messageState.updateCardLastMessage(message.chat_id, message.message);
+	// 			console.log("after toast");
+	// 		}
+	// 	);
 
-		//setup the focus listener
-		this.focusListener = async () => {
-			if (this.notificationSocket.sockets[this.socketId]) return;
-			this.setup();
-		};
+	// 	//setup the focus listener
+	// 	this.focusListener = async () => {
+	// 		if (this.notificationSocket.sockets[this.socketId]) return;
+	// 		this.setup();
+	// 	};
 
-		window.removeEventListener("focus", this.focusListener);
-		window.addEventListener("focus", this.focusListener);
-	}
+	// 	window.removeEventListener("focus", this.focusListener);
+	// 	window.addEventListener("focus", this.focusListener);
+	// }
 
 	async fetchUser(username) {
 		try {
