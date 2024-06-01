@@ -17,6 +17,7 @@ from rest_framework.viewsets import ModelViewSet
 class FriendshipViewSet(ModelViewSet):
     serializer_class = FriendshipSerializer
     permission_classes = [IsAuthenticated, AreFriends]
+    
 
     def get_queryset(self):
         user = self.request.user
