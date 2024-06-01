@@ -15,4 +15,3 @@ class NotificationViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         return Notification.objects.filter(recipient=user)
-
