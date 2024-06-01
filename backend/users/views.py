@@ -121,15 +121,20 @@ class UpdateUserView(generics.UpdateAPIView):
                     return Response({'detail': 'Full name contains special characters'}, status=status.HTTP_400_BAD_REQUEST)
                 self.object.full_name = full_name
             if email is not None:
-                validator = EmailValidator()
+                # Check if the email already exists
+                existing_user = User.objects.filter(email=email).first()
+                if existing_user:
+                    existing_user.email = email
+                # If the email does not exist, proceed with validation and assignment
+                if not existing_user:
+                    validator = EmailValidator()
                 try:
                     validator(email)
                 except ValidationError:
-                    return Response({'detail': 'Email is not valid'}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'detail': 'Invalid email'}, status=status.HTTP_400_BAD_REQUEST)
                 self.object.email = email
-
-            self.object.save()
-
+            # Save the object only if the email was successfully assigned
+            if self.object.email!= email:
+                self.object.save()
             return Response({'detail' : 'User updated successfully'}, status=status.HTTP_200_OK)
-
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
