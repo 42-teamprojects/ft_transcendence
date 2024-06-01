@@ -22,10 +22,12 @@ class PlayerStatsSerializer(serializers.ModelSerializer):
         instance.tournaments_played += tournament_played
 
         if win:
+            instance.matches_played += 1
             instance.current_win_streak += win
             if instance.current_win_streak > instance.longest_win_streak:
                 instance.longest_win_streak = instance.current_win_streak
         if loss:
+            instance.matches_played += 1
             instance.current_win_streak = 0
 
         instance.save()
