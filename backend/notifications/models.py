@@ -22,3 +22,4 @@ class Notification(models.Model):
 
     def __str__(self):
         return f'{self.type} notification for {self.recipient}'
+
