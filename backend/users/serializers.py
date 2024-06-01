@@ -56,6 +56,8 @@ class UpdateUserSerializer(serializers.ModelSerializer):
         return value
 
     def validate_email(self, value):
+        if self.instance.provider == 'google' or self.instance.provider == 'fortytwo':
+            raise serializers.ValidationError("Email cannot be changed")
         if self.instance.email != value:
             if User.objects.filter(email=value).exclude(pk=self.instance.pk).exists():
                 raise serializers.ValidationError("Email already exists")

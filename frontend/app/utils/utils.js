@@ -101,7 +101,7 @@ export const handleFormSubmitApi = async (
 	form,
 	apiFunction,
 	formValidations,
-	successCallback = () => {},
+	successCallback = (data = {}) => {},
 	errorCallback = () => {}
 ) => {
 	const inputs = Array.from(form.querySelectorAll("input")); // Get all input elements within the form
@@ -135,7 +135,7 @@ export const handleFormSubmitApi = async (
 	try {
 		button.setAttribute("processing", "true"); // Set the button attribute to indicate processing
 		await apiFunction(data); // Call the API function with the form data
-		successCallback(); // Call the success callback function
+		successCallback(data); // Call the success callback function
 		form.reset(); // Reset the form
 		button.setAttribute("processing", "false"); // Set the button attribute to indicate processing is complete
 	} catch (errors) {

@@ -8,7 +8,6 @@ import { useFormData } from "../../utils/useForm.js";
 export default class Updateuserinfoform extends HTMLElement {
 	constructor() {
 		super();
-		this.user = userState.state.user;
 	}
 
 	connectedCallback() {
@@ -21,6 +20,10 @@ export default class Updateuserinfoform extends HTMLElement {
 
 	async handleSubmit(e) {
 		e.preventDefault();
+
+		if (this.user.provider !== null) {
+			this.form.email.remove();
+		}
 
 		const validations = (data) => {
 			const errors = {
@@ -39,16 +42,17 @@ export default class Updateuserinfoform extends HTMLElement {
 			this.form,
 			Authentication.instance.changeUserData.bind(Authentication.instance),
 			validations,
-			() => {
+			(data) => {
+				userState.setState({ user: {...this.user, ...data} });
 				Toast.notify({ type: "success", message: "Changes saved successfully" });
 			},
 		);
-
 	}
 
 	disconnectedCallback() {}
 
 	render() {
+		this.user = userState.state.user;
 		this.innerHTML = /*html*/ `
         <form id="update-user-info" class="settings-form">
             <div class="form-group-inline">
