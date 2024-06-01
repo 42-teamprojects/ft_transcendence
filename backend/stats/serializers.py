@@ -13,7 +13,6 @@ class PlayerStatsSerializer(serializers.ModelSerializer):
         tournament_played = validated_data.get('tournaments_played', 0)
         tournament_win = validated_data.get('tournaments_won', 0)
         tournament_loss = validated_data.get('tournaments_lost', 0)
-        wins_streak = validated_data.get('wins_streak', 0)
 
         instance.matches_played += played
         instance.matches_won += win

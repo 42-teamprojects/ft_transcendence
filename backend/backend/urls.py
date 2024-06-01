@@ -28,6 +28,7 @@ urlpatterns = [
     path('api/', include('chat.urls')),
     path('api/users/', include('users.urls')),
     path('api/', include('friends.urls')),
+    path('api/stats/', include('stats.urls')),
 ]
 
 if settings.DEBUG:

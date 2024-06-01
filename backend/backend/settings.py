@@ -80,6 +80,7 @@ INSTALLED_APPS = [
     'friends',
     'notifications',
     'django_crontab',
+    'stats',
 ]
 
 ASGI_APPLICATION = 'backend.asgi.application'
