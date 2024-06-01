@@ -4,7 +4,6 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from .models import UserStats
 from .serializers import PlayerStatsSerializer
-from django.http import Http404
 
 class UpdatePlayerStatsView(APIView):
     serializer_class = PlayerStatsSerializer
