@@ -58,7 +58,12 @@ export function handleInputError(form, fieldName, errorMessage) {
 		existingErrorSpan.remove();
 	}
 
-	const inputField = form.querySelector(`input[name='${fieldName}']`);
+	const inputField =
+		form.querySelector(`input[name='${fieldName}']`) || form.querySelector(`input[id='${fieldName}']`);
+	if (!inputField) {
+		console.error(`Input field with name or id ${fieldName} not found`);
+		return;
+	}
 	inputField.classList.remove("error");
 
 	// Add new error message
@@ -100,8 +105,16 @@ export const handleFormSubmitApi = async (
 	errorCallback = () => true
 ) => {
 	const inputs = Array.from(form.querySelectorAll("input")); // Get all input elements within the form
+	if (!inputs.length) {
+		console.error("No input elements found");
+		return;
+	}
 
 	const button = form.querySelector("button[type='submit']") || form.querySelector("button"); // Get the submit button element
+	if (!button) {
+		console.error("Submit button not found");
+		return;
+	}
 
 	inputs.forEach((input) => removeErrors(form, input.name)); // Remove any existing error messages for each input
 
@@ -112,6 +125,7 @@ export const handleFormSubmitApi = async (
 	if (Object.keys(errors).length > 0) {
 		// If there are validation errors
 		Object.keys(errors).forEach((key) => {
+			console.log(key, errors[key]);
 			handleInputError(form, key, errors[key]); // Display error messages for each input with errors
 		});
 		return; // Stop further execution

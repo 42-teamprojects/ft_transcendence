@@ -44,7 +44,7 @@ export default class Updateuserinfoform extends HTMLElement {
         <form id="update-user-info" class="settings-form">
             <div class="form-group-inline">
                 <label for="username">Username</label>
-                <div className="form-group">
+                <div className="form-group"> 
                     <input type="text" id="username" name="username" class="input-field" placeholder="Username" value="${this.user.username}"/>
                 </div>
             </div>
@@ -54,16 +54,15 @@ export default class Updateuserinfoform extends HTMLElement {
                     <input type="text" id="full_name" name="full_name" class="input-field" placeholder="Full Name" value="${this.user.full_name}"/>
                 </div>
             </div>
-            ${this.user.provider === null ? /*html*/`
 			<div class="form-group-inline">
                 <label for="email">Email</label>
                 <div className="form-group">
-                    <input type="text" id="email" name="email" class="input-field" placeholder="Email" value="${this.user.email}"/>
+                    <input type="text" id="email" name="email" class="input-field" placeholder="Email" value="${this.user.email}" ${this.user.provider !== null ? 'disabled' : ''}/>
 					${this.user.is_verified ? "" : /*html*/`
 						<span class="input-error text-xs ml-3 text-danger">Your email is not verified. <a is="c-link" href="/resend-verification-email" class="underline font-bold text-danger">Verify Now.</a></span>
 					`}
                 </div>
-            </div>` : ""}
+            </div>
             <div class="form-group-inline">
                 <label></label>
                 <button is="c-button" class="btn-secondary" type="submit">Save changes</button>
