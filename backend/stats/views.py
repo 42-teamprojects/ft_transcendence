@@ -15,7 +15,9 @@ class UpdatePlayerStatsView(APIView):
         try:
             return UserStats.objects.get(user=user)
         except UserStats.DoesNotExist:
-            raise Http404
+            stats = UserStats(user=user)
+            stats.save()
+            return stats
         
     def get(self, request):
         stats = self.get_object(request.user)
