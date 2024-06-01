@@ -29,6 +29,7 @@ export default class Profile extends HTMLElement {
             this.isMine = false;
         }
         this.render();
+        this.modal = document.querySelector("c-modal");
         this.unsubscribe = userState.subscribe(() => {
             this.user = userState.state.user;
             if (this.user) this.render();
@@ -50,6 +51,7 @@ export default class Profile extends HTMLElement {
         const avatar = this.user.avatar ? config.backend_domain + this.user.avatar : `https://api.dicebear.com/8.x/thumbs/svg?seed=${this.user.username}`;
         this.innerHTML = /*html*/`
         ${this.isMine ? /*html*/`<c-upload-avatar-modal></c-upload-avatar-modal>` : ""}
+        ${!this.isMine ? /*html*/`<c-modal></c-modal>` : ""} 
         <div class="dashboard-content">
             <main>
                 ${!this.isMine ? /*html*/`<a is="c-link" href="/dashboard/profile" class="text-secondary font-bold uppercase text-sm spacing-1"><i class="fa-solid fa-angle-left mr-2"></i> Back to my profile</a>` : ""}
@@ -106,16 +108,52 @@ export default class Profile extends HTMLElement {
         }
         const removeFriend = this.querySelector("#remove-friend");
         if (removeFriend) {
-            removeFriend.addEventListener("click", async () => {
+            this.removeFriendFunc = async () => {
                 const result = await friendState.removeFriend(this.user.id);
                 if (result) {
                     Toast.notify({message: "Friend removed successfuly", type: "success"});
                 }
+            }
+
+            removeFriend.addEventListener("click", () => {
+                this.modal.addEventListener("confirm", this.removeFriendFunc.bind(this));
+                this.modal.addEventListener("cancel", () => {
+                    // remove the event listener
+                    this.modal.removeEventListener("confirm", this.removeFriendFunc.bind(this));
+                });
+
+                setTimeout(() => {
+                    this.modal.open();
+                }, 100);
             });
         }
         const chatFriend = this.querySelector("#chat-friend");
         if (chatFriend) {
             chatFriend.addEventListener("click", this.handleChatClick.bind(this));
+        }
+
+        const blockFriend = this.querySelector("#block-friend");
+        if (blockFriend) {
+            this.blockFriendFunc = async () => {
+                console.log("block")
+                // const result = await friendState.blockFriend(this.user.id);
+                // if (result) {
+                //     Toast.notify({message: "User blocked successfuly", type: "success"});
+                // }
+                                   
+            }
+
+            blockFriend.addEventListener("click", () => {
+                this.modal.addEventListener("confirm", this.blockFriendFunc.bind(this));
+                this.modal.addEventListener("cancel", () => {
+                    // remove the event listener
+                    this.modal.removeEventListener("confirm", this.blockFriendFunc.bind(this));
+                });
+
+                setTimeout(() => {
+                    this.modal.open();
+                }, 100);
+            });
         }
     }
 
