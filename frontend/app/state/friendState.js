@@ -1,4 +1,5 @@
 import HttpClient from "../http/httpClient.js";
+import { notificationState } from "./notificationState.js";
 import State from "./state.js";
 import { userState } from "./userState.js";
 
@@ -28,6 +29,20 @@ class FriendState extends State {
 	async addFriend(userId) {
 		try {
 			const result = await this.httpClient.post(`friends/`, { user2: userId });
+
+			// Send notification to the recipient
+			const notification = {
+				type: "FAL",
+				data: {
+					type: "ADD",
+					sender_id: userState.state.user.id,
+					sender_name: userState.state.user.username,
+				},
+				recipient: userId,
+			}
+
+			await notificationState.sendNotification(notification);
+
 			this.setState({ friends: [...this.state.friends, result] });
 			return result;
 		} catch (error) {
@@ -39,6 +54,18 @@ class FriendState extends State {
 		try {
 			const friendshipObject = this.getFriendshipObject(userId);
 			const result = await this.httpClient.delete(`friends/${friendshipObject.id}/`);
+			const notification = {
+				type: "FAL",
+				data: {
+					type: "REMOVE",
+					sender_id: userState.state.user.id,
+					sender_name: userState.state.user.username,
+				},
+				recipient: userId,
+			}
+
+			await notificationState.sendNotification(notification);
+
 			this.setState({ friends: this.state.friends.filter((friendshipObject) => friendshipObject.user1.id !== userId && friendshipObject.user2.id !== userId) });
 			return result;
 		} catch (error) {
@@ -74,6 +101,7 @@ class FriendState extends State {
 			friends: [],
 			loading: true,
 		});
+		this.fetchedFriends = false;
 	}
 }
 

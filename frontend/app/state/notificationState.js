@@ -7,6 +7,7 @@ import { config } from "../config.js";
 import Toast from "../components/comps/toast.js";
 import { truncate } from "../utils/utils.js";
 import { messageState } from "./messageState.js";
+import { friendState } from "./friendState.js";
 
 /* 
     Notification: 
@@ -66,6 +67,18 @@ class NotificationState extends State {
             });
         }
         messageState.updateCardLastMessage(notification.data.chat_id, notification.data.message);
+    }
+
+    handleFriendAlertNotification(notification) {
+        const message = notification.data.type === "ADD" ? `${notification.data.sender_name} added you as a friend` : `${notification.data.sender_name} removed you from their friends list`;
+        Toast.notify({
+            type: "info",
+            message: /*html*/ `<p>${message}</p><br/><a is="c-link" class="font-bold spacing-1 uppercase text-secondary mt-2 text-sm" href="/dashboard/profile?username=${notification.data.sender_name}" class="mt-2">View friend</a>`,
+        });
+
+        friendState.reset();
+        friendState.getFriends();
+
     }
 
     /* 
