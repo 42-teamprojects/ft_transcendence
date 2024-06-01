@@ -8,11 +8,14 @@ from rest_framework import status
 from accounts.models import User
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from chat.models import Chat
 from .serializers import FriendshipSerializer
 from rest_framework import serializers
 from .permissions import AreFriends
 from .models import Friendship
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.decorators import action
 
 class FriendshipViewSet(ModelViewSet):
     serializer_class = FriendshipSerializer
@@ -21,7 +24,9 @@ class FriendshipViewSet(ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return Friendship.objects.filter(Q(user1=user) | Q(user2=user)).distinct()
+        return Friendship.objects.filter(
+            (Q(user1=user) | Q(user2=user)) & Q(is_blocked=False)
+        ).distinct()
 
     def perform_create(self, serializer):
         user1 = self.request.user
@@ -54,8 +59,15 @@ class FriendshipViewSet(ModelViewSet):
             return Response({'detail': 'Friendship deleted successfully'}, status=status.HTTP_200_OK)
         except Friendship.DoesNotExist:
             raise serializers.ValidationError("Friendship not found.")
-
-
+    
+    @action(detail=False, methods=['get'])
+    def blocked(self, request):
+        user = request.user
+        blocked_friendships = Friendship.objects.filter(
+            (Q(user1=user) | Q(user2=user)) & Q(is_blocked=True)
+        ).distinct()
+        serializer = self.get_serializer(blocked_friendships, many=True)
+        return Response(serializer.data)
 
 
 class BlockFriendshipView(APIView):
@@ -68,6 +80,13 @@ class BlockFriendshipView(APIView):
         friendship.is_blocked = True
         friendship.blocked_by = request.user
         friendship.save()
+        
+        # Delete all chats between the two users
+        Chat.objects.filter(
+            Q(user1=request.user, user2=friendship.user2) | 
+            Q(user1=friendship.user2, user2=request.user)
+        ).delete()
+        
         return Response({'detail': 'Friendship blocked successfully'}, status=status.HTTP_200_OK)
     
 

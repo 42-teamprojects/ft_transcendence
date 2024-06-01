@@ -1,6 +1,7 @@
 import { chatState } from "../state/chatState.js";
 import { friendState } from "../state/friendState.js";
 import { messageState } from "../state/messageState.js";
+import { notificationState } from "../state/notificationState.js";
 import { userState as userState } from "../state/userState.js";
 import AuthService from "./authService.js";
 import OAuthService from "./oAuthService.js";
@@ -72,8 +73,9 @@ export default class Authentication {
 
 			// Update the token_verified_at timestamp in the userState
 			userState.setState({ user: result, token_verified_at: now });
-			userState.socketId = "notifications/" + userState.state.user.id;
-			userState.setup();
+			// userState.socketId = "notifications/" + userState.state.user.id;
+			// userState.setup();
+			notificationState.setup();
 			return true;
 		} catch (error) {
 			throw error;

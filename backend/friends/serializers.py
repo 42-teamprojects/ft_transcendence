@@ -7,9 +7,11 @@ from users.serializers import UserSerializer
 
 class FriendshipSerializer(serializers.ModelSerializer):
     user1 = UserSerializer(read_only=True)
+    is_blocked = serializers.BooleanField(read_only=True)
+    blocked_by = UserSerializer(read_only=True)
     class Meta:
         model = Friendship
-        fields = ['id', 'user1', 'user2']
+        fields = ['id', 'user1', 'user2', 'is_blocked', 'blocked_by']
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -24,9 +26,11 @@ class FriendshipSerializer(serializers.ModelSerializer):
 class ListFriendshipSerializer(serializers.ModelSerializer):
     user1 = UserSerializer(read_only=True)
     user2 = UserSerializer(read_only=True)
+    is_blocked = serializers.BooleanField(read_only=True)
+    blocked_by = UserSerializer(read_only=True)
     class Meta:
         model = Friendship
-        fields = ['id', 'user1', 'user2']
+        fields = ['id', 'user1', 'user2', 'is_blocked', 'blocked_by']
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)

@@ -5,6 +5,7 @@ import { chatState } from "./chatState.js";
 import WebSocketManager from "../socket/WebSocketManager.js";
 import { config } from "../config.js";
 import Router from "../router/router.js";
+import { notificationState } from "./notificationState.js";
 
 const socketTimeout = 60000 * 5; // 5 minute
 
@@ -70,31 +71,33 @@ class MessageState extends State {
 		window.addEventListener("focus", this.focusListener);
 	}
 
-	async sendMessage(chatId, message) {
+	async sendMessage(chatId, content) {
 		if (!this.webSocketManager.sockets[chatId]) {
 			await this.setup(chatId);
 		}
 		try {
 			// Save message to the database
-			await this.httpClient.post(`chats/${chatId}/messages/`, { content: message });
+			await this.httpClient.post(`chats/${chatId}/messages/`, { content: content });
 			// Send message to the WebSocket
 			this.webSocketManager.send(chatId, {
-				content: message,
+				content: content,
 				sender: userState.state.user.id,
 			});
 
-			// Send notification to the socket
-			let id  = "notifications/" + userState.state.user.id;
-			let toSend = {
-				notification_type: "message",
-				data:{
+			// Send notification to the recipient
+			const chat = await chatState.getChat(chatId);
+			const friend = chatState.getFriend(chat);
+			const notification = {
+				type: "MSG",
+				data: {
 					chat_id: chatId,
 					sender_id: userState.state.user.id,
 					sender_name: userState.state.user.username,
-					message: message,
-				}
+					message: content,
+				},
+				recipient: friend.id,
 			}
-			userState.notificationSocket.send(id, toSend);
+			notificationState.sendNotification(notification);
 		} catch (error) {
 			console.error(error);
 		}
@@ -105,7 +108,7 @@ class MessageState extends State {
 		if (!chatId) {
 			throw new Error("Chat id not provided");
 		}
-		if (this.messagesFetched[chatId]) return;
+		if (this.messagesFetched[chatId]) return this.state.messages[chatId];
 		try {
 			this.resetLoading();
 			const messages = { ...this.state.messages };
@@ -116,6 +119,7 @@ class MessageState extends State {
 			this.updateCardLastMessage(chatId, messages[chatId][0]?.content);
 			this.setState({ messages, loading: false });
 			this.messagesFetched[chatId] = true;
+			return this.state.messages[chatId];
 		} catch (error) {
 			console.error(error);
 		}
