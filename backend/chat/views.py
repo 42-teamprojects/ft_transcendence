@@ -1,4 +1,6 @@
 from rest_framework.permissions import IsAuthenticated
+
+from friends.models import Friendship
 from .permissions import IsChatParticipant
 from .models import Chat, Message
 from .serializers import ChatSerializer, MessageSerializer
@@ -44,6 +46,15 @@ class ChatViewSet(ModelViewSet):
             raise serializers.ValidationError("user2 field is required.")
         if user1.id == int(user2_id):
             raise serializers.ValidationError("user1 and user2 cannot be the same user.")
+        
+        blocked_friendship_exists = Friendship.objects.filter(
+            Q(user1=user1, user2_id=user2_id, is_blocked=True) | 
+            Q(user1_id=user2_id, user2=user1, is_blocked=True)
+        ).exists()
+
+        if blocked_friendship_exists:
+            raise serializers.ValidationError("You have a blocked friendship with this user.")
+        
         user2 = User.objects.get(pk=user2_id)
         serializer.save(user1=user1, user2=user2)
 
@@ -76,4 +87,14 @@ class MessageViewSet(ModelViewSet):
         chat = get_object_or_404(Chat, pk=chat_id)
         if sender != chat.user1 and sender != chat.user2:
             raise serializers.ValidationError("You are not a participant in this chat.")
+        
+        receiver = chat.user1 if sender != chat.user1 else chat.user2
+        blocked_friendship_exists = Friendship.objects.filter(
+            Q(user1=sender, user2=receiver, is_blocked=True) | 
+            Q(user1=receiver, user2=sender, is_blocked=True)
+        ).exists()
+
+        if blocked_friendship_exists:
+            raise serializers.ValidationError("You have a blocked friendship with the receiver.")
+        
         serializer.save(sender=sender, chat_id=chat_id)

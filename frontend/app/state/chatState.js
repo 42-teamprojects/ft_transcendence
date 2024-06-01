@@ -42,9 +42,10 @@ class ChatState extends State {
 				return chat;
 			});
 			this.setState({ chats, loading: false});
+			console.log("Chats", chats)
 			this.chatsFetched = true;
 		} catch (error) {
-			this.setState({ chats, loading: false});
+			this.setState({ loading: false});
 			console.error(error);
 		}
 	}
@@ -79,6 +80,7 @@ class ChatState extends State {
 	reset() {
 		this.setState({
 			chats: [],
+			loading: true,
 		});
 		this.chatsFetched = false;
 	}

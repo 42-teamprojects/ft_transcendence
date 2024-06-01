@@ -1,4 +1,5 @@
 import HttpClient from "../http/httpClient.js";
+import { chatState } from "./chatState.js";
 import { notificationState } from "./notificationState.js";
 import State from "./state.js";
 import { userState } from "./userState.js";
@@ -90,6 +91,8 @@ class FriendState extends State {
 			await notificationState.sendNotification(notification);
 
 			this.setState({ friends: this.state.friends.filter((friendshipObject) => friendshipObject.user1.id !== userId && friendshipObject.user2.id !== userId) });
+			chatState.reset();
+			chatState.getChats();
 			return result;
 		} catch (error) {
 			console.error(error);

@@ -8,6 +8,7 @@ import Toast from "../components/comps/toast.js";
 import { truncate } from "../utils/utils.js";
 import { messageState } from "./messageState.js";
 import { friendState } from "./friendState.js";
+import { chatState } from "./chatState.js";
 
 /* 
     Notification: 
@@ -77,9 +78,11 @@ class NotificationState extends State {
                 message: /*html*/ `<p>${message}</p><br/><a is="c-link" class="font-bold spacing-1 uppercase text-secondary mt-2 text-sm" href="/dashboard/profile?username=${notification.data.sender_name}" class="mt-2">View friend</a>`,
             });
         }
-
+        
         friendState.reset();
         friendState.getFriends();
+        chatState.reset();
+        chatState.getChats();
     }
 
     /* 
