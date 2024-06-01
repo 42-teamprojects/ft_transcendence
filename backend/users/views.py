@@ -11,6 +11,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
 from .serializers import AvatarSerializer
+from .serializers import UpdateUserSerializer
+from rest_framework import generics
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -84,3 +86,27 @@ class UploadAvatarView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class UpdateUserView(generics.UpdateAPIView):
+    serializer_class = UpdateUserSerializer
+    model = User
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, queryset=None):
+        obj = self.request.user
+        return obj
+
+    def update(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            self.object.username = serializer.data.get("username")
+            self.object.full_name = serializer.data.get("full_name")
+            self.object.save()
+
+            return Response({'detail' : 'User updated successfully'}, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
