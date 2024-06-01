@@ -12,4 +12,12 @@ export default class UserService {
         };
 		return this.httpClient.put("users/set_password/", data);
 	}
+    async changeUserData(username, full_name, email) {
+        const data = {
+            username: username,
+            full_name: full_name,
+            email: email,
+        };
+		return this.httpClient.put("users/", data);
+	}
 }

@@ -36,7 +36,6 @@ export default class SignUp extends HTMLElement {
 					message: "Account created successfully, Please verify your email. check spam",
 				});
 			},
-			() => {}
 		);
 	}
 
@@ -50,16 +49,16 @@ export default class SignUp extends HTMLElement {
             <h1>Sign up</h1>
             <form>
                 <div class="form-group">
-                    <input type="text" name="full_name" class="input-field" placeholder="Full name"/>
+                    <input type="text" name="full_name" id="full_name" class="input-field" placeholder="Full name"/>
                 </div>
                 <div class="form-group">
-                    <input type="text" name="username" class="input-field" placeholder="Username"/>
+                    <input type="text" name="username" id="username" class="input-field" placeholder="Username"/>
                 </div>
                 <div class="form-group">
-                    <input type="email" name="email" class="input-field" placeholder="Email"/>
+                    <input type="email" name="email" id="email" class="input-field" placeholder="Email"/>
                 </div>
                 <div class="form-group">
-                    <input type="password" name="password" class="input-field" placeholder="Password" />
+                    <input type="password" name="password" id="password" class="input-field" placeholder="Password" />
                 </div>
                 <div class="form-group">
                     <input type="password" name="confirm_password" class="input-field" placeholder="Confirm password" />

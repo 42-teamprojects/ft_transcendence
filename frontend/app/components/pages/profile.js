@@ -1,5 +1,7 @@
 import { config } from "../../config.js";
 import Router from "../../router/router.js";
+import { chatState } from "../../state/chatState.js";
+import { friendState } from "../../state/friendState.js";
 import { userState } from "../../state/userState.js";
 import { formatDate } from "../../utils/utils.js";
 import Toast from "../comps/toast.js";
@@ -16,6 +18,7 @@ export default class Profile extends HTMLElement {
         this.user = userState.state.user;
         this.isMine = true;
         if (this.user.username !== this.username) {
+            this.innerHTML = /*html*/`<c-loader></c-loader>`;
             const searchedUser = await userState.fetchUser(this.username);
             if (!searchedUser) {
                 Toast.notify({message: "User not found", type: "warning"});
@@ -25,17 +28,22 @@ export default class Profile extends HTMLElement {
             this.user = searchedUser;
             this.isMine = false;
         }
-        
         this.render();
         this.unsubscribe = userState.subscribe(() => {
             this.user = userState.state.user;
             if (this.user) this.render();
             return;
         });
+        this.unsubscribeFriends = friendState.subscribe(() => {
+            this.getActions();
+            this.addEventListeners();
+        });
+        this.addEventListeners();
     }
 
     disconnectedCallback() {
         if (this.unsubscribe) this.unsubscribe();
+        if (this.unsubscribeFriends) this.unsubscribeFriends();
     }
 
     render() {
@@ -60,9 +68,6 @@ export default class Profile extends HTMLElement {
                         </div>
                         <p>Joined ${formatDate(this.user?.date_joined)}</p>
                         <div class="profile-user-actions flex gap-6">
-                            ${this.isMine ? /*html*/`<a is="c-link" href="/dashboard/settings" class="text-secondary font-bold uppercase text-sm spacing-1">Edit Profile</a>` : ""}
-                            ${!this.isMine ? /*html*/`<a is="c-link" href="" class="text-secondary font-bold uppercase text-sm spacing-1"><i class="fa-solid fa-plus mr-2"></i>Add friend</a>` : ""}
-                            ${!this.isMine ? /*html*/`<a is="c-link" href="" class="text-secondary font-bold uppercase text-sm spacing-1"><i class="fa-regular fa-comment mr-2"></i>Chat</a>` : ""}
                         </div>
                     </div>
                 </section>
@@ -85,6 +90,67 @@ export default class Profile extends HTMLElement {
             </div>
         </div>
         `;
+
+        this.getActions();
+    }
+    
+    addEventListeners() {
+        const addFriend = this.querySelector("#add-friend");
+        if (addFriend) {
+            addFriend.addEventListener("click", async () => {
+                const result = await friendState.addFriend(this.user.id);
+                if (result) {
+                    Toast.notify({message: "Friend added successfuly", type: "success"});
+                }
+            });
+        }
+        const removeFriend = this.querySelector("#remove-friend");
+        if (removeFriend) {
+            removeFriend.addEventListener("click", async () => {
+                const result = await friendState.removeFriend(this.user.id);
+                if (result) {
+                    Toast.notify({message: "Friend removed successfuly", type: "success"});
+                }
+            });
+        }
+        const chatFriend = this.querySelector("#chat-friend");
+        if (chatFriend) {
+            chatFriend.addEventListener("click", this.handleChatClick.bind(this));
+        }
+    }
+
+    async handleChatClick() {
+        await chatState.getChats();
+		// Check if the chat already exists
+		const chat = chatState.state.chats.find((c) => c.friend.id === this.user.id)
+		// If the chat exists, navigate to the chat
+		if (chat) {
+			Router.instance.navigate(`/dashboard/chat/${chat.id}`);
+			return;
+		}
+		// If the chat does not exist, open direct message modal to create a chat
+		const searchModal = document.querySelector("c-friends-search-modal");
+		const chatModal = document.createElement("c-chat-send-message-modal");
+		chatModal.setAttribute("user-id", this.user.id);
+		chatModal.setAttribute("username", this.user.username);
+		document.body.appendChild(chatModal);
+		setTimeout(() => {
+			chatModal.open();
+			if (searchModal) {
+				searchModal.hide();
+			}
+		}, 100);
+	}
+
+    getActions() {
+        const actions = this.querySelector(".profile-user-actions");
+        if (!actions) return;
+        actions.innerHTML = /*html*/`
+        ${this.isMine ? /*html*/`<a is="c-link" href="/dashboard/settings" class="text-secondary font-bold uppercase text-sm spacing-1">Edit Profile</a>` : ""}
+        ${!this.isMine && !friendState.alreadyFriends(this.user.id) ? /*html*/`<p id="add-friend" href="" class="cursor-pointer text-secondary font-bold uppercase text-sm spacing-1"><i class="fa-solid fa-plus mr-2"></i>Add friend</p>` : ""}
+        ${!this.isMine ? /*html*/`<p id="chat-friend" class="cursor-pointer text-secondary font-bold uppercase text-sm spacing-1"><i class="fa-regular fa-comment mr-2"></i>Chat</p>` : ""}
+        ${!this.isMine && friendState.alreadyFriends(this.user.id) ? /*html*/`<p id="remove-friend" href="" class="cursor-pointer text-danger font-bold uppercase text-sm spacing-1"><i class="fa-solid fa-minus mr-2"></i>Remove friend</p>` : ""}
+        `
     }
 }
 

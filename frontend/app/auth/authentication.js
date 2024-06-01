@@ -1,4 +1,5 @@
 import { chatState } from "../state/chatState.js";
+import { friendState } from "../state/friendState.js";
 import { messageState } from "../state/messageState.js";
 import { userState as userState } from "../state/userState.js";
 import AuthService from "./authService.js";
@@ -166,6 +167,15 @@ export default class Authentication {
 	async resetPassword(data) {
 		try {
 			return await this.verificationService.resetPassword(data);
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	async changeUserData(data) {
+		try {
+			const { username, full_name, email } = data;
+			return await this.userService.changeUserData(username, full_name, email);
 		} catch (error) {
 			throw error;
 		}
