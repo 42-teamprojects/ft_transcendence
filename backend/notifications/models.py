@@ -1,7 +1,6 @@
 from django.db import models
 from accounts.models import User
 
-
 class Notification(models.Model):
     MESSAGE = 'MSG'
     TOURNAMENT = 'TRN'
