@@ -88,7 +88,7 @@ class MessageState extends State {
 			let toSend = {
 				notification_type: "message",
 				data:{
-					chat_id: this.chatId,
+					chat_id: chatId,
 					sender_id: userState.state.user.id,
 					sender_name: userState.state.user.username,
 					message: message,
