@@ -110,8 +110,7 @@ class UpdateUserView(generics.UpdateAPIView):
             full_name = serializer.data.get("full_name")
             email = serializer.data.get("email")
             
-            regex = re.compile('^[a-zA-Z0-9_]*$')
-
+            regex = re.compile('^[a-zA-Z0-9_ ]*$')
             if username is not None:
                 if not regex.match(username):
                     return Response({'detail': 'Username contains special characters'}, status=status.HTTP_400_BAD_REQUEST)
@@ -121,20 +120,21 @@ class UpdateUserView(generics.UpdateAPIView):
                     return Response({'detail': 'Full name contains special characters'}, status=status.HTTP_400_BAD_REQUEST)
                 self.object.full_name = full_name
             if email is not None:
-                # Check if the email already exists
-                existing_user = User.objects.filter(email=email).first()
-                if existing_user:
-                    existing_user.email = email
-                # If the email does not exist, proceed with validation and assignment
-                if not existing_user:
+            # If the new email is the same as the old one, don't do anything
+                if email == self.object.email:
+                    # delete the email from the serializer data to avoid validation errors
+                    del serializer.data['email']
+                else:
+                    # Check if the new email already exists for a user who is not the owner
+                    if User.objects.filter(email=email).exclude(pk=self.object.pk).exists():
+                        return Response({'detail': 'Email already exists'}, status=status.HTTP_400_BAD_REQUEST)
                     validator = EmailValidator()
-                try:
-                    validator(email)
-                except ValidationError:
-                    return Response({'detail': 'Invalid email'}, status=status.HTTP_400_BAD_REQUEST)
-                self.object.email = email
-            # Save the object only if the email was successfully assigned
-            if self.object.email!= email:
+                    try:
+                        validator(email)
+                    except ValidationError:
+                        return Response({'detail': 'Invalid email'}, status=status.HTTP_400_BAD_REQUEST)           
+                    self.object.email = email
+                # Save the object only if the email was successfully assigned
                 self.object.save()
             return Response({'detail' : 'User updated successfully'}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
