@@ -102,7 +102,7 @@ export const handleFormSubmitApi = async (
 	apiFunction,
 	formValidations,
 	successCallback = () => {},
-	errorCallback = () => true
+	errorCallback = () => {}
 ) => {
 	const inputs = Array.from(form.querySelectorAll("input")); // Get all input elements within the form
 	if (!inputs.length) {
@@ -122,7 +122,7 @@ export const handleFormSubmitApi = async (
 
 	const errors = formValidations(data); // Validate the form data using the provided formValidations function
 	if (!errors) return; // Stop further execution if there are no validation errors
-	
+
 	if (Object.keys(errors).length > 0) {
 		// If there are validation errors
 		Object.keys(errors).forEach((key) => {
@@ -140,7 +140,7 @@ export const handleFormSubmitApi = async (
 		button.setAttribute("processing", "false"); // Set the button attribute to indicate processing is complete
 	} catch (errors) {
 		button.setAttribute("processing", "false"); // Set the button attribute to indicate processing is complete
-		if (!errorCallback(errors)) return; // Call the error callback function and stop further execution if it returns false
+		errorCallback(errors) // Call the error callback function and stop further execution if it returns false
 
 		// Show error messages
 		const errorsKeys = Object.keys(errors);
