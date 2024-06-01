@@ -1,4 +1,5 @@
 import { chatState } from "../state/chatState.js";
+import { friendState } from "../state/friendState.js";
 import { messageState } from "../state/messageState.js";
 import { userState as userState } from "../state/userState.js";
 import AuthService from "./authService.js";

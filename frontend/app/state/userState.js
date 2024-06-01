@@ -94,12 +94,6 @@ class UserState extends State {
 		return this.state.user.two_factor_enabled;
 	}
 
-	updateUser(field, value) {
-		const user = this.state.user;
-		user[field] = value;
-		this.setState({ user });
-	}
-
 	reset() {
 		this.setState({
 			user: {},
