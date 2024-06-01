@@ -78,7 +78,6 @@ class NotificationState extends State {
 
         friendState.reset();
         friendState.getFriends();
-
     }
 
     /* 

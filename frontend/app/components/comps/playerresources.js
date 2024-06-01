@@ -20,10 +20,6 @@ export default class Playerresources extends HTMLElement {
                 <img src="/public/assets/icons/streak.svg" alt="streak"/>
                 <h3>1</h3>
             </div>
-            <div class="flex-center gap-2 resource-count text-xs font-medium text-danger">
-                <img src="/public/assets/icons/heart.svg" alt="heart"/>
-                <h3>5</h3>
-            </div>
             </div>
         `;
     }
