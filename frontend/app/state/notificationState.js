@@ -78,6 +78,7 @@ class NotificationState extends State {
 
         friendState.reset();
         friendState.getFriends();
+        console.log("Friend alert notification", notification);
     }
 
     /* 
