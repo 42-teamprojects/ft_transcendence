@@ -20,6 +20,7 @@ from rest_framework.decorators import action
 class FriendshipViewSet(ModelViewSet):
     serializer_class = FriendshipSerializer
     permission_classes = [IsAuthenticated, AreFriends]
+    
 
     def get_queryset(self):
         user = self.request.user

@@ -52,8 +52,8 @@ REST_FRAMEWORK = {
         'accounts.custom_throttles.ResendRateThrottle',
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '1/min',
-        'resend': '1/min',
+        'anon': '3/h',
+        'resend': '3/h',
     }
 }
 
@@ -80,6 +80,7 @@ INSTALLED_APPS = [
     'friends',
     'notifications',
     'django_crontab',
+    'stats',
 ]
 
 ASGI_APPLICATION = 'backend.asgi.application'

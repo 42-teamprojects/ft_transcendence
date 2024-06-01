@@ -29,3 +29,4 @@ class ResendRateThrottle(UserRateThrottle):
             return super().allow_request(request, view)
         # Allow all other requests without throttling
         return True
+    

@@ -39,7 +39,7 @@ class RegisterView(GenericAPIView):
         # Save default avatar
         avatar_path = get_default_avatar(user.username)
         user.avatar = avatar_path
-        
+        user.save()
         # Pass the user instance to send_verification
         is_sent = send_verification(user)
         refresh_token, access_token = user.tokens().values()
