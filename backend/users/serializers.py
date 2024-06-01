@@ -1,6 +1,9 @@
 from rest_framework import serializers
 from accounts.models import User
 from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+from django.core.validators import EmailValidator
+import re
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -31,14 +34,34 @@ class ChangePasswordSerializer(serializers.Serializer):
         return value
     
 class UpdateUserSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = User
         fields = ['username', 'full_name', 'email']
-        #make the change pf the fields optional
         extra_kwargs = {
             'username': {'required': False},
             'full_name': {'required': False},
             'email': {'required': False}
         }
-        
+
+    def validate_username(self, value):
+        regex = re.compile('^[a-zA-Z0-9_]*$')
+        if not regex.match(value):
+            raise serializers.ValidationError("Username contains special characters")
+        return value
+
+    def validate_full_name(self, value):
+        regex = re.compile('^[a-zA-Z ]*$')
+        if not regex.match(value):
+            raise serializers.ValidationError("Full name contains special characters")
+        return value
+
+    def validate_email(self, value):
+        if self.instance.email != value:
+            if User.objects.filter(email=value).exclude(pk=self.instance.pk).exists():
+                raise serializers.ValidationError("Email already exists")
+            validator = EmailValidator()
+            try:
+                validator(value)
+            except ValidationError:
+                raise serializers.ValidationError("Invalid email")
+        return value
