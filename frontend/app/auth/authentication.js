@@ -1,3 +1,5 @@
+import { chatState } from "../state/chatState.js";
+import { messageState } from "../state/messageState.js";
 import { userState as userState } from "../state/userState.js";
 import AuthService from "./authService.js";
 import OAuthService from "./oAuthService.js";
@@ -44,6 +46,8 @@ export default class Authentication {
 	async logout() {
 		try {
 			userState.setState({ user: null, token_verified_at: null });
+			messageState.reset();
+			chatState.reset();
 			await this.authService.logout();
 		} catch (error) {
 			throw error;
@@ -67,6 +71,8 @@ export default class Authentication {
 
 			// Update the token_verified_at timestamp in the userState
 			userState.setState({ user: result, token_verified_at: now });
+			userState.socketId = "notifications/" + userState.state.user.id;
+			userState.setup();
 			return true;
 		} catch (error) {
 			throw error;

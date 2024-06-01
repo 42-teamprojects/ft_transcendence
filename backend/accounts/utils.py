@@ -1,7 +1,9 @@
+import os
 import datetime
 from django.core.mail import send_mail
 from django.conf import settings
 import jwt
+import requests
 from accounts.models import OneTimePassword
 import pyotp
 from smtplib import SMTPException
@@ -65,3 +67,14 @@ def generate_2fa_token(username):
         samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
     )
     return response 
+
+def get_default_avatar(username):
+    if not os.path.exists('storage'):
+        os.makedirs('storage')
+    if not os.path.exists('storage/avatars'):
+        os.makedirs('storage/avatars')
+    image_url = f'https://api.dicebear.com/8.x/thumbs/svg?seed={username}'
+    image = requests.get(image_url)
+    avatar_path = f'avatars/{username}.svg'
+    with open('storage/' + avatar_path, 'wb') as f:
+        f.write(image.content)

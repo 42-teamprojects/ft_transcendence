@@ -78,6 +78,8 @@ INSTALLED_APPS = [
     'oauth',
     'users',
     'friends',
+    'notifications',
+    'django_crontab',
 ]
 
 ASGI_APPLICATION = 'backend.asgi.application'
@@ -108,8 +110,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.BrokenLinkEmailsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -255,6 +257,15 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:8080",
 ]
+CORS_ALLOW_HEADERS = (
+    "accept",
+    "authorization",
+    "content-type",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+)
+
 CORS_ALLOW_CREDENTIALS = True
 
 # CSRF
@@ -323,3 +334,7 @@ OAUTH2_PROVIDERS = {
         }
     }
 }
+
+CRONJOBS = [
+    # ('*/30 * * * * *', 'accounts.cron.delete_orphaned_avatars')
+]

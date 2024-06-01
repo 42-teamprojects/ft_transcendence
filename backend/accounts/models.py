@@ -2,9 +2,13 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.utils.translation import gettext_lazy as _
 from .managers import UserManager
-
+import os
+from backend import settings
 from rest_framework_simplejwt.tokens import RefreshToken
 from datetime import datetime
+
+def avatar_upload_to(instance, filename):
+    return f'avatars/{instance.username}.png'
 
 class UserStatus(models.TextChoices):
     ONLINE = 'ON', _('Online')
@@ -26,7 +30,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     two_factor_enabled = models.BooleanField(_('Two Factor Enabled'), default=False)
     last_2fa_login = models.DateTimeField(_('Last 2FA Login'), blank=True, null=True)
     provider = models.CharField(_('Provider'), max_length=100, blank=True, null=True)
-    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
+    avatar = models.ImageField(upload_to=avatar_upload_to, null=True, blank=True)
     
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['full_name', 'email']

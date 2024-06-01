@@ -31,7 +31,7 @@ export default class SidebarLink extends HTMLElement {
     connectedCallback() {
       this.render();
       this.unsubscribe = userState.subscribe(() => {
-        if (this.link === "profile") this.render();
+        if (this.link === "profile" && userState.state.user) this.render();
         return;
       });
     }
@@ -45,7 +45,7 @@ export default class SidebarLink extends HTMLElement {
       this.innerHTML = /*html*/`
         <a is="c-link" href="/dashboard/${this.link}" class="sidebar-link ${this.isActive && 'active'}">
           ${this.link === "profile"
-            ? /*html*/`<img class="profile_icon object-cover" src="${avatar}" alt="profile image">`
+            ? /*html*/`<img class="profile_icon object-cover skeleton" src="${avatar}" alt="profile image">`
             : /*html*/`<img src="${this.icons[this.link]}" alt="${this.link}"/>`
           }
           <div class="font-bold uppercase spacing-1">${this.textContent}</div>

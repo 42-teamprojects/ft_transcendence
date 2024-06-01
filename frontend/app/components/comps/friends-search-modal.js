@@ -1,6 +1,7 @@
 import HttpClient from "../../http/httpClient.js";
 import { UserStatus } from "../../entities/UserStatus.js";
 import Toast from "./toast.js";
+import { config } from "../../config.js";
 
 export default class Chatsearchmodal extends HTMLElement {
 	constructor() {
@@ -42,7 +43,7 @@ export default class Chatsearchmodal extends HTMLElement {
 			this.friendsResult.innerHTML = result
 				.map(
 					(user) =>
-						/*html*/`<c-usercard user-id="${user.id}" username="${user.username}" status="${user.status}" img="https://api.dicebear.com/8.x/thumbs/svg?seed=Casper"></c-usercard>`
+						/*html*/`<c-usercard user-id="${user.id}" username="${user.username}" status="${user.status}" img="${config.backend_domain}${user.avatar}"></c-usercard>`
 				)
 				.join("");
 		} catch (error) {
@@ -74,6 +75,7 @@ export default class Chatsearchmodal extends HTMLElement {
 		if (this.hasAttribute("opened")) {
 			this.removeAttribute("opened");
 		}
+		this.friendsResult.innerHTML = "";
 		this.isOpen = false;
 	}
 

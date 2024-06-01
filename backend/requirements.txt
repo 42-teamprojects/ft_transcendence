@@ -14,8 +14,7 @@ django-ses==4.0.0
 qrcode==7.4.2
 requests==2.31.0
 requests-oauthlib==2.0.0
-
-
+django-crontab==0.7.1
 asgiref==3.7.2
 Pillow==10.3.0
 django-braces==1.15.0

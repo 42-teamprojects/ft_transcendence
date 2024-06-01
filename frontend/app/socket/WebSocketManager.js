@@ -13,7 +13,7 @@ export default class WebSocketManager {
             onClose = () => console.log(`WebSocket connection closed for id: ${id}`),
             onError = (error) => console.error(`WebSocket error for id: ${id}`, error),
         } = options;
-        
+
         
         if (this.sockets[id]) return;
        
@@ -48,7 +48,10 @@ export default class WebSocketManager {
     }
 
     send(id, data) {
-        if (!this.sockets[id]) return;
+        if (!this.sockets[id]) {
+            console.error(`WebSocket connection with id: ${id} does not exist`);
+            return;
+        }
         this.sockets[id].send(JSON.stringify(data));
         this.lastUseTimes[id] = Date.now();
     }

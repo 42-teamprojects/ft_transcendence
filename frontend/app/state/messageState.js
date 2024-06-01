@@ -75,13 +75,13 @@ class MessageState extends State {
 			await this.setup(chatId);
 		}
 		try {
+			// Save message to the database
+			await this.httpClient.post(`chats/${chatId}/messages/`, { content: message });
 			// Send message to the WebSocket
 			this.webSocketManager.send(chatId, {
 				content: message,
 				sender: userState.state.user.id,
 			});
-			// Save message to the database
-			await this.httpClient.post(`chats/${chatId}/messages/`, { content: message });
 		} catch (error) {
 			console.error(error);
 		}

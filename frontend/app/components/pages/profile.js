@@ -1,17 +1,33 @@
 import { config } from "../../config.js";
+import Router from "../../router/router.js";
 import { userState } from "../../state/userState.js";
 import { formatDate } from "../../utils/utils.js";
+import Toast from "../comps/toast.js";
 
 export default class Profile extends HTMLElement {
     constructor() {
         super();
-        this.user = userState.state.user;
-        document.title = `${this.user.username} | Blitzpong.`;
+        this.search = new URLSearchParams(window.location.search);
+        this.username = this.search.get("username") || userState.state.user.username;
+        document.title = `${this.username} | Blitzpong.`;
     }
 
-    connectedCallback() {
+    async connectedCallback() {
+        this.user = userState.state.user;
+        this.isMine = true;
+        if (this.user.username !== this.username) {
+            const searchedUser = await userState.fetchUser(this.username);
+            if (!searchedUser) {
+                Toast.notify({message: "User not found", type: "warning"});
+                Router.instance.navigate("/dashboard/profile");
+                return;
+            }
+            this.user = searchedUser;
+            this.isMine = false;
+        }
+        
         this.render();
-        this.unsubscribe = userState.subscribe((state) => {
+        this.unsubscribe = userState.subscribe(() => {
             this.user = userState.state.user;
             if (this.user) this.render();
             return;
@@ -19,21 +35,23 @@ export default class Profile extends HTMLElement {
     }
 
     disconnectedCallback() {
-        this.unsubscribe();
+        if (this.unsubscribe) this.unsubscribe();
     }
 
     render() {
         const avatar = this.user.avatar ? config.backend_domain + this.user.avatar : `https://api.dicebear.com/8.x/thumbs/svg?seed=${this.user.username}`;
         this.innerHTML = /*html*/`
-        <c-upload-avatar-modal></c-upload-avatar-modal>
+        ${this.isMine ? /*html*/`<c-upload-avatar-modal></c-upload-avatar-modal>` : ""}
         <div class="dashboard-content">
             <main>
-                <section class="profile-info">
+                ${!this.isMine ? /*html*/`<a is="c-link" href="/dashboard/profile" class="text-secondary font-bold uppercase text-sm spacing-1"><i class="fa-solid fa-angle-left mr-2"></i> Back to my profile</a>` : ""}
+                <section class="profile-info ${!this.isMine ? 'mt-8' : ''}">
                     <div class="profile-image relative">
-                        <img src="${avatar}" class="profile image object-cover">
+                        <img src="${avatar}" class="profile image object-cover skeleton">
+                        ${this.isMine ? /*html*/`
                         <div class="absolute bg-secondary p-2 rounded-full border-white cursor-pointer w-8 h-8 flex-center" style="top: 10px; right: 10px" onclick="document.querySelector('c-upload-avatar-modal').open()">
                             <i class="fa-solid fa-camera"></i>
-                        </div>
+                        </div>` : ""}
                     </div>
                     <div class="profile-user">
                         <div class="profile-user-names">
@@ -41,8 +59,10 @@ export default class Profile extends HTMLElement {
                             <h3>@${this.user.username}</h3>
                         </div>
                         <p>Joined ${formatDate(this.user?.date_joined)}</p>
-                        <div class="profile-user-actions">
-                            <a is="c-link" href="/dashboard/settings" class="text-secondary font-bold uppercase text-sm spacing-1">Edit Profile</a>
+                        <div class="profile-user-actions flex gap-6">
+                            ${this.isMine ? /*html*/`<a is="c-link" href="/dashboard/settings" class="text-secondary font-bold uppercase text-sm spacing-1">Edit Profile</a>` : ""}
+                            ${!this.isMine ? /*html*/`<a is="c-link" href="" class="text-secondary font-bold uppercase text-sm spacing-1"><i class="fa-solid fa-plus mr-2"></i>Add friend</a>` : ""}
+                            ${!this.isMine ? /*html*/`<a is="c-link" href="" class="text-secondary font-bold uppercase text-sm spacing-1"><i class="fa-regular fa-comment mr-2"></i>Chat</a>` : ""}
                         </div>
                     </div>
                 </section>
