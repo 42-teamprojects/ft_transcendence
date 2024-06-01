@@ -78,3 +78,4 @@ def get_default_avatar(username):
     avatar_path = f'avatars/{username}.svg'
     with open('storage/' + avatar_path, 'wb') as f:
         f.write(image.content)
+    return avatar_path

@@ -35,11 +35,11 @@ export default class Conversationheader extends HTMLElement {
         <c-modal id="delete-modal"></c-modal>
         <div class="chat-header conversation-header">
             <div class="flex-center gap-4">
-                <a is="c-link" href="/dashboard/profile?username=${this.usernameAtt}">
+                <a is="c-link" href="/dashboard/profile?username=${this.usernameAtt}" tooltip="View profile" flow="down">
                     <img class="message-card__img" src="${this.imgAtt}" alt="user">
                 </a>
                 <div class="flex-col gap-2">
-                    <a is="c-link" href="/dashboard/profile?username=${this.usernameAtt}">
+                    <a is="c-link" href="/dashboard/profile?username=${this.usernameAtt}" tooltip="View profile" flow="right">
                         <div class="conversation-header__username" >${this.usernameAtt}</div>
                     </a>
                     <div class="conversation-header__status gap-2">

@@ -10,10 +10,16 @@ export default class Modal extends HTMLElement {
         } else {
           this.isOpen = false;
         }
+        if (name === 'title') {
+          this.querySelector('#title').textContent = newValue;
+        }
+        if (name === 'subtitle') {
+          this.querySelector('#subtitle').textContent = newValue;
+        }
       }
     
       static get observedAttributes() {
-        return ['opened'];
+        return ['opened', 'title', 'subtitle'];
       }
     
       open() {
