@@ -65,3 +65,8 @@ class UpdateUserSerializer(serializers.ModelSerializer):
             except ValidationError:
                 raise serializers.ValidationError("Invalid email")
         return value
+
+    def update(self, instance, validated_data):
+        if validated_data.get('email', instance.email) != instance.email:
+            instance.is_verified = False
+        return super().update(instance, validated_data)
