@@ -9,6 +9,9 @@ class UserStats(models.Model):
     tournaments_played = models.PositiveIntegerField(default=0)
     tournaments_won = models.PositiveIntegerField(default=0)
     tournaments_lost = models.PositiveIntegerField(default=0)
+    current_win_streak = models.PositiveIntegerField(default=0)
+    longest_win_streak = models.PositiveIntegerField(default=0)
+
 
 
     def __str__(self):

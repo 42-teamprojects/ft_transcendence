@@ -4,7 +4,7 @@ from .models import UserStats
 class PlayerStatsSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserStats
-        fields = ['matches_played', 'matches_won', 'matches_lost', 'tournaments_played', 'tournaments_won', 'tournaments_lost']
+        fields = ['matches_played', 'matches_won', 'matches_lost', 'tournaments_played', 'tournaments_won', 'tournaments_lost', 'current_win_streak', 'longest_win_streak']
 
     def update(self, instance, validated_data):
         played = validated_data.get('matches_played', 0)
@@ -13,6 +13,7 @@ class PlayerStatsSerializer(serializers.ModelSerializer):
         tournament_played = validated_data.get('tournaments_played', 0)
         tournament_win = validated_data.get('tournaments_won', 0)
         tournament_loss = validated_data.get('tournaments_lost', 0)
+        wins_streak = validated_data.get('wins_streak', 0)
 
         instance.matches_played += played
         instance.matches_won += win
@@ -20,6 +21,13 @@ class PlayerStatsSerializer(serializers.ModelSerializer):
         instance.tournaments_won += tournament_win
         instance.tournaments_lost += tournament_loss
         instance.tournaments_played += tournament_played
+
+        if win:
+            instance.current_win_streak += win
+            if instance.current_win_streak > instance.longest_win_streak:
+                instance.longest_win_streak = instance.current_win_streak
+        if loss:
+            instance.current_win_streak = 0
 
         instance.save()
         return instance
@@ -31,5 +39,7 @@ class PlayerStatsSerializer(serializers.ModelSerializer):
             'matches_lost': instance.matches_lost,
             'tournaments_played': instance.tournaments_played,
             'tournaments_won': instance.tournaments_won,
-            'tournaments_lost': instance.tournaments_lost
+            'tournaments_lost': instance.tournaments_lost,
+            'current_win_streak': instance.current_win_streak,
+            'longest_win_streak': instance.longest_win_streak
         }
