@@ -1,3 +1,5 @@
+import Router from "../../router/router.js";
+
 export default class Matchmaking extends HTMLElement {
     constructor() {
         super();
@@ -5,6 +7,11 @@ export default class Matchmaking extends HTMLElement {
 
     connectedCallback() {
         this.render();
+        let btn = this.querySelector('.btn-primary');
+        btn.addEventListener('click', () => {
+            //go back to the home page]
+            Router.instance.navigate('/dashboard/home');
+        });
     }
 
     disconnectedCallback() {}
