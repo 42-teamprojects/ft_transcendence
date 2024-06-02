@@ -96,9 +96,9 @@ class MatchMakingView(viewsets.ModelViewSet):
         if match.status != MatchStatus.FINISHED:
             return Response({'detail': 'Match is not finished'}, status=status.HTTP_400_BAD_REQUEST)
         winner = request.data.get('winner')
-        if user == match.user1:
-            match.winner = match.user1 if winner == 1 else match.user2
-        else:
-            match.winner = match.user2 if winner == 2 else match.user1
+        if winner == 1:
+            match.winner = match.user1
+        elif winner == 2:
+            match.winner = match.user2
         match.save()
         return Response(self.serializer_class(match).data, status=status.HTTP_200_OK)
