@@ -19,8 +19,12 @@ class UpdatePlayerStatsView(generics.GenericAPIView):
 
         if 'win' in self.request.path:
             user_stats.matches_won += 1
+            user_stats.current_win_streak += 1
+            if user_stats.current_win_streak > user_stats.longest_win_streak:
+                user_stats.longest_win_streak = user_stats.current_win_streak
         elif 'lose' in self.request.path:
             user_stats.matches_lost += 1
+            user_stats.current_win_streak = 0
 
         if 'tournament' in self.request.path:
             if 'win' in self.request.path:
