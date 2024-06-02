@@ -54,7 +54,7 @@ export default class Profile extends HTMLElement {
         ${!this.isMine ? /*html*/`<c-modal></c-modal>` : ""} 
         <div class="dashboard-content">
             <main>
-                ${!this.isMine ? /*html*/`<a is="c-link" href="/dashboard/profile" class="text-secondary font-bold uppercase text-sm spacing-1"><i class="fa-solid fa-angle-left mr-2"></i> Back to my profile</a>` : ""}
+                ${!this.isMine ? /*html*/`<a is="c-link" href="/dashboard/profile" class="text-secondary btn-link"><i class="fa-solid fa-angle-left mr-2"></i> Back to my profile</a>` : ""}
                 <section class="profile-info ${!this.isMine ? 'mt-8' : ''}">
                     <div class="profile-image relative">
                         <img src="${avatar}" class="profile image object-cover skeleton">
@@ -156,11 +156,11 @@ export default class Profile extends HTMLElement {
         const actions = this.querySelector(".profile-user-actions");
         if (!actions) return;
         actions.innerHTML = /*html*/`
-        ${this.isMine ? /*html*/`<a is="c-link" href="/dashboard/settings" class="text-secondary font-bold uppercase text-sm spacing-1">Edit Profile</a>` : ""}
-        ${!this.isMine && !friendState.alreadyFriends(this.user.id) ? /*html*/`<p id="add-friend" href="" class="cursor-pointer text-secondary font-bold uppercase text-sm spacing-1"><i class="fa-solid fa-plus mr-2"></i>Add friend</p>` : ""}
-        ${!this.isMine ? /*html*/`<p id="chat-friend" class="cursor-pointer text-secondary font-bold uppercase text-sm spacing-1"><i class="fa-regular fa-comment mr-2"></i>Chat</p>` : ""}
-        ${!this.isMine && friendState.alreadyFriends(this.user.id) ? /*html*/`<p id="remove-friend" href="" class="cursor-pointer text-warning font-bold uppercase text-sm spacing-1"><i class="fa-solid fa-minus mr-2"></i>Remove friend</p>` : ""}
-        ${!this.isMine && friendState.alreadyFriends(this.user.id) ? /*html*/`<p id="block-friend" href="" class="cursor-pointer text-danger font-bold uppercase text-sm spacing-1"><i class="fa-solid fa-ban mr-2"></i>Block</p>` : ""}
+        ${this.isMine ? /*html*/`<a is="c-link" href="/dashboard/settings" class="text-secondary btn-link">Edit Profile</a>` : ""}
+        ${!this.isMine && !friendState.alreadyFriends(this.user.id) ? /*html*/`<p id="add-friend" href="" class="text-secondary btn-link"><i class="fa-solid fa-plus mr-2"></i>Add friend</p>` : ""}
+        ${!this.isMine ? /*html*/`<p id="chat-friend" class="cursor-pointer text-secondary btn-link"><i class="fa-regular fa-comment mr-2"></i>Chat</p>` : ""}
+        ${!this.isMine && friendState.alreadyFriends(this.user.id) ? /*html*/`<p id="remove-friend" href="" class="text-warning btn-link"><i class="fa-solid fa-minus mr-2"></i>Remove friend</p>` : ""}
+        ${!this.isMine && friendState.alreadyFriends(this.user.id) ? /*html*/`<p id="block-friend" href="" class="text-danger btn-link"><i class="fa-solid fa-ban mr-2"></i>Block</p>` : ""}
         `
     }
 

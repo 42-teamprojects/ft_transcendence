@@ -47,6 +47,7 @@ import Logo from "./components/comps/logo.js";
 import Modal from "./components/comps/modal.js";
 import Button from "./components/comps/button.js";
 import { routerComponents } from "./router/router.js";
+import BlockedListModal from "./components/comps/blocked-list-modal.js";
 
 // Define the components of the layouts and their tagname
 export const layoutComponents = [
@@ -104,4 +105,5 @@ export const components = [
 	{ tagName: 'c-usercard-loading', component: Usercardloading },
 	{ tagName: 'c-friends-list', component: Friendslist },
 	{ tagName: 'c-loader', component: Loader },
+	{ tagName: 'c-blocked-list-modal', component: BlockedListModal },
 ];
