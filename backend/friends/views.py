@@ -64,7 +64,7 @@ class FriendshipViewSet(ModelViewSet):
     def blocked(self, request):
         user = request.user
         blocked_friendships = Friendship.objects.filter(
-            (Q(user1=user) | Q(user2=user)) & Q(is_blocked=True)
+            (Q(user1=user) | Q(user2=user)) & Q(is_blocked=True) & Q(blocked_by=user)
         ).distinct()
         serializer = self.get_serializer(blocked_friendships, many=True)
         return Response(serializer.data)
@@ -74,19 +74,21 @@ class BlockFriendshipView(APIView):
     permission_classes = [IsAuthenticated, AreFriends]
 
     def post(self, request, friendship_id, format=None):
-        friendship = Friendship.objects.get(pk=friendship_id)
-        if friendship.is_blocked:
-            raise serializers.ValidationError({'detail': f"Friendship is already blocked by {friendship.blocked_by.username}"})
-        friendship.is_blocked = True
-        friendship.blocked_by = request.user
-        friendship.save()
-        
-        # Delete all chats between the two users
-        Chat.objects.filter(
-            Q(user1=request.user, user2=friendship.user2) | 
-            Q(user1=friendship.user2, user2=request.user)
-        ).delete()
-        
+        try:
+            friendship = Friendship.objects.get(pk=friendship_id)
+            if friendship.is_blocked:
+                raise serializers.ValidationError({'detail': f"Friendship is already blocked by {friendship.blocked_by.username}"})
+            friendship.is_blocked = True
+            friendship.blocked_by = request.user
+            friendship.save()
+            
+            # Delete all chats between the two users
+            Chat.objects.filter(
+                Q(user1=request.user, user2=friendship.user2) | 
+                Q(user1=friendship.user2, user2=request.user)
+            ).delete()
+        except Friendship.DoesNotExist:
+            raise serializers.ValidationError({'detail': 'Friendship not found'})    
         return Response({'detail': 'Friendship blocked successfully'}, status=status.HTTP_200_OK)
     
 
@@ -94,10 +96,13 @@ class UnblockFriendshipView(APIView):
     permission_classes = [IsAuthenticated, AreFriends]
 
     def post(self, request, friendship_id, format=None):
-        friendship = Friendship.objects.get(pk=friendship_id)
-        if not friendship.is_blocked:
-            raise serializers.ValidationError({'detail': 'Friendship is not blocked'})
-        friendship.is_blocked = False
-        friendship.blocked_by = None
-        friendship.save()
+        try:
+            friendship = Friendship.objects.get(pk=friendship_id)
+            if not friendship.is_blocked:
+                raise serializers.ValidationError({'detail': 'Friendship is not blocked'})
+            friendship.is_blocked = False
+            friendship.blocked_by = None
+            friendship.save()
+        except Friendship.DoesNotExist:
+            raise serializers.ValidationError({'detail': 'Friendship not found'})
         return Response({'detail': 'Friendship unblocked successfully'}, status=status.HTTP_200_OK)

@@ -34,6 +34,7 @@ class CustomTableThemeView(APIView):
     
     def put(self, request):
         user = User.objects.get(username=request.user)
+        print(request.data)
         serializer = TableThemeSerializer(user, data=request.data)
         if serializer.is_valid():
             serializer.save()

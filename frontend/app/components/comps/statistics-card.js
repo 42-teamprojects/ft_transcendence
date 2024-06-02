@@ -1,7 +1,7 @@
 export default class Statisticscard extends HTMLElement {
     constructor() {
         super();
-        this.imgAtt = this.getAttribute("img") || "none";
+        this.icon = this.getAttribute("icon") || "";
         this.numberAtt = this.getAttribute("number") || "none";
 		this.textAtt = this.getAttribute("text") || "none";
     }
@@ -15,7 +15,7 @@ export default class Statisticscard extends HTMLElement {
     render() {
         this.innerHTML = /*html*/`
         <div class="flex gap-6 py-4 px-6 border-dark rounded-xl">
-            <img src="${this.imgAtt}" alt="icon" >
+            ${this.icon}
             <div class="flex-col gap-2">
                 <h3 class="font-bold">${this.numberAtt}</h3>
                 <p class="text-stroke">${this.textAtt}</p>

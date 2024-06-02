@@ -186,3 +186,7 @@ export function getTimePassed(date) {
 	if (months < 12) return `${Math.floor(months)}mo`;
 	return `${Math.floor(years)}y`;
 }
+
+export function getKeyByValue(object, value) {
+    return Object.keys(object).find(key => object[key].toLowerCase() === value.toLowerCase());
+}

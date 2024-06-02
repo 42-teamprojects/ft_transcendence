@@ -1,3 +1,4 @@
+import Toast from "../components/comps/toast.js";
 import HttpClient from "../http/httpClient.js";
 import { chatState } from "./chatState.js";
 import { notificationState } from "./notificationState.js";
@@ -8,6 +9,7 @@ class FriendState extends State {
 	constructor() {
 		super({
 			friends: [],
+			blocked: [],
 			loading: true,
 		});
         this.fetchedFriends = false;
@@ -24,6 +26,19 @@ class FriendState extends State {
 			return result;
 		} catch (error) {
 			console.error(error);
+			Toast.notify({ message: "An error occurred", type: "error" });
+		}
+	}
+
+	async getBlocked() {
+		try {
+			this.setState({ loading: true });
+			const result = await this.httpClient.get(`friends/blocked/`);
+			this.setState({ blocked: result, loading: false });
+			return result;
+		} catch (error) {
+			console.error(error);
+			Toast.notify({ message: "An error occurred", type: "error" });
 		}
 	}
 
@@ -48,6 +63,7 @@ class FriendState extends State {
 			return result;
 		} catch (error) {
 			console.error(error);
+			Toast.notify({ message: "An error occurred", type: "error" });
 		}
 	}
 
@@ -71,6 +87,7 @@ class FriendState extends State {
 			return result;
 		} catch (error) {
 			console.error(error);
+			Toast.notify({ message: "An error occurred", type: "error" });
 		}
 	}
 
@@ -91,17 +108,19 @@ class FriendState extends State {
 			await notificationState.sendNotification(notification);
 
 			this.setState({ friends: this.state.friends.filter((friendshipObject) => friendshipObject.user1.id !== userId && friendshipObject.user2.id !== userId) });
+			this.setState({ blocked: [...this.state.blocked, friendshipObject] });
 			chatState.reset();
 			chatState.getChats();
 			return result;
 		} catch (error) {
 			console.error(error);
+			Toast.notify({ message: "An error occurred", type: "error" });
 		}
 	}
 
 	async unblockFriend(userId) {
 		try {
-			const friendshipObject = this.getFriendshipObject(userId);
+			const friendshipObject = this.getFriendshipObject(+userId, true);
 			const result = await this.httpClient.post(`friends/unblock/${friendshipObject.id}/`);
 			const notification = {
 				type: "FAL",
@@ -114,10 +133,13 @@ class FriendState extends State {
 			}
 
 			await notificationState.sendNotification(notification);
-			this.setState({ friends: this.state.friends.filter((friendshipObject) => friendshipObject.user1.id !== userId && friendshipObject.user2.id !== userId) });
+			this.getBlocked();
+			this.setState({ friends: [...this.state.friends, friendshipObject] });
+			// this.setState({ blocked: this.state.blocked.filter((friendshipObject) => friendshipObject.user1.id !== userId && friendshipObject.user2.id !== userId) });
 			return result;
 		} catch (error) {
 			console.error(error);
+			Toast.notify({ message: "An error occurred", type: "error" });
 		}
 	}
 
@@ -134,7 +156,12 @@ class FriendState extends State {
 		});
 	}
 
-	getFriendshipObject(userId) {
+	getFriendshipObject(userId, blocked = false) {
+		if (blocked) {
+			return this.state.blocked.find((friendshipObject) => {
+				return friendshipObject.user1.id === userId || friendshipObject.user2.id === userId;
+			});
+		}
 		return this.state.friends.find((friendshipObject) => {
 			return friendshipObject.user1.id === userId || friendshipObject.user2.id === userId;
 		});
