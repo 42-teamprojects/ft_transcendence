@@ -24,13 +24,14 @@ class MatchState extends State {
 			// On message callback
 			async (event) => {
 				const matchData = JSON.parse(event.data);
-				console.log(matchData);
-				console.log(matchData.data.player1, matchData.data.player2);
+				// console.log(matchData);
+				// console.log(matchData.data.player1, matchData.data.player2);
 				let opponent = (matchData.data.player1 !== userState.state.user.id) ? matchData.data.player1 : matchData.data.player2;
-
-				console.log("my id is ", userState.state.user.id);
-				console.log("my opponent is: ", opponent);
-				this.setMatch(matchData);
+				matchData.opponent = opponent;
+				// console.log("my id is ", userState.state.user.id);
+				// console.log("my opponent is: ", opponent);
+				console.log("match data: ", matchData);
+				this.setState({ match: matchData });
 			},
 			{
 				// shouldCloseOnTimeout: true,

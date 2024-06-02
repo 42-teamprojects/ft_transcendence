@@ -76,6 +76,14 @@ class UserState extends State {
 			console.error(error);
 		}
 	}
+	async fetchUserById(userId) {
+		try {
+			const result = await this.httpClient.get(`users/get/${userId}/`);
+			return result;
+		} catch (error) {
+			console.error(error);
+		}
+	}
 
 	updateUser(field, value) {
 		const user = this.state.user;
