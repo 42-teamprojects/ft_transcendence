@@ -93,6 +93,7 @@ class MessageState extends State {
 					chat_id: chatId,
 					sender_id: userState.state.user.id,
 					sender_name: userState.state.user.username,
+					sender_avatar: userState.state.user.avatar,
 					message: content,
 				},
 				recipient: friend.id,

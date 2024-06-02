@@ -30,7 +30,8 @@ class NotificationState extends State {
         this.notificationsFetched = false;
     }
 
-    setup() {
+    async setup() {
+        await this.getNotifications();
         this.socketId = "notifications/" + userState.state.user.id;
         //check if the socket is already open
         if (this.notificationSocket.sockets[this.socketId]) return;
@@ -40,6 +41,7 @@ class NotificationState extends State {
             //on message callback
             (event) => {
                 const notification = JSON.parse(event.data);
+                this.setState({ notifications: [notification, ...this.state.notifications] ,loading: false });
                 switch (notification.type) {
                     case "MSG":
                         this.handleMessageNotification(notification);
@@ -107,13 +109,16 @@ class NotificationState extends State {
     }
 
     async getNotifications() {
-        if (this.notificationsFetched) return this.state.notifications;
+        if (this.notificationsFetched) {
+            // return unread notifications
+            return this.state.getNotifications
+        }
         try {
             this.resetLoading();
             const notifications = await this.httpClient.get('notifications/');
             this.setState({ notifications, loading: false });
             this.notificationsFetched = true;
-            return this.state.notifications;
+            return this.state.notifications
         } catch (error) {
             this.setState({ loading: false });
             console.error(error);
@@ -124,7 +129,7 @@ class NotificationState extends State {
         console.log("marking all as read");
         try {
             this.resetLoading();
-            await this.httpClient.put('notifications/mark_as_read', { read: true });
+            await this.httpClient.put('notifications/mark_as_read/', { read: true });
             const notifications = this.state.notifications.map((n) => {
                 n.read = true;
                 return n;
