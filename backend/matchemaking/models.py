@@ -15,3 +15,4 @@ class MatchMaking(models.Model):
     score2 = models.IntegerField(default=0)
     winner = models.ForeignKey(User, related_name='matchmaking_winner', on_delete=models.CASCADE, null=True, blank=True)
     status = models.CharField(_('Status'), max_length=1, choices=MatchStatus.choices, default=MatchStatus.WAITING)
+    created_at = models.DateTimeField(auto_now_add=True)
