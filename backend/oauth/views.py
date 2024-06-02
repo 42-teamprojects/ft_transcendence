@@ -1,72 +1,77 @@
 from datetime import datetime
-import logging
+import re
+import secrets
+from django.shortcuts import redirect
 from django.conf import settings
 from rest_framework.views import APIView
-from requests_oauthlib import OAuth2Session
-import os
-from accounts.models import User
-from accounts.utils import add_cookies, generate_2fa_token
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
-
-# http://localhost:8000/api/oauth/login/google/
-# http://localhost:8000/api/oauth/login/fortytwo/
-logger = logging.getLogger(__name__)
+import requests
+from urllib.parse import urlencode
+import json
+import os
+from accounts.models import User
+from accounts.utils import add_cookies, generate_2fa_token
 
 class OAuth2LoginView(APIView):
     permission_classes = [AllowAny]
-    
+
     def get(self, request, provider):
         provider_config = settings.OAUTH2_PROVIDERS.get(provider)
         if not provider_config:
             return Response({"detail" : "Unsupported provider"}, status=status.HTTP_400_BAD_REQUEST)
 
-        os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'  # Only for development
-        oauth = OAuth2Session(
-            provider_config['client_id'],
-            redirect_uri=provider_config['redirect_uri'],
-            scope=provider_config['scope']
-        )
-        authorization_url, state = oauth.authorization_url(provider_config['authorization_url'])
+        state = secrets.token_hex(16)
 
-        # Save the state and provider in the session to validate the response later
-        request.session['oauth_state'] = state
+        params = {
+            'client_id': provider_config['client_id'],
+            'redirect_uri': provider_config['redirect_uri'],
+            'scope': ' '.join(provider_config['scope']),
+            'response_type': 'code',
+            'state': state
+        }
+
+        authorization_url = provider_config['authorization_url'] + '?' + urlencode(params)
+
+        request.session['oauth_state'] = params['state']
         request.session['oauth_provider'] = provider
-        request.session.modified = True
-        
-        return Response({ 'authorization_url': authorization_url }, status=status.HTTP_200_OK)
+
+        return redirect(authorization_url)
 
 class OAuth2CallbackView(APIView):
     permission_classes = [AllowAny]
-    
+
     def get(self, request, provider):
         provider_config = settings.OAUTH2_PROVIDERS.get(provider)
         if not provider_config:
             return Response({"detail" : "Unsupported provider"}, status=status.HTTP_400_BAD_REQUEST)
 
-        os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'  # Only for development
-
-        # Ensure 'oauth_state' exists in the session
         state = request.session.get('oauth_state')
         oauth_provider = request.session.get('oauth_provider')
 
         if not state or oauth_provider != provider:
             return Response({"detail" : "State not found or provider mismatch."}, status=status.HTTP_400_BAD_REQUEST)
 
-        oauth = OAuth2Session(
-            provider_config['client_id'],
-            redirect_uri=provider_config['redirect_uri'],
-            state=state
-        )
-        token = oauth.fetch_token(
-            provider_config['token_url'],
-            authorization_response=request.build_absolute_uri(),
-            client_secret=provider_config['client_secret']
-        )
+        code = request.GET.get('code')
 
-        # Fetch user profile
-        response = oauth.get(provider_config['profile_url'])
+        data = {
+            'grant_type': 'authorization_code',
+            'code': code,
+            'redirect_uri': provider_config['redirect_uri'],
+            'client_id': provider_config['client_id'],
+            'client_secret': provider_config['client_secret']
+        }
+
+        response = requests.post(provider_config['token_url'], data=data)
+        response.raise_for_status()
+
+        token = response.json().get('access_token')
+
+        headers = {'Authorization': f'Bearer {token}'}
+        response = requests.get(provider_config['profile_url'], headers=headers)
+        response.raise_for_status()
+
         profile = response.json()
 
         # Clear session state
@@ -77,10 +82,13 @@ class OAuth2CallbackView(APIView):
         if (provider == 'google'):
             full_name = profile['name']
             username = profile['email'].split('@')[0]
+            # =s96-c
+            image_url = profile['picture'].replace('s96-c', 's600-c')
         
         if (provider == 'fortytwo'):
             full_name = profile['displayname']
             username = profile['login']
+            image_url = profile['image']['link']
         
         #check if username already exists
         try:
@@ -99,8 +107,21 @@ class OAuth2CallbackView(APIView):
         except User.DoesNotExist:
             if User.objects.filter(username=username).exists():
                 username = username + str(User.objects.count())
-            
-            user = User.objects.create(username=username, email=email, full_name=full_name, is_verified=profile.get('verified_email', False))
+            # Download the avatar
+            image = requests.get(image_url)
+            avatar_path = f'avatars/{username}.png'
+
+            # create the storage directory and avatars directory if it doesn't exist
+            if not os.path.exists('storage'):
+                os.makedirs('storage')
+            if not os.path.exists('storage/avatars'):
+                os.makedirs('storage/avatars')
+
+            # Save it as a file in the storage
+            with open('storage/' + avatar_path, 'wb') as f:
+                f.write(image.content)
+        
+            user = User.objects.create(username=username, email=email, full_name=full_name, is_verified=True, avatar=avatar_path)
             user.provider = provider
             user.last_login = datetime.now()
             user.set_unusable_password()
@@ -111,4 +132,5 @@ class OAuth2CallbackView(APIView):
             return response
         except:
             return Response({"detail" : "Something went wrong, please try again."}, status=status.HTTP_401_UNAUTHORIZED)
-        
+
+    

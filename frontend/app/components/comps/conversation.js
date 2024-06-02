@@ -1,49 +1,44 @@
-import { chatService } from "../../state/chatService.js";
+import { config } from "../../config.js";
+import Router from "../../router/router.js";
+import { chatState } from "../../state/chatState.js";
+import { messageState } from "../../state/messageState.js";
 import { getMatchUrl } from "../../utils/utils.js";
+import Toast from "./toast.js";
 
 export default class Conversation extends HTMLElement {
-    constructor() {
-        super();
-        this.isEmpty = window.location.href.match(/\/chat\/?$/);
-        
-        if (!this.isEmpty) {
-            this.chatId = getMatchUrl(/^\/dashboard\/chat\/(\w+)\/?$/) || "none";
-            if (this.chatId === "none") {
-                throw new Error("Chat id not found");
-            }
-            this.chat = chatService.getState().chats.find((chat) => {
-                return chat.id === parseInt(this.chatId);
-            });;
-        }
-    }
+	constructor() {
+		super();
+		this.chatId = getMatchUrl(/^\/dashboard\/chat\/(\w+)\/?$/);
+	}
 
-    connectedCallback() {
-        this.render();
-    }
+	async connectedCallback() {
+		this.innerHTML = /*html*/ `
+            <div class="flex-col-center vh-full">
+                <h1 class="text-xl font-medium">Loading conversation...</h1>
+            </div>
+            `;
 
-    disconnectedCallback() {}
+		this.chat = await chatState.getChat(this.chatId);
+		if (!this.chat) {
+			Toast.notify({ message: "Chat not found", type: "error" })
+			Router.instance.navigate("/dashboard/chat");
+			return;
+		};
 
-    render() {
-        this.innerHTML = /*html*/`
+		this.render();
+
+		await messageState.setup(this.chatId);
+	}
+
+	disconnectedCallback() {}
+
+	render() {
+		this.innerHTML = /*html*/ `
         <div class="conversation vh-full w-full">
-            ${this.isEmpty
-            ? /*html*/`
-                <div class="flex-center vh-full">
-                <div class="flex-col-center gap-4">
-                    <i class="fa-regular fa-comments text-6xl text-primary mb-5"></i>
-                    <h1 class="text-xl font-medium">Select a conversation to start chatting</h1>
-                    <h2 class="text-md font-normal text-stroke">Or find a friend and chat</h2>
-                    <button class="btn-primary" onclick="document.querySelector('c-chat-search-modal').open()">Find friends</button>
-                </div>
-                </div>
-            `     
-            : /*html*/`
-            <c-conversation-header img="https://api.dicebear.com/8.x/thumbs/svg?seed=mouad" username="${this.chat.friend.username}" state="${this.chat.friend.status}"></c-conversation-header>
-            <c-conversation-body></c-conversation-body>
+            <c-conversation-header img="${config.backend_domain}${this.chat.friend.avatar}" username="${this.chat.friend.username}" state="${this.chat.friend.status}"></c-conversation-header>
+            <c-conversation-body friend-img="${config.backend_domain}${this.chat.friend.avatar}"></c-conversation-body>
             <c-conversation-footer></c-conversation-footer>
-            `}
         </div>
         `;
-    }
+	}
 }
-

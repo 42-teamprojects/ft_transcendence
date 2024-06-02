@@ -1,7 +1,7 @@
 import Authentication from "../auth/authentication.js";
 import Toast from "../components/comps/toast.js";
 import Router from "../router/router.js";
-import { userService } from "../state/userService.js";
+import { userState } from "../state/userState.js";
 import CanActivate from "./canActivate.js";
 
 export default class AuthGuard extends CanActivate {

@@ -8,7 +8,7 @@ c-usercard {
         /* border: 1px solid #000; */
     }
 
-    &:hover {
+    &:hover, & .dropdown-button.active {
         background-color: var(--default-color);
         border-radius: 0.75rem;
     }
@@ -54,7 +54,7 @@ c-usercard {
 }
 
 .friends-result h3 {
-    font-size: .87rem;
+    font-size: .95rem;
 }
 
 .friends-result p {
@@ -62,6 +62,19 @@ c-usercard {
     padding-top: 0.2rem;
 }
 
+.friends-result .usercard {
+    width: 120px;
+    height: 110px;
+}
+
+.friends-result c-dropdown .dropdown__menu {
+    background-color: var(--bg-color) !important;
+}
+
+.friends-result .usercard:hover, .friends-result .usercard.active {
+    background-color: var(--bg-color);
+    border-radius: 0.75rem;
+}
 
 
 .dashboard-content {

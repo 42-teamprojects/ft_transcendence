@@ -1,8 +1,8 @@
 import LocalMatch from "../entities/LocalMatch.js";
 import { shuffleArray } from "../utils/utils.js";
-import Service from "./service.js";
+import State from "./state.js";
 
-class TournamentService extends Service {
+class TournamentState extends State {
 	constructor() {
 		super({
 			roundsNumber: 0,
@@ -201,32 +201,8 @@ class TournamentService extends Service {
 	}
 }
 
-const tournamentService = new TournamentService();
 
-// const players = [];
-
-// for (let i = 0; i < 8; i++) {
-// 	players.push(new LocalPlayer(i, `Player ${i + 1}`, "basic"));
-// }
-
-// tournamentService.setState({
-// 	players: players,
-// 	theme: "football",
-// 	playersNumber: players.length,
-// });
-
-// tournamentService.generateTournament();
-
-// let currentMatch;
-
-// while (!tournamentService.state.tournamentFinished) {
-// 	currentMatch = tournamentService.startNextMatch();
-// 	tournamentService.finishMatch(currentMatch.player1.id);
-// }
-
-// rounds[round][group][match]
-export { tournamentService };
-
+export const tournamentState = new TournamentState();
 /* 
 [
 

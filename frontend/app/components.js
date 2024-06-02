@@ -1,8 +1,16 @@
+import Loader from "./components/comps/loader.js";
+import Friendslist from "./components/comps/friends-list.js";
+import Usercardloading from "./components/comps/usercard-loading.js";
+import Uploadavatarmodal from "./components/comps/upload-avatar-modal.js";
+import Statisticscard from "./components/comps/statistics-card.js";
+import Chatlistitems from "./components/comps/chat-list-items.js";
+import Chatsendmessagemodal from "./components/comps/chat-send-message-modal.js";
+import Loadingchatcard from "./components/comps/loading-chat-card.js";
 import Dropdown from "./components/comps/dropdown.js";
 import Leaderboardtable from "./components/comps/leaderboard-table.js";
 import Chatmatchhistory from "./components/comps/chat-match-history.js";
 import Matchhistory from "./components/comps/match-history.js";
-import Chatsearchmodal from "./components/comps/chat-search-modal.js";
+import Chatsearchmodal from "./components/comps/friends-search-modal.js";
 import Updateuserinfoform from "./components/comps/update-user-info-form.js";
 import Changepasswordform from "./components/comps/change-password-form.js";
 import Enable2famodal from "./components/comps/enable-2fa-modal.js";
@@ -84,8 +92,16 @@ export const components = [
 	{ tagName: 'c-change-password-form', component: Changepasswordform },
 	{ tagName: 'c-update-user-info-form', component: Updateuserinfoform },
 	{ tagName: 'c-match-history', component: Matchhistory },
-	{ tagName: 'c-chat-search-modal', component: Chatsearchmodal },
+	{ tagName: 'c-friends-search-modal', component: Chatsearchmodal },
 	{ tagName: 'c-chat-match-history', component: Chatmatchhistory },
 	{ tagName: 'c-leaderboard-table', component: Leaderboardtable },
+	{ tagName: 'c-statistics-card', component: Statisticscard },
 	{ tagName: 'c-dropdown', component: Dropdown },
+	{ tagName: 'c-loading-chat-card', component: Loadingchatcard },
+	{ tagName: 'c-chat-send-message-modal', component: Chatsendmessagemodal },
+	{ tagName: 'c-chat-list-items', component: Chatlistitems },
+	{ tagName: 'c-upload-avatar-modal', component: Uploadavatarmodal },
+	{ tagName: 'c-usercard-loading', component: Usercardloading },
+	{ tagName: 'c-friends-list', component: Friendslist },
+	{ tagName: 'c-loader', component: Loader },
 ];

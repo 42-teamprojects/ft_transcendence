@@ -15,7 +15,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
     TokenVerifyView
 )
-from ..utils import add_cookies, generate_2fa_token, send_verification
+from ..utils import add_cookies, generate_2fa_token, get_default_avatar, send_verification
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.tokens import UntypedToken
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
@@ -35,6 +35,11 @@ class RegisterView(GenericAPIView):
 
         # Save the user instance
         user = serializer.save()
+
+        # Save default avatar
+        avatar_path = get_default_avatar(user.username)
+        user.avatar = avatar_path
+        user.save()
         # Pass the user instance to send_verification
         is_sent = send_verification(user)
         refresh_token, access_token = user.tokens().values()
@@ -128,6 +133,7 @@ class JWTVerifyView(TokenVerifyView):
                 return response
 
 class LogoutView(APIView):
+    permission_classes = [AllowAny]
     def post(self, request, *args, **kwargs):
         response = Response(status=status.HTTP_204_NO_CONTENT)
         response.delete_cookie('access')

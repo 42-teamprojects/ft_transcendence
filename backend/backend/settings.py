@@ -52,8 +52,8 @@ REST_FRAMEWORK = {
         'accounts.custom_throttles.ResendRateThrottle',
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '1/min',
-        'resend': '1/min',
+        'anon': '3/h',
+        'resend': '3/h',
     }
 }
 
@@ -76,19 +76,14 @@ INSTALLED_APPS = [
     'security',
     'game',
     'oauth',
-    'users'
+    'users',
+    'friends',
+    'notifications',
+    'django_crontab',
+    'stats',
 ]
 
 ASGI_APPLICATION = 'backend.asgi.application'
-
-# CHANNEL_LAYERS = {
-#     "default": {
-#         "BACKEND": "channels_redis.core.RedisChannelLayer",
-#         "CONFIG": {
-#             "hosts": [('127.0.0.1', 6379)],
-#         },
-#     },
-# }
 
 CHANNEL_LAYERS = {
     "default": {
@@ -107,8 +102,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.BrokenLinkEmailsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -200,7 +195,7 @@ EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 
 # JWT
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': False,
@@ -254,6 +249,15 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:8080",
 ]
+CORS_ALLOW_HEADERS = (
+    "accept",
+    "authorization",
+    "content-type",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+)
+
 CORS_ALLOW_CREDENTIALS = True
 
 # CSRF
@@ -322,3 +326,7 @@ OAUTH2_PROVIDERS = {
         }
     }
 }
+
+CRONJOBS = [
+    # ('*/30 * * * * *', 'accounts.cron.delete_orphaned_avatars')
+]

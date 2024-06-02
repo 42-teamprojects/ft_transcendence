@@ -1,4 +1,6 @@
+import { config } from "../../config.js";
 import Router from "../../router/router.js";
+import { userState } from "../../state/userState.js";
 import { isThere } from "../../utils/utils.js";
 
 export default class SidebarLink extends HTMLElement {
@@ -28,15 +30,24 @@ export default class SidebarLink extends HTMLElement {
   
     connectedCallback() {
       this.render();
+      this.unsubscribe = userState.subscribe(() => {
+        if (this.link === "profile" && userState.state.user) this.render();
+        return;
+      });
     }
 
     disconnectedCallback() {
     }
 
     render() {
+      const user = userState.state.user;
+      const avatar = user.avatar ? config.backend_domain + user.avatar : `https://api.dicebear.com/8.x/thumbs/svg?seed=${user.username}`;
       this.innerHTML = /*html*/`
         <a is="c-link" href="/dashboard/${this.link}" class="sidebar-link ${this.isActive && 'active'}">
-          <img src="${this.icons[this.link]}" alt="${this.link}"/>
+          ${this.link === "profile"
+            ? /*html*/`<img class="profile_icon object-cover skeleton" src="${avatar}" alt="profile image">`
+            : /*html*/`<img src="${this.icons[this.link]}" alt="${this.link}"/>`
+          }
           <div class="font-bold uppercase spacing-1">${this.textContent}</div>
         </a>
       `;
