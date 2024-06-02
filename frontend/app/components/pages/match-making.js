@@ -25,18 +25,19 @@ export default class Matchmaking extends HTMLElement {
             let intervalId = setInterval(() => {
                 this.text.textContent = `Starting in ${countdown}...`;
                 countdown--;
-                
-                if (countdown < 0) {
+                    
+                    if (countdown < 0) {
                     Router.instance.navigate('/dashboard/home');
                     clearInterval(intervalId);
                 }
             }, 1000);
             let btn = this.querySelector('.btn-primary');
-            btn.addEventListener('click', () => {
-                //go back to the home page]
-                matchState.closeConnection('matchId');
-                Router.instance.navigate('/dashboard/home');
-            });
+            btn.disabled = true;
+            // btn.addEventListener('click', () => {
+            //     //go back to the home page]
+            //     matchState.closeConnection('matchId');
+            //     Router.instance.navigate('/dashboard/home');
+            // });
         });
         let btn = this.querySelector('.btn-primary');
         btn.addEventListener('click', () => {
