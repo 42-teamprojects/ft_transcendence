@@ -66,4 +66,3 @@ class NotificationViewSet(viewsets.ModelViewSet):
     def mark_messages_as_read(self, request):
         Notification.objects.filter(recipient=request.user, type='MSG').update(read=True)
         return Response({'message': 'All messages marked as read'}, status=status.HTTP_200_OK)
-        
