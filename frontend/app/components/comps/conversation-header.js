@@ -1,4 +1,4 @@
-import { UserStatus } from "../../entities/UserStatus.js";
+import { UserStatus } from "../../entities/enums.js";
 import HttpClient from "../../http/httpClient.js";
 import Router from "../../router/router.js";
 import { chatState } from "../../state/chatState.js";

@@ -1,4 +1,4 @@
-import { UserStatus } from "../../entities/UserStatus.js";
+import { UserStatus } from "../../entities/enums.js";
 import { truncate } from "../../utils/utils.js";
 export default class Usercard extends HTMLElement {
 	constructor() {

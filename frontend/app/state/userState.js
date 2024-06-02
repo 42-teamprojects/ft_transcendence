@@ -83,6 +83,27 @@ class UserState extends State {
 		this.setState({ user });
 	}
 
+	async updateUserPaddle(value) {
+		try {
+			await this.httpClient.put("auth/paddle-type/", { paddle_type: value });
+			this.updateUser("paddle_type", value);
+			Toast.notify({ type: "success", message: "Paddle type updated successfully" });
+		} catch (error) {
+			console.error(error);
+			Toast.notify({ type: "error", message: "Failed to update paddle type" });
+		}
+	}
+	async updateUserTheme(value) {
+		try {
+			await this.httpClient.put("auth/table-theme/", { table_theme: value });
+			this.updateUser("table_theme", value);
+			Toast.notify({ type: "success", message: "Theme type updated successfully" });
+		} catch (error) {
+			console.error(error);
+			Toast.notify({ type: "error", message: "Failed to update theme type" });
+		}
+	}
+
 	isVerified() {
 		return this.state.user.provider === "fortytwo" ? true : this.state.user.is_verified;
 	}

@@ -1,3 +1,4 @@
+import Friendslistmodal from "./components/comps/friends-list-modal.js";
 import Loader from "./components/comps/loader.js";
 import Friendslist from "./components/comps/friends-list.js";
 import Usercardloading from "./components/comps/usercard-loading.js";
@@ -106,4 +107,5 @@ export const components = [
 	{ tagName: 'c-friends-list', component: Friendslist },
 	{ tagName: 'c-loader', component: Loader },
 	{ tagName: 'c-blocked-list-modal', component: BlockedListModal },
+	{ tagName: 'c-friends-list-modal', component: Friendslistmodal },
 ];

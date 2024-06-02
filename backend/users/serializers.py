@@ -8,12 +8,12 @@ import re
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'full_name', 'email', 'last_login', 'status', 'avatar', 'date_joined']
+        fields = ['id', 'username', 'full_name', 'email', 'last_login', 'status', 'avatar', 'date_joined', 'paddle_type', 'table_theme']
 
 class UserMeSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'full_name','avatar', 'email', 'last_login', 'status', 'is_superuser', 'is_staff', 'is_verified', 'date_joined', 'provider', 'two_factor_enabled']
+        fields = ['id', 'username', 'full_name','avatar', 'email', 'last_login', 'status', 'is_superuser', 'is_staff', 'is_verified', 'date_joined', 'provider', 'two_factor_enabled', 'paddle_type', 'table_theme']
 
 class AvatarSerializer(serializers.ModelSerializer):
     class Meta:

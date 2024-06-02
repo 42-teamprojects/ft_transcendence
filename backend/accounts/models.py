@@ -43,7 +43,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     provider = models.CharField(_('Provider'), max_length=100, blank=True, null=True)
     avatar = models.ImageField(upload_to=avatar_upload_to, null=True, blank=True)
     paddle_type = models.CharField(_('Paddle Type'), max_length=1, choices=PaddleType.choices, default=PaddleType.Basic)
-    table_theme = models.CharField(_('Table Theme'), max_length=1, choices=TableTheme.choices, default=TableTheme.Classic)
+    table_theme = models.CharField(_('Table Theme'), max_length=1, choices=TableTheme.choices, default=TableTheme.Standard)
     
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['full_name', 'email']
