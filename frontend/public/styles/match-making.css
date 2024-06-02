@@ -1,0 +1,13 @@
+.match-making-container
+{
+    width: 100vw;
+    height: 100vh;
+}
+
+.player-img{
+    width: 170px;
+    height: 170px;
+    border-radius: 11%;
+    /* margin: 10px; */
+    border: 5px solid gray;
+}
