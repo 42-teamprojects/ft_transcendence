@@ -67,7 +67,13 @@ export default class Profile extends HTMLElement {
                     <div class="profile-user">
                         <div class="profile-user-names">
                             <h2>${this.user.full_name}</h2>
-                            <h3>@${this.user.username}</h3>
+                            <h3 class="flex gap-4">
+                                @${this.user.username}
+                                <div class="flex gap-1">
+                                    <div class="user-status w-2 h-2 bg-success rounded-full" style="bottom: 10px; right: 30px"></div>
+                                    <p class="text-md text-stroke">Online</p>
+                                </div>
+                            </h3>
                         </div>
                         <p>Joined ${formatDate(this.user?.date_joined)}</p>
                         <div class="profile-user-actions flex gap-6">
