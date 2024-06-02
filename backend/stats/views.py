@@ -1,29 +1,36 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
-
-from accounts.models import User
+from rest_framework.response import Response
 from .models import UserStats
 from .serializers import UserStatsSerializer
-from rest_framework.decorators import action
 
-class UpdatePlayerStatsView(APIView):
+class UpdatePlayerStatsView(generics.GenericAPIView):
     serializer_class = UserStatsSerializer
-    model = UserStats
-        
-    def get(self, request):
-        stats = request.user.stats
-        serializer = UserStatsSerializer(stats)
-        return Response(serializer.to_representation(stats))
-    
-    def put(self, request):
-        stats = request.user.user_stats
-        serializer = UserStatsSerializer(stats, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.to_representation(stats))
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    
-    
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return UserStats.objects.filter(user=self.request.user)
+
+    def post(self, request, *args, **kwargs):
+        user_stats = self.get_queryset().first()
+        if user_stats is None:
+            user_stats = UserStats(user=self.request.user)
+            user_stats.save()
+
+        if 'win' in self.request.path:
+            user_stats.matches_won += 1
+        elif 'lose' in self.request.path:
+            user_stats.matches_lost += 1
+
+        if 'tournament' in self.request.path:
+            if 'win' in self.request.path:
+                user_stats.tournaments_won += 1
+            elif 'lose' in self.request.path:
+                user_stats.tournaments_lost += 1
+            user_stats.tournaments_played += 1
+        else:
+            user_stats.matches_played += 1  
+
+        user_stats.save()
+        serializer = UserStatsSerializer(user_stats)
+        return Response(serializer.data, status=status.HTTP_200_OK)
