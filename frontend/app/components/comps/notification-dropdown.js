@@ -45,8 +45,10 @@ export default class Notificationdropdown extends HTMLElement {
                     </div>
                     <div class="notification__list flex-col" style="margin-top: -1rem">
                        <c-notification type="MSG" username="Yusuf" user-avatar="https://api.dicebear.com/8.x/thumbs/svg?seed=yousef"></c-notification>
+                       <c-notification type="TRN" tournament-detail="Tournament is starting soon"></c-notification>
+                       <c-notification type="PRQ" play-request-user="Yusuf"></c-notification>
                        <c-notification type="MSG" username="Yusuf" user-avatar="https://api.dicebear.com/8.x/thumbs/svg?seed=yousef"></c-notification>
-                       <c-notification type="MSG" username="Yusuf" user-avatar="https://api.dicebear.com/8.x/thumbs/svg?seed=yousef"></c-notification>
+                       <c-notification type="FAL" username="Yusuf" user-avatar="https://api.dicebear.com/8.x/thumbs/svg?seed=yousef"></c-notification>
                     </div> 
                     <div class="notification__footer flex-center">
                         <p class="btn-link text-primary">View all</p>

@@ -30,12 +30,12 @@ export default class Notification extends HTMLElement {
                 this.actions = /*html*/`<p class="btn-link text-secondary">View</p>`
                 break;
             case 'TRN':
-                this.icon = /*html*/`<div class="bg-warning w-12 h-12"><i class="fa-solid fa-trophy"></i></div>`
+                this.icon = /*html*/`<div class="bg-secondary w-12 h-12 flex-col-center rounded-full"><i class="fa-solid fa-trophy"></i></div>`
                 this.details = /*html*/`<h3>Tournament</h3><p class="text-stroke mt-2">${this.tournamentDetail}</p>`
                 this.actions = /*html*/`<p class="btn-link text-secondary">View</p>`
                 break;
             case 'PRQ':
-                this.icon = /*html*/`<div class="bg-primary w-12 h-12"><i class="fa-solid fa-gamepad"></i></div>`
+                this.icon = /*html*/`<div class="bg-primary w-12 h-12 flex-col-center rounded-full"><i class="fa-solid fa-gamepad"></i></div>`
                 this.details = /*html*/`<h3>Play Request</h3><p class="text-stroke mt-2">You have a new play request from ${this.playRequestUser}</p>`
                 this.actions = /*html*/`<p class="btn-link text-secondary">Accept</p> <p class="btn-link text-danger">Reject</p>`
                 break;
