@@ -1,6 +1,7 @@
 import { config } from "../../config.js";
 import Router from "../../router/router.js";
 import { userState } from "../../state/userState.js";
+import { matchState } from "../../state/matchState.js";
 
 export default class Matchmaking extends HTMLElement {
     constructor() {
@@ -17,6 +18,7 @@ export default class Matchmaking extends HTMLElement {
             //go back to the home page]
             Router.instance.navigate('/dashboard/home');
         });
+        matchState.setup('matchId');
     }
 
     disconnectedCallback() {}

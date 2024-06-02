@@ -56,8 +56,7 @@ class NotificationState extends State {
                     default:
                         break;
             }
-        }
-        );
+        });
     }
 
     handleMessageNotification(notification) {
