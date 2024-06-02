@@ -17,7 +17,7 @@ class MatchView(viewsets.ModelViewSet):
         user2 = User.objects.filter(~Q(id=user.id)).first()
         
         if not user2:
-            return Response({'detail': 'No other user available for Match'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'No other user available for match'}, status=status.HTTP_400_BAD_REQUEST)
         
         match = Match.objects.create(player1=user, player2=user2)
         return Response(self.serializer_class(match).data, status=status.HTTP_201_CREATED)
@@ -33,7 +33,7 @@ class MatchView(viewsets.ModelViewSet):
         if user != match.player1 and user != match.player2:
             return Response({'detail': 'You are not part of this match'}, status=status.HTTP_400_BAD_REQUEST)
         if match.status != required_status:
-            return Response({'detail': f'Match is not in the required status: {required_status}'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': f'match is not in the required status: {required_status}'}, status=status.HTTP_400_BAD_REQUEST)
         match.status = new_status
         match.save()
         return Response(self.serializer_class(match).data, status=status.HTTP_200_OK)
@@ -58,7 +58,7 @@ class MatchView(viewsets.ModelViewSet):
         if user != match.player1 and user != match.player2:
             return Response({'detail': 'You are not part of this match'}, status=status.HTTP_400_BAD_REQUEST)
         if match.status != MatchStatus.ONGOING:
-            return Response({'detail': 'Match is not ongoing'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'match is not ongoing'}, status=status.HTTP_400_BAD_REQUEST)
         match.status = MatchStatus.FINISHED
         match.save()
         return Response(self.serializer_class(match).data, status=status.HTTP_200_OK)
@@ -69,7 +69,7 @@ class MatchView(viewsets.ModelViewSet):
         if user != match.player1 and user != match.player2:
             return Response({'detail': 'You are not part of this match'}, status=status.HTTP_400_BAD_REQUEST)
         if match.status != MatchStatus.ONGOING:
-            return Response({'detail': 'Match is not ongoing'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'match is not ongoing'}, status=status.HTTP_400_BAD_REQUEST)
         
         score1 = request.data.get('score1')
         score2 = request.data.get('score2')
@@ -98,7 +98,7 @@ class MatchView(viewsets.ModelViewSet):
         if user != match.player1 and user != match.player2:
             return Response({'detail': 'You are not part of this match'}, status=status.HTTP_400_BAD_REQUEST)
         if match.status != MatchStatus.FINISHED:
-            return Response({'detail': 'Match is not finished'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'match is not finished'}, status=status.HTTP_400_BAD_REQUEST)
         winner = request.data.get('winner')
         if user == match.player1:
             match.winner = match.player1 if winner == 1 else match.player2
