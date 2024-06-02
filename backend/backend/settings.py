@@ -81,7 +81,7 @@ INSTALLED_APPS = [
     'notifications',
     'django_crontab',
     'stats',
-    'matchemaking',
+    'match',
 ]
 
 ASGI_APPLICATION = 'backend.asgi.application'

@@ -3,30 +3,34 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q
-from .models import MatchMaking, MatchStatus
-from .serializers import MatchMakingSerializer
+from .models import Match, MatchStatus
+from .serializers import MatchSerializer
 from accounts.models import User
 
-class MatchMakingView(viewsets.ModelViewSet):
+class MatchView(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
-    serializer_class = MatchMakingSerializer
-    queryset = MatchMaking.objects.all()
+    serializer_class = MatchSerializer
+    queryset = Match.objects.all()
 
     def create(self, request, *args, **kwargs):
         user = request.user
         user2 = User.objects.filter(~Q(id=user.id)).first()
-        match = MatchMaking.objects.create(user1=user, user2=user2)
+        
+        if not user2:
+            return Response({'detail': 'No other user available for Match'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        match = Match.objects.create(player1=user, player2=user2)
         return Response(self.serializer_class(match).data, status=status.HTTP_201_CREATED)
     
     def list(self, request, *args, **kwargs):
         user = request.user
-        matches = MatchMaking.objects.filter(Q(user1=user) | Q(user2=user))
+        matches = Match.objects.filter(Q(player1=user) | Q(player2=user))
         return Response(self.serializer_class(matches, many=True).data, status=status.HTTP_200_OK)
     
     def update_match_status(self, request, new_status, required_status, *args, **kwargs):
         user = request.user
         match = self.get_object()
-        if user != match.user1 and user != match.user2:
+        if user != match.player1 and user != match.player2:
             return Response({'detail': 'You are not part of this match'}, status=status.HTTP_400_BAD_REQUEST)
         if match.status != required_status:
             return Response({'detail': f'Match is not in the required status: {required_status}'}, status=status.HTTP_400_BAD_REQUEST)
@@ -43,7 +47,7 @@ class MatchMakingView(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         user = request.user
         match = self.get_object()
-        if user != match.user1 and user != match.user2:
+        if user != match.player1 and user != match.player2:
             return Response({'detail': 'You are not part of this match'}, status=status.HTTP_400_BAD_REQUEST)
         match.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -51,7 +55,7 @@ class MatchMakingView(viewsets.ModelViewSet):
     def finish(self, request, *args, **kwargs):
         user = request.user
         match = self.get_object()
-        if user != match.user1 and user != match.user2:
+        if user != match.player1 and user != match.player2:
             return Response({'detail': 'You are not part of this match'}, status=status.HTTP_400_BAD_REQUEST)
         if match.status != MatchStatus.ONGOING:
             return Response({'detail': 'Match is not ongoing'}, status=status.HTTP_400_BAD_REQUEST)
@@ -62,7 +66,7 @@ class MatchMakingView(viewsets.ModelViewSet):
     def score(self, request, *args, **kwargs):
         user = request.user
         match = self.get_object()
-        if user != match.user1 and user != match.user2:
+        if user != match.player1 and user != match.player2:
             return Response({'detail': 'You are not part of this match'}, status=status.HTTP_400_BAD_REQUEST)
         if match.status != MatchStatus.ONGOING:
             return Response({'detail': 'Match is not ongoing'}, status=status.HTTP_400_BAD_REQUEST)
@@ -77,13 +81,13 @@ class MatchMakingView(viewsets.ModelViewSet):
             match.score1 = score1
             if match.score1 >= settings.SCORE_WINNER:
                 match.status = MatchStatus.FINISHED
-                match.winner = match.user1
+                match.winner = match.player1
         
         if score2 is not None:
             match.score2 = score2
             if match.score2 >= settings.SCORE_WINNER:
                 match.status = MatchStatus.FINISHED
-                match.winner = match.user2
+                match.winner = match.player2
         
         match.save()
         return Response(self.serializer_class(match).data, status=status.HTTP_200_OK)
@@ -91,14 +95,14 @@ class MatchMakingView(viewsets.ModelViewSet):
     def winner(self, request, *args, **kwargs):
         user = request.user
         match = self.get_object()
-        if user != match.user1 and user != match.user2:
+        if user != match.player1 and user != match.player2:
             return Response({'detail': 'You are not part of this match'}, status=status.HTTP_400_BAD_REQUEST)
         if match.status != MatchStatus.FINISHED:
             return Response({'detail': 'Match is not finished'}, status=status.HTTP_400_BAD_REQUEST)
         winner = request.data.get('winner')
-        if winner == 1:
-            match.winner = match.user1
-        elif winner == 2:
-            match.winner = match.user2
+        if user == match.player1:
+            match.winner = match.player1 if winner == 1 else match.player2
+        else:
+            match.winner = match.player2 if winner == 2 else match.player1
         match.save()
         return Response(self.serializer_class(match).data, status=status.HTTP_200_OK)

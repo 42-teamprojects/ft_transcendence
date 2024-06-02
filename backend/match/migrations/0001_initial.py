@@ -21,9 +21,9 @@ class Migration(migrations.Migration):
                 ('score1', models.IntegerField(default=0)),
                 ('score2', models.IntegerField(default=0)),
                 ('status', models.CharField(choices=[('S', 'Starting'), ('W', 'Waiting'), ('O', 'Ongoing'), ('F', 'Finished')], default='W', max_length=1, verbose_name='Status')),
-                ('user1', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='matchemaking_player1', to=settings.AUTH_USER_MODEL)),
-                ('user2', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='matchemaking_player2', to=settings.AUTH_USER_MODEL)),
-                ('winner_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='matchemaking_winner', to=settings.AUTH_USER_MODEL)),
+                ('user1', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='match_player1', to=settings.AUTH_USER_MODEL)),
+                ('user2', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='match_player2', to=settings.AUTH_USER_MODEL)),
+                ('winner_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='match_winner', to=settings.AUTH_USER_MODEL)),
             ],
         ),
     ]

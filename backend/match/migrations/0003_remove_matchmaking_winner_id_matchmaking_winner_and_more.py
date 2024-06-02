@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('matchemaking', '0002_alter_matchmaking_winner_id'),
+        ('match', '0002_alter_matchmaking_winner_id'),
     ]
 
     operations = [

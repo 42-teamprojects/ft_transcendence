@@ -30,7 +30,7 @@ urlpatterns = [
     path('api/', include('notifications.urls')),
     path('api/', include('friends.urls')),
     path('api/stats/', include('stats.urls')),
-    path('api/matchmaking/', include('matchemaking.urls')),
+    path('api/matchmaking/', include('match.urls')),
 ]
 
 if settings.DEBUG:

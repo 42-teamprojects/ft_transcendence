@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('matchemaking', '0003_remove_matchmaking_winner_id_matchmaking_winner_and_more'),
+        ('match', '0003_remove_matchmaking_winner_id_matchmaking_winner_and_more'),
     ]
 
     operations = [

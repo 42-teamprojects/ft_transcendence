@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('matchemaking', '0004_matchmaking_created_at'),
+        ('match', '0004_matchmaking_created_at'),
     ]
 
     operations = [

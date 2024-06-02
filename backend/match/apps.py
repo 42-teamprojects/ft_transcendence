@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class TournamentConfig(AppConfig):
+class matchConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'tournament'
+    name = 'match'
