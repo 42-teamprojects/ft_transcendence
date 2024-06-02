@@ -26,22 +26,26 @@ export default class Notification extends HTMLElement {
         switch (this.type) {
             case 'MSG':
                 this.icon = /*html*/`<img src="${this.userAvatar}" class="player-avatar" alt="" />`
-                this.details = /*html*/`<h3>${this.username}</h3><p class="text-stroke mt-2">Has sent you a message</p>`
+                this.detailsTitle = this.username
+                this.detailsSubtitle = 'Has sent you a message'
                 this.actions = /*html*/`<p class="btn-link text-secondary">View</p>`
                 break;
             case 'TRN':
-                this.icon = /*html*/`<div class="bg-secondary w-12 h-12 flex-col-center rounded-full"><i class="fa-solid fa-trophy"></i></div>`
-                this.details = /*html*/`<h3>Tournament</h3><p class="text-stroke mt-2">${this.tournamentDetail}</p>`
+                this.icon = /*html*/`<div class="bg-secondary w-10 h-10 flex-col-center rounded-full"><i class="fa-solid fa-trophy"></i></div>`
+                this.detailsTitle = 'Tournament'
+                this.detailsSubtitle = this.tournamentDetail
                 this.actions = /*html*/`<p class="btn-link text-secondary">View</p>`
                 break;
             case 'PRQ':
-                this.icon = /*html*/`<div class="bg-primary w-12 h-12 flex-col-center rounded-full"><i class="fa-solid fa-gamepad"></i></div>`
-                this.details = /*html*/`<h3>Play Request</h3><p class="text-stroke mt-2">You have a new play request from ${this.playRequestUser}</p>`
+                this.icon = /*html*/`<div class="bg-primary w-10 h-10 flex-col-center rounded-full"><i class="fa-solid fa-gamepad"></i></div>`
+                this.detailsTitle = 'Play Request'
+                this.detailsSubtitle = `from ${this.playRequestUser}`
                 this.actions = /*html*/`<p class="btn-link text-secondary">Accept</p> <p class="btn-link text-danger">Reject</p>`
                 break;
             case 'FAL':
                 this.icon = /*html*/`<img src="${this.userAvatar}" class="player-avatar" alt="" />`
-                this.details = /*html*/`<h3>${this.username}</h3><p class="text-stroke mt-2">Has added you as a friend</p>`
+                this.detailsTitle = this.username
+                this.detailsSubtitle = 'Has added you as a friend'
                 this.actions = /*html*/`<p class="btn-link text-secondary">View</p>`
                 break;
             default:
@@ -61,8 +65,9 @@ export default class Notification extends HTMLElement {
             <div class="notification-icon">
                 ${this.icon} 
             </div>
-            <div class="notification-details ">
-                ${this.details}
+            <div class="notification-details flex-col gap-2">
+                <h3>${this.detailsTitle}</h3>
+                <p class="text-stroke">${this.detailsSubtitle}</p>
             </div>
             </div>
             <div class="notification-actions flex gap-3">
