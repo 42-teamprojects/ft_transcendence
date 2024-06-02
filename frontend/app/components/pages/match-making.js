@@ -34,8 +34,8 @@ export default class Matchmaking extends HTMLElement {
             let btn = this.querySelector('.btn-primary');
             btn.addEventListener('click', () => {
                 //go back to the home page]
-                Router.instance.navigate('/dashboard/home');
                 matchState.closeConnection('matchId');
+                Router.instance.navigate('/dashboard/home');
             });
         });
         let btn = this.querySelector('.btn-primary');
