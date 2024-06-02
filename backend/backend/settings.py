@@ -81,6 +81,7 @@ INSTALLED_APPS = [
     'notifications',
     'django_crontab',
     'stats',
+    'matchemaking',
 ]
 
 ASGI_APPLICATION = 'backend.asgi.application'
@@ -140,6 +141,12 @@ DATABASES = {
         'PORT': env('POSTGRES_PORT'),
     }
 }
+
+
+
+
+#score winner
+SCORE_WINNER = 5
 
 
 # Password validation
