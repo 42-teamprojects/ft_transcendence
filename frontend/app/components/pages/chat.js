@@ -28,7 +28,7 @@ export default class Chat extends HTMLElement {
                     <i class="fa-regular fa-comments text-6xl text-primary mb-5"></i>
                     <h1 class="text-xl font-medium">Select a conversation to start chatting</h1>
                     <h2 class="text-md font-normal text-stroke">Or find a friend and chat</h2>
-                    <button class="btn-primary" onclick="document.querySelector('c-chat-search-modal').open()">Find friends</button>
+                    <button class="btn-primary" onclick="document.querySelector('c-friends-search-modal').open()">Find friends</button>
                 </div>
                 </div>
             </div>

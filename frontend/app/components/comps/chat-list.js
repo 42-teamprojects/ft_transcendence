@@ -18,11 +18,11 @@ export default class Chatlist extends HTMLElement {
 
 	render() {
 		this.innerHTML = /*html*/ `
-        <c-chat-search-modal></c-chat-search-modal>
+        <c-friends-search-modal></c-friends-search-modal>
         <div class="chat-list">
             <div class="chat-list__header">
                 <h1 class="chat-list__title">Messages</h1>
-                <img src="/public/assets/icons/plus.svg" alt="add" class="chat-list__add" onclick="document.querySelector('c-chat-search-modal').open()"/>
+                <img src="/public/assets/icons/plus.svg" alt="add" class="chat-list__add" onclick="document.querySelector('c-friends-search-modal').open()"/>
             </div>
             <div class="chat-list__search">
                 <input type="text" class="input-field" placeholder="Search Users, Messages..." />

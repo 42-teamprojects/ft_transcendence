@@ -1,5 +1,7 @@
 import { config } from "../../config.js";
 import Router from "../../router/router.js";
+import { chatState } from "../../state/chatState.js";
+import { friendState } from "../../state/friendState.js";
 import { userState } from "../../state/userState.js";
 import { formatDate } from "../../utils/utils.js";
 import Toast from "../comps/toast.js";
@@ -16,6 +18,7 @@ export default class Profile extends HTMLElement {
         this.user = userState.state.user;
         this.isMine = true;
         if (this.user.username !== this.username) {
+            this.innerHTML = /*html*/`<c-loader></c-loader>`;
             const searchedUser = await userState.fetchUser(this.username);
             if (!searchedUser) {
                 Toast.notify({message: "User not found", type: "warning"});
@@ -25,30 +28,36 @@ export default class Profile extends HTMLElement {
             this.user = searchedUser;
             this.isMine = false;
         }
-        
         this.render();
+        this.modal = document.querySelector("c-modal");
         this.unsubscribe = userState.subscribe(() => {
             this.user = userState.state.user;
             if (this.user) this.render();
             return;
         });
+        this.unsubscribeFriends = friendState.subscribe(() => {
+            this.getActions();
+            this.addEventListeners();
+        });
+        this.addEventListeners();
     }
 
     disconnectedCallback() {
         if (this.unsubscribe) this.unsubscribe();
+        if (this.unsubscribeFriends) this.unsubscribeFriends();
     }
 
     render() {
-        const defaultImg = `https://api.dicebear.com/8.x/thumbs/svg?seed=${this.user.username}`;
-        const avatar = this.user.avatar ? config.backend_domain + this.user.avatar : defaultImg;
+        const avatar = this.user.avatar ? config.backend_domain + this.user.avatar : `https://api.dicebear.com/8.x/thumbs/svg?seed=${this.user.username}`;
         this.innerHTML = /*html*/`
         ${this.isMine ? /*html*/`<c-upload-avatar-modal></c-upload-avatar-modal>` : ""}
+        ${!this.isMine ? /*html*/`<c-modal></c-modal>` : ""} 
         <div class="dashboard-content">
             <main>
                 ${!this.isMine ? /*html*/`<a is="c-link" href="/dashboard/profile" class="text-secondary font-bold uppercase text-sm spacing-1"><i class="fa-solid fa-angle-left mr-2"></i> Back to my profile</a>` : ""}
                 <section class="profile-info ${!this.isMine ? 'mt-8' : ''}">
                     <div class="profile-image relative">
-                        <img src="${avatar}" class="profile image object-cover" onerror="this.onerror=null; this.src='${defaultImg}';">
+                        <img src="${avatar}" class="profile image object-cover skeleton">
                         ${this.isMine ? /*html*/`
                         <div class="absolute bg-secondary p-2 rounded-full border-white cursor-pointer w-8 h-8 flex-center" style="top: 10px; right: 10px" onclick="document.querySelector('c-upload-avatar-modal').open()">
                             <i class="fa-solid fa-camera"></i>
@@ -60,9 +69,7 @@ export default class Profile extends HTMLElement {
                             <h3>@${this.user.username}</h3>
                         </div>
                         <p>Joined ${formatDate(this.user?.date_joined)}</p>
-                        <div class="profile-user-actions">
-                            ${this.isMine ? /*html*/`<a is="c-link" href="/dashboard/settings" class="text-secondary font-bold uppercase text-sm spacing-1">Edit Profile</a>` : ""}
-                            ${!this.isMine ? /*html*/`<a is="c-link" href="" class="text-secondary font-bold uppercase text-sm spacing-1"><i class="fa-solid fa-plus mr-2"></i>Add friend</a>` : ""}
+                        <div class="profile-user-actions flex gap-6">
                         </div>
                     </div>
                 </section>
@@ -85,7 +92,100 @@ export default class Profile extends HTMLElement {
             </div>
         </div>
         `;
+
+        this.getActions();
     }
+    
+    addEventListeners() {
+        const chatFriend = this.querySelector("#chat-friend");
+        if (chatFriend) {
+            chatFriend.addEventListener("click", this.handleChatClick.bind(this));
+        }
+
+        const addFriend = this.querySelector("#add-friend");
+        if (addFriend) {
+            addFriend.addEventListener("click", async () => {
+                const result = await friendState.addFriend(this.user.id);
+                if (result) {
+                    Toast.notify({message: "Friend added successfuly", type: "success"});
+                }
+            });
+        }
+        const removeFriend = this.querySelector("#remove-friend");
+        if (removeFriend) {
+            this.removeFriendFunc = async () => {
+                const result = await friendState.removeFriend(this.user.id);
+                if (result) {
+                    Toast.notify({message: "Friend removed successfuly", type: "success"});
+                }
+                this.modal.removeEventListener("confirm", this.removeFriendFunc.bind(this));
+            }
+
+            removeFriend.addEventListener("click", () => {
+                this.modal.addEventListener("confirm", this.removeFriendFunc.bind(this));
+                this.modal.addEventListener("cancel", () => {
+                    // remove the event listener
+                    this.modal.removeEventListener("confirm", this.removeFriendFunc.bind(this));
+                });
+                this.modal.open();
+            });
+        }
+
+        const blockFriend = this.querySelector("#block-friend");
+        if (blockFriend) {
+            this.blockFriendFunc = async () => {
+                const result = await friendState.blockFriend(this.user.id)
+                if (result) {
+                    Toast.notify({message: "User blocked successfuly", type: "success"});
+                    Router.instance.navigate("/dashboard/profile");
+                }
+                this.modal.removeEventListener("confirm", this.removeFriendFunc.bind(this));              
+            }
+
+            blockFriend.addEventListener("click", () => {
+                this.modal.addEventListener("confirm", this.blockFriendFunc.bind(this));
+                this.modal.addEventListener("cancel", () => {
+                    this.modal.removeEventListener("confirm", this.blockFriendFunc.bind(this));
+                });
+                this.modal.open();
+            });
+        }
+    }
+
+    getActions() {
+        const actions = this.querySelector(".profile-user-actions");
+        if (!actions) return;
+        actions.innerHTML = /*html*/`
+        ${this.isMine ? /*html*/`<a is="c-link" href="/dashboard/settings" class="text-secondary font-bold uppercase text-sm spacing-1">Edit Profile</a>` : ""}
+        ${!this.isMine && !friendState.alreadyFriends(this.user.id) ? /*html*/`<p id="add-friend" href="" class="cursor-pointer text-secondary font-bold uppercase text-sm spacing-1"><i class="fa-solid fa-plus mr-2"></i>Add friend</p>` : ""}
+        ${!this.isMine ? /*html*/`<p id="chat-friend" class="cursor-pointer text-secondary font-bold uppercase text-sm spacing-1"><i class="fa-regular fa-comment mr-2"></i>Chat</p>` : ""}
+        ${!this.isMine && friendState.alreadyFriends(this.user.id) ? /*html*/`<p id="remove-friend" href="" class="cursor-pointer text-warning font-bold uppercase text-sm spacing-1"><i class="fa-solid fa-minus mr-2"></i>Remove friend</p>` : ""}
+        ${!this.isMine && friendState.alreadyFriends(this.user.id) ? /*html*/`<p id="block-friend" href="" class="cursor-pointer text-danger font-bold uppercase text-sm spacing-1"><i class="fa-solid fa-ban mr-2"></i>Block</p>` : ""}
+        `
+    }
+
+    async handleChatClick() {
+        await chatState.getChats();
+		// Check if the chat already exists
+		const chat = chatState.state.chats.find((c) => c.friend.id === this.user.id)
+		// If the chat exists, navigate to the chat
+		if (chat) {
+			Router.instance.navigate(`/dashboard/chat/${chat.id}`);
+			return;
+		}
+		// If the chat does not exist, open direct message modal to create a chat
+		const searchModal = document.querySelector("c-friends-search-modal");
+		const chatModal = document.createElement("c-chat-send-message-modal");
+		chatModal.setAttribute("user-id", this.user.id);
+		chatModal.setAttribute("username", this.user.username);
+		document.body.appendChild(chatModal);
+		setTimeout(() => {
+			chatModal.open();
+			if (searchModal) {
+				searchModal.hide();
+			}
+		}, 100);
+	}
 }
 
 customElements.define('p-profile', Profile);

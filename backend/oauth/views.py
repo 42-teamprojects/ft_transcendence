@@ -73,8 +73,6 @@ class OAuth2CallbackView(APIView):
         response.raise_for_status()
 
         profile = response.json()
-        with open('profile.json', 'w') as f:
-            f.write(json.dumps(profile, indent=4))
 
         # Clear session state
         del request.session['oauth_state']
@@ -111,7 +109,15 @@ class OAuth2CallbackView(APIView):
                 username = username + str(User.objects.count())
             # Download the avatar
             image = requests.get(image_url)
-            avatar_path = f'avatars/{username}.jpg'
+            avatar_path = f'avatars/{username}.png'
+
+            # create the storage directory and avatars directory if it doesn't exist
+            if not os.path.exists('storage'):
+                os.makedirs('storage')
+            if not os.path.exists('storage/avatars'):
+                os.makedirs('storage/avatars')
+
+            # Save it as a file in the storage
             with open('storage/' + avatar_path, 'wb') as f:
                 f.write(image.content)
         

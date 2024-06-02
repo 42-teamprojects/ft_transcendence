@@ -75,6 +75,7 @@ export default class Chatsearchmodal extends HTMLElement {
 		if (this.hasAttribute("opened")) {
 			this.removeAttribute("opened");
 		}
+		this.friendsResult.innerHTML = "";
 		this.isOpen = false;
 	}
 

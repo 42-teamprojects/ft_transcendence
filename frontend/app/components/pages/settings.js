@@ -1,3 +1,5 @@
+import { userState } from "../../state/userState.js";
+
 export default class Settings extends HTMLElement {
     constructor() {
         super();
@@ -5,9 +7,16 @@ export default class Settings extends HTMLElement {
 
     connectedCallback() {
         this.render();
+
+		this.unsubscribe = userState.subscribe(() => {
+			console.log("User state updated")
+			this.render();
+		});
     }
 
-    disconnectedCallback() {}
+    disconnectedCallback() {
+		this.unsubscribe();
+    }
 
     render() {
         this.innerHTML = /*html*/`

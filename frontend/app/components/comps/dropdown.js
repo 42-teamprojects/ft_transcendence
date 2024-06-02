@@ -34,7 +34,7 @@ export default class Dropdown extends HTMLElement {
 			return;
 		}
 		// If the chat does not exist, open direct message modal to create a chat
-		const searchModal = document.querySelector("c-chat-search-modal");
+		const searchModal = document.querySelector("c-friends-search-modal");
 		const chatModal = document.createElement("c-chat-send-message-modal");
 		chatModal.setAttribute("user-id", this.userId);
 		chatModal.setAttribute("username", this.username);
@@ -73,7 +73,7 @@ export default class Dropdown extends HTMLElement {
                 <ul class="dropdown__menu">
 					<a is="c-link" href="/dashboard/profile?username=${this.username}">
 						<li class="dropdown__item">
-							<i class="fa-solid fa-eye dropdown__icon"></i>
+							<i class="fa-solid fa-user dropdown__icon"></i>
 							<span class="dropdown__name">Profile</span>
 						</li>
 					</a>

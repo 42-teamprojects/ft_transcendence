@@ -45,14 +45,14 @@ export default class HttpClient {
 			}
 
 			if (!response.ok) {
-				if (response.status === 401 && retries < 3) {
+				if (data.detail !== "No active account found with the given credentials" && response.status === 401 && retries < 3) {
 					// Unauthorized, try refreshing token
 					await this.#refreshToken();
 					return this.fetch(endpoint, options, retries + 1);
 				}
 
 				let error = data;
-				error.status = response.status;
+				error.status = response.status || 500;
 				// Handle 2fa required
 				if (response.status === 423) {
 					error = {

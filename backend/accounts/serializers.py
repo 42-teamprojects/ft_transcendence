@@ -66,3 +66,24 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
             'two_factor_auth_required': self.user.two_factor_enabled,
             **attrs,
         }
+    
+
+class PaddleTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['paddle_type']
+
+        def update(self, instance, validated_data):
+            instance.paddle_type = validated_data.get('paddle_type', instance.paddle_type)
+            instance.save()
+            return instance
+        
+class TableThemeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['table_theme']
+
+        def update(self, instance, validated_data):
+            instance.table_theme = validated_data.get('table_theme', instance.table_theme)
+            instance.save()
+            return instance
