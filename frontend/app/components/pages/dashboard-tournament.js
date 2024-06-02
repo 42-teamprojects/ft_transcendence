@@ -21,7 +21,7 @@ export default class Dashboardtournament extends HTMLElement {
                     </div>
                     <div class="tournament-cards">
                         <c-tournament-card players="4"></c-tournament-card>
-                        <c-tournament-card players="8"></c-tournament-card>
+                        <c-tournament-card players="8" type="waitingPlayers"></c-tournament-card>
                         <c-tournament-card players="16"></c-tournament-card>
                     </div>
                 </section>
