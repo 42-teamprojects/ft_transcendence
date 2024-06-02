@@ -126,7 +126,6 @@ export const handleFormSubmitApi = async (
 	if (Object.keys(errors).length > 0) {
 		// If there are validation errors
 		Object.keys(errors).forEach((key) => {
-			console.log(key, errors[key]);
 			handleInputError(form, key, errors[key]); // Display error messages for each input with errors
 		});
 		return; // Stop further execution

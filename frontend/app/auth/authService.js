@@ -19,23 +19,12 @@ export default class AuthService {
     }
 
     async isAuthenticated() {
-        let retries = 3;
-
-        while (retries > 0) {
-            try {
-                const result = await this.httpClient.post('auth/jwt/verify/');
-                return result;
-            } catch (error) {
-                if (error.code && error.code === 'token_not_valid') {
-                    // Unauthorized, try refreshing token
-                    await this.refreshToken();
-                    retries--;
-                } else {
-                    throw error;
-                }
-            }
+        try {
+            const result = await this.httpClient.post('auth/jwt/verify/');
+            return result;
+        } catch (error) {
+            throw error;
         }
-        throw new Error("Authentication failed after multiple attempts");
     }
 
     async refreshToken() {
