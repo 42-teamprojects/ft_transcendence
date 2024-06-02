@@ -1,48 +1,80 @@
 import json
+
 from channels.generic.websocket import AsyncWebsocketConsumer
-from channels.db import database_sync_to_async
+from rest_framework_simplejwt.tokens import UntypedToken
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+# from channels.db import database_sync_to_async
 
 
 class GameConsumer(AsyncWebsocketConsumer):
+    loby = []
     async def connect(self):
-        self.room_id = self.scope['url_route']['kwargs']['room_id']
-        self.room_group_name = 'game_%s' % self.room_id
+        if (self.scope["cookies"] is None) or ("access" not in self.scope["cookies"]):
+            await self.close()
+            return
+        self.access_token = self.scope["cookies"]["access"]
+        try:
+            #! to replace with access token
+            UntypedToken(self.access_token)
+        
+        except (InvalidToken, TokenError):
+            await self.close()
+            return
 
-        # Join room group
+        self.user_id = UntypedToken(self.access_token).payload['user_id']
+        self.loby.append(self.user_id)
+        user_group = f"player_{self.user_id}"
         await self.channel_layer.group_add(
-            self.room_group_name,
+            user_group,
             self.channel_name
         )
-
-        await self.accept()
-
-    async def disconnect(self, close_code):
-        pass
-        # # Leave room group
-        # await self.channel_layer.group_discard(
-        #     self.room_group_name,
-        #     self.channel_name
-        # )
-
-    # Receive message from WebSocket
-    async def receive(self, text_data):
-        text_data_json = json.loads(text_data)
-        message = text_data_json['message']
-
-        # Send message to room group
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            {
-                'type': 'game_message',
-                'message': message
+        if len(self.loby) >= 2:
+            print("connected : ", self.loby, flush=True)
+    
+            self.player1 = self.loby.pop(0)
+            self.player2 = self.loby.pop(0)
+            print("loby full", flush=True)
+        
+            #creating a channel for the players
+            player1_group = f"player_{self.player1}"
+            player2_group = f"player_{self.player2}"
+            
+            data = {
+                "player1": self.player1,
+                "player2": self.player2,
+                "match_id": f"{self.player1}_{self.player2}"
             }
-        )
+            
+            await self.channel_layer.group_send(
+                player1_group,
+                {
+                    "type": "game_message",
+                    "data": data
+                }
+            )
+            
+            await self.channel_layer.group_send(
+                player2_group,
+                {
+                    "type": "game_message",
+                    "data": data
+                }
+            )
+                
+        
+        await self.accept()
+    
+    async def disconnect(self, close_code):
+        GameConsumer.loby.remove(self.user_id)
+        print("disco : ", self.loby, flush=True)
+        # print("disconnected : ", self.player.username)
+    
+    async def receive(self, text_data):
+        pass
 
-    # Receive message from room group
     async def game_message(self, event):
-        message = event['message']
-
-        # Send message to WebSocket
+        data = event["data"]
         await self.send(text_data=json.dumps({
-            'message': message
+            "data": data
         }))
+

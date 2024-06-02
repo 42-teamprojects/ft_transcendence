@@ -1,6 +1,7 @@
 import { config } from "../config.js";
 import WebSocketManager from "../socket/WebSocketManager.js";
 import State from "./state.js";
+import { userState } from "./userState.js";
 
 
 class MatchState extends State {
@@ -22,14 +23,24 @@ class MatchState extends State {
 			matchId,
 			// On message callback
 			async (event) => {
-				const match = JSON.parse(event.data);
-				this.setMatch(match);
+				const matchData = JSON.parse(event.data);
+				console.log(matchData);
+				console.log(matchData.data.player1, matchData.data.player2);
+				let opponent = (matchData.data.player1 !== userState.state.user.id) ? matchData.data.player1 : matchData.data.player2;
+
+				console.log("my id is ", userState.state.user.id);
+				console.log("my opponent is: ", opponent);
+				this.setMatch(matchData);
 			},
 			{
 				// shouldCloseOnTimeout: true,
 				// should timeout when game finishes
 			}
 		);
+	}
+
+	closeConnection(matchId) {
+		this.webSocketManager.closeConnection(matchId);
 	}
 
 	sendGameUpdate(matchId, data) {

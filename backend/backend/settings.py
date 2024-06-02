@@ -31,6 +31,7 @@ DEBUG = env('DEBUG')
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
+    '10.11.3.1'
 ]
 
 AUTH_USER_MODEL = 'accounts.User'
@@ -248,6 +249,7 @@ SIMPLE_JWT = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:8080",
+    "http://10.11.3.1:8080",
 ]
 CORS_ALLOW_HEADERS = (
     "accept",

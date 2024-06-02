@@ -17,6 +17,7 @@ export default class Matchmaking extends HTMLElement {
         btn.addEventListener('click', () => {
             //go back to the home page]
             Router.instance.navigate('/dashboard/home');
+            matchState.closeConnection('matchId');
         });
         matchState.setup('matchId');
     }
