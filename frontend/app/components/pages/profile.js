@@ -28,6 +28,7 @@ export default class Profile extends HTMLElement {
             this.user = searchedUser;
             this.isMine = false;
         }
+        console.log(this.user)
         this.render();
         this.modal = document.querySelector("c-modal");
         this.unsubscribe = userState.subscribe(() => {
@@ -79,10 +80,12 @@ export default class Profile extends HTMLElement {
                         <h2 class="mb-3">Statistics</h2>
                     </div>
                     <div class="statistics">
-                        <c-statistics-card img="/public/assets/icons/camera.svg" number="10" text="Friends"></c-statistics-card>
-                        <c-statistics-card img="/public/assets/icons/streak.svg" number="5" text="Streak"></c-statistics-card>
-                        <c-statistics-card img="/public/assets/icons/bar9.svg" number="8" text="Wins"></c-statistics-card>
-                        <c-statistics-card img="/public/assets/icons/camera.svg" number="3" text="Losses"></c-statistics-card>
+                        <c-statistics-card icon="<img src='/public/assets/icons/streak.svg'/>" number="${this.user.user_stats.current_win_streak}" text="Current Streak"></c-statistics-card>
+                        <c-statistics-card icon="<img src='/public/assets/icons/streaks.svg'/>" number="${this.user.user_stats.longest_win_streak}" text="Longest Streak"></c-statistics-card>
+                        <c-statistics-card icon="<i class='fa-solid fa-medal text-2xl text-success'></i>" number="${this.user.user_stats.matches_won}" text="Wins"></c-statistics-card>
+                        <c-statistics-card icon="<i class='fa-solid fa-times text-2xl text-danger'></i>" number="${this.user.user_stats.matches_lost}" text="Losses"></c-statistics-card>
+                        <c-statistics-card icon="<i class='fa-solid fa-trophy text-2xl text-success'></i>" number="${this.user.user_stats.tournaments_won}" text="Tournaments Won"></c-statistics-card>
+                        <c-statistics-card icon="<i class='fa-solid fa-times text-2xl text-danger'></i>" number="${this.user.user_stats.tournaments_lost}" text="Tournaments Lost"></c-statistics-card>
                     </div>
                 </section>
             </main>
