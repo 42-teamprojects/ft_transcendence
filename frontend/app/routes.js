@@ -59,6 +59,12 @@ export const routes = [
 			{
 				path: "/1v1",
 				component: () => import("./components/pages/match-making.js"),
+				children: [
+					{
+						path: "/game",
+						component: () => import("./components/pages/online-gameplay.js"),
+					},
+				],
 			},
 		],
 	},

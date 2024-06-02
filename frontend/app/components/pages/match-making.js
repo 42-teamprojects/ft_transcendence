@@ -29,17 +29,12 @@ export default class Matchmaking extends HTMLElement {
                     
                     if (countdown < 0) {
                         matchState.closeConnection('matchId');
-                        Router.instance.navigate('/dashboard/home');
+                        Router.instance.navigate('/online/1v1/game');
                         clearInterval(intervalId);
                     }
             }, 1000);
             let btn = this.querySelector('.btn-primary');
             btn.disabled = true;
-            // btn.addEventListener('click', () => {
-            //     //go back to the home page]
-            //     matchState.closeConnection('matchId');
-            //     Router.instance.navigate('/dashboard/home');
-            // });
         });
         let btn = this.querySelector('.btn-primary');
         btn.addEventListener('click', () => {

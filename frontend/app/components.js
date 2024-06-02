@@ -1,3 +1,4 @@
+import Onlinepongtable from "./components/comps/online-pong-table.js";
 import Notification from "./components/comps/notification.js";
 import Notificationdropdown from "./components/comps/notification-dropdown.js";
 import Friendslistmodal from "./components/comps/friends-list-modal.js";
@@ -112,4 +113,5 @@ export const components = [
 	{ tagName: 'c-friends-list-modal', component: Friendslistmodal },
 	{ tagName: 'c-notification-dropdown', component: Notificationdropdown },
 	{ tagName: 'c-notification', component: Notification },
+	{ tagName: 'c-online-pong-table', component: Onlinepongtable },
 ];
