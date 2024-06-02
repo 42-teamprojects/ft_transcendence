@@ -28,6 +28,7 @@ export default class Profile extends HTMLElement {
             this.user = searchedUser;
             this.isMine = false;
         }
+        console.log(this.user)
         this.render();
         this.modal = document.querySelector("c-modal");
         this.unsubscribe = userState.subscribe(() => {
@@ -53,8 +54,8 @@ export default class Profile extends HTMLElement {
         ${this.isMine ? /*html*/`<c-upload-avatar-modal></c-upload-avatar-modal>` : ""}
         ${!this.isMine ? /*html*/`<c-modal></c-modal>` : ""} 
         <div class="dashboard-content">
-            <main>
-                ${!this.isMine ? /*html*/`<a is="c-link" href="/dashboard/profile" class="text-secondary font-bold uppercase text-sm spacing-1"><i class="fa-solid fa-angle-left mr-2"></i> Back to my profile</a>` : ""}
+            <mains>
+                ${!this.isMine ? /*html*/`<a is="c-link" href="/dashboard/profile" class="text-secondary btn-link"><i class="fa-solid fa-angle-left mr-2"></i> Back to my profile</a>` : ""}
                 <section class="profile-info ${!this.isMine ? 'mt-8' : ''}">
                     <div class="profile-image relative">
                         <img src="${avatar}" class="profile image object-cover skeleton">
@@ -66,7 +67,13 @@ export default class Profile extends HTMLElement {
                     <div class="profile-user">
                         <div class="profile-user-names">
                             <h2>${this.user.full_name}</h2>
-                            <h3>@${this.user.username}</h3>
+                            <h3 class="flex gap-4">
+                                @${this.user.username}
+                                <div class="flex gap-1">
+                                    <div class="user-status w-2 h-2 bg-success rounded-full" style="bottom: 10px; right: 30px"></div>
+                                    <p class="text-md text-stroke">Online</p>
+                                </div>
+                            </h3>
                         </div>
                         <p>Joined ${formatDate(this.user?.date_joined)}</p>
                         <div class="profile-user-actions flex gap-6">
@@ -74,18 +81,31 @@ export default class Profile extends HTMLElement {
                     </div>
                 </section>
                 <hr class="divider">
-                <section class="profile-bio">
+                <section class="profile-stats my-8">
                     <div class="settings-header mb-6">
                         <h2 class="mb-3">Statistics</h2>
                     </div>
                     <div class="statistics">
-                        <c-statistics-card img="/public/assets/icons/camera.svg" number="10" text="Friends"></c-statistics-card>
-                        <c-statistics-card img="/public/assets/icons/streak.svg" number="5" text="Streak"></c-statistics-card>
-                        <c-statistics-card img="/public/assets/icons/bar9.svg" number="8" text="Wins"></c-statistics-card>
-                        <c-statistics-card img="/public/assets/icons/camera.svg" number="3" text="Losses"></c-statistics-card>
+                        <c-statistics-card icon="<img src='/public/assets/icons/streak.svg'/>" number="${this.user.user_stats.current_win_streak}" text="Current Streak"></c-statistics-card>
+                        <c-statistics-card icon="<img src='/public/assets/icons/streaks.svg'/>" number="${this.user.user_stats.longest_win_streak}" text="Longest Streak"></c-statistics-card>
+                        <c-statistics-card icon="<i class='fa-solid fa-medal text-2xl text-success'></i>" number="${this.user.user_stats.matches_won}" text="Wins"></c-statistics-card>
+                        <c-statistics-card icon="<i class='fa-solid fa-times text-2xl text-danger'></i>" number="${this.user.user_stats.matches_lost}" text="Losses"></c-statistics-card>
+                        <c-statistics-card icon="<i class='fa-solid fa-trophy text-2xl text-success'></i>" number="${this.user.user_stats.tournaments_won}" text="Tournaments Won"></c-statistics-card>
+                        <c-statistics-card icon="<i class='fa-solid fa-times text-2xl text-danger'></i>" number="${this.user.user_stats.tournaments_lost}" text="Tournaments Lost"></c-statistics-card>
                     </div>
                 </section>
-            </main>
+                <section class="matches-history my-8">
+                    <div class="settings-header mb-6">
+                        <h2 class="mb-3">Matches history</h2>
+                    </div>
+                    <div class="matches flex-col gap-4">
+                        <c-match-history me="yusufisawi" them="msodor" my-score="3" their-score="5" tooltip="14-06-2024" flow="right"></c-match-history>
+                        <c-match-history me="yusufisawi" them="msodor" my-score="5" their-score="2" tooltip="14-06-2024" flow="right"></c-match-history>
+                        <c-match-history me="yusufisawi" them="msodor" my-score="5" their-score="1" tooltip="14-06-2024" flow="right"></c-match-history>
+                        <c-match-history me="yusufisawi" them="msodor" my-score="3" their-score="5" tooltip="14-06-2024" flow="right"></c-match-history>
+                    </div>
+                </section>
+            </mains>
             <div class="widgets flex-col-center gap-5">
                 <c-playerresources></c-playerresources>
                 <c-friendscard></c-friendscard>
@@ -156,11 +176,11 @@ export default class Profile extends HTMLElement {
         const actions = this.querySelector(".profile-user-actions");
         if (!actions) return;
         actions.innerHTML = /*html*/`
-        ${this.isMine ? /*html*/`<a is="c-link" href="/dashboard/settings" class="text-secondary font-bold uppercase text-sm spacing-1">Edit Profile</a>` : ""}
-        ${!this.isMine && !friendState.alreadyFriends(this.user.id) ? /*html*/`<p id="add-friend" href="" class="cursor-pointer text-secondary font-bold uppercase text-sm spacing-1"><i class="fa-solid fa-plus mr-2"></i>Add friend</p>` : ""}
-        ${!this.isMine ? /*html*/`<p id="chat-friend" class="cursor-pointer text-secondary font-bold uppercase text-sm spacing-1"><i class="fa-regular fa-comment mr-2"></i>Chat</p>` : ""}
-        ${!this.isMine && friendState.alreadyFriends(this.user.id) ? /*html*/`<p id="remove-friend" href="" class="cursor-pointer text-warning font-bold uppercase text-sm spacing-1"><i class="fa-solid fa-minus mr-2"></i>Remove friend</p>` : ""}
-        ${!this.isMine && friendState.alreadyFriends(this.user.id) ? /*html*/`<p id="block-friend" href="" class="cursor-pointer text-danger font-bold uppercase text-sm spacing-1"><i class="fa-solid fa-ban mr-2"></i>Block</p>` : ""}
+        ${this.isMine ? /*html*/`<a is="c-link" href="/dashboard/settings" class="text-secondary btn-link">Edit Profile</a>` : ""}
+        ${!this.isMine && !friendState.alreadyFriends(this.user.id) ? /*html*/`<p id="add-friend" href="" class="text-secondary btn-link"><i class="fa-solid fa-plus mr-2"></i>Add friend</p>` : ""}
+        ${!this.isMine ? /*html*/`<p id="chat-friend" class="cursor-pointer text-secondary btn-link"><i class="fa-regular fa-comment mr-2"></i>Chat</p>` : ""}
+        ${!this.isMine && friendState.alreadyFriends(this.user.id) ? /*html*/`<p id="remove-friend" href="" class="text-warning btn-link"><i class="fa-solid fa-minus mr-2"></i>Remove friend</p>` : ""}
+        ${!this.isMine && friendState.alreadyFriends(this.user.id) ? /*html*/`<p id="block-friend" href="" class="text-danger btn-link"><i class="fa-solid fa-ban mr-2"></i>Block</p>` : ""}
         `
     }
 

@@ -21,10 +21,11 @@ export default class Friendscard extends HTMLElement {
 
 	render() {
 		this.innerHTML = /*html*/ `
+        <c-friends-list-modal></c-friends-list-modal>
         <div class="widget-container card-border flex-col gap-4">
             <div class="title-bar flex justify-between items-center mb-3">
                 <h1>Friends</h1>
-                <a is="c-link" href="/" class="uppercase font-extrabold spacing-1">view all</a>
+                <p class="btn-link text-secondary" onclick="document.querySelector('c-friends-list-modal').open()">View all</p>
             </div>
             <c-friends-list></c-friends-list>
             <button is="c-button" class="btn-secondary w-full" onclick="document.querySelector('c-friends-search-modal').open()">Find friends</button>

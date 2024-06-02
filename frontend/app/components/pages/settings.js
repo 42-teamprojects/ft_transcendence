@@ -9,7 +9,7 @@ export default class Settings extends HTMLElement {
         this.render();
 
 		this.unsubscribe = userState.subscribe(() => {
-			console.log("User state updated")
+            if (!userState.state.user) return;
 			this.render();
 		});
     }
@@ -20,6 +20,7 @@ export default class Settings extends HTMLElement {
 
     render() {
         this.innerHTML = /*html*/`
+        <c-blocked-list-modal></c-blocked-list-modal>
         <div class="dashboard-content">
             <main class="flex-col gap-16 mb-12">
                 <div class="settings-header">
@@ -33,12 +34,18 @@ export default class Settings extends HTMLElement {
                     </div>
                     <c-update-user-info-form></c-update-user-in-form>
                 </section>
-                <form class="settings-form hidden">
-                    <div class="form-group-inline">
-                        <label></label>
-                        <button is="c-button" class="btn-primary">Delete my account</button>
+                <section class="blocked-friends">
+                    <div class="settings-header mb-9">
+                        <h2 class="mb-3">Blocked</h2>
                     </div>
-                </form>
+                    <div class="flex-center justify-between">
+                        <div>
+                            <h3 class="font-normal mb-4">Blocked list</h3>
+                            <p class="text-stroke">View your blocked friends list</p>
+                        </div>
+                        <button id="blocked-list" class="btn-secondary" onclick="document.querySelector('c-blocked-list-modal').open()">View list</button>
+                    </div>
+                </section>
             </main>
             <div class="widgets flex-col-center gap-5">
                 <c-playerresources></c-playerresources>

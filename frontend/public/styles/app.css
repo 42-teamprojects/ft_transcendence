@@ -770,3 +770,15 @@ button:active:not([disabled]) {
 		background-color: var(--border-color);
 	}
 }
+
+.btn-link {
+	cursor: pointer;
+	font-weight: bold;
+	text-transform: uppercase;
+	font-size: 0.875rem !important;
+	letter-spacing: 0.8px;
+}
+
+.notification {
+	border-bottom: 2px solid var(--border-color);
+}

@@ -1,5 +1,5 @@
 import HttpClient from "../../http/httpClient.js";
-import { UserStatus } from "../../entities/UserStatus.js";
+import { UserStatus } from "../../entities/enums.js";
 import Toast from "./toast.js";
 import { config } from "../../config.js";
 

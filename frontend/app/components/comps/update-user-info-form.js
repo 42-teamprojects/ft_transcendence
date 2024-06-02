@@ -53,6 +53,7 @@ export default class Updateuserinfoform extends HTMLElement {
 
 	render() {
 		this.user = userState.state.user;
+		if (!this.user) return;
 		this.innerHTML = /*html*/ `
         <form id="update-user-info" class="settings-form">
             <div class="form-group-inline">

@@ -7,7 +7,7 @@ export default class Sidebar extends HTMLElement {
 		super();
 		this.router = Router.instance;
 		this.handleNavigation = this.handleNavigation.bind(this);
-		this.links = ["home", "chat", "tournaments", "shop", "profile", "settings"];
+		this.links = ["home", "chat", "tournaments", "profile", "settings"];
 	}
 
 	connectedCallback() {

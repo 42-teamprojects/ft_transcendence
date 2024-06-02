@@ -126,7 +126,6 @@ export const handleFormSubmitApi = async (
 	if (Object.keys(errors).length > 0) {
 		// If there are validation errors
 		Object.keys(errors).forEach((key) => {
-			console.log(key, errors[key]);
 			handleInputError(form, key, errors[key]); // Display error messages for each input with errors
 		});
 		return; // Stop further execution
@@ -185,4 +184,8 @@ export function getTimePassed(date) {
 	if (weeks < 4) return `${Math.floor(weeks)}w`;
 	if (months < 12) return `${Math.floor(months)}mo`;
 	return `${Math.floor(years)}y`;
+}
+
+export function getKeyByValue(object, value) {
+    return Object.keys(object).find(key => object[key].toLowerCase() === value.toLowerCase());
 }

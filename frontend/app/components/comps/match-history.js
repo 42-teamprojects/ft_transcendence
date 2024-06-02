@@ -7,9 +7,6 @@ export default class Matchhistory extends HTMLElement {
         this.score1 = this.getAttribute('my-score');
         this.score2 = this.getAttribute('their-score');
         this.isWinner = this.score1 > this.score2;
-
-        this.setAttribute('tooltip', '20-10-2024')
-        this.setAttribute('flow', 'left')
     }
 
     connectedCallback() {
