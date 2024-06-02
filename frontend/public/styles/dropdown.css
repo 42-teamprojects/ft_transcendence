@@ -61,6 +61,13 @@ ul {
 	opacity: 0;
 }
 
+.dropdown-notifications .dropdown__menu {
+	top: 2rem;
+	left: -20rem;
+	width: 450px;
+	transform-origin: 20rem 0rem;
+}
+
 .dropdown__item {
 	cursor: pointer;
 	transition: color 0.3s;

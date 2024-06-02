@@ -778,3 +778,7 @@ button:active:not([disabled]) {
 	font-size: 0.875rem !important;
 	letter-spacing: 0.8px;
 }
+
+.notification {
+	border-bottom: 2px solid var(--border-color);
+}
