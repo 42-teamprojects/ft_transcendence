@@ -54,7 +54,7 @@ export default class Profile extends HTMLElement {
         ${this.isMine ? /*html*/`<c-upload-avatar-modal></c-upload-avatar-modal>` : ""}
         ${!this.isMine ? /*html*/`<c-modal></c-modal>` : ""} 
         <div class="dashboard-content">
-            <main>
+            <mains>
                 ${!this.isMine ? /*html*/`<a is="c-link" href="/dashboard/profile" class="text-secondary btn-link"><i class="fa-solid fa-angle-left mr-2"></i> Back to my profile</a>` : ""}
                 <section class="profile-info ${!this.isMine ? 'mt-8' : ''}">
                     <div class="profile-image relative">
@@ -75,7 +75,7 @@ export default class Profile extends HTMLElement {
                     </div>
                 </section>
                 <hr class="divider">
-                <section class="profile-bio">
+                <section class="profile-stats my-8">
                     <div class="settings-header mb-6">
                         <h2 class="mb-3">Statistics</h2>
                     </div>
@@ -88,7 +88,18 @@ export default class Profile extends HTMLElement {
                         <c-statistics-card icon="<i class='fa-solid fa-times text-2xl text-danger'></i>" number="${this.user.user_stats.tournaments_lost}" text="Tournaments Lost"></c-statistics-card>
                     </div>
                 </section>
-            </main>
+                <section class="matches-history my-8">
+                    <div class="settings-header mb-6">
+                        <h2 class="mb-3">Matches history</h2>
+                    </div>
+                    <div class="matches flex-col gap-4">
+                        <c-match-history me="yusufisawi" them="msodor" my-score="3" their-score="5" tooltip="14-06-2024" flow="right"></c-match-history>
+                        <c-match-history me="yusufisawi" them="msodor" my-score="5" their-score="2" tooltip="14-06-2024" flow="right"></c-match-history>
+                        <c-match-history me="yusufisawi" them="msodor" my-score="5" their-score="1" tooltip="14-06-2024" flow="right"></c-match-history>
+                        <c-match-history me="yusufisawi" them="msodor" my-score="3" their-score="5" tooltip="14-06-2024" flow="right"></c-match-history>
+                    </div>
+                </section>
+            </mains>
             <div class="widgets flex-col-center gap-5">
                 <c-playerresources></c-playerresources>
                 <c-friendscard></c-friendscard>

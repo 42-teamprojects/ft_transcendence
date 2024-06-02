@@ -1,3 +1,5 @@
+import Notification from "./components/comps/notification.js";
+import Notificationdropdown from "./components/comps/notification-dropdown.js";
 import Friendslistmodal from "./components/comps/friends-list-modal.js";
 import Loader from "./components/comps/loader.js";
 import Friendslist from "./components/comps/friends-list.js";
@@ -108,4 +110,6 @@ export const components = [
 	{ tagName: 'c-loader', component: Loader },
 	{ tagName: 'c-blocked-list-modal', component: BlockedListModal },
 	{ tagName: 'c-friends-list-modal', component: Friendslistmodal },
+	{ tagName: 'c-notification-dropdown', component: Notificationdropdown },
+	{ tagName: 'c-notification', component: Notification },
 ];

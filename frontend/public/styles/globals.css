@@ -929,6 +929,26 @@
     background-color: var(--input-bg-color) !important;
 }
 
+.bg-success {
+    background-color: var(--success-color) !important;
+}
+
+.bg-danger {
+    background-color: var(--danger-color) !important;
+}
+
+.bg-warning {
+    background-color: var(--warning-color) !important;
+}
+
+.bg-info {
+    background-color: var(--info-color) !important;
+}
+
+.bg-highlight {
+    background-color: var(--highlight-color) !important;
+}
+
 /* Fonts */
 
 .font-light {
