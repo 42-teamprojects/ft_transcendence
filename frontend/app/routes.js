@@ -54,6 +54,7 @@ export const routes = [
 	{
 		path: "/online",
 		component: () => import("./components/pages/online.js"),
+		canActivate: [AuthGuard],
 		children: [
 			{
 				path: "/1v1",
