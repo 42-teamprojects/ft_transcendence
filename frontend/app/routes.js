@@ -52,6 +52,16 @@ export const routes = [
 		],
 	},
 	{
+		path: "/online",
+		component: () => import("./components/pages/online.js"),
+		children: [
+			{
+				path: "/1v1",
+				component: () => import("./components/pages/match-making.js"),
+			},
+		],
+	},
+	{
 		path: "/dashboard",
 		canActivate: [AuthGuard],
 		children: [

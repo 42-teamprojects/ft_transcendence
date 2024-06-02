@@ -1315,6 +1315,10 @@
     letter-spacing: 1px;
 }
 
+.spacing-10 {
+    letter-spacing: 10px;
+}
+
 /* scale */
 
 .scale-0 {
