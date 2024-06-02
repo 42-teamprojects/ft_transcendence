@@ -115,7 +115,22 @@ class NotificationState extends State {
             this.notificationsFetched = true;
             return this.state.notifications;
         } catch (error) {
-            this.setState({ notifications: [], loading: false });
+            this.setState({ loading: false });
+            console.error(error);
+        }
+    }
+
+    async markAllAsRead() {
+        console.log("marking all as read");
+        try {
+            this.resetLoading();
+            await this.httpClient.put('notifications/mark_as_read', { read: true });
+            const notifications = this.state.notifications.map((n) => {
+                n.read = true;
+                return n;
+            });
+            this.setState({ notifications, loading: false });
+        } catch (error) {
             console.error(error);
         }
     }

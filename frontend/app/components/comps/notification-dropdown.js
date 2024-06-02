@@ -1,6 +1,7 @@
 import HttpClient from "../../http/httpClient.js";
 import Router from "../../router/router.js";
 import { chatState } from "../../state/chatState.js";
+import { notificationState } from "../../state/notificationState.js";
 
 export default class Notificationdropdown extends HTMLElement {
 	constructor() {
@@ -20,7 +21,13 @@ export default class Notificationdropdown extends HTMLElement {
 		// this.dropdownButton.addEventListener("mouseleave", () => {
 		// 	this.dropdownContent.classList.remove("show-dropdown");
 		// });
-		this.dropdownButton.addEventListener("mouseover", () => {
+		this.dropdownButton.addEventListener("mouseover", async () => {
+			if (!notificationState.state.notifications.length){
+				await notificationState.getNotifications();
+				console.log("fetching notifications");
+			}
+			notificationState.markAllAsRead();
+			console.log(notificationState.state.notifications);
 			this.dropdownContent.classList.add("show-dropdown");
 		});
 
@@ -37,6 +44,7 @@ export default class Notificationdropdown extends HTMLElement {
 	disconnectedCallback() {}
 
 	render() {
+
 		this.innerHTML = /*html*/ `
             <div class="dropdown-content dropdown-notifications">
                 <div class="dropdown__menu">
