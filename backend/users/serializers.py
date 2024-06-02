@@ -4,16 +4,20 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.core.validators import EmailValidator
 import re
+from stats.serializers import UserStatsSerializer
 
 class UserSerializer(serializers.ModelSerializer):
+    user_stats = UserStatsSerializer(read_only=True)
+
     class Meta:
         model = User
-        fields = ['id', 'username', 'full_name', 'email', 'last_login', 'status', 'avatar', 'date_joined', 'paddle_type', 'table_theme']
+        fields = ['id', 'username', 'full_name', 'email', 'last_login', 'status', 'avatar', 'date_joined', 'paddle_type', 'table_theme', 'user_stats']
 
 class UserMeSerializer(serializers.ModelSerializer):
+    user_stats = UserStatsSerializer(read_only=True)
     class Meta:
         model = User
-        fields = ['id', 'username', 'full_name','avatar', 'email', 'last_login', 'status', 'is_superuser', 'is_staff', 'is_verified', 'date_joined', 'provider', 'two_factor_enabled', 'paddle_type', 'table_theme']
+        fields = ['id', 'username', 'full_name','avatar', 'email', 'last_login', 'status', 'is_superuser', 'is_staff', 'is_verified', 'date_joined', 'provider', 'two_factor_enabled', 'paddle_type', 'table_theme', 'user_stats']
 
 class AvatarSerializer(serializers.ModelSerializer):
     class Meta:

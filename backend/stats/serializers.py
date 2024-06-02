@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import UserStats
 
-class PlayerStatsSerializer(serializers.ModelSerializer):
+class UserStatsSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserStats
         fields = ['matches_played', 'matches_won', 'matches_lost', 'tournaments_played', 'tournaments_won', 'tournaments_lost', 'current_win_streak', 'longest_win_streak']
