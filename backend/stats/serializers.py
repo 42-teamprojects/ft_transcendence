@@ -14,12 +14,12 @@ class UserStatsSerializer(serializers.ModelSerializer):
         tournament_win = validated_data.get('tournaments_won', 0)
         tournament_loss = validated_data.get('tournaments_lost', 0)
 
-        instance.matches_played += played
+        instance.matches_played += win + loss 
         instance.matches_won += win
         instance.matches_lost += loss
         instance.tournaments_won += tournament_win
         instance.tournaments_lost += tournament_loss
-        instance.tournaments_played += tournament_played
+        instance.tournaments_played += tournament_loss + tournament_win 
 
         if win:
             instance.matches_played += 1
