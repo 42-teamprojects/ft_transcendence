@@ -81,7 +81,7 @@ export const routes = [
 				children: [
 					{
 						path: "/game",
-						component: () => import("./components/pages/settings.js"),
+						component: () => import("./components/pages/settings-game.js"),
 					},	
 					{
 						path: "/privacy",

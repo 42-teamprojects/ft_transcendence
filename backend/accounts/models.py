@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.utils.translation import gettext_lazy as _
+
+from stats.models import UserStats
 from .managers import UserManager
 import os
 from backend import settings
@@ -43,12 +45,22 @@ class User(AbstractBaseUser, PermissionsMixin):
     provider = models.CharField(_('Provider'), max_length=100, blank=True, null=True)
     avatar = models.ImageField(upload_to=avatar_upload_to, null=True, blank=True)
     paddle_type = models.CharField(_('Paddle Type'), max_length=1, choices=PaddleType.choices, default=PaddleType.Basic)
-    table_theme = models.CharField(_('Table Theme'), max_length=1, choices=TableTheme.choices, default=TableTheme.Classic)
-    
+    table_theme = models.CharField(_('Table Theme'), max_length=1, choices=TableTheme.choices, default=TableTheme.Standard)
+    user_stats = models.OneToOneField(UserStats, on_delete=models.CASCADE, null=True, blank=True)
+
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['full_name', 'email']
     
     objects = UserManager()
+    
+    def save(self, *args, **kwargs):
+        # If the user is being created (i.e., it doesn't have an ID yet), create a UserStats instance for it
+        is_new = self.pk is None
+        super().save(*args, **kwargs)
+        if is_new and not self.user_stats:
+            UserStats.objects.create()
+            self.user_stats = UserStats.objects.latest('id')
+            self.save()
     
     def __str__(self):
         return self.username

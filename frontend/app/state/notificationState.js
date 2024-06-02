@@ -71,8 +71,8 @@ class NotificationState extends State {
     }
 
     handleFriendAlertNotification(notification) {
-        const message = notification.data.type === "ADD" ? `${notification.data.sender_name} added you as a friend` : `${notification.data.sender_name} removed you from their friends list`;
-        if (notification.data.type === "ADD" || notification.data.type === "REMOVE") {
+        const message = notification.data.type === "ADD" ? `${notification.data.sender_name} added you as a friend` : ``;
+        if (notification.data.type === "ADD") {
             Toast.notify({
                 type: "info",
                 message: /*html*/ `<p>${message}</p><br/><a is="c-link" class="font-bold spacing-1 uppercase text-secondary mt-2 text-sm" href="/dashboard/profile?username=${notification.data.sender_name}" class="mt-2">View friend</a>`,
@@ -81,6 +81,7 @@ class NotificationState extends State {
         
         friendState.reset();
         friendState.getFriends();
+        friendState.blockFriend();
         chatState.reset();
         chatState.getChats();
     }
