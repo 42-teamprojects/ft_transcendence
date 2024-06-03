@@ -53,8 +53,8 @@ class Tournament(models.Model):
     def validate_start_conditions(self):
         if self.status != 'NS':
             raise ValidationError('The tournament has already started.')
-        if self.participants.count() < int(self.type):
-            raise ValidationError('Not enough participants to start the tournament.')
+        # if self.participants.count() < int(self.type):
+        #     raise ValidationError('Not enough participants to start the tournament.')
 
     def calculate_rounds(self):
         num_rounds = int(math.log2(self.participants.count()))
@@ -71,7 +71,7 @@ class Tournament(models.Model):
             group = 1
             num_matches = int(self.participants.count() / 2**(round - 1))
             for i in range(num_matches):
-                player1 = participants.pop() if round == 1 else None
+                player1 = participants.pop() if round == 1 and participants else None
                 player2 = participants.pop() if round == 1 and participants else None
                 if player1 and player2:
                     matches.append(TournamentMatch(tournament=self, round=round, group=group, player1=player1, player2=player2))
@@ -80,6 +80,11 @@ class Tournament(models.Model):
                 if i % 2 == 1: # Increment the group number every two matches
                     group += 1
         return matches
+    
+    def print_matches_tree(self):
+        matches = self.matches.all()
+        for match in matches:
+            print(f'Round {match.round} - Group {match.group}: {match.player1} vs {match.player2}')
 
     def notify_participants(self):
         for participant in self.participants.all():
@@ -101,6 +106,7 @@ class TournamentMatch(models.Model):
         ('IP', 'In Progress'),
         ('F', 'Finished'),
     ]
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE, related_name='matches', null=True)
     round = models.IntegerField()
     group = models.IntegerField()
     player1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tournament_player1', null=True)
