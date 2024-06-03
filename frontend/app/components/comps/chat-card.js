@@ -10,6 +10,8 @@ export default class Chatcard extends HTMLElement {
 		this.idAtt = this.getAttribute("chat-id") || "null";
 		this.maxNameSize = 15;
 		this.isActive = false;
+		this.isSeen = false;
+		this.display = true;
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -40,7 +42,8 @@ export default class Chatcard extends HTMLElement {
 	render() {
 		this.innerHTML = /*html*/ `
         <a is="c-link" href="/dashboard/chat/${this.idAtt}">
-            <div class="message-card ${this.isActive ? "active" : ""}">
+		<div class="message-card ${this.isActive || this.isSeen === false ? "active" : ""}" style="position: relative">
+				${(this.isSeen === false && this.display) ? /*html*/`<div class="dot"></div>` : '' }
                 <img class="message-card__img" src="${this.imgAtt}" alt="user">
                 <div class="flex-col gap-2">
                     <div class="font-bold">${this.usernameAtt}</div>
