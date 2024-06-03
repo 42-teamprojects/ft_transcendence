@@ -3,15 +3,32 @@ export default class WebSocketManager {
         this.socketUrl = socketUrl;
         this.sockets = {};
         this.lastUseTimes = {};
+        this.retryCounts = {};
     }
 
     setupWebSocket(id, onMessage, options = {}) {
         const {
+            onErrorCallback = () => {},
             shouldCloseOnTimeout = false,
             timeoutDuration = 5 * 60 * 1000,
             onOpen = () => console.log(`WebSocket connection opened for id: ${id}`),
             onClose = () => console.log(`WebSocket connection closed for id: ${id}`),
-            onError = (error) => console.error(`WebSocket error for id: ${id}`, error),
+            onError = (error) => {
+                console.error(`WebSocket error for id: ${id}`, error);
+                if (!this.retryCounts[id]) {
+                    this.retryCounts[id] = 0;
+                }
+                if (this.retryCounts[id] < 3) {
+                    this.retryCounts[id]++;
+                    console.log(`Retrying connection for id: ${id}. Attempt number: ${this.retryCounts[id]}`);
+                    this.closeConnection(id);
+                    this.setupWebSocket(id, onMessage, options);
+                    onErrorCallback();
+                } else {
+                    console.log(`Failed to establish connection for id: ${id} after 3 attempts. Closing connection.`);
+                    this.closeConnection(id);
+                }
+            },
         } = options;
 
         
