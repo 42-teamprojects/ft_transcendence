@@ -31,7 +31,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['put'])
     def mark_all_as_read(self, request):
         Notification.objects.filter(recipient=request.user).update(read=True)
-        return Response({'message': 'All notifications marked as read'}, status=status.HTTP_200_OK)
+        return Response({'detail': 'All notifications marked as read'}, status=status.HTTP_200_OK)
 
     #get all notifications exept for messages
     @action(detail=False, methods=['get'])
@@ -65,10 +65,10 @@ class NotificationViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['put'])
     def mark_as_read(self, request):
         Notification.objects.filter(recipient=request.user).exclude(type='MSG').update(read=True)
-        return Response({'message': 'All notifications except messages marked as read'}, status=status.HTTP_200_OK)
+        return Response({'detail': 'All notifications except messages marked as read'}, status=status.HTTP_200_OK)
     
     #mark all messages as read
     @action(detail=False, methods=['put'])
     def mark_messages_as_read(self, request):
         Notification.objects.filter(recipient=request.user, type='MSG').update(read=True)
-        return Response({'message': 'All messages marked as read'}, status=status.HTTP_200_OK)
+        return Response({'detail': 'All messages marked as read'}, status=status.HTTP_200_OK)

@@ -13,7 +13,7 @@ export default class Playerresources extends HTMLElement {
             this.querySelector(".streak-count").textContent = userState.state.user.user_stats.current_win_streak;
         });
         this.unsub = notificationState.subscribe(() => {
-            this.querySelector(".notifications-count").textContent = notificationState.state.notifications.length;
+            this.querySelector(".notifications-count").textContent = notificationState.state.notifications.filter(n => !n.read).length;
         });
     }
 
@@ -29,7 +29,7 @@ export default class Playerresources extends HTMLElement {
                 <div class="dropdown-button">
                     <div class="flex-center gap-2 resource-count text-xs font-medium text-secondary">
                         <i class="fa-solid fa-bell text-3xl"></i>
-                        <h3 class="notifications-count">${notificationState.state.notifications.length}</h3>
+                        <h3 class="notifications-count">${notificationState.state.notifications.filter(n => !n.read).length}</h3>
                     </div>
                 </div>
                 <c-notification-dropdown></c-notification-dropdown>

@@ -33,7 +33,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         response = json.loads(text_data)
-        if response['type'] == 'MSG':
+        if response['type'] != 'NEW_STATUS':
             self.group_name = f"notifications_{response['recipient']}"
             await self.channel_layer.group_send(
                 self.group_name,
@@ -44,7 +44,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                     'recipient': response['recipient'] or None,
                 }
             )
-        elif response['type'] == 'NEW_STATUS':
+        else:
             await self.channel_layer.group_send(
                 self.group_name_all,
                 {

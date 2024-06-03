@@ -14,42 +14,43 @@ export default class Notificationdropdown extends HTMLElement {
 		this.render();
 		this.dropdownContent = this.querySelector(".dropdown-content");
 		this.dropdownButton = this.parentElement.querySelector(".dropdown-button");
-
+		this.unsubscribe = notificationState.subscribe(() => {
+			this.instertNotifications();
+		});
 		this.addEventListeners();
 	}
 
 	addEventListeners() {
-		// this.dropdownButton.addEventListener("mouseleave", () => {
-		// 	this.dropdownContent.classList.remove("show-dropdown");
-		// });
 		this.dropdownButton.addEventListener("mouseover", async () => {
-			console.log(notificationState.state.notifications);
 			await notificationState.getNotifications();
-			notificationState.markAllAsRead();
-			console.log(notificationState.state.notifications);
 			this.instertNotifications();
 			this.dropdownContent.classList.add("show-dropdown");
 		});
-
+		this.dropdownButton.addEventListener("click", async () => {
+			await notificationState.getNotifications();
+			this.instertNotifications();
+			this.dropdownContent.classList.add("show-dropdown");
+		});
 		this.dropdownContent.addEventListener("mouseover", () => {
 			this.dropdownContent.classList.add("show-dropdown");
 		});
-		this.dropdownContent.addEventListener("mouseleave", () => {
-            setTimeout(() => {
-                this.dropdownContent.classList.remove("show-dropdown");
-            }, 500);
+		this.querySelector("#cancel-btn").addEventListener("click", async () => {
+			this.dropdownContent.classList.remove("show-dropdown");
 		});
 	}
 
-	disconnectedCallback() {}
+	disconnectedCallback() {
+		this.unsubscribe();
+	}
 
 	render() {
 
 		this.innerHTML = /*html*/ `
             <div class="dropdown-content dropdown-notifications">
                 <div class="dropdown__menu">
-                    <div class="notification__header">
+                    <div class="notification__header flex justify-between">
                         <h2>Notifications</h2>
+						<i id="cancel-btn" class="fa fa-times close-icon text-2xl cursor-pointer hover"></i>
                     </div>
                     <div class="notification__list flex-col" style="margin-top: -1rem">
                     </div> 
@@ -68,7 +69,7 @@ export default class Notificationdropdown extends HTMLElement {
 		if (unreadNotifications.length === 0) {
 			notificationList.innerHTML = /*html*/ `
 				<div class="notification__item flex-center">
-					<p>No new notifications</p>
+					<p class="text-stroke">No new notifications</p>
 				</div>
 			`;
 			return;
@@ -76,19 +77,19 @@ export default class Notificationdropdown extends HTMLElement {
 		const notifications = unreadNotifications.slice(0, 4).map((notification) => {
 			if (notification.type === "MSG") {
 				return /*html*/ `
-					<c-notification type="MSG" username="${notification.data.sender_name}" user-avatar="${config.backend_domain}${notification.data.sender_avatar}"></c-notification>
+					<c-notification notification-id="${notification.id}" type="MSG" username="${notification.data.sender_name}" user-avatar="${config.backend_domain}${notification.data.sender_avatar}" chat-id="${notification.data.chat_id}"></c-notification>
 				`;
 			} else if (notification.type === "TRN") {
 				return /*html*/ `
-					<c-notification type="TRN" tournament-detail="${notification.data.tournament_detail}"></c-notification>
+					<c-notification notification-id="${notification.id}" type="TRN" tournament-detail="${notification.data.tournament_detail}"></c-notification>
 				`;
 			} else if (notification.type === "PRQ") {
 				return /*html*/ `
-					<c-notification type="PRQ" play-request-user="${notification.data.sender_name}"></c-notification>
+					<c-notification notification-id="${notification.id}" type="PRQ" play-request-user="${notification.data.sender_name}"></c-notification>
 				`;
 			} else if (notification.type === "FAL") {
 				return /*html*/ `
-					<c-notification type="FAL" username="${notification.data.sender_name}" user-avatar="${config.backend_domain}${notification.data.sender_avatar}"></c-notification>
+					<c-notification notification-id="${notification.id}" type="FAL" username="${notification.data.sender_name}" user-avatar="${config.backend_domain}${notification.data.sender_avatar}"></c-notification>
 				`;
 			}
 		});

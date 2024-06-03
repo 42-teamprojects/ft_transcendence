@@ -1,9 +1,19 @@
+import { notificationState } from "../../state/notificationState.js";
+
 export default class Notification extends HTMLElement {
     constructor() {
         super();
+        this.id = +this.getAttribute('notification-id') || null;
         this.type = this.getAttribute('type') || 'default';
         this.username = this.getAttribute('username') || null;
         this.userAvatar = this.getAttribute('user-avatar') || null;
+        this.chatId = this.getAttribute('chat-id') || null;
+        if (!this.id) {
+            throw new Error('notification-id is required');
+        }
+        if (this.type === 'MSG' && !this.chatId) {
+            throw new Error('chat-id is required for type MSG');
+        }
         if ((this.type === 'FAL' && !this.username && !this.userAvatar) || (this.type === 'MSG' && !this.username && !this.userAvatar)) {
             throw new Error('username and user-avatar is required for type FAL and MSG');
         }
@@ -28,25 +38,25 @@ export default class Notification extends HTMLElement {
                 this.icon = /*html*/`<img src="${this.userAvatar}" class="player-avatar" alt="" />`
                 this.detailsTitle = this.username
                 this.detailsSubtitle = 'Has sent you a message'
-                this.actions = /*html*/`<p class="btn-link text-secondary">View</p>`
+                this.actions = /*html*/`<a is="c-link" href="/dashboard/chat/${this.chatId}" class="btn-link text-secondary">View</a>`
                 break;
             case 'TRN':
                 this.icon = /*html*/`<div class="bg-secondary w-10 h-10 flex-col-center rounded-full"><i class="fa-solid fa-trophy"></i></div>`
                 this.detailsTitle = 'Tournament'
                 this.detailsSubtitle = this.tournamentDetail
-                this.actions = /*html*/`<p class="btn-link text-secondary">View</p>`
+                this.actions = /*html*/`<a is="c-link" href="/dashboard/tournaments" class="btn-link text-secondary">View</a>`
                 break;
             case 'PRQ':
                 this.icon = /*html*/`<div class="bg-primary w-10 h-10 flex-col-center rounded-full"><i class="fa-solid fa-gamepad"></i></div>`
                 this.detailsTitle = 'Play Request'
                 this.detailsSubtitle = `from ${this.playRequestUser}`
-                this.actions = /*html*/`<p class="btn-link text-secondary">Accept</p> <p class="btn-link text-danger">Reject</p>`
+                this.actions = /*html*/`<a is="c-link" class="btn-link text-secondary">Accept</a> <a is="c-link" class="btn-link text-danger">Reject</a>`
                 break;
             case 'FAL':
                 this.icon = /*html*/`<img src="${this.userAvatar}" class="player-avatar" alt="" />`
                 this.detailsTitle = this.username
                 this.detailsSubtitle = 'Has added you as a friend'
-                this.actions = /*html*/`<p class="btn-link text-secondary">View</p>`
+                this.actions = /*html*/`<a is="c-link" href="/dashboard/profile?username=${this.username}" class="btn-link text-secondary">View</a>`
                 break;
             default:
                 throw new Error('Invalid notification type');
@@ -54,6 +64,12 @@ export default class Notification extends HTMLElement {
         }
 
         this.render();
+
+        this.querySelector('a').addEventListener('click', async (e) => {
+            e.preventDefault();
+            await notificationState.markAsRead(+this.id);
+            console.log('View notification', this.id);
+        });
     }
 
     disconnectedCallback() {}

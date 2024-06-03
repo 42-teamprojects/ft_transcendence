@@ -51,6 +51,8 @@ class FriendState extends State {
 				type: "FAL",
 				data: {
 					type: "ADD",
+					avatar: userState.state.user.avatar,
+					username: userState.state.user.username,
 					sender_id: userState.state.user.id,
 					sender_name: userState.state.user.username,
 				},
@@ -81,9 +83,8 @@ class FriendState extends State {
 				},
 				recipient: userId,
 			}
-
 			await notificationState.sendNotification(notification);
-
+			
 			this.setState({ friends: this.state.friends.filter((friendshipObject) => friendshipObject.user1.id !== userId && friendshipObject.user2.id !== userId) });
 			return result;
 		} catch (error) {
