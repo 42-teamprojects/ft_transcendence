@@ -76,6 +76,9 @@ class NotificationState extends State {
             },
         }
         );
+        window.addEventListener("beforeunload", () => {
+            this.closeSocket();
+        });
     }
 
     handleMessageNotification(notification) {
