@@ -33,7 +33,7 @@ export default class Chatsearchmodal extends HTMLElement {
         }
 		if (!keyword || keyword.trim() === "") return;
 		try {
-			const result = await this.httpClient.get(`users/${keyword}`);
+			const result = await this.httpClient.get(`users/search/${keyword}`);
             if (result.length === 0) {
                 Toast.notify({ type: "info", message: "No user found" });
                 return;

@@ -50,6 +50,7 @@ export default class Authentication {
 			userState.setState({ user: null, token_verified_at: null });
 			messageState.reset();
 			chatState.reset();
+			notificationState.closeSocket();
 			await this.authService.logout();
 		} catch (error) {
 			throw error;

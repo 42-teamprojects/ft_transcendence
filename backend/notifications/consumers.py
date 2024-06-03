@@ -1,48 +1,58 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from chat.models import Chat
+from accounts.models import User, UserStatus
 from channels.db import database_sync_to_async
 class NotificationConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.user_id = self.scope['url_route']['kwargs']['user_id']
         self.group_name = f'notifications_{self.user_id}'
+        self.group_name_all = 'all_users'
+        await self.channel_layer.group_add(
+            self.group_name_all,
+            self.channel_name
+        )
+            
         await self.channel_layer.group_add(
             self.group_name,
             self.channel_name
         )
+
         await self.accept()
+        await self.set_status_update()
+        
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(
             self.group_name,
             self.channel_name
         )
- 
+        print('disconnected', flush=True)
+        await self.set_offline_status()
 
-#
-    # def get_recepient_username(self, chatid):
-    # @database_sync_to_async
-    # def get_recpient_id(self, chatid, sender_id):
-    #     chat = Chat.objects.get(id=chatid)
-    #     if chat.user1.id == sender_id:
-    #         return chat.user2.id
-    #     return chat.user1.id
-    
 
     async def receive(self, text_data):
         response = json.loads(text_data)
-        self.group_name = f"notifications_{response['recipient']}"
-        await self.channel_layer.group_send(
-            self.group_name,
-            {
-                'type': 'notification_message',
-                'notification_type': response['type'] or None,
-                'data': response['data'] or None,
-                'recipient': response['recipient'] or None,
-            }
-        )
-
-
+        if response['type'] == 'MSG':
+            self.group_name = f"notifications_{response['recipient']}"
+            await self.channel_layer.group_send(
+                self.group_name,
+                {
+                    'type': 'notification_message',
+                    'notification_type': response['type'] or None,
+                    'data': response['data'] or None,
+                    'recipient': response['recipient'] or None,
+                }
+            )
+        elif response['type'] == 'NEW_STATUS':
+            await self.channel_layer.group_send(
+                self.group_name_all,
+                {
+                    'type': 'new_status_update',
+                }
+            )
+        
+        
 
     async def notification_message(self, event):
         type = event['notification_type']
@@ -54,3 +64,20 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             'data': data,
             'recipient': recipient,
         }))
+        
+    async def new_status_update(self, event):
+        await self.send(text_data=json.dumps({
+            'type': 'NEW_STATUS',
+        }))
+        
+    @database_sync_to_async
+    def set_status_update(self):
+        user = User.objects.get(id=self.user_id)
+        user.status = UserStatus.ONLINE
+        user.save()
+    
+    @database_sync_to_async
+    def set_offline_status(self):
+        user = User.objects.get(id=self.user_id)
+        user.status = UserStatus.OFFLINE
+        user.save()
