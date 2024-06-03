@@ -1,19 +1,29 @@
+import { config } from "../../config.js";
 import { UserStatus } from "../../entities/enums.js";
 import HttpClient from "../../http/httpClient.js";
 import Router from "../../router/router.js";
 import { chatState } from "../../state/chatState.js";
+import { notificationState } from "../../state/notificationState.js";
 import { getMatchUrl } from "../../utils/utils.js";
 export default class Conversationheader extends HTMLElement {
     constructor() {
         super();
-        this.imgAtt = this.getAttribute("img") || "null";
-        this.usernameAtt = this.getAttribute("username") || "null";
-        this.stateAtt = this.getAttribute("state") || "null";
         this.chatId = getMatchUrl(/^\/dashboard\/chat\/(\w+)\/?$/);
     }
 
-    connectedCallback() {
+    async connectedCallback() {
+        this.chat = await chatState.getChat(+this.chatId)
+        this.friend = chatState.getFriend(this.chat);
         this.render();
+
+        this.unsubscribe = notificationState.subscribe(async () => {
+            this.chat = await chatState.getChat(+this.chatId, true)
+            this.friend = chatState.getFriend(this.chat);
+            this.querySelector(".conversation-header__status").innerHTML = /*html*/`
+                <div class="conversation-header__status__dot ${UserStatus[this.friend.status].toLowerCase()}"></div>
+                <div class="conversation-header__status__text capitalize">${UserStatus[this.friend.status]}</div>
+            `;
+        });
 
         this.deleteModal = this.querySelector("#delete-modal");
 
@@ -35,16 +45,16 @@ export default class Conversationheader extends HTMLElement {
         <c-modal id="delete-modal"></c-modal>
         <div class="chat-header conversation-header">
             <div class="flex-center gap-4">
-                <a is="c-link" href="/dashboard/profile?username=${this.usernameAtt}" tooltip="View profile" flow="down">
-                    <img class="message-card__img" src="${this.imgAtt}" alt="user">
+                <a is="c-link" href="/dashboard/profile?username=${this.friend.username}" tooltip="View profile" flow="down">
+                    <img class="message-card__img" src="${config.backend_domain}${this.friend.avatar}" alt="user">
                 </a>
                 <div class="flex-col gap-2">
-                    <a is="c-link" href="/dashboard/profile?username=${this.usernameAtt}" tooltip="View profile" flow="right">
-                        <div class="conversation-header__username" >${this.usernameAtt}</div>
+                    <a is="c-link" href="/dashboard/profile?username=${this.friend.username}" tooltip="View profile" flow="right">
+                        <div class="conversation-header__username" >${this.friend.username}</div>
                     </a>
                     <div class="conversation-header__status gap-2">
-                        <div class="conversation-header__status__dot ${UserStatus[this.stateAtt].toLowerCase()}"></div>
-                        <div class="conversation-header__status__text capitalize">${UserStatus[this.stateAtt]}</div>
+                        <div class="conversation-header__status__dot ${UserStatus[this.friend.status].toLowerCase()}"></div>
+                        <div class="conversation-header__status__text capitalize">${UserStatus[this.friend.status]}</div>
                     </div>
                 </div>
             </div>
