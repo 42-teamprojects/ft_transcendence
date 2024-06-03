@@ -83,6 +83,7 @@ INSTALLED_APPS = [
     'django_crontab',
     'stats',
     'match',
+    'tournaments',
 ]
 
 ASGI_APPLICATION = 'backend.asgi.application'

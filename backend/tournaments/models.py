@@ -3,7 +3,7 @@ from datetime import timedelta
 from email.message import EmailMessage
 from email.policy import default
 from django.db import models
-from django.contrib.auth.models import User
+from accounts.models import User
 from django.forms import ValidationError
 import math
 import random
@@ -22,9 +22,9 @@ class Tournament(models.Model):
         ('C', 'Cancelled'),
     ]
     type = models.CharField(max_length=2, choices=TYPE_CHOICES)
-    organizer = models.ForeignKey(User, on_delete=models.CASCADE)
+    organizer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='organized_tournaments')
+    winner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='won_tournaments')
     status = models.CharField(max_length=2, choices=STATUS_CHOICES, default='NS')
-    winner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     participants = models.ManyToManyField(User, related_name='tournaments')
     total_rounds = models.IntegerField(null=True)
     
