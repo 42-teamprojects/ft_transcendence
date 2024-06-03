@@ -27,10 +27,11 @@ export default class OnlinePongTable extends HTMLElement {
 		this.handleKeyDownF = this.handleKeyDown.bind(this);
 		this.handleKeyUpF = this.handleKeyUp.bind(this);
 
-		// this.match = matchState.state.match;
+		this.match = {"player1": "hassan", "player2": "mouad", "score1": 0, "score2": 0};
 		// this.theme = this.match.theme;
 
 		// this.finalScore = config.finalScore;
+		this.finalScore = 100;
 
 		// //table
 		this.tableWidth = 1235;
@@ -185,21 +186,21 @@ export default class OnlinePongTable extends HTMLElement {
 		this.ball.bounceOnPaddles(this.paddle2);
 		this.ball.bounceOnWalls(this.tableHeight);
 
-		// if (this.scored()) {
-		// 	this.scene = true;
-		// }
-		//check if scores
-		// if (this.isGameOver) {
-		// 	this.dispatchEvent(
-		// 		new CustomEvent("game-over", {
-		// 			detail: {
-		// 				winner: this.match.score1 === this.finalScore
-		// 						? this.match.player1
-		// 						: this.match.player2,},
-		// 		})
-		// 	);
-		// 	return;
-		// }
+		if (this.scored()) {
+			this.scene = true;
+		}
+		// check if scores
+		if (this.isGameOver) {
+			this.dispatchEvent(
+				new CustomEvent("game-over", {
+					detail: {
+						winner: this.match.score1 === this.finalScore
+								? this.match.player1
+								: this.match.player2,},
+				})
+			);
+			return;
+		}
 		requestAnimationFrame(this.update);
 	};
 
@@ -241,23 +242,23 @@ export default class OnlinePongTable extends HTMLElement {
 		}
 	};
 
-	// scored = () => {
-	// 	let scored = false;
-	// 	if (this.ball.x - this.ball.size <= 0) {
-	// 		this.match.score2++;
-	// 		scored = true;
-	// 	} else if (this.ball.x + this.ball.size >= this.tableWidth) {
-	// 		this.match.score1++;
-	// 		scored = true;
-	// 	}
+	scored = () => {
+		let scored = false;
+		if (this.ball.x - this.ball.size <= 0) {
+			this.match.score2++;
+			scored = true;
+		} else if (this.ball.x + this.ball.size >= this.tableWidth) {
+			this.match.score1++;
+			scored = true;
+		}
 
-	// 	if (scored) {
-	// 		this.resetGame();
-	// 		this.querySelector("c-scoreboard").setAttribute("score1", this.match.score1);
-	// 		this.querySelector("c-scoreboard").setAttribute("score2", this.match.score2);
-	// 		this.scene = true;
-	// 	}
-	// };
+		if (scored) {
+			this.resetGame();
+			this.querySelector("c-scoreboard").setAttribute("score1", this.match.score1);
+			this.querySelector("c-scoreboard").setAttribute("score2", this.match.score2);
+			this.scene = true;
+		}
+	};
 
 	drawMiddle = () => {
 		const STROKE_WIDTH = 120;
@@ -310,16 +311,16 @@ export default class OnlinePongTable extends HTMLElement {
 		}
 	};
 
-	// resetGame = () => {
-	// 	this.ball.reset(this);
-	// 	this.paddle1.reset();
-	// 	this.paddle2.reset();
-	// };
+	resetGame = () => {
+		this.ball.reset(this);
+		this.paddle1.reset();
+		this.paddle2.reset();
+	};
 
-	// get isGameOver() {
-	// 	return (
-	// 		this.match.score1 === this.finalScore ||
-	// 		this.match.score2 === this.finalScore
-	// 	);
-	// }
+	get isGameOver() {
+		return (
+			this.match.score1 === this.finalScore ||
+			this.match.score2 === this.finalScore
+		);
+	}
 }
