@@ -70,6 +70,7 @@ class FriendState extends State {
 	async removeFriend(userId) {
 		try {
 			const friendshipObject = this.getFriendshipObject(userId);
+			if (!friendshipObject) return;
 			const result = await this.httpClient.delete(`friends/${friendshipObject.id}/`);
 			const notification = {
 				type: "FAL",
@@ -94,6 +95,7 @@ class FriendState extends State {
 	async blockFriend(userId) {
 		try {
 			const friendshipObject = this.getFriendshipObject(userId);
+			if (!friendshipObject) return;
 			const result = await this.httpClient.post(`friends/block/${friendshipObject.id}/`);
 			const notification = {
 				type: "FAL",
@@ -121,6 +123,7 @@ class FriendState extends State {
 	async unblockFriend(userId) {
 		try {
 			const friendshipObject = this.getFriendshipObject(+userId, true);
+			if (!friendshipObject) return;
 			const result = await this.httpClient.post(`friends/unblock/${friendshipObject.id}/`);
 			const notification = {
 				type: "FAL",
