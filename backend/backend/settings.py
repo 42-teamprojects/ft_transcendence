@@ -50,6 +50,7 @@ REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_CLASSES': [
         'accounts.custom_throttles.CustomAnonRateThrottle',
         'accounts.custom_throttles.ResendRateThrottle',
+        'accounts.custom_throttles.ResetPasswordRateThrottle',
     ],
     'DEFAULT_THROTTLE_RATES': {
         'anon': '3/h',
