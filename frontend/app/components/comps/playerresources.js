@@ -1,3 +1,4 @@
+import { notificationState } from "../../state/notificationState.js";
 import { userState } from "../../state/userState.js";
 
 export default class Playerresources extends HTMLElement {
@@ -6,11 +7,20 @@ export default class Playerresources extends HTMLElement {
     }
 
     connectedCallback() {
-        this.user = userState.state.user;
         this.render();
+        this.unsubscribe = userState.subscribe(() => {
+            if (!userState.state.user) return;
+            this.querySelector(".streak-count").textContent = userState.state.user.user_stats.current_win_streak;
+        });
+        this.unsub = notificationState.subscribe(() => {
+            this.querySelector(".notifications-count").textContent = notificationState.state.notifications.length;
+        });
     }
 
-    disconnectedCallback() {}
+    disconnectedCallback() {
+        this.unsubscribe();
+        this.unsub();
+    }
 
     render() {
         this.innerHTML = /*html*/`
@@ -19,14 +29,14 @@ export default class Playerresources extends HTMLElement {
                 <div class="dropdown-button">
                     <div class="flex-center gap-2 resource-count text-xs font-medium text-secondary">
                         <i class="fa-solid fa-bell text-3xl"></i>
-                        <h3>0</h3>
+                        <h3 class="notifications-count">${notificationState.state.notifications.length}</h3>
                     </div>
                 </div>
                 <c-notification-dropdown></c-notification-dropdown>
             </div>
             <div class="flex-center gap-2 resource-count text-xs font-medium text-highlight">
                 <img src="/public/assets/icons/streak.svg" alt="streak"/>
-                <h3>${this.user.user_stats.current_win_streak}</h3>
+                <h3 class="streak-count">${userState.state.user.user_stats.current_win_streak}</h3>
             </div>
             </div>
         `;

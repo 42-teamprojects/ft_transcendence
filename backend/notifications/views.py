@@ -15,17 +15,23 @@ class NotificationViewSet(viewsets.ModelViewSet):
     queryset = Notification.objects.all()
     permission_classes = [IsAuthenticated, IsNotificationRecipient]
 
-    #get only unread notifications
     def get_queryset(self):
-        return Notification.objects.filter(recipient=self.request.user, read=False)
-
-    #get all notifications
+        return Notification.objects.filter(recipient=self.request.user)
     
+    #get all unread notifications
     @action(detail=False, methods=['get'])
-    def all(self, request):
-        notifications = Notification.objects.filter(recipient=request.user)
+    def unread(self, request):
+        notifications = Notification.objects.filter(recipient=request.user, read=False)
         serializer = self.get_serializer(notifications, many=True)
         return Response(serializer.data)
+
+    ##get notification 
+
+    #mark all notifications as read
+    @action(detail=False, methods=['put'])
+    def mark_all_as_read(self, request):
+        Notification.objects.filter(recipient=request.user).update(read=True)
+        return Response({'message': 'All notifications marked as read'}, status=status.HTTP_200_OK)
 
     #get all notifications exept for messages
     @action(detail=False, methods=['get'])
@@ -57,7 +63,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
     
     #mark all notifications as read exept for messages
     @action(detail=False, methods=['put'])
-    def mark_as_read_exept_messages(self, request):
+    def mark_as_read(self, request):
         Notification.objects.filter(recipient=request.user).exclude(type='MSG').update(read=True)
         return Response({'message': 'All notifications except messages marked as read'}, status=status.HTTP_200_OK)
     
@@ -66,4 +72,3 @@ class NotificationViewSet(viewsets.ModelViewSet):
     def mark_messages_as_read(self, request):
         Notification.objects.filter(recipient=request.user, type='MSG').update(read=True)
         return Response({'message': 'All messages marked as read'}, status=status.HTTP_200_OK)
-        
