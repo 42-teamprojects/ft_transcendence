@@ -1,3 +1,5 @@
+
+from datetime import timedelta
 from email.message import EmailMessage
 from email.policy import default
 from django.db import models
@@ -5,6 +7,7 @@ from django.contrib.auth.models import User
 from django.forms import ValidationError
 import math
 import random
+from django.utils import timezone
 
 class Tournament(models.Model):
     TYPE_CHOICES = [
@@ -23,6 +26,7 @@ class Tournament(models.Model):
     status = models.CharField(max_length=2, choices=STATUS_CHOICES, default='NS')
     winner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     participants = models.ManyToManyField(User, related_name='tournaments')
+    total_rounds = models.IntegerField(null=True)
     
     def save(self, *args, **kwargs):
         if self.pk is None:  # The tournament is being created
@@ -34,25 +38,36 @@ class Tournament(models.Model):
             self.participants.add(self.organizer)
         else:
             super().save(*args, **kwargs)
-    
+            
     def start(self):
+        self.validate_start_conditions()
+        self.status = 'IP'
+        self.calculate_rounds()
+        self.save()
+
+        participants = self.randomize_participants()
+        matches = self.generate_matches(participants)
+        TournamentMatch.objects.bulk_create(matches)
+        # self.notify_participants()
+
+    def validate_start_conditions(self):
         if self.status != 'NS':
             raise ValidationError('The tournament has already started.')
         if self.participants.count() < int(self.type):
             raise ValidationError('Not enough participants to start the tournament.')
-        self.status = 'IP'
-        self.save()
-        
-        # Calculate the number of rounds
-        num_rounds = int(math.log2(self.participants.count()))
 
-        # Randomize the participants
+    def calculate_rounds(self):
+        num_rounds = int(math.log2(self.participants.count()))
+        self.total_rounds = num_rounds
+
+    def randomize_participants(self):
         participants = list(self.participants.all())
         random.shuffle(participants)
-        
-        # Generate matches for all rounds
+        return participants
+
+    def generate_matches(self, participants):
         matches = []
-        for round in range(1, num_rounds + 1):
+        for round in range(1, self.total_rounds + 1):
             group = 1
             num_matches = int(self.participants.count() / 2**(round - 1))
             for i in range(num_matches):
@@ -64,18 +79,16 @@ class Tournament(models.Model):
                     matches.append(TournamentMatch(tournament=self, round=round, group=group, player1=player1, player2=None, status='F', winner=player1))
                 if i % 2 == 1: # Increment the group number every two matches
                     group += 1
+        return matches
 
-        # Create all matches at once
-        TournamentMatch.objects.bulk_create(matches)
-        
-        # Notify participants
-        # for participant in self.participants.all():
-        #     email = EmailMessage(
-        #         'Tournament Started',
-        #         'The tournament you signed up for has started.',
-        #         to=[participant.email]
-        #     )
-        #     email.send()
+    def notify_participants(self):
+        for participant in self.participants.all():
+            email = EmailMessage(
+                'Tournament Started',
+                'The tournament you signed up for has started.',
+                to=[participant.email]
+            )
+            email.send()
             # Notification with channels/sockets
     
     def __str__(self):
@@ -93,27 +106,30 @@ class TournamentMatch(models.Model):
     player1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tournament_player1', null=True)
     player2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tournament_player2', null=True)
     winner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    status = models.CharField(max_length=2, choices=STATUS_CHOICES)
+    status = models.CharField(max_length=2, choices=STATUS_CHOICES, default='NS')
+    start_time = models.DateTimeField(auto_now_add=False, null=True)
     
     def set_winner(self, winner):
+        if winner not in [self.player1, self.player2]:
+            raise ValidationError('The provided user is not a player in this match.')
         self.winner = winner
         self.status = 'F'
+        self.assign_winner_to_next_round(winner)
         self.save()
 
-        # Check if all matches in the round are finished
-        all_matches_in_round = TournamentMatch.objects.filter(tournament=self.tournament, round=self.round)
-        if all(match.status == 'F' for match in all_matches_in_round):
-            self.assign_winners_to_next_round()
+    def assign_winner_to_next_round(self, winner):
+        # Get the match in the next round for this match's group
+        next_round_match = TournamentMatch.objects.select_for_update().filter(tournament=self.tournament, round=self.round + 1, group=self.group).first()
 
-    def assign_winners_to_next_round(self):
-        # Get all winners from the previous round
-        winners = [match.winner for match in TournamentMatch.objects.filter(tournament=self.tournament, round=self.round)]
+        if next_round_match:
+            # Assign the winner to player1 or player2, depending on which is empty
+            if next_round_match.player1 is None:
+                next_round_match.player1 = winner
+            elif next_round_match.player2 is None:
+                next_round_match.player2 = winner
+            next_round_match.save()
 
-        # Assign winners to the matches in the next round based on the group they are in
-        next_round_matches = TournamentMatch.objects.filter(tournament=self.tournament, round=self.round + 1).order_by('group')
-        for i, match in enumerate(next_round_matches):
-            if i % 2 == 0:  # Assign the winner to player1 for even-indexed matches
-                match.player1 = winners[i // 2]
-            else:  # Assign the winner to player2 for odd-indexed matches
-                match.player2 = winners[i // 2]
-            match.save()
+            # If the match is now full, start it after 1 minute
+            if next_round_match.player1 is not None and next_round_match.player2 is not None:
+                next_round_match.start_time = timezone.now() + timedelta(minutes=1)
+                next_round_match.save()
