@@ -84,7 +84,7 @@ class FriendState extends State {
 				recipient: userId,
 			}
 			await notificationState.sendNotification(notification);
-			
+
 			this.setState({ friends: this.state.friends.filter((friendshipObject) => friendshipObject.user1.id !== userId && friendshipObject.user2.id !== userId) });
 			return result;
 		} catch (error) {
