@@ -44,7 +44,7 @@ export default class Matchmaking extends HTMLElement {
     }
     
     connectedCallback() {
-        matchState.setup('matchId');
+        matchState.setupMatchMaking("matchId");
         this.user = userState.state.user;
         this.render();
  
@@ -61,8 +61,8 @@ export default class Matchmaking extends HTMLElement {
                 countdown--;
                     
                     if (countdown < 0) {
-                        matchState.closeConnection('matchId');
-                        Router.instance.navigate('/online/1v1/game');
+                        matchState.closeMatchMakingConnection();
+                        Router.instance.navigate(`/online/1v1/game?id=${this.matchData.data.match_id}`);
                         clearInterval(intervalId);
                     }
             }, 1000);
@@ -73,7 +73,7 @@ export default class Matchmaking extends HTMLElement {
         btn.addEventListener('click', () => {
             //go back to the home page]
             Router.instance.navigate('/dashboard/home');
-            matchState.closeConnection('matchId');
+            matchState.closeMatchMakingConnection('matchId');
             this.unsubscribe();
         });
         // console.log(this.user);

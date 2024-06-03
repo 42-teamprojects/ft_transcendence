@@ -4,6 +4,9 @@ import Toast from "../comps/toast.js";
 export default class Onlinegameplay extends HTMLElement {
     constructor() {
         super();
+        this.params = new URLSearchParams(window.location.search);
+        this.match_id = this.params.get('id');
+        matchState.matchSetup(this.match_id);
     }
 
     connectedCallback() {

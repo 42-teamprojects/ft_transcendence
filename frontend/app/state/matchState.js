@@ -9,17 +9,42 @@ class MatchState extends State {
 		super({
             match: null,
         });
-		this.webSocketManager = new WebSocketManager(config.match_websocket_url);
+		this.matchMakingSocket = new WebSocketManager(config.match_making_websocket_url);
+		this.matchSocket = new WebSocketManager(config.match_websocket_url);
 	}
 
-	setup(matchId) {
+	matchSetup(matchId)
+	{
 		if (!matchId) {
 			throw new Error("Match id not provided");
 		}
 
-		if (this.webSocketManager.sockets[matchId]) return;
+		this.matchSocket.setupWebSocket(
+			matchId,
+			// On message callback
+			async (event) => {
+				const matchData = JSON.parse(event.data);
+				console.log(matchData);
+				// this.setState({ match: matchData });
+			},
+			{
+				onOpen: () => {
+					console.log("user connected");
+					// this.matchSocket.send("user_id", userState.state.user.id);
+				}
+				// shouldCloseOnTimeout: true,
+				// should timeout when game finishes
+			}
+		);
+	}
+	setupMatchMaking(matchId) {
+		if (!matchId) {
+			throw new Error("Match id not provided");
+		}
 
-		this.webSocketManager.setupWebSocket(
+		if (this.matchMakingSocket.sockets[matchId]) return;
+
+		this.matchMakingSocket.setupWebSocket(
 			matchId,
 			// On message callback
 			async (event) => {
@@ -40,12 +65,12 @@ class MatchState extends State {
 		);
 	}
 
-	closeConnection(matchId) {
-		this.webSocketManager.closeConnection(matchId);
+	closeMatchMakingConnection(matchId) {
+		this.matchMakingSocket.closeConnection(matchId);
 	}
 
 	sendGameUpdate(matchId, data) {
-		this.webSocketManager.send(matchId, data);
+		this.matchMakingSocket.send(matchId, data);
 	}
 
 	setMatch(match) {

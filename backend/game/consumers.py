@@ -65,7 +65,8 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
         await self.accept()
     
     async def disconnect(self, close_code):
-        MatchMakingConsumer.loby.remove(self.user_id)
+        if self.user_id in MatchMakingConsumer.loby:
+            MatchMakingConsumer.loby.remove(self.user_id)
         print("disco : ", self.loby, flush=True)
         # print("disconnected : ", self.player.username)
     
@@ -78,3 +79,52 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
             "data": data
         }))
 
+
+class GameConsumer(AsyncWebsocketConsumer):
+    connected_users = 0
+    async def connect(self):
+        self.connected_users += 1
+        self.room_name = self.scope['url_route']['kwargs']['match_id']
+        print(f"connected to room {self.room_name}", flush=True)
+        self.room_group_name = f'game_{self.room_name}'
+        await self.channel_layer.group_add(
+            self.room_group_name,
+            self.channel_name
+        )
+        if self.connected_users == 2:
+            print("connected 2 users", flush=True)
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    "type": "game_message",
+                    "data": "start"
+                }
+            )
+        await self.accept()
+    
+    
+    async def disconnect(self, close_code):
+        print(f"disconnected from room {self.room_name}", flush=True)
+        await self.channel_layer.group_discard(
+            self.room_group_name,
+            self.channel_name
+        )
+    
+    async def receive(self, text_data):
+        text_data_json = json.loads(text_data)
+        print(text_data_json, flush=True)
+        data = text_data_json["data"]
+        print(data, flush=True)
+        # await self.channel_layer.group_send(
+        #     self.room_group_name,
+        #     {
+        #         "type": "game_message",
+        #         "data": data
+        #     }
+        # )
+
+    async def game_message(self, event):
+        data = event["data"]
+        await self.send(text_data=json.dumps({
+            "data": data
+        }))
