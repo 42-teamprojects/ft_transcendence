@@ -9,6 +9,7 @@ export default class Playerresources extends HTMLElement {
     connectedCallback() {
         this.render();
         this.unsubscribe = userState.subscribe(() => {
+            if (!userState.state.user) return;
             this.querySelector(".streak-count").textContent = userState.state.user.user_stats.current_win_streak;
         });
         this.unsub = notificationState.subscribe(() => {
@@ -16,7 +17,10 @@ export default class Playerresources extends HTMLElement {
         });
     }
 
-    disconnectedCallback() {}
+    disconnectedCallback() {
+        this.unsubscribe();
+        this.unsub();
+    }
 
     render() {
         this.innerHTML = /*html*/`
