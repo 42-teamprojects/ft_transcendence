@@ -7,17 +7,22 @@ import { matchState } from "../../state/matchState.js";
 class ThreeDots extends HTMLElement {
     constructor() {
         super();
+        this.color = this.getAttribute('color') || 'white';
     }
 
     connectedCallback() {
         this.render();
+        this.dots = this.querySelectorAll('.single-dot');
+        for (let i = 0; i < this.dots.length; i++) {
+            this.dots[i].style.backgroundColor = `${this.color}`;
+        }
     }
 
     disconnectedCallback() {}
 
     render() {
         this.innerHTML = /*html*/`
-        <div class="flex align-end gap-5">
+        <div class="flex-center align-end gap-5">
             <h1>Searching</h1>
             <div class="dots">
                 <div class="single-dot"></div>
@@ -79,7 +84,7 @@ export default class Matchmaking extends HTMLElement {
     render() {
         this.innerHTML = /*html*/`
             <div class="match-making-container flex-col  flex-center gap-40">
-                <h1 class="starting">${(this.opponent.username == "Searching...") ? /*html*/`<c-three-dots></c-three-dots>`: "Starting in 3..."}</h1>
+                <h1 class="starting">${(this.opponent.username == "Searching...") ? /*html*/`<c-three-dots color="white"></c-three-dots>`: "Starting in 3..."}</h1>
                 <div class="flex flex-center gap-30">
                     <div class="flex flex-col gap-5">
                         <div class="img-box player-border">
@@ -89,10 +94,10 @@ export default class Matchmaking extends HTMLElement {
                     </div>
                     <h1 class="text-6xl font-black spacing-10">VS</h1>
                     <div class="flex flex-col gap-5">
-                        <div class="img-box loading">
+                        <div class="img-box ${this.opponent.username === "Searching..." ? 'loading' : 'player-border'}">
                             <img src="${config.backend_domain}${this.opponent.avatar}" alt="" class="player-img">
                         </div>
-                        <h2 class="text-primary text-3xl">${this.opponent.username}</h2>
+                        <h2 class="text-primary text-center text-3xl">${this.opponent.username === "Searching..." ? /*html*/`<c-three-dots color="#D7524C"></c-three-dots>` : this.opponent.username }</h2>
                     </div>
                 </div>
                 <button class="btn-primary">quit match</button>
