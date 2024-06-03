@@ -6,7 +6,7 @@ from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 # from channels.db import database_sync_to_async
 
 
-class GameConsumer(AsyncWebsocketConsumer):
+class MatchMakingConsumer(AsyncWebsocketConsumer):
     loby = []
     async def connect(self):
         if (self.scope["cookies"] is None) or ("access" not in self.scope["cookies"]):
@@ -65,7 +65,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         await self.accept()
     
     async def disconnect(self, close_code):
-        GameConsumer.loby.remove(self.user_id)
+        MatchMakingConsumer.loby.remove(self.user_id)
         print("disco : ", self.loby, flush=True)
         # print("disconnected : ", self.player.username)
     
