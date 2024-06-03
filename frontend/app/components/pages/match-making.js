@@ -8,6 +8,7 @@ class ThreeDots extends HTMLElement {
     constructor() {
         super();
         this.color = this.getAttribute('color') || 'white';
+        this.text = this.getAttribute('text') || '';
     }
 
     connectedCallback() {
@@ -23,7 +24,7 @@ class ThreeDots extends HTMLElement {
     render() {
         this.innerHTML = /*html*/`
         <div class="flex-center align-end gap-5">
-            <h1>Searching</h1>
+            ${this.text==="" ? '' : /*html*/`<h1>${this.text}</h1>` }
             <div class="dots">
                 <div class="single-dot"></div>
                 <div class="single-dot"></div>
@@ -84,7 +85,7 @@ export default class Matchmaking extends HTMLElement {
     render() {
         this.innerHTML = /*html*/`
             <div class="match-making-container flex-col  flex-center gap-40">
-                <h1 class="starting">${(this.opponent.username == "Searching...") ? /*html*/`<c-three-dots color="white"></c-three-dots>`: "Starting in 3..."}</h1>
+                <h1 class="starting">${(this.opponent.username == "Searching...") ? /*html*/`<c-three-dots text="Searching for opponent" color="white"></c-three-dots>`: "Starting in 3..."}</h1>
                 <div class="flex flex-center gap-30">
                     <div class="flex flex-col gap-5">
                         <div class="img-box player-border">
@@ -97,7 +98,7 @@ export default class Matchmaking extends HTMLElement {
                         <div class="img-box ${this.opponent.username === "Searching..." ? 'loading' : 'player-border'}">
                             <img src="${config.backend_domain}${this.opponent.avatar}" alt="" class="player-img">
                         </div>
-                        <h2 class="text-primary text-center text-3xl">${this.opponent.username === "Searching..." ? /*html*/`<c-three-dots color="#D7524C"></c-three-dots>` : this.opponent.username }</h2>
+                        <h2 class="text-primary text-center text-3xl">${this.opponent.username === "Searching..." ? /*html*/`<c-three-dots text="" color="#D7524C"></c-three-dots>` : this.opponent.username }</h2>
                     </div>
                 </div>
                 <button class="btn-primary">quit match</button>
