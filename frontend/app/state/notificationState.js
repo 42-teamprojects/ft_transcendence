@@ -22,6 +22,7 @@ class NotificationState extends State {
     constructor() {
         super({
             notifications: [],
+            newStatus: null,
             loading: true,
         })
         this.httpClient = HttpClient.instance;
@@ -41,7 +42,9 @@ class NotificationState extends State {
             //on message callback
             (event) => {
                 const notification = JSON.parse(event.data);
-                this.setState({ notifications: [notification, ...this.state.notifications] ,loading: false });
+                if (notification.type !== 'NEW_STATUS') {
+                    this.setState({ notifications: [notification, ...this.state.notifications] ,loading: false });
+                }
                 switch (notification.type) {
                     case "MSG":
                         this.handleMessageNotification(notification);
@@ -55,9 +58,22 @@ class NotificationState extends State {
                     case "FAL":
                         this.handleFriendAlertNotification(notification);
                         break;
+                    case "NEW_STATUS":
+                        this.setState({ newStatus: true });
+                        friendState.reset();
+                        friendState.getFriends();
+                        break;
                     default:
                         break;
             }
+        },
+        {
+            onOpen: () => {
+                console.log(`WebSocket connection opened for id: ${this.socketId}`);
+                this.notificationSocket.send(this.socketId, {
+                    type: "NEW_STATUS",
+                });
+            },
         }
         );
     }
@@ -160,6 +176,14 @@ class NotificationState extends State {
 
     resetLoading() {
         this.setState({ loading: true });
+    }
+
+    closeSocket() {
+        this.setState({ newStatus: true });
+        this.notificationSocket.send(this.socketId, {
+            type: "NEW_STATUS",
+        });
+        this.notificationSocket.closeConnection(this.socketId);
     }
 
     reset() {

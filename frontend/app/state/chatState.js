@@ -50,10 +50,10 @@ class ChatState extends State {
 		}
 	}
 
-	async getChat(chatId) {
+	async getChat(chatId, force = false) {
 		try {
 			let chat = this.state.chats.find((chat) => chat.id === parseInt(chatId));
-			if (chat) return chat;
+			if (chat && !force) return chat;
 			chat = await this.httpClient.get(`chats/${chatId}/`);
 			chat.friend = this.getFriend(chat);
 			return chat;
