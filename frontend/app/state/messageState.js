@@ -6,6 +6,7 @@ import WebSocketManager from "../socket/WebSocketManager.js";
 import { config } from "../config.js";
 import Router from "../router/router.js";
 import { notificationState } from "./notificationState.js";
+import Toast from "../components/comps/toast.js";
 
 const socketTimeout = 60000 * 5; // 5 minute
 
@@ -47,6 +48,10 @@ class MessageState extends State {
 			{
 				shouldCloseOnTimeout: true,
 				timeoutDuration: socketTimeout,
+				onErrorCallback: () => {
+					this.messagesFetched[chatId] = false;
+					Toast.notify("Failed to establish connection with the server. Please try again.", "error");
+				}
 			}
 		);
 

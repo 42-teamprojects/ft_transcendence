@@ -81,9 +81,11 @@ class NotificationState extends State {
         
         friendState.reset();
         friendState.getFriends();
-        friendState.blockFriend();
         chatState.reset();
         chatState.getChats();
+        if (notification.data.type === "BLOCK" || notification.data.type === "UNBLOCK") {
+            friendState.blockFriend();
+        }
     }
 
     /* 
