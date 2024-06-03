@@ -10,10 +10,27 @@ export default class Onlinegameplay extends HTMLElement {
     }
 
     connectedCallback() {
+        
         this.render();
+        this.unsubscribe = matchState.subscribe(() => {
+            this.match = matchState.state.game;
+            console.log("matchstate : ", this.match);
+            if (this.match.playerLeft) {
+                Toast.notify({ type: "warning", message: "Opponent left the match" });
+                matchState.closeMatchConnection(this.match_id);
+                Router.instance.navigate('/dashboard/home');
+            }
+            this.render();
+        })
+        // document.addEventListener('click', () => {
+        //     matchState.closeMatchConnection(this.match_id);
+        //     Router.instance.navigate('/dashboard/home');
+        // });
     }
 
-    disconnectedCallback() {}
+    disconnectedCallback() {
+        this.unsubscribe();
+    }
 
     render() {
         this.innerHTML = /*html*/`

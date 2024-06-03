@@ -8,6 +8,7 @@ class MatchState extends State {
 	constructor() {
 		super({
             match: null,
+			game: null,
         });
 		this.matchMakingSocket = new WebSocketManager(config.match_making_websocket_url);
 		this.matchSocket = new WebSocketManager(config.match_websocket_url);
@@ -25,7 +26,15 @@ class MatchState extends State {
 			async (event) => {
 				const matchData = JSON.parse(event.data);
 				console.log(matchData);
-				// this.setState({ match: matchData });
+				if (matchData.data === "start") {
+					console.log("game started");
+					this.is_ready = true;
+				}
+				if (matchData.data === "player_left") {
+					console.log("player left the match");
+					matchData.playerLeft = true;
+				}
+				this.setState({ game: matchData });
 			},
 			{
 				onOpen: () => {
@@ -55,7 +64,7 @@ class MatchState extends State {
 				matchData.opponent = opponent;
 				// console.log("my id is ", userState.state.user.id);
 				// console.log("my opponent is: ", opponent);
-				console.log("match data: ", matchData);
+				// console.log("match data: ", matchData);
 				this.setState({ match: matchData });
 			},
 			{
@@ -64,7 +73,9 @@ class MatchState extends State {
 			}
 		);
 	}
-
+	closeMatchConnection(matchId) {
+		this.matchSocket.closeConnection(matchId);
+	}
 	closeMatchMakingConnection(matchId) {
 		this.matchMakingSocket.closeConnection(matchId);
 	}

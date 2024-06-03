@@ -40,7 +40,7 @@ export default class Matchmaking extends HTMLElement {
     constructor() {
         super();
         this.user = userState.state.user;
-        this.opponent = {username: "Searching...", avatar: "/storage/avatars/default.jpg"};
+        this.opponent = {username: "Searching...", avatar: "/storage/avatars/default.png"};
     }
     
     connectedCallback() {
@@ -80,7 +80,9 @@ export default class Matchmaking extends HTMLElement {
 
     }
 
-    disconnectedCallback() {}
+    disconnectedCallback() {
+        this.unsubscribe();
+    }
 
     render() {
         this.innerHTML = /*html*/`

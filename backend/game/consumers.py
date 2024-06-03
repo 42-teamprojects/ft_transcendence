@@ -5,23 +5,27 @@ from rest_framework_simplejwt.tokens import UntypedToken
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 # from channels.db import database_sync_to_async
 
+def get_user_id(scope):
+    if (scope["cookies"] is None) or ("access" not in scope["cookies"]):
+        return None
+    access_token = scope["cookies"]["access"]
+    try:
+        #! to replace with access token
+        UntypedToken(access_token)
+    
+    except (InvalidToken, TokenError):
+        return None
+
+    return UntypedToken(access_token).payload['user_id']
 
 class MatchMakingConsumer(AsyncWebsocketConsumer):
     loby = []
     async def connect(self):
-        if (self.scope["cookies"] is None) or ("access" not in self.scope["cookies"]):
-            await self.close()
-            return
-        self.access_token = self.scope["cookies"]["access"]
-        try:
-            #! to replace with access token
-            UntypedToken(self.access_token)
-        
-        except (InvalidToken, TokenError):
-            await self.close()
-            return
 
-        self.user_id = UntypedToken(self.access_token).payload['user_id']
+        self.user_id = get_user_id(self.scope)
+        if self.user_id is None:
+            await self.close()
+            return
         self.loby.append(self.user_id)
         user_group = f"player_{self.user_id}"
         await self.channel_layer.group_add(
@@ -81,18 +85,22 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
 
 
 class GameConsumer(AsyncWebsocketConsumer):
-    connected_users = 0
+    connected_users = []
     async def connect(self):
-        self.connected_users += 1
+        self.user_id = get_user_id(self.scope)
+        if self.user_id is None:
+            await self.close()
+            return
+        GameConsumer.connected_users.append(self.user_id)
         self.room_name = self.scope['url_route']['kwargs']['match_id']
-        print(f"connected to room {self.room_name}", flush=True)
+        print(f"user {self.user_id} connected to room {self.room_name} , playing users = {GameConsumer.connected_users}", flush=True)
         self.room_group_name = f'game_{self.room_name}'
         await self.channel_layer.group_add(
             self.room_group_name,
             self.channel_name
         )
-        if self.connected_users == 2:
-            print("connected 2 users", flush=True)
+        if len(GameConsumer.connected_users) >= 2:
+            print(f"connected 2 users : {GameConsumer.connected_users}", flush=True)
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
@@ -102,13 +110,24 @@ class GameConsumer(AsyncWebsocketConsumer):
             )
         await self.accept()
     
-    
+
     async def disconnect(self, close_code):
-        print(f"disconnected from room {self.room_name}", flush=True)
-        await self.channel_layer.group_discard(
+        if self.user_id in GameConsumer.connected_users:
+            GameConsumer.connected_users.remove(self.user_id)
+        print(f"user {self.user_id} disconnected from room {self.room_name}", flush=True)
+        #semd data to other user that the user has left
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                "type": "game_message",
+                "data": "player_left"
+            }
+        )
+        await self.channel_layer.group_discard( 
             self.room_group_name,
             self.channel_name
         )
+        print(f"users left = {GameConsumer.connected_users}", flush=True)
     
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)

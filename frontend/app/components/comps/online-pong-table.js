@@ -67,6 +67,7 @@ export default class OnlinePongTable extends HTMLElement {
 		this.scene = true;
 		this.counter = 3;
 		this.frameCount = 0;
+		console.log("are the players ready; ", matchState.is_ready);
 	}
 
 	connectedCallback() {
@@ -176,7 +177,7 @@ export default class OnlinePongTable extends HTMLElement {
 		//draw paddles
 		this.frameCount++;
 		// update paddle position
-		if (this.scene) {
+		if (this.scene && matchState.is_ready) {
 			this.drawScene();
 		}
 		else
@@ -222,24 +223,24 @@ export default class OnlinePongTable extends HTMLElement {
 
 	drawScene = () => {
 		this.draw();
-		// this.context.fillStyle = "black";
-		// this.context.globalAlpha = 0.7;
-		// this.context.fillRect(0, 0, this.tableWidth, this.tableHeight);
-		// this.context.globalAlpha = 1;
-		// this.context.fillStyle = "white";
-		// this.context.font = "30px MPlusRounded";
-		// this.context.fillText('Round starts in', this.tableWidth / 2 - 120, this.tableHeight / 3);
-		// this.context.font = "100px MPlusRounded";
-		// const textWidth = this.context.measureText(this.counter).width;
-		// this.context.fillText(this.counter, this.tableWidth / 2 - textWidth / 2, this.tableHeight / 2);
+		this.context.fillStyle = "black";
+		this.context.globalAlpha = 0.7;
+		this.context.fillRect(0, 0, this.tableWidth, this.tableHeight);
+		this.context.globalAlpha = 1;
+		this.context.fillStyle = "white";
+		this.context.font = "30px MPlusRounded";
+		this.context.fillText('Round starts in', this.tableWidth / 2 - 120, this.tableHeight / 3);
+		this.context.font = "100px MPlusRounded";
+		const textWidth = this.context.measureText(this.counter).width;
+		this.context.fillText(this.counter, this.tableWidth / 2 - textWidth / 2, this.tableHeight / 2);
 
-		// if (this.frameCount % 60 === 0) {
-		// 	this.counter--;
-		// }
-		// if (this.counter === 0) {
-		// 	this.scene = false;
-		// 	this.counter = 3;
-		// }
+		if (this.frameCount % 60 === 0) {
+			this.counter--;
+		}
+		if (this.counter === 0) {
+			this.scene = false;
+			this.counter = 3;
+		}
 	};
 
 	scored = () => {
