@@ -24,8 +24,8 @@ function getRandomInt(min, max) {
 export default class OnlinePongTable extends HTMLElement {
 	constructor() {
 		super();
-		// this.handleKeyDownF = this.handleKeyDown.bind(this);
-		// this.handleKeyUpF = this.handleKeyUp.bind(this);
+		this.handleKeyDownF = this.handleKeyDown.bind(this);
+		this.handleKeyUpF = this.handleKeyUp.bind(this);
 
 		// this.match = matchState.state.match;
 		// this.theme = this.match.theme;
@@ -75,40 +75,40 @@ export default class OnlinePongTable extends HTMLElement {
 		document.addEventListener("keyup", this.handleKeyUpF);
 	}
 
-	// handleKeyDown = (event) => {
-	// 	if (event.code === "KeyW" || event.code === "KeyS") {
-	// 		player1PressedKeys[event.code] = true;
-	// 		this.paddle1.directionChange(
-	// 			event.code === "KeyW" ? "up" : event.code === "KeyS" ? "down" : ""
-	// 		);
-	// 	}
+	handleKeyDown = (event) => {
+		if (event.code === "KeyW" || event.code === "KeyS") {
+			player1PressedKeys[event.code] = true;
+			this.paddle1.directionChange(
+				event.code === "KeyW" ? "up" : event.code === "KeyS" ? "down" : ""
+			);
+		}
 
-	// 	if (event.code === "ArrowUp" || event.code === "ArrowDown") {
-	// 		player2PressedKeys[event.code] = true;
-	// 		this.paddle2.directionChange(
-	// 			event.code === "ArrowUp"
-	// 				? "up"
-	// 				: event.code === "ArrowDown"
-	// 					? "down"
-	// 					: ""
-	// 		);
-	// 	}
-	// };
+		if (event.code === "ArrowUp" || event.code === "ArrowDown") {
+			player2PressedKeys[event.code] = true;
+			this.paddle2.directionChange(
+				event.code === "ArrowUp"
+					? "up"
+					: event.code === "ArrowDown"
+						? "down"
+						: ""
+			);
+		}
+	};
 
-	// handleKeyUp = (event) => {
-	// 	if (event.code === "KeyW" || event.code === "KeyS") {
-	// 		player1PressedKeys[event.code] = false;
-	// 	}
-	// 	if (event.code === "ArrowUp" || event.code === "ArrowDown") {
-	// 		player2PressedKeys[event.code] = false;
-	// 	}
-	// 	if (Object.values(player1PressedKeys).every((value) => !value)) {
-	// 		this.paddle1.stop(event);
-	// 	}
-	// 	if (Object.values(player2PressedKeys).every((value) => !value)) {
-	// 		this.paddle2.stop(event);
-	// 	}
-	// };
+	handleKeyUp = (event) => {
+		if (event.code === "KeyW" || event.code === "KeyS") {
+			player1PressedKeys[event.code] = false;
+		}
+		if (event.code === "ArrowUp" || event.code === "ArrowDown") {
+			player2PressedKeys[event.code] = false;
+		}
+		if (Object.values(player1PressedKeys).every((value) => !value)) {
+			this.paddle1.stop(event);
+		}
+		if (Object.values(player2PressedKeys).every((value) => !value)) {
+			this.paddle2.stop(event);
+		}
+	};
 
 	movePlayers = (ev) => {
 		this.paddle1.directionChange(
