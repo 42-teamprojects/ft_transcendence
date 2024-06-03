@@ -27,7 +27,7 @@ class MatchState extends State {
 				const matchData = JSON.parse(event.data);
 				console.log(matchData);
 				if (matchData.data === "start") {
-					console.log("game started");
+					
 					this.is_ready = true;
 				}
 				if (matchData.data === "player_left") {
@@ -73,15 +73,17 @@ class MatchState extends State {
 			}
 		);
 	}
+	
 	closeMatchConnection(matchId) {
 		this.matchSocket.closeConnection(matchId);
 	}
+
 	closeMatchMakingConnection(matchId) {
 		this.matchMakingSocket.closeConnection(matchId);
 	}
 
 	sendGameUpdate(matchId, data) {
-		this.matchMakingSocket.send(matchId, data);
+		this.matchSocket.send(matchId, data);
 	}
 
 	setMatch(match) {

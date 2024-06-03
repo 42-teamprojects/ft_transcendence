@@ -24,6 +24,7 @@ function getRandomInt(min, max) {
 export default class OnlinePongTable extends HTMLElement {
 	constructor() {
 		super();
+		this.match_id = this.getAttribute("match_id");
 		this.handleKeyDownF = this.handleKeyDown.bind(this);
 		this.handleKeyUpF = this.handleKeyUp.bind(this);
 
@@ -173,6 +174,7 @@ export default class OnlinePongTable extends HTMLElement {
 	}
 
 	update = () => {
+
 		// console.log(mouse);
 		//draw paddles
 		this.frameCount++;
@@ -186,7 +188,15 @@ export default class OnlinePongTable extends HTMLElement {
 		this.ball.bounceOnPaddles(this.paddle1);
 		this.ball.bounceOnPaddles(this.paddle2);
 		this.ball.bounceOnWalls(this.tableHeight);
-
+		
+		let gameData = {
+			"type": "game_update",
+			x : this.paddle1.x,
+			y: this.paddle1.y,
+		}
+		matchState.sendGameUpdate(this.match_id, {
+			data: gameData,
+		});
 		if (this.scored()) {
 			this.scene = true;
 		}

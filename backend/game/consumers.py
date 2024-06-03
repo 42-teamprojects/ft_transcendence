@@ -131,9 +131,18 @@ class GameConsumer(AsyncWebsocketConsumer):
     
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        print(text_data_json, flush=True)
+        # print(text_data_json, flush=True)
         data = text_data_json["data"]
-        print(data, flush=True)
+        # print(data["type"], flush=True) 
+        if (data["type"] == "update_game"): 
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    "type": "game_message",
+                    "data": data
+                }
+            )
+
         # await self.channel_layer.group_send(
         #     self.room_group_name,
         #     {

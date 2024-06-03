@@ -34,7 +34,7 @@ export default class Onlinegameplay extends HTMLElement {
 
     render() {
         this.innerHTML = /*html*/`
-        <c-online-pong-table id="table"></c-online-pong-table>
+        <c-online-pong-table match_id="${this.match_id}" id="table"></c-online-pong-table>
         `;
     }
 }
