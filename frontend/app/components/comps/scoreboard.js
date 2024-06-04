@@ -1,3 +1,6 @@
+import { config } from "../../config.js";
+import { userState } from "../../state/userState.js";
+
 export default class Scoreboard extends HTMLElement {
     constructor() {
         super();
@@ -5,6 +8,12 @@ export default class Scoreboard extends HTMLElement {
         this.player2 = this.getAttribute("player2")
         this.score1 = this.getAttribute("score1")
         this.score2 = this.getAttribute("score2")
+        //get paranms
+        const params = new URLSearchParams(window.location.search);
+        this.opponentId = params.get("user_id");
+        console.log("opponent id = ", this.opponentId);
+        this.opponent = {username: "Searching...", avatar: "/storage/avatars/default.png"};
+        this.user = userState.state.user;
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -23,7 +32,10 @@ export default class Scoreboard extends HTMLElement {
         return ["score1", "score2"];
 	}
 
-    connectedCallback() {
+    async connectedCallback() {
+        this.user = userState.state.user;
+        this.opponent = await userState.fetchUserById(this.opponentId);
+        console.log("opponent", this.opponent);
         this.render();
     }
 
@@ -33,14 +45,14 @@ export default class Scoreboard extends HTMLElement {
         this.innerHTML = /*html*/`
         <div class="scoreboard">
             <div class="leftBox">
-                <img src="../public/assets/icons/default.png" alt="Pong Logo" class="w-10 h-10" >
+                <img src="${config.backend_domain}${this.user.avatar}" alt="Pong Logo" class="w-10 h-10" >
             </div>
             <div class="rightBox">
-                <img src="../public/assets/icons/default.png" alt="Pong Logo" class="w-10 h-10" >
+                <img src="${config.backend_domain}${this.opponent.avatar}" alt="Pong Logo" class="w-10 h-10" >
             </div>
             <div class="middleBox"></div>
-            <div class="text text1">${this.player1}</div>
-            <div class="text text2">${this.player2}</div>
+            <div class="text text1">${this.user.username}</div>
+            <div class="text text2">${this.opponent.username}</div>
             <div class="text text3">${this.score1}</div>
             <div class="text text4">${this.score2}</div>
         </div>
