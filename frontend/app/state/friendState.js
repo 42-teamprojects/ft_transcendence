@@ -78,6 +78,8 @@ class FriendState extends State {
 				type: "FAL",
 				data: {
 					type: "REMOVE",
+					userAvatar: userState.state.user.avatar,
+					avatar: userState.state.user.avatar,
 					sender_id: userState.state.user.id,
 					sender_name: userState.state.user.username,
 				},

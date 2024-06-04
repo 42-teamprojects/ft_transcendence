@@ -22,7 +22,7 @@ class NotificationState extends State {
     constructor() {
         super({
             notifications: [],
-            newStatus: null,
+            newStatus: false,
             loading: true,
         })
         this.httpClient = HttpClient.instance;
@@ -60,7 +60,7 @@ class NotificationState extends State {
                         break;
                     case "NEW_STATUS":
                         this.setState({ newStatus: true });
-                        friendState.reset();
+                        friendState.fetchedFriends = false;
                         friendState.getFriends();
                         break;
                     default:

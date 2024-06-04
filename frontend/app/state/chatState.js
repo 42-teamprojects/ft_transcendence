@@ -51,6 +51,8 @@ class ChatState extends State {
 	}
 
 	async getChat(chatId, force = false) {
+		// if the force flag is set to true, wait 1 second before fetching the chat
+		if (force) await new Promise((resolve) => setTimeout(resolve, 100));
 		try {
 			let chat = this.state.chats.find((chat) => chat.id === parseInt(chatId));
 			if (chat && !force) return chat;
