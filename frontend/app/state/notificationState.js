@@ -88,6 +88,9 @@ class NotificationState extends State {
                 message: /*html*/ `<p>You got message from  ${notification.data.sender_name}</p><br/><a is="c-link" class="font-bold spacing-1 uppercase text-secondary mt-2 text-sm" href="/dashboard/chat/${notification.data.chat_id}" class="mt-2">View chat</a>`,
             });
         }
+        if (!messageState.state.messages[notification.data.chat_id]) {
+            messageState.getMessages(notification.data.chat_id);
+        } 
         messageState.updateCardLastMessage(notification.data.chat_id, notification.data.message);
     }
 
