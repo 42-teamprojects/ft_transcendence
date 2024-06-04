@@ -49,3 +49,26 @@ class TournamentViewSet(viewsets.ModelViewSet):
             raise serializers.ValidationError({'detail': e.message})
         return Response({'detail': 'Participant added successfully.'}, status=status.HTTP_200_OK)
     
+    # Get only NS tournaments
+    def get_queryset(self):
+        return Tournament.objects.filter(status='NS')
+
+    # Get the in-progress tournaments
+    @action(detail=False)
+    def in_progress(self, request):
+        return Response(TournamentSerializer(Tournament.objects.filter(status='IP'), many=True).data, status=status.HTTP_200_OK)
+    
+    # Get the finished tournaments
+    @action(detail=False)
+    def finished(self, request):
+        return Response(TournamentSerializer(Tournament.objects.filter(status='F'), many=True).data, status=status.HTTP_200_OK)
+    
+    # Get the matches for a tournament
+    @action(detail=True)
+    def matches(self, request, pk=None):
+        try:
+            tournament = self.get_object()
+        except serializers.ValidationError as e:
+            return Response(e, status=status.HTTP_404_NOT_FOUND)
+        return Response(TournamentMatchSerializer(tournament.matches.all(), many=True).data, status=status.HTTP_200_OK)
+    
