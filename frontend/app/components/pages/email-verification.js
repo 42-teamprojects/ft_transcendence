@@ -7,6 +7,7 @@ import Toast from "../comps/toast.js";
 export default class EmailVerification extends HTMLElement {
 	constructor() {
 		super();
+        this.classList.add('full-page');
 	}
 
 	connectedCallback() {

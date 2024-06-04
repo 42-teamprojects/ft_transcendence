@@ -7,6 +7,7 @@ import Router from '../../router/router.js';
 export default class ResetTwoFactor extends HTMLElement {
     constructor() {
         super();
+        this.classList.add('full-page');
     }
 
     connectedCallback() {

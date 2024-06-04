@@ -5,24 +5,28 @@
 }
 
 .profile-user {
-	display: flex;
-	flex-direction: column;
-	gap: 1.5rem;
-	h2 {
-		font-size: 1.75rem;
-		font-weight: bold;
-		margin-bottom: 0.25rem;
-	}
-	p {
-		font-size: 1.1rem;
-		color: var(--dark-text-color);
-	}
-	h3 {
-		font-size: 1.2rem;
-		color: var(--stroke-color);
-		font-weight: normal;
-	}
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
+
+.profile-user h2 {
+    font-size: 1.75rem;
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+}
+
+.profile-user p {
+    font-size: 1.1rem;
+    color: var(--dark-text-color);
+}
+
+.profile-user h3 {
+    font-size: 1.2rem;
+    color: var(--stroke-color);
+    font-weight: normal;
+}
+
 
 .profile-image {
 	width: 200px;

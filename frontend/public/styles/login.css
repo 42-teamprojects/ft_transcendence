@@ -1,77 +1,70 @@
-p-login,
-p-signup,
-p-email-verification,
-p-verify-two-factor-auth,
-p-email-reset-password,
-p-reset-password,
-p-reset-two-factor
-{
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	height: 100vh;
+.full-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
 
-    .form-container {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 1.5rem;
-        width: 340px;
-    }
+.full-page .form-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    width: 340px;
+}
 
-    form {
-        display: flex;
-		flex-direction: column;
-		justify-content: center;
-        align-items: center;
-        gap: 1rem;
-        width: 100%;
-    }
+.full-page form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+}
 
-	input {
-        width: 100%;
-		margin-bottom: 14px;
-	}
+.full-page input {
+    width: 100%;
+    margin-bottom: 14px;
+}
 
-	button {
-		width: 100%;
-	}
+.full-page button {
+    width: 100%;
+}
 
-	.hr {
-		display: flex;
-		gap: 1.5rem;
-		align-items: center;
-		width: 100%;
-	}
+.full-page .hr {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    width: 100%;
+}
 
-	.hr hr {
-		width: 100%;
-	}
+.full-page .hr hr {
+    width: 100%;
+}
 
-	.hr span {
-		font-size: 0.8rem;
-		color: var(--stroke-color);
-	}
+.full-page .hr span {
+    font-size: 0.8rem;
+    color: var(--stroke-color);
+}
 
-	p {
-		font-size: 0.8rem;
-	}
+.full-page p {
+    font-size: 0.8rem;
+}
 
-	p a {
-		color: var(--secondary-color);
-	}
+.full-page p a {
+    color: var(--secondary-color);
+}
 
-	.social-login {
-		display: flex;
-		gap: 1rem;
-		justify-content: center;
-		align-items: center;
-        width: 100%;
-	}
+.full-page .social-login {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
 
-	h1 {
-		text-align: center;
-		font-size: 1.5rem;
-	}
+.full-page h1 {
+    text-align: center;
+    font-size: 1.5rem;
 }
