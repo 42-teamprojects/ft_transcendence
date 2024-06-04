@@ -99,6 +99,8 @@ class Tournament(models.Model):
             raise ValidationError('Cannot add participants to a tournament that has already started.')
         if self.participants.count() >= int(self.type):
             raise ValidationError('The tournament is already full.')
+        if user in self.participants.all():
+            raise ValidationError('You are already a participant in this tournament.')
         self.participants.add(user)
         self.save()
     

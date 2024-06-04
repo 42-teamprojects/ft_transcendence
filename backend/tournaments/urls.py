@@ -7,4 +7,6 @@ router.register(r'tournaments', TournamentViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('tournaments/<int:pk>/start/', TournamentViewSet.as_view({'post': 'start'})),
+    path('tournaments/<int:pk>/join/', TournamentViewSet.as_view({'post': 'join'})),
 ]
