@@ -51,7 +51,6 @@ class Tournament(models.Model):
 
         participants = self.randomize_participants()
         matches = self.generate_matches(participants)
-        print(matches)
         TournamentMatch.objects.bulk_create(matches)
         # self.notify_participants()
 
@@ -104,7 +103,7 @@ class Tournament(models.Model):
     def print_tree(self):
         print(f'Tournament {self.pk} - {self.type} players')
         for match in self.matches.all():
-            print(f'Round {match.round} - Group {match.group}: {match.player1} vs {match.player2}')
+            print(match)
 
     def notify_participants(self):
         for participant in self.participants.all():
@@ -154,13 +153,16 @@ class TournamentMatch(models.Model):
 
     def assign_winner_to_next_round(self, winner):
         # Calculate the group and match for the next round
-        next_round_group = self.group // 2
-        next_round_match_number = self.group % 2
+        next_round_group = self.group
+        next_round_match_number = self.match_number
 
         # Get the match in the next round for the calculated group and match
-        next_round_match = TournamentMatch.objects.select_for_update().filter(
-            tournament=self.tournament, round=self.round + 1, group=next_round_group, match_number=next_round_match_number).first()
+        next_round_matches = TournamentMatch.objects.select_for_update().filter(
+            tournament=self.tournament, round=self.round + 1).all()
+        print(next_round_matches)
 
+        next_round_match = None
+        # print(f"from match {next_round_match_number}-{next_round_group}", next_round_match)
         if next_round_match:
             # Assign the winner to player1 or player2, depending on the current match number
             if self.match_number == 0:

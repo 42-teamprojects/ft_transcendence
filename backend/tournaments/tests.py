@@ -119,9 +119,9 @@ class TournamentMatchModelTest(TestCase):
         self.tournament_4 = Tournament.objects.create(type='4', organizer=self.users[0])
         self.tournament_4.participants.add(self.users[1], self.users[2], self.users[3])
         self.tournament_4.start()
-        # self.tournament_8 = Tournament.objects.create(type='8', organizer=self.users[0])
-        # self.tournament_8.participants.add(self.users[1], self.users[2], self.users[3], self.users[4], self.users[5], self.users[6], self.users[7])
-        # self.tournament_8.start()
+        self.tournament_8 = Tournament.objects.create(type='8', organizer=self.users[0])
+        self.tournament_8.participants.add(self.users[1], self.users[2], self.users[3], self.users[4], self.users[5], self.users[6], self.users[7])
+        self.tournament_8.start()
 
     # def test_create_match(self):
     #     print("Test: create_match")
@@ -136,30 +136,26 @@ class TournamentMatchModelTest(TestCase):
     #     self.assertEqual(match.winner, self.users[0])
     #     self.assertEqual(match.status, 'F')
     
-    def test_assign_winner_to_next_round_same_group(self):
-        print("Test: assign_winner_to_next_round_same_group")
-        match1 = TournamentMatch.objects.get(tournament=self.tournament_4, round=1, group=1, match_number=0)
-        match2 = TournamentMatch.objects.get(tournament=self.tournament_4, round=1, group=1, match_number=1)
+    # def test_assign_winner_to_next_round_same_group(self):
+    #     print("Test: assign_winner_to_next_round_same_group")
+    #     match1 = TournamentMatch.objects.get(tournament=self.tournament_4, round=1, group=1, match_number=0)
+    #     match2 = TournamentMatch.objects.get(tournament=self.tournament_4, round=1, group=1, match_number=1)
+    #     match1.set_winner(match1.player1)
+    #     match2.set_winner(match2.player2)
+    #     next_round_match = TournamentMatch.objects.filter(tournament=self.tournament_4, round=2, group=1, match_number=0).first()
+    #     self.assertEqual(next_round_match.player1, match1.player1)
+    #     self.assertEqual(next_round_match.player2, match2.player2)
+
+    def test_assign_winner_to_next_round_different_group(self):
+        print("Test: assign_winner_to_next_round_different_group")
+        match1 = TournamentMatch.objects.get(tournament=self.tournament_8, round=1, group=1, match_number=0)
+        match2 = TournamentMatch.objects.get(tournament=self.tournament_8, round=1, group=2, match_number=0)
         match1.set_winner(match1.player1)
         match2.set_winner(match2.player2)
-        next_round_match = TournamentMatch.objects.filter(tournament=self.tournament_4)
-        print(next_round_match)
-        # self.assertEqual(next_round_match.player1, self.users[1])
-        # self.assertEqual(next_round_match.player2, self.users[3])
-
-    # def test_assign_winner_to_next_round_different_group(self):
-    #     print("Test: assign_winner_to_next_round_different_group")
-    #     match1 = TournamentMatch.objects.create(tournament=self.tournament_8, round=1, group=1, player1=self.users[0], player2=self.users[1])
-    #     match2 = TournamentMatch.objects.create(tournament=self.tournament_8, round=1, group=2, player1=self.users[2], player2=self.users[3])
-    #     match1.set_winner(self.users[1])
-    #     match2.set_winner(self.users[3])
-    #     next_round_matches = TournamentMatch.objects.filter(tournament=self.tournament_8, round=2, group=1)
-    #     print(next_round_matches)
-        # get the match with smallest id
-        # next_round_match1 = next_round_matches.order_by('id').first()
-        # next_round_match2 = next_round_matches.order_by('id').last()
-        # self.assertEqual(next_round_match1.player1, self.users[1])
-        # self.assertEqual(next_round_match2.player1, self.users[3])        
+        # self.tournament_8.print_tree()
+        # next_round_match = TournamentMatch.objects.filter(tournament=self.tournament_8, round=2, group=1, match_number=0).first()
+        # self.assertEqual(next_round_match.player1, match1.player1)
+        # self.assertEqual(next_round_match.player2, match2.player2)
 
     
 #     def test_set_invalid_winner(self):
