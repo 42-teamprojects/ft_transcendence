@@ -29,6 +29,8 @@ class TournamentViewSet(viewsets.ModelViewSet):
     def start(self, request, pk=None):
         try:
             tournament = self.get_object()
+            if request.user != tournament.organizer:
+                return Response({'detail': 'You are not the organizer of this tournament.'}, status=status.HTTP_403_FORBIDDEN)
         except serializers.ValidationError as e:
             return Response(e, status=status.HTTP_404_NOT_FOUND)
         try:
@@ -68,7 +70,54 @@ class TournamentViewSet(viewsets.ModelViewSet):
     def matches(self, request, pk=None):
         try:
             tournament = self.get_object()
+            if tournament.status == 'NS':
+                return Response({'detail': 'Tournament not started yet.'}, status=status.HTTP_400_BAD_REQUEST)
         except serializers.ValidationError as e:
             return Response(e, status=status.HTTP_404_NOT_FOUND)
         return Response(TournamentMatchSerializer(tournament.matches.all(), many=True).data, status=status.HTTP_200_OK)
     
+    def update(self, request, *args, **kwargs):
+        tournament = self.get_object()
+        if request.user != tournament.organizer:
+            return Response({'detail': 'You are not the organizer of this tournament.'}, status=status.HTTP_403_FORBIDDEN)
+        return super().update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        tournament = self.get_object()
+        if request.user != tournament.organizer:
+            return Response({'detail': 'You are not the organizer of this tournament.'}, status=status.HTTP_403_FORBIDDEN)
+        return super().destroy(request, *args, **kwargs)
+    
+class TournamentMatchViewSet(viewsets.ModelViewSet):
+    queryset = TournamentMatch.objects.all()
+    serializer_class = TournamentMatchSerializer
+
+    def get_object(self):
+        try:
+            return TournamentMatch.objects.get(pk=self.kwargs['pk'])
+        except TournamentMatch.DoesNotExist:
+            raise serializers.ValidationError({'detail': 'Match not found.'})
+    
+    @action(detail=True, methods=['post'])
+    def set_winner(self, request, pk=None):
+        try:
+            match = self.get_object()
+        except serializers.ValidationError as e:
+            return Response(e, status=status.HTTP_404_NOT_FOUND)
+        try:
+            match.set_winner(request.user)
+        except ValidationError as e:
+            raise serializers.ValidationError({'detail': e.message})
+        return Response({'detail': 'Winner set successfully.'}, status=status.HTTP_200_OK)
+    
+    def create(self, request, *args, **kwargs):
+        return Response({'detail': 'Method "POST" not allowed.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    
+    def update(self, request, *args, **kwargs):
+        return Response({'detail': 'Method "PUT" not allowed.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def partial_update(self, request, *args, **kwargs):
+        return Response({'detail': 'Method "PATCH" not allowed.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def destroy(self, request, *args, **kwargs):
+        return Response({'detail': 'Method "DELETE" not allowed.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)

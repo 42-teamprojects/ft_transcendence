@@ -84,7 +84,10 @@ class Tournament(models.Model):
                 player1 = participants.pop() if round == 1 and participants else None
                 player2 = participants.pop() if round == 1 and participants else None
                 if player1 and player2:
-                    matches.append(TournamentMatch(tournament=self, round=round, group=group, match_number=match_number, player1=player1, player2=player2))
+                    match = TournamentMatch(tournament=self, round=round, group=group, match_number=match_number, player1=player1, player2=player2)
+                    if round == 1:
+                        match.start_time = timezone.now() + timedelta(minutes=3)
+                    matches.append(match)
                 else:
                     matches.append(TournamentMatch(tournament=self, round=round, group=group, match_number=match_number, player1=None, player2=None))
                 if i % 2 == 1:  # Increment the group number and reset match_number every two matches
@@ -122,6 +125,10 @@ class Tournament(models.Model):
                 fail_silently=False,
             )
     
+    def cancel(self):
+        self.status = 'C'
+        self.save()
+    
     def __str__(self):
         return f'Tournament {self.pk}'
 
@@ -141,14 +148,6 @@ class TournamentMatch(models.Model):
     winner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     status = models.CharField(max_length=2, choices=STATUS_CHOICES, default='NS')
     start_time = models.DateTimeField(auto_now_add=False, null=True)
-    
-    # on create, if the match is in the first round and doesn't have two players, set it as finished with the winner as player1, and move him to the next round
-    def save(self, *args, **kwargs):
-        if self.pk is None and self.round == 1 and self.player1 and not self.player2:
-            self.status = 'F'
-            self.winner = self.player1
-            self.assign_winner_to_next_round(self.player1)
-        super().save(*args, **kwargs)
     
     def set_winner(self, winner):
         if winner not in [self.player1, self.player2]:
