@@ -7,6 +7,8 @@ import Toast from "../comps/toast.js";
 export default class VerifyTwoFactorAuth extends HTMLElement {
 	constructor() {
 		super();
+        this.classList.add('full-page');
+
 	}
 
 	connectedCallback() {

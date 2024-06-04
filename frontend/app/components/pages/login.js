@@ -10,6 +10,7 @@ import Toast from "../comps/toast.js";
 export default class Login extends HTMLElement {
 	constructor() {
 		super();
+        this.classList.add('full-page');
 		document.title = "Login | Blitzpong.";
 	}
 

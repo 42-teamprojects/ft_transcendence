@@ -103,8 +103,6 @@ class MatchView(viewsets.ModelViewSet):
             return Response({'detail': 'You are not part of this match'}, status=status.HTTP_400_BAD_REQUEST)
         if match.status != MatchStatus.FINISHED:
             return Response({'detail': 'match is not finished'}, status=status.HTTP_400_BAD_REQUEST)
-        
-        #the same data of the winner save it by the score function
         if match.score1 >= settings.SCORE_WINNER:
                 match.status = MatchStatus.FINISHED
                 match.winner = match.player1
