@@ -45,9 +45,9 @@ export default class Paddle {
 
     directionChange = (direction) => {
         if (direction === "up") {
-            this.speed = -7;
+            this.speed = -1;
         } else if (direction === "down") {
-            this.speed = 7;
+            this.speed = 1  ;
         }
     }
 

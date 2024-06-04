@@ -25,15 +25,25 @@ class MatchState extends State {
 			// On message callback
 			async (event) => {
 				const matchData = JSON.parse(event.data);
-				console.log(matchData);
-				if (matchData.data === "start") {
-					
+				console.log("data i got from socket : ", matchData);
+				if (matchData.type === "game_started") {
+					console.log("game started");
 					this.is_ready = true;
 				}
-				if (matchData.data === "player_left") {
+				if (matchData.type === "player_left") {
 					console.log("player left the match");
-					matchData.playerLeft = true;
+					this.playerLeft = true;
 				}
+
+				if (matchData.type === "game_update") {
+					console.log("paddle moving");
+				
+					// this.game = matchData.data;
+				}
+				// if (matchData.data === "game_upd") {
+				// 	console.log("game over");
+				// 	matchData.gameOver = true;
+				// }
 				this.setState({ game: matchData });
 			},
 			{
@@ -73,7 +83,7 @@ class MatchState extends State {
 			}
 		);
 	}
-	
+
 	closeMatchConnection(matchId) {
 		this.matchSocket.closeConnection(matchId);
 	}

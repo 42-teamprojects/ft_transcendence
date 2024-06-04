@@ -3,7 +3,7 @@ import Ball from "../../entities/Ball.js";
 import Paddle from "../../entities/Paddle.js";
 import { matchState } from "../../state/matchState.js";
 
-// const mouse = {x: 0, y: 0};
+const mouse = {x: 0, y: 0};
 
 const player1PressedKeys = {
 	KeyW: false,
@@ -27,7 +27,6 @@ export default class OnlinePongTable extends HTMLElement {
 		this.match_id = this.getAttribute("match_id");
 		this.handleKeyDownF = this.handleKeyDown.bind(this);
 		this.handleKeyUpF = this.handleKeyUp.bind(this);
-
 		this.match = {"player1": "hassan", "player2": "mouad", "score1": 0, "score2": 0};
 		// this.theme = this.match.theme;
 
@@ -73,32 +72,75 @@ export default class OnlinePongTable extends HTMLElement {
 
 	connectedCallback() {
 		this.render();
-		this.gameplay();
-		document.addEventListener("keydown", this.handleKeyDownF);
-		document.addEventListener("keyup", this.handleKeyUpF);
-	}
+		this.unsubscribe = matchState.subscribe(() => {
+			this.matchData = matchState.state.game;
+			console.log("matchData : ", this.matchData);
+			if (this.matchData.type === "game_update") {
+				console.log("paddle moving");
+				this.paddle1.y = this.matchData.paddle1_y;
+				this.paddle2.y = this.matchData.paddle2_y;
+				this.ball.x = this.matchData.ball_x;
+				this.ball.y = this.matchData.ball_y;
+			}
+			if (this.match.playerLeft) {
+				console.log("player left the match");
+				return ;
+			}
+			// this.render();
+			this.gameplay();
+			document.addEventListener("keydown", this.handleKeyDownF);
+			document.addEventListener("keyup", this.handleKeyUpF);
+		});
 
+		// document.addEventListener("click", () => {
+		// 	matchState.sendGameUpdate(this.match_id, {
+		// 		type: "game_update",
+		// 		paddle1_y: this.paddle1.y,
+		// 		paddle2_y: this.paddle2.y,
+		// 		ball_x: this.ball.x,
+		// 		ball_y: this.ball.y,
+		// 	});
+		// });
+		this.render();
+	}
+	
 	handleKeyDown = (event) => {
+		let data = {
+			"type": "game_update",
+			"paddle1_y": this.paddle1.y,
+			"paddle2_y": this.paddle2.y,
+			"ball_x": this.ball.x,
+			"ball_y": this.ball.y,
+		}
+		matchState.sendGameUpdate(this.match_id, data);
 		if (event.code === "KeyW" || event.code === "KeyS") {
 			player1PressedKeys[event.code] = true;
 			this.paddle1.directionChange(
 				event.code === "KeyW" ? "up" : event.code === "KeyS" ? "down" : ""
-			);
-		}
-
-		if (event.code === "ArrowUp" || event.code === "ArrowDown") {
-			player2PressedKeys[event.code] = true;
-			this.paddle2.directionChange(
-				event.code === "ArrowUp"
+				);
+			}
+			
+			if (event.code === "ArrowUp" || event.code === "ArrowDown") {
+				player2PressedKeys[event.code] = true;
+				this.paddle2.directionChange(
+					event.code === "ArrowUp"
 					? "up"
 					: event.code === "ArrowDown"
-						? "down"
-						: ""
-			);
-		}
+					? "down"
+					: ""
+					);
+				}
 	};
-
 	handleKeyUp = (event) => {
+		let data = {
+			"type": "game_update",
+			"paddle1_y": this.paddle1.y,
+			"paddle2_y": this.paddle2.y,
+			"ball_x": this.ball.x,
+			"ball_y": this.ball.y,
+		}
+		matchState.sendGameUpdate(this.match_id, data);
+
 		if (event.code === "KeyW" || event.code === "KeyS") {
 			player1PressedKeys[event.code] = false;
 		}
@@ -114,12 +156,22 @@ export default class OnlinePongTable extends HTMLElement {
 	};
 
 	movePlayers = (ev) => {
+
 		this.paddle1.directionChange(
 			ev.code === "KeyW" ? "up" : ev.code === "KeyS" ? "down" : ""
 		);
 		this.paddle2.directionChange(
 			ev.code === "ArrowUp" ? "up" : ev.code === "ArrowDown" ? "down" : ""
 		);
+		let data = {
+			"type": "game_update",
+			"paddle1_y": this.paddle1.y,
+			"paddle2_y": this.paddle2.y,
+			"ball_x": this.ball.x,
+			"ball_y": this.ball.y,
+		}
+		matchState.sendGameUpdate(this.match_id, data);
+
 	};
 
 	stopPlayers = (ev) => {
@@ -129,9 +181,18 @@ export default class OnlinePongTable extends HTMLElement {
 		if (ev.code === "ArrowUp" || ev.code === "ArrowDown") {
 			this.paddle2.stop(ev);
 		}
+		let data = {
+			"type": "game_update",
+			"paddle1_y": this.paddle1.y,
+			"paddle2_y": this.paddle2.y,
+			"ball_x": this.ball.x,
+			"ball_y": this.ball.y,
+		}
+		matchState.sendGameUpdate(this.match_id, data);
 	};
 
 	disconnectedCallback() {
+		this.unsubscribe();
 		document.removeEventListener("keydown", this.handleKeyDownF);
 		document.removeEventListener("keyup", this.handleKeyUpF);
 	}
@@ -159,9 +220,7 @@ export default class OnlinePongTable extends HTMLElement {
         //     <canvas id="table" class="pong-table pong-table-${this.theme}"></canvas>
         // </div>
 
-	gameplay() {
-
-
+	gameplay() {	
 		this.table = this.querySelector("#table");
 		this.table.height = this.tableHeight;
 		this.table.width = this.tableWidth;
@@ -174,9 +233,11 @@ export default class OnlinePongTable extends HTMLElement {
 	}
 
 	update = () => {
-
+		// console.log("paddle_1: ", {x: this.paddle1.x, y: this.paddle1.y});
+		// console.log("paddle_2: ", {x: this.paddle2.x, y: this.paddle2.y});
 		// console.log(mouse);
 		//draw paddles
+
 		this.frameCount++;
 		// update paddle position
 		if (this.scene && matchState.is_ready) {
@@ -188,15 +249,7 @@ export default class OnlinePongTable extends HTMLElement {
 		this.ball.bounceOnPaddles(this.paddle1);
 		this.ball.bounceOnPaddles(this.paddle2);
 		this.ball.bounceOnWalls(this.tableHeight);
-		
-		let gameData = {
-			"type": "game_update",
-			x : this.paddle1.x,
-			y: this.paddle1.y,
-		}
-		matchState.sendGameUpdate(this.match_id, {
-			data: gameData,
-		});
+
 		if (this.scored()) {
 			this.scene = true;
 		}
@@ -217,10 +270,12 @@ export default class OnlinePongTable extends HTMLElement {
 
 	draw = () => {
 		this.context.clearRect(0, 0, this.table.width, this.table.height);
+		
 		this.drawMiddle();
 		this.paddle1.draw(this.context);
 		this.paddle2.draw(this.context);
 		this.ball.draw(this.context);
+
 	};
 
 	drawForGame = () => {
@@ -228,7 +283,6 @@ export default class OnlinePongTable extends HTMLElement {
 		this.paddle2.update(this.tableHeight);
 		// this.ball.update();
 		this.draw();
-		console.log(this.counter);
 	};
 
 	drawScene = () => {

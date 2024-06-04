@@ -32,8 +32,12 @@ export default class Scoreboard extends HTMLElement {
     render() {
         this.innerHTML = /*html*/`
         <div class="scoreboard">
-            <div class="leftBox"></div>
-            <div class="rightBox"></div>
+            <div class="leftBox">
+                <img src="../public/assets/icons/default.png" alt="Pong Logo" class="w-10 h-10" >
+            </div>
+            <div class="rightBox">
+                <img src="../public/assets/icons/default.png" alt="Pong Logo" class="w-10 h-10" >
+            </div>
             <div class="middleBox"></div>
             <div class="text text1">${this.player1}</div>
             <div class="text text2">${this.player2}</div>

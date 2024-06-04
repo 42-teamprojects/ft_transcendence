@@ -153,3 +153,22 @@ input[name="paddle-option"]:checked~.paddlecard {
     }
 
 }
+
+.scoreboard .leftBox
+{
+    & img{
+        position: absolute;
+        top: 4px;
+        left: 5px;
+        border-radius: 10px;
+    }
+}
+.scoreboard .rightBox
+{
+    & img{
+        position: absolute;
+        top: 4px;
+        right: 5px;
+        border-radius: 10px;
+    }
+}
