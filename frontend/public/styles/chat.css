@@ -281,3 +281,11 @@ c-message-bubble {
     right: -4px;
     top: -4px;
 }
+
+/* styling for the seen message */
+.seen{
+    color: var(--stroke-color);
+    position: absolute;
+    right:40px;
+    bottom: 80px;
+}

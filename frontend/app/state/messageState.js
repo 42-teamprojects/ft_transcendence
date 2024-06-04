@@ -131,6 +131,30 @@ class MessageState extends State {
 		}
 	}
 
+	// mark message as read all messages to seen
+	async markMessageAsRead(chatId) {
+		if (!this.state.messages[chatId]) return;
+		this.state.messages[chatId].forEach((message) => {
+			if (!message.is_seen && message.sender !== userState.state.user.id) {
+				message.is_seen = true;
+			}
+		});
+		try {
+			await this.httpClient.post(`chats/${chatId}/messages/mark_read/`);
+		} catch (error) {
+			console.error(error);
+		}
+	}
+	//check if the last message that not mine is read
+	isLastMessageSeen(chatId) {
+		const messages = this.state.messages[chatId];
+		if (!messages) return;
+		const lastMessage = messages[0];
+		if (lastMessage.sender === userState.state.user.id) return true;
+		if (lastMessage.sender !== userState.state.user.id && !lastMessage.is_seen) return false;
+		return true;
+	}
+
 	// {content: string, sender: id}
 	appendMessage(chatId, messageObject) {
 		const messages = { ...this.state.messages };
