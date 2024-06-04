@@ -9,7 +9,9 @@ import math
 import random
 from django.utils import timezone
 
+from backend import settings
 import tournaments
+from django.core.mail import send_mail
 
 class Tournament(models.Model):
     TYPE_CHOICES = [
@@ -29,6 +31,7 @@ class Tournament(models.Model):
     status = models.CharField(max_length=2, choices=STATUS_CHOICES, default='NS')
     participants = models.ManyToManyField(User, related_name='tournaments')
     total_rounds = models.IntegerField(null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     
     def save(self, *args, **kwargs):
         if self.pk is None:  # The tournament is being created
@@ -102,18 +105,20 @@ class Tournament(models.Model):
     # print tournament qualification brackets tree
     def print_tree(self):
         print(f'Tournament {self.pk} - {self.type} players')
-        for match in self.matches.all():
+        # get all matches order by round and group
+        matches = self.matches.all().order_by('round', 'group', 'match_number')
+        for match in matches:
             print(match)
 
     def notify_participants(self):
         for participant in self.participants.all():
-            email = EmailMessage(
+            send_mail(
                 'Tournament Started',
                 'The tournament you signed up for has started.',
-                to=[participant.email]
+                settings.EMAIL_HOST_USER
+                [participant.email],
+                fail_silently=False,
             )
-            email.send()
-            # Notification with channels/sockets
     
     def __str__(self):
         return f'Tournament {self.pk}'
@@ -148,33 +153,27 @@ class TournamentMatch(models.Model):
             raise ValidationError('The provided user is not a player in this match.')
         self.winner = winner
         self.status = 'F'
-        self.assign_winner_to_next_round(winner)
+        if self.round < self.tournament.total_rounds:
+            self.assign_winner_to_next_round(winner)
+        elif self.round == self.tournament.total_rounds:
+            self.tournament.winner = winner
+            self.tournament.status = 'F'
+            self.tournament.save()
         self.save()
 
     def assign_winner_to_next_round(self, winner):
-        # Calculate the group and match for the next round
-        next_round_group = self.group
-        next_round_match_number = self.match_number
+        # Get all the matches in the next round
+        next_round_group = math.ceil(self.group / 2)
+        next_round_match = 0 if self.group % 2 == 1 else 1
+        next_round_match = TournamentMatch.objects.select_for_update().filter(
+            tournament=self.tournament, round=self.round + 1, group=next_round_group, match_number=next_round_match).first()
 
-        # Get the match in the next round for the calculated group and match
-        next_round_matches = TournamentMatch.objects.select_for_update().filter(
-            tournament=self.tournament, round=self.round + 1).all()
-        print(next_round_matches)
-
-        next_round_match = None
-        # print(f"from match {next_round_match_number}-{next_round_group}", next_round_match)
         if next_round_match:
-            # Assign the winner to player1 or player2, depending on the current match number
             if self.match_number == 0:
                 next_round_match.player1 = winner
             elif self.match_number == 1:
                 next_round_match.player2 = winner
             next_round_match.save()
-
-            # If the match is now full, start it after 1 minute
-            if next_round_match.player1 is not None and next_round_match.player2 is not None:
-                next_round_match.start_time = timezone.now() + timedelta(minutes=1)
-                next_round_match.save()
-    
+                
     def __str__(self):
-        return f'Round {self.round} - {"1st match of" if self.match_number == 0 else "2nd match of"} Group {self.group}: {self.player1} vs {self.player2}, Winner: {self.winner}'
+        return f'R{self.round}-{"1" if self.match_number == 0 else "2"}G{self.group}: {self.player1} vs {self.player2}, W: {self.winner}'
