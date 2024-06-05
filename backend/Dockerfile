@@ -11,4 +11,4 @@ ENV DJANGO_SETTINGS_MODULE=backend.settings
 
 ENTRYPOINT ["./backend-entrypoint.sh"]
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["python", "manage.py", "runsslserver", "0.0.0.0:8443"]

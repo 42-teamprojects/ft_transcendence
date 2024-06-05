@@ -239,7 +239,7 @@ SIMPLE_JWT = {
     # A string like "example.com", or None for standard domain cookie.
     'AUTH_COOKIE_DOMAIN': None,
     # Whether the auth cookies should be secure (https:// only).
-    'AUTH_COOKIE_SECURE': False, 
+    'AUTH_COOKIE_SECURE': True, 
     # Http only cookie flag.It's not fetch by javascript.
     'AUTH_COOKIE_HTTP_ONLY': True,
     'AUTH_COOKIE_PATH': '/',        # The path of the auth cookie.
@@ -255,6 +255,8 @@ SIMPLE_JWT = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:8080",
+    "https://localhost",
+    "https://127.0.0.1",
 ]
 CORS_ALLOW_HEADERS = (
     "accept",
@@ -358,8 +360,8 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
 
-# Define STATIC_ROOT
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# # Define STATIC_ROOT
+# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Optionally, you can also define STATIC_URL if it's not already set
-STATIC_URL = '/static/'
+# # Optionally, you can also define STATIC_URL if it's not already set
+# STATIC_URL = '/static/'
