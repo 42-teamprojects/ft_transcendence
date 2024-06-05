@@ -116,6 +116,13 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
 
 
 class GameConsumer(AsyncWebsocketConsumer):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.paddle_1_y = 110
+        self.paddle_2_y = 110
+        self.ball_x = 0
+        self.ball_y = 0
+
     connected_users = []
     game_session = GameState()
     async def connect(self):
@@ -138,15 +145,17 @@ class GameConsumer(AsyncWebsocketConsumer):
         if len(GameConsumer.connected_users) >= 2:
             print(f"connected 2 users : {GameConsumer.connected_users}", flush=True)
         
+
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
                     "type": "game_message",
-                    "data": {"type": "game_started"},
+                    "data": {"type": "game_started", "paddle_1_y": self.paddle_1_y},
                 }
             )
         await self.accept()
     
+
 #message type : start_game, player_left, game_update
     async def disconnect(self, close_code):
         if len(GameConsumer.connected_users) == 0:
@@ -174,17 +183,29 @@ class GameConsumer(AsyncWebsocketConsumer):
         text_data_json = json.loads(text_data)
         # print(text_data_json, flush=True)
         data = text_data_json
-        GameState.state = data
+        
+        # GameState.state = data
 
         print(data, flush=True)
 
         # print(data["type"], flush=True) 
-        if (data["type"] == "game_update"):   
+        if (data["type"] == "game_update"):
+            if data["action"] == "move-up":
+                self.paddle_1_y -= 10
+            if data["action"] == "move-down":
+                self.paddle_1_y += 10
+            
+            state = {
+                "type": "game_update",
+                "paddle_1_y": self.paddle_1_y,
+                "ball_x": self.ball_x,
+                "ball_y": self.ball_y
+            }
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
                     "type": "game_message",
-                    "data": GameConsumer.game_session.state
+                    "data": state,
                 }
             )
 

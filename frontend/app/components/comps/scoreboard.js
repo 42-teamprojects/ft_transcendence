@@ -11,8 +11,9 @@ export default class Scoreboard extends HTMLElement {
         //get paranms
         const params = new URLSearchParams(window.location.search);
         this.opponentId = params.get("user_id");
-        console.log("opponent id = ", this.opponentId);
-        this.opponent = {username: "Searching...", avatar: "/storage/avatars/default.png"};
+        // console.log("opponent id = ", this.opponentId);
+        this.opponent = {username: "", avatar: ""};
+
         this.user = userState.state.user;
     }
 
@@ -33,15 +34,18 @@ export default class Scoreboard extends HTMLElement {
 	}
 
     async connectedCallback() {
-        this.user = userState.state.user;
-        this.opponent = await userState.fetchUserById(this.opponentId);
-        console.log("opponent", this.opponent);
+        // if (this.opponent.username !== "Searching...")
+        
+            this.opponent = await userState.fetchUserById(this.opponentId);
+
+        // console.log("opponent", this.opponent);
         this.render();
     }
 
     disconnectedCallback() {}
 
-    render() {
+    async render() {
+        this.user = userState.state.user;
         this.innerHTML = /*html*/`
         <div class="scoreboard">
             <div class="leftBox">

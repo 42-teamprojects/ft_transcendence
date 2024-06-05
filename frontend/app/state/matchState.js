@@ -29,6 +29,7 @@ class MatchState extends State {
 				if (matchData.type === "game_started") {
 					console.log("game started");
 					this.is_ready = true;
+					// matchData.player_1_paddle = matchData.data.player_1_paddle;
 				}
 				if (matchData.type === "player_left") {
 					console.log("player left the match");
@@ -38,7 +39,7 @@ class MatchState extends State {
 				if (matchData.type === "game_update") {
 					console.log("paddle moving");
 				
-					// this.game = matchData.data;
+					// this.game = matchData.data;	
 				}
 				// if (matchData.data === "game_upd") {
 				// 	console.log("game over");
