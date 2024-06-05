@@ -253,11 +253,14 @@ SIMPLE_JWT = {
     'TWO_FACTOR_AUTH_COOKIE': 'two-factor-auth',
 }
 
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+
 # CORS
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:8080",
-    "https://localhost",
+    "https://localhost:8443",
     "https://127.0.0.1",
 ]
 CORS_ALLOW_HEADERS = (
@@ -269,7 +272,6 @@ CORS_ALLOW_HEADERS = (
     "x-requested-with",
 )
 
-CORS_ALLOW_CREDENTIALS = True
 
 # CSRF
 CSRF_COOKIE_SECURE = True
