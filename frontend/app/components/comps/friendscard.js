@@ -17,6 +17,7 @@ export default class Friendscard extends HTMLElement {
 
 	disconnectedCallback() {
         if (this.searchModal) this.searchModal.remove();
+        friendState.reset();
     }
 
 	render() {

@@ -87,69 +87,68 @@ input[name="paddle-option"]:checked~.paddlecard {
     width: 710px;
     height: 49px;
     position: relative;
+}
 
-    & .leftBox,
-    & .rightBox {
-        width: 354px;
-        height: 49px;
-        position: absolute;
-        top: 0px;
-    }
+.scoreboard .leftBox,
+.scoreboard .rightBox {
+    width: 354px;
+    height: 49px;
+    position: absolute;
+    top: 0px;
+}
 
-    & .leftBox {
-        left: 0px;
-        background: var(--secondary-color);
-        border-top-left-radius: 15px;
-        border-bottom-left-radius: 15px;
-    }
-    
-    & .rightBox {
-        left: 356px;
-        background: var(--primary-color);
-        border-bottom-right-radius: 15px;
-        border-top-right-radius: 15px;
-    }
+.scoreboard .leftBox {
+    left: 0px;
+    background: var(--secondary-color);
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+}
 
-    & .middleBox {
-        width: 75px;
-        height: 37px;
-        left: 317px;
-        top: 6px;
-        position: absolute;
-        background: rgba(255, 255, 255, 0.95);
-        border-radius: 20px;
-    }
+.scoreboard .rightBox {
+    left: 356px;
+    background: var(--primary-color);
+    border-bottom-right-radius: 15px;
+    border-top-right-radius: 15px;
+}
 
-    & .text {
-        position: absolute;
-        color: white;
-        font-size: 24px;
-        font-family: inherit;
-        font-weight: 800;
-        line-height: 18px;
-        word-wrap: break-word;
-    }
+.scoreboard .middleBox {
+    width: 75px;
+    height: 37px;
+    left: 317px;
+    top: 6px;
+    position: absolute;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+}
 
-    & .text1 {
-        left: 127px;
-        top: 16px;
-    }
+.scoreboard .text {
+    position: absolute;
+    color: white;
+    font-size: 24px;
+    font-family: inherit;
+    font-weight: 800;
+    line-height: 18px;
+    word-wrap: break-word;
+}
 
-    & .text2 {
-        left: 483px;
-        top: 16px;
-    }
+.scoreboard .text1 {
+    left: 127px;
+    top: 16px;
+}
 
-    & .text3 {
-        left: 329px;
-        top: 16px;
-        color: var(--secondary-color);
-    }
-    
-    & .text4 {
-        left: 363px;
-        top: 16px;
-        color: var(--primary-color);
-    }
+.scoreboard .text2 {
+    left: 483px;
+    top: 16px;
+}
 
+.scoreboard .text3 {
+    left: 329px;
+    top: 16px;
+    color: var(--secondary-color);
+}
+
+.scoreboard .text4 {
+    left: 363px;
+    top: 16px;
+    color: var(--primary-color);
 }
