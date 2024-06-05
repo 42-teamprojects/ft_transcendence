@@ -1,4 +1,5 @@
 import HttpClient from "../http/httpClient.js";
+import { messageState } from "./messageState.js";
 import State from "./state.js";
 import { userState } from "./userState.js";
 
@@ -40,6 +41,9 @@ class ChatState extends State {
 			chats = chats.map((chat) => {
 				chat.friend = this.getFriend(chat);
 				return chat;
+			});
+			chats.forEach(async (chat) => {
+				await messageState.getMessages(chat.id);
 			});
 			this.setState({ chats, loading: false});
 			console.log("Chats", chats)
