@@ -83,8 +83,8 @@ export default class OnlinePongTable extends HTMLElement {
 			if (this.matchData.type === "game_update") {
 				console.log("paddle moving");
 				this.paddle1.y = this.matchData.paddle_1_y;
-				this.ball.x = this.matchData.ball_x;
-				this.ball.y = this.matchData.ball_y;
+				// this.ball.x = this.matchData.ball_x;
+				// this.ball.y = this.matchData.ball_y;
 				// this.paddle2.y = this.matchData.paddle2_y;
 				// this.ball.x = this.matchData.ball_x;
 				// this.ball.y = this.matchData.ball_y;
@@ -105,22 +105,25 @@ export default class OnlinePongTable extends HTMLElement {
 	
 	handleKeyDown = (event) => {
 		console.log("key pressed", event.code);
+		if ((this.paddle1.y <= 0 && data.action === "move-up") || (this.paddle1.y + this.paddle1.height >= this.tableHeight && data.action === "move-down")) {
+			return ;
+		}
 		let data = {
 			"type": "game_update",
 			"player": "player1",
+			// "ball_x": this.ball.x,
+			// "ball_y": this.ball.y,
 		}
 		if (event.code == "KeyW") {
 			console.log("sending data that the paddle is moving up");
 			data.action = "move-up";
+			matchState.sendGameUpdate(this.match_id, data);
 		}
 		else if (event.code == "KeyS") {
 			console.log("sending data that the paddle is moving down");
 			data.action = "move-down";
+			matchState.sendGameUpdate(this.match_id, data);
 		}
-		if ((this.paddle1.y <= 0 && data.action === "move-up") || (this.paddle1.y + this.paddle1.height >= this.tableHeight && data.action === "move-down")) {
-			return ;
-		}
-		matchState.sendGameUpdate(this.match_id, data);
 
 		// if (event.code === "KeyW" || event.code === "KeyS") {
 		// 	// console.log("sending paddle positions", this.paddle1.y);

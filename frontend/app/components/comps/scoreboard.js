@@ -57,7 +57,7 @@ export default class Scoreboard extends HTMLElement {
             <div class="middleBox"></div>
             <div class="text text1">${this.user.username}</div>
             <div class="text text2">${this.opponent.username}</div>
-            <div class="text text3">${this.score1}</div>
+            <div class="text text3">${this.score1}</div>    
             <div class="text text4">${this.score2}</div>
         </div>
         `;

@@ -190,17 +190,20 @@ class GameConsumer(AsyncWebsocketConsumer):
 
         # print(data["type"], flush=True) 
         if (data["type"] == "game_update"):
-            if data["action"] == "move-up":
-                self.paddle_1_y -= 10
-            if data["action"] == "move-down":
-                self.paddle_1_y += 10
-            
+            if "action" in data:
+                if data["action"] == "move-up":
+                    self.paddle_1_y -= 10
+                if data["action"] == "move-down":
+                    self.paddle_1_y += 10
+            # self.ball_x = data["ball_x"]
+            # self.ball_y = data["ball_y"]
             state = {
                 "type": "game_update",
                 "paddle_1_y": self.paddle_1_y,
-                "ball_x": self.ball_x,
-                "ball_y": self.ball_y
+                # "ball_x": self.ball_x,
+                # "ball_y": self.ball_y
             }
+
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
