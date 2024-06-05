@@ -300,7 +300,8 @@ export default class OnlinePongTable extends HTMLElement {
 	drawForGame = () => {
 		this.paddle1.update(this.tableHeight);
 		this.paddle2.update(this.tableHeight);
-		this.ball.update();
+		
+		// this.ball.update();
 		this.draw();
 	};
 

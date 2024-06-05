@@ -50,19 +50,18 @@ export default class Matchmaking extends HTMLElement {
  
         this.unsubscribe = matchState.subscribe(async () => {
             this.matchData = matchState.state.match;
+            console.log("match data", this.matchData);
             this.opponent = await  userState.fetchUserById(this.matchData.opponent);
-            console.log("opponent", this.opponent);
-            console.log("test", this.matchData);
             this.render();
             this.text = document.querySelector('.starting');
             let countdown = 3;
-            let intervalId = setInterval(() => {
+            let intervalId = setInterval(() => {    
                 this.text.textContent = `Starting in ${countdown}...`;
                 countdown--;
                     
                     if (countdown < 0) {
                         matchState.closeMatchMakingConnection();
-                        Router.instance.navigate(`/online/1v1/game?id=${this.matchData.data.match_id}&user_id=${this.opponent.id}`);
+                        Router.instance.navigate(`/online/1v1/game?id=${this.matchData.data.match_id}&palyer_1=${this.matchData.data.player1}&player_2=${this.matchData.data.player2}`);
                         clearInterval(intervalId);
                     }
             }, 1000);
