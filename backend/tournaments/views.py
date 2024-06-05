@@ -25,19 +25,19 @@ class TournamentViewSet(viewsets.ModelViewSet):
         except ValidationError as e:
             raise serializers.ValidationError({'detail': e.message})
     
-    @action(detail=True, methods=['post'])
-    def start(self, request, pk=None):
-        try:
-            tournament = self.get_object()
-            if request.user != tournament.organizer:
-                return Response({'detail': 'You are not the organizer of this tournament.'}, status=status.HTTP_403_FORBIDDEN)
-        except serializers.ValidationError as e:
-            return Response(e, status=status.HTTP_404_NOT_FOUND)
-        try:
-            tournament.start()
-        except ValidationError as e:
-            raise serializers.ValidationError({'detail': e.message})
-        return Response({'detail': 'Tournament started successfully.'}, status=status.HTTP_200_OK)
+    # @action(detail=True, methods=['post'])
+    # def start(self, request, pk=None):
+    #     try:
+    #         tournament = self.get_object()
+    #         if request.user != tournament.organizer:
+    #             return Response({'detail': 'You are not the organizer of this tournament.'}, status=status.HTTP_403_FORBIDDEN)
+    #     except serializers.ValidationError as e:
+    #         return Response(e, status=status.HTTP_404_NOT_FOUND)
+    #     try:
+    #         tournament.start()
+    #     except ValidationError as e:
+    #         raise serializers.ValidationError({'detail': e.message})
+    #     return Response({'detail': 'Tournament started successfully.'}, status=status.HTTP_200_OK)
     
     @action(detail=True, methods=['post'])
     def join(self, request, pk=None):

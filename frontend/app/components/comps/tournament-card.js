@@ -1,22 +1,45 @@
+import { config } from "../../config.js";
+import { onlineTournamentState } from "../../state/onlineTournamentState.js";
+import { userState } from "../../state/userState.js";
+
 export default class Tournamentcard extends HTMLElement {
 	constructor() {
 		super();
 		this.type = this.getAttribute("type") || "notStarted";
 		this.players = parseInt(this.getAttribute("players"));
-
+		this.tournamentId = this.getAttribute("tournament-id") || undefined;
+		this.tournament = null;
 		if (![4, 8, 16].includes(this.players)) {
 			throw new Error("Invalid number of players");
 		}
 	}
 
-	connectedCallback() {
+	async connectedCallback() {
+		this.innerHTML = /*html*/ `<div class="tournament-card flex-col-center"><span class="loader"></span></div>`;
+		if (this.tournamentId) {
+			this.tournament = await onlineTournamentState.getTournament(this.tournamentId);
+			if (this.tournament.participants.length === this.players) {
+				this.type = "waitingStart";
+			}
+			console.log(this.tournament)
+		}
 		this.render();
+		this.addEventListeners();
+	}
+
+	addEventListeners() {
+		this.querySelector(".join-btn")?.addEventListener("click", async () => {
+			await onlineTournamentState.joinTournament(this.tournament.id);
+		});
+		this.querySelector(".create-btn")?.addEventListener("click", async () => {
+			await onlineTournamentState.createTournament(this.players);
+		});
 	}
 
 	disconnectedCallback() {}
 
-	// waitingStart: All players joined, waiting for organizer to start
 	// waitingPlayers: Waiting for players to join
+	// waitingStart: All players joined, waiting for organizer to start
 	// start : All players joined, starting soon
 	// inProgress : In progress
 	// notStarted : No organizer yet, be the first!
@@ -45,32 +68,25 @@ export default class Tournamentcard extends HTMLElement {
 	getFooterContent(footer) {
 		let footerContent;
 		switch (footer) {
-			case "waitingStart":
+			case "notStarted":
 				footerContent = /*html*/ `
-                <p class="tournament-card-footer-text">All joined</p>
-            `;
+				<p class="tournament-card-footer-text">Not Started</p>
+				<button is="c-button" class="create-btn btn-secondary">Create</button>`;
 				break;
 			case "waitingPlayers":
 				footerContent = /*html*/ `
-            <p class="tournament-card-footer-text">3 Left to join</p>
-            <button is="c-button" class="tournament-card-join-btn btn-primary">Join</button>
-            `;
+				<p class="tournament-card-footer-text">${+this.players - this.tournament.participants.length} Left to join</p>
+				<button is="c-button" class="join-btn btn-primary">Join</button>`;
 				break;
-			case "start":
+			case "waitingStart":
 				footerContent = /*html*/ `
-                <p class="tournament-card-footer-text">Starting in 5 minutes</p>
+                <p class="tournament-card-footer-text">Will automatically start in 10min be ready</p>
+				${this.tournament.organizer.id === userState.state.user.id ? /*html*/ `<button is="c-button" class="btn-start btn-primary">Start</button>` : ''}
             `;
 				break;
 			case "inProgress":
 				footerContent = /*html*/ `
-                <p class="tournament-card-footer-text">In progress</p>
-            `;
-				break;
-			case "notStarted":
-				footerContent = /*html*/ `
-                <p class="tournament-card-footer-text">Not Started</p>
-                <button is="c-button" class="tournament-card-join-btn btn-secondary">Create</button> 
-            `;
+                <p class="tournament-card-footer-text">In progress</p>`;
 				break;
 			default:
 				footerContent = "";
@@ -83,17 +99,14 @@ export default class Tournamentcard extends HTMLElement {
 	getSubtitleContent(subtitle) {
 		let subtitleContent;
 		switch (subtitle) {
+			case "notStarted":
+				subtitleContent = "No organizer yet, be the first!";
+				break;
 			case "waitingPlayers":
 				subtitleContent = "Waiting for players to join";
 				break;
 			case "waitingStart":
-				subtitleContent = "Waiting for organizer to start";
-				break;
-			case "start":
 				subtitleContent = "All players joined, starting soon";
-				break;
-			case "notStarted":
-				subtitleContent = "No organizer yet, be the first!";
 				break;
 			case "inProgress":
 				subtitleContent = "In progress";
@@ -107,24 +120,30 @@ export default class Tournamentcard extends HTMLElement {
 
 	prepareAvatars() {
 		const avatars = [];
-
-		for (let i = 0; i < this.players && i < 4; i++) {
+		const usernames = [];
+		for (let i = 0; i < this.players; i++) {
+			if (this.type !== "notStarted" && this.tournament?.participants[i] && i >= 4) {
+				usernames.push(this.tournament?.participants[i].username);
+			}
+			if (i >= 4) continue;
 			let avatar = /*html*/ `
-                <div class="player-avatar"></div>
-            `;
-			if (this.type !== "notStarted") {
+				<div class="player-avatar"></div>
+			`;
+			if (this.type !== "notStarted" && this.tournament?.participants[i]) {
+				const user = this.tournament?.participants[i]
 				avatar = /*html*/ `
-                <a is="c-link" href="/user/1" tooltip="User" flow="up">
-                    <img class="player-avatar" src="https://api.dicebear.com/8.x/thumbs/svg?seed=Casper" />
-                </a>
-            `;
+				<a is="c-link" class="relative" href="/dashboard/profile?username=${user.username}" tooltip="${user.username}" flow="up">
+					<img class="player-avatar" src="${config.backend_domain}${user.avatar}" />
+					${i === 0 ? `<i class="fa-solid fa-star text-highlight text-sm absolute" style="bottom: 0; right: 0"></i>` : ""}
+				</a>
+				`;
 			}
 			avatars.push(avatar);
 		}
 
 		if (this.players > 4) {
 			avatars.push(/*html*/ `
-                <div class="player-avatar players-remaining">
+                <div class="player-avatar players-remaining" tooltip="${usernames.join(', ')}" flow="up">
                     <p>${this.players - 4}+</p>
                 </div>
             `);

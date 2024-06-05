@@ -1,11 +1,22 @@
+import { onlineTournamentState } from "../../state/onlineTournamentState.js";
+
 export default class Dashboardtournament extends HTMLElement {
 	constructor() {
 		super();
         document.title = "Tournaments | BlitzPong";
+        this.tournamentState = onlineTournamentState;
 	}
 
-	connectedCallback() {
+	async connectedCallback() {
 		this.render();
+        this.tournamentCards = this.querySelector(".tournament-cards");
+        this.unsubscribe = this.tournamentState.subscribe(() => {
+            const tournaments = this.tournamentState.state.tournaments;
+            if (tournaments.length === 0) return;
+            this.tournamentCards.innerHTML = this.getTournamentsCards();
+            
+        });
+        await onlineTournamentState.getNotStartedTournament();
 	}
 
 	disconnectedCallback() {}
@@ -20,9 +31,7 @@ export default class Dashboardtournament extends HTMLElement {
                         <h4 class="font-normal text-stroke line-3">Join the latest BlitzPong tournaments and compete for the top spot on the leaderboard.</h4>
                     </div>
                     <div class="tournament-cards">
-                        <c-tournament-card players="4"></c-tournament-card>
-                        <c-tournament-card players="8" type="waitingPlayers"></c-tournament-card>
-                        <c-tournament-card players="16"></c-tournament-card>
+                        ${this.getTournamentsCards()}
                     </div>
                 </section>
                 <section class="leaderboard">
@@ -43,6 +52,17 @@ export default class Dashboardtournament extends HTMLElement {
         </div>
         `;
 	}
+
+    getTournamentsCards() {
+        return ['4', '8', '16'].map(players => {
+            const tournament = this.tournamentState.isTournamentTypeExists(players);
+            return /*html*/`
+            ${tournament 
+            ?  /*html*/`<c-tournament-card tournament-id="${tournament.id}" players="${players}" type="waitingPlayers"></c-tournament-card>`
+            : /*html*/`<c-tournament-card players="${players}"></c-tournament-card>`
+            }`
+        }).join('');
+    }
 }
 
 customElements.define("p-dashboardtournament", Dashboardtournament);

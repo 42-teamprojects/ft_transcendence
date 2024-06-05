@@ -41,6 +41,8 @@ class Tournament(models.Model):
                 raise ValidationError('You are already organizing an active tournament.')
             if self.type not in [choice[0] for choice in self.TYPE_CHOICES]:
                 raise ValidationError('Invalid tournament type.')
+            if self.organizer.tournaments.filter(status='NS').exists():
+                raise ValidationError('You are already a participant in another tournament.')
             super().save(*args, **kwargs)
             self.participants.add(self.organizer)
         else:
@@ -85,8 +87,6 @@ class Tournament(models.Model):
                 player2 = participants.pop() if round == 1 and participants else None
                 if player1 and player2:
                     match = TournamentMatch(tournament=self, round=round, group=group, match_number=match_number, player1=player1, player2=player2)
-                    if round == 1:
-                        match.start_time = timezone.now() + timedelta(minutes=3)
                     matches.append(match)
                 else:
                     matches.append(TournamentMatch(tournament=self, round=round, group=group, match_number=match_number, player1=None, player2=None))
@@ -104,6 +104,8 @@ class Tournament(models.Model):
             raise ValidationError('The tournament is already full.')
         if user in self.participants.all():
             raise ValidationError('You are already a participant in this tournament.')
+        if user.tournaments.filter(status='NS').exists():
+            raise ValidationError('You are already a participant in another tournament.')
         self.participants.add(user)
         self.save()
     

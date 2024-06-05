@@ -52,7 +52,6 @@ export default class HttpClient {
 				}
 
 				let error = data;
-				console.log(response.status)
 				// Handle 2fa required
 				if (response.status === 423) {
 					error = {
