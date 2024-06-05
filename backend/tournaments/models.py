@@ -8,7 +8,7 @@ from django.forms import ValidationError
 import math
 import random
 from django.utils import timezone
-
+# from .signals import tournament_full
 from backend import settings
 import tournaments
 from django.core.mail import send_mail
@@ -32,6 +32,7 @@ class Tournament(models.Model):
     participants = models.ManyToManyField(User, related_name='tournaments')
     total_rounds = models.IntegerField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    start_time = models.DateTimeField(auto_now_add=False, null=True)
     
     def save(self, *args, **kwargs):
         if self.pk is None:  # The tournament is being created
@@ -57,6 +58,8 @@ class Tournament(models.Model):
         participants = self.randomize_participants()
         matches = self.generate_matches(participants)
         TournamentMatch.objects.bulk_create(matches)
+        self.start_time = timezone.now() + timedelta(minutes=10)
+        self.save()
         # self.notify_participants()
 
     def validate_start_conditions(self):
@@ -108,6 +111,9 @@ class Tournament(models.Model):
             raise ValidationError('You are already a participant in another tournament.')
         self.participants.add(user)
         self.save()
+
+        # if self.participants.count() == int(self.type):
+        #     tournament_full.send(sender=self.__class__, tournament=self)
     
     # print tournament qualification brackets tree
     def print_tree(self):

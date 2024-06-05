@@ -14,6 +14,7 @@ class OnlineTournamentState extends State {
 		this.httpClient = HttpClient.instance;
 	}
 	
+
 	async createTournament(type) {
 		try {
 			const tournament = await this.httpClient.post("tournaments/", {
@@ -88,6 +89,17 @@ class OnlineTournamentState extends State {
 		}
 		catch (error) {
 			console.log(error);
+		}
+	}
+
+	async startTournament(id) {
+		try {
+			const result = await this.httpClient.post(`tournaments/${id}/start/`);
+			this.getInProgressTournament();
+		}
+		catch (error) {
+			console.log(error);
+			Toast.notify({ message: error.detail, type: "error" })
 		}
 	}
 

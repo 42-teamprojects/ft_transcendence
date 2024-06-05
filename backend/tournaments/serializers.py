@@ -7,7 +7,7 @@ class TournamentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tournament
         fields = '__all__'
-        read_only_fields = ['status', 'winner', 'participants', 'organizer', 'total_rounds']
+        read_only_fields = ['status', 'winner', 'participants', 'organizer', 'total_rounds', 'start_time']
     
     def to_representation(self, instance):
         representation = super().to_representation(instance)
