@@ -39,8 +39,6 @@ export default class Onlinetournamentmatch extends HTMLElement {
                 </div>
             </div>
             `).join('');
-        
-        this.innerHTML += /*html*/`<span class="match-id">${this.matchId}</span>`
     }
 
     findMatch() {
