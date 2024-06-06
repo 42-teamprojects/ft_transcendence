@@ -18,6 +18,7 @@ export default class Conversationheader extends HTMLElement {
 
         this.unsubscribe = notificationState.subscribe(async () => {
             this.chat = await chatState.getChat(+this.chatId, true)
+            if (!this.chat) return;
             this.friend = chatState.getFriend(this.chat);
             this.querySelector(".conversation-header__status").innerHTML = /*html*/`
                 <div class="conversation-header__status__dot ${UserStatus[this.friend.status].toLowerCase()}"></div>

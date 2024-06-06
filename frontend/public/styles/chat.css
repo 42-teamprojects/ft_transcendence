@@ -270,3 +270,22 @@ c-message-bubble {
     word-break: break-word;
     line-height: 1.6;
 }
+
+.dot{
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    border: 3px solid var(--bg-color);
+    background-color: var(--primary-color);
+    position: absolute;
+    right: -4px;
+    top: -4px;
+}
+
+/* styling for the seen message */
+.seen{
+    color: var(--stroke-color);
+    position: absolute;
+    right:40px;
+    bottom: 80px;
+}
