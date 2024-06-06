@@ -22,7 +22,7 @@ class NotificationState extends State {
     constructor() {
         super({
             notifications: [],
-            newStatus: null,
+            newStatus: false,
             loading: true,
         })
         this.httpClient = HttpClient.instance;
@@ -60,7 +60,7 @@ class NotificationState extends State {
                         break;
                     case "NEW_STATUS":
                         this.setState({ newStatus: true });
-                        friendState.reset();
+                        friendState.fetchedFriends = false;
                         friendState.getFriends();
                         break;
                     default:
@@ -76,6 +76,9 @@ class NotificationState extends State {
             },
         }
         );
+        window.addEventListener("beforeunload", () => {
+            this.closeSocket();
+        });
     }
 
     handleMessageNotification(notification) {
@@ -85,6 +88,9 @@ class NotificationState extends State {
                 message: /*html*/ `<p>You got message from  ${notification.data.sender_name}</p><br/><a is="c-link" class="font-bold spacing-1 uppercase text-secondary mt-2 text-sm" href="/dashboard/chat/${notification.data.chat_id}" class="mt-2">View chat</a>`,
             });
         }
+        if (!messageState.state.messages[notification.data.chat_id]) {
+            messageState.getMessages(notification.data.chat_id);
+        } 
         messageState.updateCardLastMessage(notification.data.chat_id, notification.data.message);
     }
 
@@ -116,8 +122,8 @@ class NotificationState extends State {
     async sendNotification(notification) {
         try {
             this.resetLoading();
-            await this.httpClient.post('notifications/', notification);
-
+            const notif = await this.httpClient.post('notifications/', notification);
+            notification.id = notif.id;
             // Send notification to the socket
             this.notificationSocket.send(this.socketId, notification);
             this.setState({ notifications: [notification, ...this.state.notifications] ,loading: false });
@@ -127,10 +133,21 @@ class NotificationState extends State {
     }
 
     async getNotifications() {
-        if (this.notificationsFetched) {
-            // return unread notifications
-            return this.state.getNotifications
+        if (this.notificationsFetched) return this.state.getNotifications;
+        try {
+            this.resetLoading();
+            const notifications = await this.httpClient.get('notifications/unread/');
+            this.setState({ notifications, loading: false });
+            this.notificationsFetched = true;
+            return this.state.notifications
+        } catch (error) {
+            this.setState({ loading: false });
+            console.error(error);
         }
+    }
+    
+    async getNotificationsAll() {
+        if (this.notificationsFetched) return this.state.getNotifications;
         try {
             this.resetLoading();
             const notifications = await this.httpClient.get('notifications/');
@@ -144,10 +161,9 @@ class NotificationState extends State {
     }
 
     async markAllAsRead() {
-        console.log("marking all as read");
         try {
             this.resetLoading();
-            await this.httpClient.put('notifications/mark_as_read/', { read: true });
+            await this.httpClient.put('notifications/mark_all_as_read/');
             const notifications = this.state.notifications.map((n) => {
                 n.read = true;
                 return n;

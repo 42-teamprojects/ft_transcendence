@@ -1,3 +1,4 @@
+import { messageState } from "../../state/messageState.js";
 import { getTimePassed, isThere, truncate } from "../../utils/utils.js";
 
 export default class Chatcard extends HTMLElement {
@@ -10,6 +11,9 @@ export default class Chatcard extends HTMLElement {
 		this.idAtt = this.getAttribute("chat-id") || "null";
 		this.maxNameSize = 15;
 		this.isActive = false;
+		this.isSeen = false;
+		this.display = true;
+		this.focus = false;
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -32,15 +36,25 @@ export default class Chatcard extends HTMLElement {
 	}
 
 	connectedCallback() {
+		this.windowLink = window.location.href;
+		//check if the link end with the chat id
+		this.focus = this.windowLink.endsWith(this.idAtt);
+		if (this.focus) {
+			messageState.markMessageAsRead(this.idAtt);
+			
+		}
 		this.render();
 	}
-
+	
 	disconnectedCallback() {}
-
+	
 	render() {
+		
+		this.isSeen = this.focus ? true : messageState.isLastMessageSeen(this.idAtt);
 		this.innerHTML = /*html*/ `
         <a is="c-link" href="/dashboard/chat/${this.idAtt}">
-            <div class="message-card ${this.isActive ? "active" : ""}">
+		<div class="message-card ${this.isActive || this.isSeen === false ? "active" : ""}" style="position: relative">
+				${(this.isSeen === false) ? /*html*/`<div class="dot"></div>` : '' }
                 <img class="message-card__img" src="${this.imgAtt}" alt="user">
                 <div class="flex-col gap-2">
                     <div class="font-bold">${this.usernameAtt}</div>

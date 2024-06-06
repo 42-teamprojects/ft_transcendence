@@ -98,3 +98,13 @@ class MessageViewSet(ModelViewSet):
             raise serializers.ValidationError("You have a blocked friendship with the receiver.")
         
         serializer.save(sender=sender, chat_id=chat_id)
+        
+    #mark all messages that not belong to the user as read
+    @action(detail=False, methods=['post'])
+    def mark_read(self, request, chat_id):
+        chat = get_object_or_404(Chat, pk=chat_id)
+        user = self.request.user
+        if user != chat.user1 and user != chat.user2:
+            return Response({'detail': 'You are not a participant in this chat.'}, status=status.HTTP_400_BAD_REQUEST)
+        Message.objects.filter(chat=chat_id).exclude(sender=user).update(is_seen=True)
+        return Response({'detail': 'All messages marked as read.'}, status=status.HTTP_200_OK)

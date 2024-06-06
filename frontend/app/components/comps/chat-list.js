@@ -10,7 +10,6 @@ export default class Chatlist extends HTMLElement {
 	async connectedCallback() {
 		this.render();
         // This should only run once
-        await chatState.getChats();
 	}
 
 	disconnectedCallback() {
