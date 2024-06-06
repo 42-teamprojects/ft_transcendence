@@ -36,13 +36,13 @@ class Tournament(models.Model):
     
     def save(self, *args, **kwargs):
         if self.pk is None:  # The tournament is being created
-            if Tournament.objects.filter(type=self.type, status='NS').exists():
+            if Tournament.objects.filter(type=self.type, status='NS').exists() :
                 raise ValidationError('There\'s already an active tournament of this type.')
             if Tournament.objects.filter(organizer=self.organizer, status='NS').exists():
                 raise ValidationError('You are already organizing an active tournament.')
             if self.type not in [choice[0] for choice in self.TYPE_CHOICES]:
                 raise ValidationError('Invalid tournament type.')
-            if self.organizer.tournaments.filter(status='NS').exists():
+            if self.organizer.tournaments.filter(status='NS').exists() or self.organizer.tournaments.filter(status='IP').exists():
                 raise ValidationError('You are already a participant in another tournament.')
             super().save(*args, **kwargs)
             self.participants.add(self.organizer)

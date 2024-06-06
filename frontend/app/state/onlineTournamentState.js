@@ -73,6 +73,9 @@ class OnlineTournamentState extends State {
 			if (!tournament || force) {
 				tournament = await this.httpClient.get(`tournaments/${id}/`);
 			}
+			this.setState({
+				tournaments : this.state.tournaments.map(t => t.id === id ? tournament : t),
+			});
 			return tournament;
 		}
 		catch (error) {
@@ -96,6 +99,9 @@ class OnlineTournamentState extends State {
 		try {
 			const result = await this.httpClient.post(`tournaments/${id}/start/`);
 			this.getInProgressTournament();
+			this.state = {
+				tournaments: this.state.tournaments.filter(tournament => tournament.id !== id),
+			};
 		}
 		catch (error) {
 			console.log(error);

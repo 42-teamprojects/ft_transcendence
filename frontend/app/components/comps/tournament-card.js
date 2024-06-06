@@ -21,7 +21,6 @@ export default class Tournamentcard extends HTMLElement {
 			if (this.tournament.participants.length === this.players) {
 				this.type = "waitingStart";
 			}
-			console.log(this.tournament)
 		}
 		this.render();
 		this.addEventListeners();
@@ -34,13 +33,15 @@ export default class Tournamentcard extends HTMLElement {
 		this.querySelector(".create-btn")?.addEventListener("click", async () => {
 			await onlineTournamentState.createTournament(this.players);
 		});
+		this.querySelector(".btn-start")?.addEventListener("click", async () => {
+			await onlineTournamentState.startTournament(this.tournament.id);
+		});
 	}
 
 	disconnectedCallback() {}
 
 	// waitingPlayers: Waiting for players to join
 	// waitingStart: All players joined, waiting for organizer to start
-	// start : All players joined, starting soon
 	// inProgress : In progress
 	// notStarted : No organizer yet, be the first!
 
@@ -80,8 +81,8 @@ export default class Tournamentcard extends HTMLElement {
 				break;
 			case "waitingStart":
 				footerContent = /*html*/ `
-                <p class="tournament-card-footer-text">Will automatically start in 10min be ready</p>
-				${this.tournament.organizer.id === userState.state.user.id ? /*html*/ `<button is="c-button" class="btn-start btn-primary">Start</button>` : ''}
+                <p class="tournament-card-footer-text">Starting in 10min</p>
+				${this.tournament.organizer === userState.state.user.id ? /*html*/ `<button is="c-button" class="btn-start btn-primary">Start</button>` : ''}
             `;
 				break;
 			case "inProgress":
@@ -134,7 +135,7 @@ export default class Tournamentcard extends HTMLElement {
 				avatar = /*html*/ `
 				<a is="c-link" class="relative" href="/dashboard/profile?username=${user.username}" tooltip="${user.username}" flow="up">
 					<img class="player-avatar" src="${config.backend_domain}${user.avatar}" />
-					${i === 0 ? `<i class="fa-solid fa-star text-highlight text-sm absolute" style="bottom: 0; right: 0"></i>` : ""}
+					${this.tournament.organizer === user.id ? `<i class="fa-solid fa-star text-highlight text-sm absolute" style="bottom: 0; right: 0"></i>` : ""}
 				</a>
 				`;
 			}
