@@ -27,7 +27,7 @@ class ChatState extends State {
 			this.setState({ chats: [chat, ...this.state.chats], loading: false});
 			return chat;
 		} catch (error) {
-			this.setState({ chats, loading: false});
+			this.setState({ loading: false});
 			console.error(error);
 		}
 	}
