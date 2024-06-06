@@ -17,7 +17,9 @@ export default class Tournamentcard extends HTMLElement {
 	async connectedCallback() {
 		this.innerHTML = /*html*/ `<div class="tournament-card flex-col-center"><span class="loader"></span></div>`;
 		if (this.tournamentId) {
-			this.tournament = await onlineTournamentState.getTournament(this.tournamentId);
+			// this.tournament = await onlineTournamentState.getTournament(this.tournamentId);
+			console.log(onlineTournamentState.state);
+			this.tournament = onlineTournamentState.state.tournaments.find(t => t.id === +this.tournamentId)
 			if (this.tournament.participants.length === this.players) {
 				this.type = "waitingStart";
 			}
