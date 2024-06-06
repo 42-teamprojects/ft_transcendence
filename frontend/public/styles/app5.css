@@ -28,8 +28,6 @@ router-outlet {
 	gap: 0.5rem;
 }
 
-
-
 .sidebar-link {
     display: flex;
     align-items: center;
@@ -53,7 +51,7 @@ router-outlet {
 }
 
 @media screen and (max-width: 1280px) {
-    .sidebar .c-logo .logo {
+    .sidebar c-logo .logo {
         content: url("../assets/icons/bp.svg");
     }
 

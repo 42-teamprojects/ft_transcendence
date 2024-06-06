@@ -1,5 +1,6 @@
 import { config } from "../../config.js";
 import Router from "../../router/router.js";
+import { messageState } from "../../state/messageState.js";
 import { userState } from "../../state/userState.js";
 import { isThere } from "../../utils/utils.js";
 
@@ -45,6 +46,12 @@ export default class SidebarLink extends HTMLElement {
         <a is="c-link" href="/dashboard/${this.link}" class="sidebar-link ${this.isActive && 'active'}">
           ${this.link === "profile"
             ? /*html*/`<img class="profile_icon object-cover skeleton" src="${avatar}" alt="profile image">`
+            : this.link === "chat"
+            ? /*html*/`
+            <div class="relative">
+              <img src="${this.icons[this.link]}" alt="${this.link}"/>
+              ${messageState.isSomeMessageUnseen() ? `<div class="dot"></div>` : ''}
+            </div>`
             : /*html*/`<img src="${this.icons[this.link]}" alt="${this.link}"/>`
           }
           <div class="font-bold uppercase spacing-1">${this.textContent}</div>
@@ -53,4 +60,4 @@ export default class SidebarLink extends HTMLElement {
     }
   }
   
-  
+  // ${(this.isSeen === false) ? /*html*/`<div class="dot"></div>` : '' } 

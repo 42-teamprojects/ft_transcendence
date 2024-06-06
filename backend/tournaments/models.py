@@ -8,7 +8,7 @@ from django.forms import ValidationError
 import math
 import random
 from django.utils import timezone
-
+# from .signals import tournament_full
 from backend import settings
 import tournaments
 from django.core.mail import send_mail
@@ -32,15 +32,18 @@ class Tournament(models.Model):
     participants = models.ManyToManyField(User, related_name='tournaments')
     total_rounds = models.IntegerField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    start_time = models.DateTimeField(auto_now_add=False, null=True)
     
     def save(self, *args, **kwargs):
         if self.pk is None:  # The tournament is being created
-            if Tournament.objects.filter(type=self.type, status='NS').exists():
+            if Tournament.objects.filter(type=self.type, status='NS').exists() :
                 raise ValidationError('There\'s already an active tournament of this type.')
             if Tournament.objects.filter(organizer=self.organizer, status='NS').exists():
                 raise ValidationError('You are already organizing an active tournament.')
             if self.type not in [choice[0] for choice in self.TYPE_CHOICES]:
                 raise ValidationError('Invalid tournament type.')
+            if self.organizer.tournaments.filter(status='NS').exists() or self.organizer.tournaments.filter(status='IP').exists():
+                raise ValidationError('You are already a participant in another tournament.')
             super().save(*args, **kwargs)
             self.participants.add(self.organizer)
         else:
@@ -55,6 +58,8 @@ class Tournament(models.Model):
         participants = self.randomize_participants()
         matches = self.generate_matches(participants)
         TournamentMatch.objects.bulk_create(matches)
+        self.start_time = timezone.now() + timedelta(minutes=10)
+        self.save()
         # self.notify_participants()
 
     def validate_start_conditions(self):
@@ -85,8 +90,6 @@ class Tournament(models.Model):
                 player2 = participants.pop() if round == 1 and participants else None
                 if player1 and player2:
                     match = TournamentMatch(tournament=self, round=round, group=group, match_number=match_number, player1=player1, player2=player2)
-                    if round == 1:
-                        match.start_time = timezone.now() + timedelta(minutes=3)
                     matches.append(match)
                 else:
                     matches.append(TournamentMatch(tournament=self, round=round, group=group, match_number=match_number, player1=None, player2=None))
@@ -104,8 +107,13 @@ class Tournament(models.Model):
             raise ValidationError('The tournament is already full.')
         if user in self.participants.all():
             raise ValidationError('You are already a participant in this tournament.')
+        if user.tournaments.filter(status='NS').exists():
+            raise ValidationError('You are already a participant in another tournament.')
         self.participants.add(user)
         self.save()
+
+        # if self.participants.count() == int(self.type):
+        #     tournament_full.send(sender=self.__class__, tournament=self)
     
     # print tournament qualification brackets tree
     def print_tree(self):
