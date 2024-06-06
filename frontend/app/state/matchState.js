@@ -36,15 +36,6 @@ class MatchState extends State {
 					this.playerLeft = true;
 				}
 
-				if (matchData.type === "game_update") {
-					console.log("paddle moving");
-				
-					// this.game = matchData.data;	
-				}
-				// if (matchData.data === "game_upd") {
-				// 	console.log("game over");
-				// 	matchData.gameOver = true;
-				// }
 				this.setState({ game: matchData });
 			},
 			{
@@ -57,6 +48,7 @@ class MatchState extends State {
 			}
 		);
 	}
+
 	setupMatchMaking(matchId) {
 		if (!matchId) {
 			throw new Error("Match id not provided");

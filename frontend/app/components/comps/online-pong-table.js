@@ -2,6 +2,7 @@ import { config } from "../../config.js";
 import Ball from "../../entities/Ball.js";
 import Paddle from "../../entities/Paddle.js";
 import { matchState } from "../../state/matchState.js";
+import { userState } from "../../state/userState.js";
 
 const mouse = {x: 0, y: 0};
 
@@ -24,7 +25,12 @@ function getRandomInt(min, max) {
 export default class OnlinePongTable extends HTMLElement {
 	constructor() {
 		super();
+		this.isPressed = false;
 		this.match_id = this.getAttribute("match_id");
+		this.player1_id = this.getAttribute("player1");
+		this.player2_id = this.getAttribute("player2");	
+
+		console.log("player in pong table : ", this.player1_id, this.player2_id);
 		// this.handleKeyDownF = this.handleKeyDown.bind(this);
 		// this.handleKeyUpF = this.handleKeyUp.bind(this);
 		this.match = {"player1": "hassan", "player2": "mouad", "score1": 0, "score2": 0};
@@ -32,11 +38,9 @@ export default class OnlinePongTable extends HTMLElement {
 
 		// this.finalScore = config.finalScore;
 		this.finalScore = 100;
-		console.log("matchState from server : ", this.matchState);
 		this.tableWidth = 1235;
 		this.tableHeight = 740;
 		this.context = null;
-		// // paddle
 		this.paddleWidth = 18;
 		// this.paddleHeight = 110;
 		this.paddleMove = 0;
@@ -66,154 +70,142 @@ export default class OnlinePongTable extends HTMLElement {
 		this.scene = true;
 		this.counter = 3;
 		this.frameCount = 0;
-		console.log("are the players ready; ", matchState.is_ready);
-	}
 
+		// console.log("are the players ready; ", matchState.is_ready);
+	}
+	
 	connectedCallback() {
 		this.render();
 		this.unsubscribe = matchState.subscribe(() => {
+			this.user = userState.state.user;
 			this.matchData = matchState.state.game;
-			// console.log("matchData : ", this.matchData);
-			if (this.matchData.type === "game_started") {
-				console.log("data from server : ", this.matchData);
-				// console.log("displaying paddle positions", this.matchData.paddle_1_y);
-				this.paddle1.y = this.matchData.paddle_1_y;
-			}
-
-			if (this.matchData.type === "game_update") {
-				console.log("paddle moving");
-				this.paddle1.y = this.matchData.paddle_1_y;
-				// this.ball.x = this.matchData.ball_x;
-				// this.ball.y = this.matchData.ball_y;
-				// this.paddle2.y = this.matchData.paddle2_y;
-				// this.ball.x = this.matchData.ball_x;
-				// this.ball.y = this.matchData.ball_y;
-			}
+			this.handlePlayerMove(this.matchData.palyer, this.matchData.move, this.matchData.key);
 			if (this.match.playerLeft) {
 				console.log("player left the match");
 				return ;
 			}
-			// this.render();
-			this.gameplay();
-			document.addEventListener("keydown", this.handleKeyDown);
-			// document.addEventListener("keyup", this.handleKeyUp);
 		});
+		this.gameplay();
+		document.addEventListener("keydown", this.handleKeyDown);
+		document.addEventListener("keyup", this.handleKeyUp);
 
 
 		// this.render();
 	}
 	
-	handleKeyDown = (event) => {
-		console.log("key pressed", event.code);
-		if ((this.paddle1.y <= 0 && data.action === "move-up") || (this.paddle1.y + this.paddle1.height >= this.tableHeight && data.action === "move-down")) {
-			return ;
+	handlePlayerMove = (player, move, key) => {
+		console.log("player: ", player, "move: ", move, "key: ", key);
+		if (player === '1') {
+			if (move === "up" && key === "pressed") {
+				this.paddle1.directionChange("up");
+			}
+			else if (move === "down" && key === "pressed") {
+				this.paddle1.directionChange("down");
+			}
+			else if (move === "up" && key === "released") {
+				this.paddle1.stop();
+			}
+			else if (move === "down" && key === "released") {
+				this.paddle1.stop();
+			}
 		}
-		let data = {
-			"type": "game_update",
-			"player": "player1",
-			// "ball_x": this.ball.x,
-			// "ball_y": this.ball.y,
+		else if (player === '2') {
+			if (move === "up" && key === "pressed") {
+				this.paddle2.directionChange("up");
+			}
+			else if (move === "down" && key === "pressed") {
+				this.paddle2.directionChange("down");
+			}
+			else if (move === "up" && key === "released") {
+				this.paddle2.stop();
+			}
+			else if (move === "down" && key === "released") {
+				this.paddle2.stop();
+			}
 		}
-		if (event.code == "KeyW") {
-			console.log("sending data that the paddle is moving up");
-			data.action = "move-up";
-			matchState.sendGameUpdate(this.match_id, data);
-		}
-		else if (event.code == "KeyS") {
-			console.log("sending data that the paddle is moving down");
-			data.action = "move-down";
-			matchState.sendGameUpdate(this.match_id, data);
-		}
-
-		// if (event.code === "KeyW" || event.code === "KeyS") {
-		// 	// console.log("sending paddle positions", this.paddle1.y);
-		// 	let data = {
-		// 		"type": "game_update",
-		// 		"player": "player1",
-		// 		"action": "move-down",
-		// 	}
-		// 	// matchState.sendGameUpdate(this.match_id, data);
-		// 	player1PressedKeys[event.code] = true;
-		// 	if (event)
-		// 	// this.paddle1.directionChange(
-		// 	// 	);
-		// 	}
-			
-		// 	if (event.code === "ArrowUp" || event.code === "ArrowDown") {
-		// 		player2PressedKeys[event.code] = true;
-		// 		this.paddle2.directionChange(
-		// 			event.code === "ArrowUp"
-		// 			? "up"
-		// 			: event.code === "ArrowDown"
-		// 			? "down"
-		// 			: ""
-		// 			);
-		// 		}
 	};
-	// handleKeyUp = (event) => {
-	// 	// let data = {
-	// 	// 	"type": "game_update",
-	// 	// 	"paddle1_y": this.paddle1.y,
-	// 	// 	"paddle2_y": this.paddle2.y,
-	// 	// 	"ball_x": this.ball.x,
-	// 	// 	"ball_y": this.ball.y,
-	// 	// }
-	// 	// matchState.sendGameUpdate(this.match_id, data);
 
-	// 	if (event.code === "KeyW" || event.code === "KeyS") {
-	// 		player1PressedKeys[event.code] = false;
-	// 	}
-	// 	if (event.code === "ArrowUp" || event.code === "ArrowDown") {
-	// 		player2PressedKeys[event.code] = false;
-	// 	}
-	// 	if (Object.values(player1PressedKeys).every((value) => !value)) {
-	// 		this.paddle1.stop(event);
-	// 	}
-	// 	if (Object.values(player2PressedKeys).every((value) => !value)) {
-	// 		this.paddle2.stop(event);
-	// 	}
-	// };
 
-	// movePlayers = (ev) => {
+	handleKeyDown = (event) => {
+		if (event.code === "KeyW" || event.code === "KeyS") {
+			player1PressedKeys[event.code] = true;
+			player2PressedKeys[event.code] = true;
+			if (this.user.id === +this.player1_id)
+			{
+				this.paddle1.directionChange(
+					event.code === "KeyW" ? "up" : event.code === "KeyS" ? "down" : ""
+				);
+				if (event.code === "KeyW" && this.keyIsPressed === false)
+					matchState.sendGameUpdate(this.match_id, {type: "game_update", palyer: '1', move: "up", key: 'pressed'});
+				else if (event.code === "KeyS" && this.keyIsPressed === false)
+					matchState.sendGameUpdate(this.match_id, {type: "game_update", palyer: '1', move: "down", key: 'pressed'});
+				this.keyIsPressed = true;
+			}
+		else
+			{
+				this.paddle2.directionChange(
+					event.code === "KeyW" ? "up" : event.code === "KeyS" ? "down" : ""
+				);
+				if (event.code === "KeyW" && this.keyIsPressed === false)
+					matchState.sendGameUpdate(this.match_id, {type: "game_update", palyer: '2', move: "up", key: 'pressed'});
+				else if (event.code === "KeyS" && this.keyIsPressed === false)
+					matchState.sendGameUpdate(this.match_id, {type: "game_update", palyer: '2', move: "down", key: 'pressed'});
+				this.keyIsPressed = true;
+			}
+		}
+	};
 
-	// 	this.paddle1.directionChange(
-	// 		ev.code === "KeyW" ? "up" : ev.code === "KeyS" ? "down" : ""
-	// 	);
-	// 	this.paddle2.directionChange(
-	// 		ev.code === "ArrowUp" ? "up" : ev.code === "ArrowDown" ? "down" : ""
-	// 	);
-	// 	// let data = {
-	// 	// 	"type": "game_update",
-	// 	// 	"paddle1_y": this.paddle1.y,
-	// 	// 	"paddle2_y": this.paddle2.y,
-	// 	// 	"ball_x": this.ball.x,
-	// 	// 	"ball_y": this.ball.y,
-	// 	// }
-	// 	// matchState.sendGameUpdate(this.match_id, data);
+	handleKeyUp = (event) => {
+		if (event.code === "KeyW" || event.code === "KeyS") {
+			player1PressedKeys[event.code] = false;
+			player2PressedKeys[event.code] = false;
+			if (this.user.id === +this.player1_id)
+			{
+				this.paddle1.stop(event);
+				if (event.code === "KeyW")
+					matchState.sendGameUpdate(this.match_id, {type: "game_update", palyer: '1', move: "up", key: 'released'});
+				else if (event.code === "KeyS")
+					matchState.sendGameUpdate(this.match_id, {type: "game_update", palyer: '1', move: "down", key: 'released'});
+			}
+			else
+			{
+				this.paddle2.stop(event);
+				if (event.code === "KeyW")
+					matchState.sendGameUpdate(this.match_id, {type: "game_update", palyer: '2', move: "up", key: 'released'});
+				else if (event.code === "KeyS")
+					matchState.sendGameUpdate(this.match_id, {type: "game_update", palyer: '2', move: "down", key: 'released'});
+			}
+			this.keyIsPressed = false;
+		}
+	};
 
-	// };
+	movePlayers = (	) => {
 
-	// stopPlayers = (ev) => {
-	// 	if (ev.code === "KeyW" || ev.code === "KeyS") {
-	// 		this.paddle1.stop(ev);
-	// 	}
-	// 	if (ev.code === "ArrowUp" || ev.code === "ArrowDown") {
-	// 		this.paddle2.stop(ev);
-	// 	}
-	// 	// let data = {
-	// 	// 	"type": "game_update",
-	// 	// 	"paddle1_y": this.paddle1.y,
-	// 	// 	"paddle2_y": this.paddle2.y,
-	// 	// 	"ball_x": this.ball.x,
-	// 	// 	"ball_y": this.ball.y,
-	// 	// }
-	// 	// matchState.sendGameUpdate(this.match_id, data);
-	// };
+		if (this.user.id === +this.player1_id) {
+			this.paddle1.directionChange(
+				ev.code === "KeyW" ? "up" : ev.code === "KeyS" ? "down" : ""
+			);
+		}
+		else if (this.user.id === +this.player2_id) {
+			this.paddle2.directionChange(
+				ev.code === "KeyW" ? "up" : ev.code === "KeyS" ? "down" : ""
+			);
+		}
+	};
+
+	stopPlayers = (ev) => {
+		if (ev.code === "KeyW" || ev.code === "KeyS") {
+			if (this.user.id === +this.player1_id)
+				this.paddle1.stop(ev);
+		    else
+				this.paddle2.stop(ev);
+		}
+	};
 
 	disconnectedCallback() {
 		this.unsubscribe();
-		document.removeEventListener("keydown", this.handleKeyDownF);
-		// document.removeEventListener("keyup", this.handleKeyUpF);
+		document.removeEventListener("keydown", this.handleKeyDown);
+		document.removeEventListener("keyup", this.handleKeyUp);
 	}
 
 	render() {
@@ -256,7 +248,6 @@ export default class OnlinePongTable extends HTMLElement {
 		// console.log("paddle_2: ", {x: this.paddle2.x, y: this.paddle2.y});
 		// console.log(mouse);
 		//draw paddles
-
 		this.frameCount++;
 		// update paddle position
 		if (this.scene && matchState.is_ready) {
@@ -298,6 +289,11 @@ export default class OnlinePongTable extends HTMLElement {
 	};
 
 	drawForGame = () => {
+		// if (this.matchData.type === "game_update") {
+		// 	console.log("paddle moving");
+		// 	// if ()
+		// 	this.paddle1.y = this.matchData.paddle_1_y;
+		// }
 		this.paddle1.update(this.tableHeight);
 		this.paddle2.update(this.tableHeight);
 		

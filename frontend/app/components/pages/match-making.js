@@ -61,7 +61,7 @@ export default class Matchmaking extends HTMLElement {
                     
                     if (countdown < 0) {
                         matchState.closeMatchMakingConnection();
-                        Router.instance.navigate(`/online/1v1/game?id=${this.matchData.data.match_id}&palyer_1=${this.matchData.data.player1}&player_2=${this.matchData.data.player2}`);
+                        Router.instance.navigate(`/online/1v1/game?id=${this.matchData.data.match_id}&player_1=${this.matchData.data.player1}&player_2=${this.matchData.data.player2}`);
                         clearInterval(intervalId);
                     }
             }, 1000);

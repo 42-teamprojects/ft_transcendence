@@ -6,6 +6,9 @@ export default class Onlinegameplay extends HTMLElement {
         super();
         this.params = new URLSearchParams(window.location.search);
         this.match_id = this.params.get('id');
+        this.player_1_id = this.params.get("player_1");
+        this.player_2_id = this.params.get("player_2");
+
         matchState.matchSetup(this.match_id);
     }
 
@@ -33,7 +36,7 @@ export default class Onlinegameplay extends HTMLElement {
 
     render() {
         this.innerHTML = /*html*/`
-        <c-online-pong-table match_id="${this.match_id}" id="table"></c-online-pong-table>
+        <c-online-pong-table match_id="${this.match_id}" player1= ${this.player_1_id} player2=${this.player_2_id} id="table"></c-online-pong-table>
         `;
     }
 }
