@@ -10,6 +10,8 @@ from django.conf import settings
 from accounts.models import User
 from rest_framework import status
 from accounts.custom_throttles import CustomAnonRateThrottle
+from django.utils import timezone
+from accounts.models import PasswordResetToken
 
 class ResetPasswordRequestView(APIView):
 
@@ -27,6 +29,7 @@ class ResetPasswordRequestView(APIView):
             return Response({'detail': 'User with this email does not exist'}, status=status.HTTP_400_BAD_REQUEST)
         
         token = default_token_generator.make_token(user)
+        PasswordResetToken.objects.create(user=user, token=token)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         password_reset_url = f"{settings.FRONTEND_DOMAIN}/reset-password?uid={uid}&token={token}"
 
@@ -54,6 +57,17 @@ class ResetPasswordConfirmView(APIView):
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             return Response({'detail': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
         
+        try:
+            token_record = PasswordResetToken.objects.get(user=user, token=token)
+        except PasswordResetToken.DoesNotExist:
+            return Response({'detail': 'Token is invalid'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if token_record.is_used:
+            return Response({'detail': 'Token is already used'}, status=status.HTTP_400_BAD_REQUEST)
+
+        token_record.is_used = True
+        token_record.save()
+
         if not default_token_generator.check_token(user, token):
             return Response({'detail': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
         

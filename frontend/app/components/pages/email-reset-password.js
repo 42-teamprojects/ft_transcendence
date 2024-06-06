@@ -7,6 +7,8 @@ import Router from '../../router/router.js';
 export default class Emailresetpassword extends HTMLElement {
     constructor() {
         super();
+        this.classList.add('full-page');
+
     }
 
     connectedCallback() {

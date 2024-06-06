@@ -30,7 +30,8 @@ urlpatterns = [
     path('api/', include('notifications.urls')),
     path('api/', include('friends.urls')),
     path('api/stats/', include('stats.urls')),
-    path('api/matchmaking/', include('match.urls')),
+    path('api/', include('tournaments.urls')),
+    path('api/match/', include('match.urls')),
 ]
 
 if settings.DEBUG:

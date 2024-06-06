@@ -21,6 +21,11 @@ export default class Notificationdropdown extends HTMLElement {
 	}
 
 	addEventListeners() {
+		// this.dropdownButton.addEventListener("mouseleave", () => {
+		// 	setTimeout(() => {
+        //         this.dropdownContent.classList.remove("show-dropdown");
+        //     }, 800);
+		// });
 		this.dropdownButton.addEventListener("mouseover", async () => {
 			await notificationState.getNotifications();
 			this.instertNotifications();
