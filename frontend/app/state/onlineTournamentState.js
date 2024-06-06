@@ -73,9 +73,9 @@ class OnlineTournamentState extends State {
 			if (!tournament || force) {
 				tournament = await this.httpClient.get(`tournaments/${id}/`);
 			}
-			this.setState({
-				tournaments : this.state.tournaments.map(t => t.id === id ? tournament : t),
-			});
+			// this.setState({
+			// 	tournaments : this.state.tournaments.map(t => t.id === id ? tournament : t),
+			// });
 			return tournament;
 		}
 		catch (error) {
