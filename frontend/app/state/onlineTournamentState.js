@@ -1,6 +1,7 @@
 import HttpClient from "../http/httpClient.js";
 import State from "./state.js";
 import Toast from "../components/comps/toast.js";
+import { userState } from "./userState.js";
 
 class OnlineTournamentState extends State {
 	constructor() {
@@ -11,6 +12,11 @@ class OnlineTournamentState extends State {
 			FinishedTournaments: [],
             rounds: [],
 		});
+		this.isFetched = {
+			"NS" : false,
+			"IP" : false,
+			"F" : false,
+		}
 		this.httpClient = HttpClient.instance;
 	}
 	
@@ -31,7 +37,7 @@ class OnlineTournamentState extends State {
 	
 	}
 
-	async getNotStartedTournament() {
+	async getNotStartedTournaments() {
 		try {
 			const tournaments = await this.httpClient.get("tournaments/");
 			this.setState({
@@ -43,7 +49,7 @@ class OnlineTournamentState extends State {
 		}
 	}
 
-	async getInProgressTournament() {
+	async getInProgressTournaments() {
 		try {
 			const inProgressTournaments = await this.httpClient.get("tournaments/in_progress/");
 			this.setState({
@@ -55,7 +61,7 @@ class OnlineTournamentState extends State {
 		}
 	}
 
-	async getFinishedTournament() {
+	async getFinishedTournaments() {
 		try {
 			const FinishedTournaments = await this.httpClient.get("tournaments/finished/");
 			this.setState({
@@ -73,9 +79,6 @@ class OnlineTournamentState extends State {
 			if (!tournament || force) {
 				tournament = await this.httpClient.get(`tournaments/${id}/`);
 			}
-			// this.setState({
-			// 	tournaments : this.state.tournaments.map(t => t.id === id ? tournament : t),
-			// });
 			return tournament;
 		}
 		catch (error) {
@@ -98,7 +101,7 @@ class OnlineTournamentState extends State {
 	async startTournament(id) {
 		try {
 			const result = await this.httpClient.post(`tournaments/${id}/start/`);
-			this.getInProgressTournament();
+			await this.getInProgressTournaments();
 			this.state = {
 				tournaments: this.state.tournaments.filter(tournament => tournament.id !== id),
 			};
@@ -112,11 +115,21 @@ class OnlineTournamentState extends State {
 	async joinTournament(id) {
 		try {
 			const result = await this.httpClient.post(`tournaments/${id}/join/`);
-			this.getNotStartedTournament();
+			await this.getNotStartedTournaments();
 		}
 		catch (error) {
 			console.log(error);
 			Toast.notify({ message: error.detail, type: "error" })
+		}
+	}
+
+	async getUpcomingTournaments() {
+		try {
+			const tournaments = await this.httpClient.get("tournaments/upcoming_tournaments/");
+			return tournaments;
+		}
+		catch (error) {
+			console.log(error);
 		}
 	}
 
@@ -125,6 +138,10 @@ class OnlineTournamentState extends State {
 		return tournaments.find(tournament => tournament.type === type);
 	}
 	
+	isParticipant(tournament) {
+		return tournament.participants.find(u => u.id === userState.state.user.id);
+	}
+
 	reset() {
 		this.setState({
 			matches: [],

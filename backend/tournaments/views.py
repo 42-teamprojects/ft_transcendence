@@ -54,6 +54,11 @@ class TournamentViewSet(viewsets.ModelViewSet):
     # Get only NS tournaments
     def get_queryset(self):
         return Tournament.objects.filter(status='NS')
+    
+    # Get the user's upcoming tournaments, such as the ones they are one of the participants in, that are NS or IP
+    @action(detail=False)
+    def upcoming_tournaments(self, request):
+        return Response(TournamentSerializer(Tournament.objects.filter(status__in=['NS', 'IP'], participants=request.user), many=True).data, status=status.HTTP_200_OK)
 
     # Get the in-progress tournaments
     @action(detail=False)

@@ -1,5 +1,6 @@
 import Router from "../../router/router.js";
 import { onlineTournamentState } from "../../state/onlineTournamentState.js";
+import { userState } from "../../state/userState.js";
 import { getMatchUrl } from "../../utils/utils.js";
 import Toast from "../comps/toast.js";
 
@@ -7,14 +8,36 @@ export default class OnlineQualifications extends HTMLElement {
 	constructor() {
 		super();
 		document.title = "Qualifications | Blitzpong.";
-		this.tournamentState;
+		this.tournamentState = onlineTournamentState;
 		this.tournamentId = +getMatchUrl(/^\/dashboard\/tournaments\/qualifications\/(\w+)\/?$/)
+		if (!this.tournamentId) {
+			Toast.notify({ message: "Invalid tournament id", type: "error" });
+			Router.instance.navigate("/dashboard/tournaments");
+			throw new Error("Invalid tournament id");
+		}
 	}
 
 	async connectedCallback() {
 		this.tournamentState = onlineTournamentState;
+		this.innerHTML = /*html*/ `<c-loader></c-loader>`;
+		await this.tournamentState.getInProgressTournaments();
+		this.tournament = this.tournamentState.state.inProgressTournaments.find(tournament => tournament.id === this.tournamentId)
+		if (!this.tournament) {
+			Toast.notify({ message: "Tournament not found", type: "error" });
+			Router.instance.navigate("/dashboard/tournaments");
+			return;
+		}
+		if (this.tournament.participants.find(p => p.id === userState.state.user.id) === undefined) {
+			Toast.notify({ message: "You are not a participant in this tournament", type: "error" });
+			Router.instance.navigate("/dashboard/tournaments");
+			return;
+		}
 		await this.tournamentState.getMatches(this.tournamentId);
-		console.log(this.tournamentState.state.matches);
+		if (this.tournamentState.state.matches.length === 0) {
+			Toast.notify({ message: "No matches found", type: "error" });
+			Router.instance.navigate("/dashboard/tournaments");
+			return;
+		}
 		this.render();
 		// this.unsubscribe = tournamentState.subscribe(() => {
 		// 	this.tournamentState = tournamentState.state;

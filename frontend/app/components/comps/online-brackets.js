@@ -9,10 +9,8 @@ export default class Onlinebrackets extends HTMLElement {
     
 	async connectedCallback() {
         this.tournamentState = onlineTournamentState;
-        if (this.tournamentId) {
-            this.tournament = await this.tournamentState.getTournament(this.tournamentId, true);
-            console.log(this.tournament)
-        }
+		this.innerHTML = /*html*/ `<div class="flex-col-center vh-50"><span class="loader"></span></div>`;
+		this.tournament = this.tournamentState.state.inProgressTournaments.find((t) => t.id === this.tournamentId);
 		this.render();
 
 		let matches = this.tournamentState.state.matches;

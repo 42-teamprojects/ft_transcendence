@@ -77,7 +77,7 @@ export default class Tournamentcard extends HTMLElement {
 			case "waitingPlayers":
 				footerContent = /*html*/ `
 				<p class="tournament-card-footer-text">${+this.players - this.tournament.participants.length} Left to join</p>
-				<button is="c-button" class="join-btn btn-primary">Join</button>`;
+				<button is="c-button" class="join-btn btn-primary" ${onlineTournamentState.isParticipant(this.tournament) ? `disabled` : ``}>${onlineTournamentState.isParticipant(this.tournament) ? `Joined` : `Join`}</button>`;
 				break;
 			case "waitingStart":
 				footerContent = /*html*/ `

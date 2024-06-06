@@ -16,7 +16,7 @@ export default class Dashboardtournament extends HTMLElement {
             this.tournamentCards.innerHTML = this.getTournamentsCards();
             
         });
-        await onlineTournamentState.getNotStartedTournament();
+        await onlineTournamentState.getNotStartedTournaments();
 	}
 
 	disconnectedCallback() {}

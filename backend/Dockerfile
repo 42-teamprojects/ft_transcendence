@@ -11,4 +11,5 @@ ENV DJANGO_SETTINGS_MODULE=backend.settings
 
 ENTRYPOINT ["./backend-entrypoint.sh"]
 
-CMD ["python", "manage.py", "runsslserver", "0.0.0.0:8443"]
+# CMD ["python", "manage.py", "runsslserver", "0.0.0.0:8443"]
+CMD ["daphne", "-e", "ssl:8443:privateKey=/app/certs/yelaissa.key:certKey=/app/certs/yelaissa.crt", "backend.asgi:application"]

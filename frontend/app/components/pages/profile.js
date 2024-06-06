@@ -290,6 +290,7 @@ export default class Profile extends HTMLElement {
   }
 
   insertUserStatus() {
+    if (this.isMine) this.user.status = "ON"
     return /*html*/ `
         <div class="user-status w-2 h-2 bg-${
           this.user.status === "OF" ? "default" : "success"
