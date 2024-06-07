@@ -109,7 +109,6 @@ class GameConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
         if len(GameConsumer.connected_users) == 2:
-            print(f"connected 2 users : {GameConsumer.connected_users}", flush=True)
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
@@ -145,11 +144,11 @@ class GameConsumer(AsyncWebsocketConsumer):
         # print(text_data_json, flush=True)
         data = text_data_json
         
-        print(data, flush=True)
+        # print(data, flush=True)
 
         # print(data["type"], flush=True) 
         if (data["type"] == "game_update"):
-            # pass 
+            # the data have a sender id send don't send 2 consecutive messages to the same user
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {

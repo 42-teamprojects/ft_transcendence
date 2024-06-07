@@ -25,7 +25,7 @@ class MatchState extends State {
 			// On message callback
 			async (event) => {
 				const matchData = JSON.parse(event.data);
-				console.log("data i got from socket : ", matchData);
+				// console.log("data i got from socket : ", matchData);
 				if (matchData.type === "game_started") {
 					console.log("game started");
 					this.is_ready = true;

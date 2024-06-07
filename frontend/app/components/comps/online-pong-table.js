@@ -81,21 +81,13 @@ export default class OnlinePongTable extends HTMLElement {
 			if (this.matchData.type === "game_update") {
 				//update the player position if it's not the current user
 				if (this.matchData.sender !== this.user.id) {
-					if (this.matchData.sender === +this.player1_id)
-					{
-						console.log("should move player 1");
-						this.paddle1.y = this.matchData.p1y;
+					if (this.matchData.sender === +this.player1_id){
+						this.paddle1.y = this.matchData.y;
 					}
-					else if (this.matchData.sender === +this.player2_id)
-					{
-						console.log("should move player 2");
-						this.paddle2.y = this.matchData.p2y;
+					else if (this.matchData.sender === +this.player2_id){
+						this.paddle2.y = this.matchData.y;
 					}
 				}
-				// if (this.matchData.sender !== this.user.id) {
-				// 	this.paddle2.y = this.matchData.p2y;
-				// }
-				// this.isSocketMove = true;
 			}
 			if (this.match.playerLeft) {
 				console.log("player left the match");
@@ -108,8 +100,6 @@ export default class OnlinePongTable extends HTMLElement {
 	}
 
 	handleKeyDown = (event) => {
-		this.obj["player1_moving"] = this.user.id === +this.player1_id;
-		this.obj["player2_moving"] = this.user.id === +this.player2_id;
 		if (event.code === "KeyW" || event.code === "KeyS") {
 			player1PressedKeys[event.code] = true;
 			player2PressedKeys[event.code] = true;
@@ -130,8 +120,6 @@ export default class OnlinePongTable extends HTMLElement {
 	};
 
 	handleKeyUp = (event) => {
-		this.obj["player1_moving"] = this.user.id === +this.player1_id;
-		this.obj["player2_moving"] = this.user.id === +this.player2_id;
 		if (event.code === "KeyW" || event.code === "KeyS") {
 			player1PressedKeys[event.code] = false;
 			player2PressedKeys[event.code] = false;
@@ -192,14 +180,11 @@ export default class OnlinePongTable extends HTMLElement {
 	}
 
 	update = () => {
-		this.obj['p1y'] = this.paddle1.y;
-		this.obj['p2y'] = this.paddle2.y;
+		this.obj['y'] = this.obj['sender'] === +this.player1_id ? this.paddle1.y : this.paddle2.y;
 		this.obj['sender'] = this.user.id;
-		this.obj['palyer1'] = this.player1_id;
-		this.obj['player2'] = this.player2_id;
-		matchState.sendGameUpdate(this.match_id, this.obj);
+		// if (this.user.id === +this.player1_id)
+			matchState.sendGameUpdate(this.match_id, this.obj);
 		//draw paddles
-		// if (this.frameCount % 2 === 0)
 		this.frameCount++;
 		// update paddle position
 		if (this.scene && matchState.is_ready) {
@@ -242,10 +227,9 @@ export default class OnlinePongTable extends HTMLElement {
 	};
 
 	drawForGame = () => {
-		
-		this.paddle1.update(this.tableHeight);
-		this.paddle2.update(this.tableHeight);
-		
+		// call the update only when the player is the current user
+			this.paddle1.update();
+			this.paddle2.update();
 		// this.ball.update();
 		this.draw();
 	};
