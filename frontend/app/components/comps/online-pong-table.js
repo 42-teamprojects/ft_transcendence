@@ -4,48 +4,50 @@ import Paddle from "../../entities/Paddle.js";
 import { matchState } from "../../state/matchState.js";
 import { userState } from "../../state/userState.js";
 
-const playerPressedKeys = {
-	KeyW: false,
-	KeyS: false,
-};
+const FINAL_SCORE = 100;
+const TABLE_WIDTH = 1235;
+const TABLE_HEIGHT = 740;
+const PADDLE_WIDTH = 18;
+const MIDDLE_CIRCLE_RADIUS = 70;
 
 export default class OnlinePongTable extends HTMLElement {
 	constructor() {
-		super();
-		this.match_id = this.getAttribute("match_id");
-		this.player1_id = this.getAttribute("player1");
-		this.player2_id = this.getAttribute("player2");	
+        super();
+        this.match_id = this.getAttribute("match_id");
+        this.player1_id = this.getAttribute("player1");
+        this.player2_id = this.getAttribute("player2");	
 
-		this.match = {"player1": "hassan", "player2": "mouad", "score1": 0, "score2": 0};
-		// this.theme = this.match.theme;
+        this.match = {"player1": "hassan", "player2": "mouad", "score1": 0, "score2": 0};
 
-		// this.finalScore = config.finalScore;
-		this.finalScore = 100;
-		this.tableWidth = 1235;
-		this.tableHeight = 740;
-		this.context = null;
-		this.paddleWidth = 18;
-		// this.paddleHeight = 110;
-		this.paddleMove = 0;
+        this.finalScore = FINAL_SCORE;
+        this.tableWidth = TABLE_WIDTH;
+        this.tableHeight = TABLE_HEIGHT;
+        this.context = null;
+        this.paddleWidth = PADDLE_WIDTH;
+        this.paddleMove = 0;
 
-		this.paddle1 = new Paddle(1, this.paddleMove, "fire", this);
-		this.paddle2 = new Paddle(2, this.paddleMove, "ice", this);
-		this.ball = new Ball( this.tableWidth / 2, this.tableHeight / 2, 5, 5, "standard" );
-		this.middleCirlceRadius = 70;
+        this.paddle1 = new Paddle(1, this.paddleMove, "fire", this);
+        this.paddle2 = new Paddle(2, this.paddleMove, "ice", this);
+        this.ball = new Ball( this.tableWidth / 2, this.tableHeight / 2, 5, 5, "standard" );
+        this.middleCirlceRadius = MIDDLE_CIRCLE_RADIUS;
 
-		this.scene = true;
-		this.counter = 3;
-		this.frameCount = 0;
-		this.user = userState.state.user;
-		this.obj = {
-			"type": "game_update",
-		}
-	}
+        this.scene = true;
+        this.counter = 3;
+        this.frameCount = 0;
+        this.user = userState.state.user;
+        this.obj = {
+            "type": "game_update",
+        }
+    }
 	
 	connectedCallback() {
 		this.render();
 		this.unsubscribe = matchState.subscribe(() => {
 			this.matchData = matchState.state.game;
+			if (this.user.id !== +this.player1_id && this.matchData.type === "ball_update") {
+				this.ball.x = this.matchData.ball_x;
+				this.ball.y = this.matchData.ball_y;
+			}
 			if (this.matchData.type === "game_update" && this.matchData.sender !== this.user.id) {
                 if (this.matchData.sender === +this.player1_id) {
                     this.paddle1.y = this.matchData.y;
@@ -63,27 +65,21 @@ export default class OnlinePongTable extends HTMLElement {
 		document.addEventListener("keyup", this.handleKeyUp);
 	}
 
-	handleKeyDown = (event) => {
-		if (event.code === "KeyW" || event.code === "KeyS") {
-			playerPressedKeys[event.code] = true;
-			const direction = event.code === "KeyW" ? "up" : event.code === "KeyS" ? "down" : "";
-			if (this.user.id === +this.player1_id)
-				this.paddle1.directionChange(direction);
-			else
-				this.paddle2.directionChange(direction);
-		}
+	handleKey = (event, action) => {
+        if (event.code === "KeyW" || event.code === "KeyS") {
+            const direction = event.code === "KeyW" ? "up" : "down";
+            const paddle = this.user.id === +this.player1_id ? this.paddle1 : this.paddle2;
+            action(paddle, direction, event);
+        }
+    };
 
-	};
+    handleKeyDown = (event) => {
+        this.handleKey(event, (paddle, direction) => paddle.directionChange(direction));
+    };
 
-	handleKeyUp = (event) => {
-		if (event.code === "KeyW" || event.code === "KeyS") {
-			playerPressedKeys[event.code] = false;
-			if (this.user.id === +this.player1_id)
-				this.paddle1.stop(event);
-			else
-				this.paddle2.stop(event);
-		}
-	};
+    handleKeyUp = (event) => {
+        this.handleKey(event, (paddle, _, event) => paddle.stop(event));
+    };
 
 	movePlayers = () => {
 		const direction = ev.code === "KeyW" ? "up" : ev.code === "KeyS" ? "down" : "";
@@ -118,26 +114,58 @@ export default class OnlinePongTable extends HTMLElement {
 	}
 
 	update = () => {
+		const userId = this.user.id;
+		const matchId = this.match_id;
+	
+		this.updateObject(userId);
+		this.sendGameUpdates(userId, matchId);
+		this.updateFrameCount();
+		this.updateScene();
+		this.checkBounce();
+		this.checkScore();
+		this.checkGameOver();
+	
+		requestAnimationFrame(this.update);
+	};
+	
+	updateObject = (userId) => {
 		this.obj['y'] = this.obj['sender'] === +this.player1_id ? this.paddle1.y : this.paddle2.y;
-		this.obj['sender'] = this.user.id;
-		this.obj['ball_x'] = this.ball.x;
-		this.obj['ball_y'] = this.ball.y;
-		matchState.sendGameUpdate(this.match_id, this.obj);
+		this.obj['sender'] = userId;
+	};
+	
+	sendGameUpdates = (userId, matchId) => {
+		if (userId === +this.player1_id) {
+			let balldata = {
+				"type" : "ball_update",
+				"ball_x" :  this.ball.x,
+				"ball_y" : this.ball.y,
+			}
+			matchState.sendGameUpdate(matchId, balldata);
+		}
+		matchState.sendGameUpdate(matchId, this.obj);
+	};
+	
+	updateFrameCount = () => {
 		this.frameCount++;
-
-		if (this.scene && matchState.is_ready)
-			this.drawScene();
-		else
-			this.drawForGame();
-
+	};
+	
+	updateScene = () => {
+		(this.scene && matchState.is_ready) ? this.drawScene() : this.drawForGame();
+	};
+	
+	checkBounce = () => {
 		this.ball.bounceOnPaddles(this.paddle1);
 		this.ball.bounceOnPaddles(this.paddle2);
 		this.ball.bounceOnWalls(this.tableHeight);
-
+	};
+	
+	checkScore = () => {
 		if (this.scored()) {
 			this.scene = true;
 		}
-		// check if scores
+	};
+	
+	checkGameOver = () => {
 		if (this.isGameOver) {
 			this.dispatchEvent(
 				new CustomEvent("game-over", {
@@ -149,8 +177,6 @@ export default class OnlinePongTable extends HTMLElement {
 			);
 			return;
 		}
-		
-		requestAnimationFrame(this.update);
 	};
 
 	draw = () => {
@@ -280,8 +306,8 @@ export default class OnlinePongTable extends HTMLElement {
 			<c-scoreboard class="mb-5"
 						player1="${"hassan"}" 
 						player2="${"mouad"}" 
-						score1="${"1"}"
-						score2="${"2"}">
+						score1="${"0"}"
+						score2="${"0"}">
 			</c-scoreboard>
 			<canvas id="table" class="pong-table pong-table-standard"></canvas>
 		</div>
