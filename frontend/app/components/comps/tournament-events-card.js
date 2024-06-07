@@ -1,3 +1,4 @@
+import Router from "../../router/router.js";
 import { onlineTournamentState } from "../../state/onlineTournamentState.js";
 
 export default class Tournamenteventscard extends HTMLElement {

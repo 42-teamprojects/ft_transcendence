@@ -18,6 +18,9 @@ export default class Tournamentcard extends HTMLElement {
 		this.innerHTML = /*html*/ `<div class="tournament-card flex-col-center"><span class="loader"></span></div>`;
 		if (this.tournamentId) {
 			this.tournament = await onlineTournamentState.getTournament(this.tournamentId);
+			if (!this.tournament) {
+				throw new Error("Tournament not found");
+			}
 			if (this.tournament.participants.length === this.players) {
 				this.type = "waitingStart";
 			}

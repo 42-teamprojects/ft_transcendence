@@ -184,7 +184,7 @@ class Tournament(models.Model):
             str(self.id), 
             {
                 'type': 'tournament_update',
-                'data': f'{user.username} h as left the tournament.'
+                'data': f'{user.username} has left the tournament.'
             }
         )
     
