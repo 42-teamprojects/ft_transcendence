@@ -246,7 +246,7 @@ SIMPLE_JWT = {
     'AUTH_COOKIE_HTTP_ONLY': True,
     'AUTH_COOKIE_PATH': '/',        # The path of the auth cookie.
     # Whether to set the flag restricting cookie leaks on cross-site requests. This can be 'Lax', 'Strict', or None to disable the flag.
-    'AUTH_COOKIE_SAMESITE': "None", # TODO: Modify to Lax
+    'AUTH_COOKIE_SAMESITE': "Lax", # TODO: Modify to Lax
     'AUTH_COOKIE_LIFETIME': 60 * 60 * 24, # 1 day
 
     # 2fa

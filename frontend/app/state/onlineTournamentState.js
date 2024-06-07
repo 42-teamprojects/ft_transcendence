@@ -133,6 +133,17 @@ class OnlineTournamentState extends State {
 		}
 	}
 
+	async leaveTournament(id) {
+		try {
+			const result = await this.httpClient.post(`tournaments/${id}/leave/`);
+			await this.getNotStartedTournaments();
+		}
+		catch (error) {
+			console.log(error);
+			Toast.notify({ message: error.detail, type: "error" })
+		}
+	}
+
 	isTournamentTypeExists(type) {
 		const { tournaments } = this.state;
 		return tournaments.find(tournament => tournament.type === type);

@@ -36,6 +36,9 @@ export default class Tournamentcard extends HTMLElement {
 		this.querySelector(".btn-start")?.addEventListener("click", async () => {
 			await onlineTournamentState.startTournament(this.tournament.id);
 		});
+		this.querySelector(".leave-btn")?.addEventListener("click", async () => {
+			await onlineTournamentState.leaveTournament(this.tournament.id);
+		});
 	}
 
 	disconnectedCallback() {}
@@ -77,7 +80,9 @@ export default class Tournamentcard extends HTMLElement {
 			case "waitingPlayers":
 				footerContent = /*html*/ `
 				<p class="tournament-card-footer-text">${+this.players - this.tournament.participants.length} Left to join</p>
-				<button is="c-button" class="join-btn btn-primary" ${onlineTournamentState.isParticipant(this.tournament) ? `disabled` : ``}>${onlineTournamentState.isParticipant(this.tournament) ? `Joined` : `Join`}</button>`;
+				${!onlineTournamentState.isParticipant(this.tournament) ? `<button is="c-button" class="join-btn btn-primary">Join</button>` : ""}
+				${onlineTournamentState.isParticipant(this.tournament) ? `<button is="c-button" class="leave-btn btn-secondary">Leave</button>` : ""}
+				`;
 				break;
 			case "waitingStart":
 				footerContent = /*html*/ `
