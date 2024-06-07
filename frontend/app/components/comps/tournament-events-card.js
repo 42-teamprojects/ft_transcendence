@@ -22,7 +22,8 @@ export default class Tournamenteventscard extends HTMLElement {
             <div class="flex-col gap-8">
                 ${this.upcomingTournaments.length === 0 ? /*html*/`<p class="text-stroke text-center">No upcoming tournaments</p>` : ""}
                 ${this.upcomingTournaments.map(tournament => {
-                    return /*html*/`<c-tournament-event href="/dashboard/tournaments/qualifications/${tournament.id}" type="${tournament.type}" status="${tournament.status}"></c-tournament-event>`
+                    console.log(tournament)
+                    return /*html*/`<c-tournament-event href="/dashboard/tournaments/qualifications/${tournament.id}" type="${tournament.type}" status="${tournament.status}" start-time="${tournament.start_time}"></c-tournament-event>`
                 }).join("")}
             </div>
         </div>

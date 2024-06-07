@@ -1,7 +1,7 @@
 import Router from "../../router/router.js";
 import { onlineTournamentState } from "../../state/onlineTournamentState.js";
 import { userState } from "../../state/userState.js";
-import { getMatchUrl } from "../../utils/utils.js";
+import { getMatchUrl, isTimePast, startCountdown } from "../../utils/utils.js";
 import Toast from "../comps/toast.js";
 
 export default class OnlineQualifications extends HTMLElement {
@@ -38,7 +38,16 @@ export default class OnlineQualifications extends HTMLElement {
 			Router.instance.navigate("/dashboard/tournaments");
 			return;
 		}
+		this.start_time = new Date(this.tournament.start_time)
 		this.render();
+		this.timeRemaining = this.querySelector("#countdown");
+		this.countdown = startCountdown(this.start_time, (output) => {
+            this.timeRemaining.innerHTML = output;
+        },
+        () => {
+			this.querySelector(".countdown-container").remove();
+		}
+        );
 		// this.unsubscribe = tournamentState.subscribe(() => {
 		// 	this.tournamentState = tournamentState.state;
 		// 	this.update();
@@ -62,12 +71,14 @@ export default class OnlineQualifications extends HTMLElement {
             </div>
             <div class="w-full" style="max-width: 1300px">
                 <c-online-brackets tournament-id="${this.tournamentId}" class="w-full"></c-online-brackets>
-            </div>
+			</div>
+			${!isTimePast(this.start_time) ? /*html*/`
+			<div class="countdown-container w-full flex-col-center gap-5">
+				<p class="text-stroke">Starting matches in</p>
+				<h2 id="countdown">00:00</h2>
+			</div>` : ''}
 		</div>
 		`;
-            // <form id="game" class="w-full flex-col-center">
-			//     ${formButton}
-            // </form>
 	}
 }
 
