@@ -129,17 +129,17 @@ class FriendState extends State {
 			const friendshipObject = this.getFriendshipObject(+userId, true);
 			if (!friendshipObject) return;
 			const result = await this.httpClient.post(`friends/unblock/${friendshipObject.id}/`);
-			// const notification = {
-			// 	type: "FAL",
-			// 	data: {
-			// 		type: "UNBLOCK",
-			// 		sender_id: userState.state.user.id,
-			// 		sender_name: userState.state.user.username,
-			// 	},
-			// 	recipient: userId,
-			// }
+			const notification = {
+				type: "FAL",
+				data: {
+					type: "UNBLOCK",
+					sender_id: userState.state.user.id,
+					sender_name: userState.state.user.username,
+				},
+				recipient: userId,
+			}
 
-			// await notificationState.sendNotification(notification);
+			await notificationState.sendNotification(notification);
 			this.getBlocked();
 			this.setState({ friends: [...this.state.friends, friendshipObject] });
 			// this.setState({ blocked: this.state.blocked.filter((friendshipObject) => friendshipObject.user1.id !== userId && friendshipObject.user2.id !== userId) });
