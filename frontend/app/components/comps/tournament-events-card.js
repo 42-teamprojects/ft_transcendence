@@ -8,7 +8,6 @@ export default class Tournamenteventscard extends HTMLElement {
     async connectedCallback() {
         this.innerHTML = this.getLoading();
         this.upcomingTournaments = await onlineTournamentState.getUpcomingTournaments();
-        console.log(this.upcomingTournaments)
         this.render();
     }
 
@@ -21,6 +20,7 @@ export default class Tournamenteventscard extends HTMLElement {
                 <h1>Your Tournament Events</h1>
             </div>
             <div class="flex-col gap-8">
+                ${this.upcomingTournaments.length === 0 ? /*html*/`<p class="text-stroke text-center">No upcoming tournaments</p>` : ""}
                 ${this.upcomingTournaments.map(tournament => {
                     return /*html*/`<c-tournament-event href="/dashboard/tournaments/qualifications/${tournament.id}" type="${tournament.type}" status="${tournament.status}"></c-tournament-event>`
                 }).join("")}

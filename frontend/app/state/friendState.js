@@ -16,7 +16,7 @@ class FriendState extends State {
 		this.httpClient = HttpClient.instance;
 	}
 
-	async getFriends() {
+	async getFriends(force = false) {
         if (this.fetchedFriends) return this.state.friends;
 		try {
 			this.setState({ loading: true });

@@ -137,17 +137,20 @@ class Tournament(models.Model):
         self.status = 'C'
         self.save()
     
-    def leave(self, user):
+    def remove_participant(self, user):
+        # Cant leave if there's more than half of the required participants
+        if self.participants.count() > int(self.type) / 2:
+            raise ValidationError('Cannot leave a tournament that is already half full')
         if user == self.organizer:
-            # find a new organizer
-            new_organizer = self.participants.first()
+            new_organizer = self.participants.exclude(pk=user.pk).first()
             if new_organizer:
                 self.organizer = new_organizer
                 self.save()
             else:
-                self.cancel()
+                self.delete()
+                return
                 
-        if self.status != 'NS':
+        if self.status != 'NS' or self.status != 'C':
             raise ValidationError('Cannot leave a tournament that has already started.')
         if user not in self.participants.all():
             raise ValidationError('You are not a participant in this tournament.')

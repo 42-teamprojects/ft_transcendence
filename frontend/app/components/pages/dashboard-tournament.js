@@ -11,8 +11,6 @@ export default class Dashboardtournament extends HTMLElement {
 		this.render();
         this.tournamentCards = this.querySelector(".tournament-cards");
         this.unsubscribe = this.tournamentState.subscribe(() => {
-            const tournaments = this.tournamentState.state.tournaments;
-            if (tournaments.length === 0) return;
             this.tournamentCards.innerHTML = this.getTournamentsCards();
             
         });

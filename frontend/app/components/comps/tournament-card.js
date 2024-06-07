@@ -27,17 +27,30 @@ export default class Tournamentcard extends HTMLElement {
 	}
 
 	addEventListeners() {
-		this.querySelector(".join-btn")?.addEventListener("click", async () => {
+		const joinBtn = this.querySelector(".join-btn");
+		const createBtn = this.querySelector(".create-btn");
+		const startBtn = this.querySelector(".btn-start");
+		const leaveBtn = this.querySelector(".leave-btn");
+
+		joinBtn?.addEventListener("click", async () => {
+			joinBtn?.setAttribute("processing", "true");
 			await onlineTournamentState.joinTournament(this.tournament.id);
+			joinBtn?.setAttribute("processing", "false");
 		});
-		this.querySelector(".create-btn")?.addEventListener("click", async () => {
+		createBtn?.addEventListener("click", async () => {
+			createBtn?.setAttribute("processing", "true");
 			await onlineTournamentState.createTournament(this.players);
+			createBtn?.setAttribute("processing", "false");
 		});
-		this.querySelector(".btn-start")?.addEventListener("click", async () => {
+		startBtn?.addEventListener("click", async () => {
+			startBtn?.setAttribute("processing", "true");
 			await onlineTournamentState.startTournament(this.tournament.id);
+			startBtn?.setAttribute("processing", "false");
 		});
-		this.querySelector(".leave-btn")?.addEventListener("click", async () => {
+		leaveBtn?.addEventListener("click", async () => {
+			leaveBtn?.setAttribute("processing", "true");
 			await onlineTournamentState.leaveTournament(this.tournament.id);
+			leaveBtn?.setAttribute("processing", "false");
 		});
 	}
 
@@ -80,14 +93,26 @@ export default class Tournamentcard extends HTMLElement {
 			case "waitingPlayers":
 				footerContent = /*html*/ `
 				<p class="tournament-card-footer-text">${+this.players - this.tournament.participants.length} Left to join</p>
-				${!onlineTournamentState.isParticipant(this.tournament) ? `<button is="c-button" class="join-btn btn-primary">Join</button>` : ""}
-				${onlineTournamentState.isParticipant(this.tournament) ? `<button is="c-button" class="leave-btn btn-secondary">Leave</button>` : ""}
+				${
+					!onlineTournamentState.isParticipant(this.tournament)
+						? `<button is="c-button" class="join-btn btn-primary">Join</button>`
+						: ""
+				}
+				${
+					onlineTournamentState.isParticipant(this.tournament)
+						? `<button is="c-button" class="leave-btn btn-secondary">Leave</button>`
+						: ""
+				}
 				`;
 				break;
 			case "waitingStart":
 				footerContent = /*html*/ `
                 <p class="tournament-card-footer-text">Starting in 10min</p>
-				${this.tournament.organizer === userState.state.user.id ? /*html*/ `<button is="c-button" class="btn-start btn-primary">Start</button>` : ''}
+				${
+					this.tournament.organizer === userState.state.user.id
+						? /*html*/ `<button is="c-button" class="btn-start btn-primary">Start</button>`
+						: ""
+				}
             `;
 				break;
 			case "inProgress":
@@ -136,11 +161,17 @@ export default class Tournamentcard extends HTMLElement {
 				<div class="player-avatar"></div>
 			`;
 			if (this.type !== "notStarted" && this.tournament?.participants[i]) {
-				const user = this.tournament?.participants[i]
+				const user = this.tournament?.participants[i];
 				avatar = /*html*/ `
-				<a is="c-link" class="relative" href="/dashboard/profile?username=${user.username}" tooltip="${user.username}" flow="up">
+				<a is="c-link" class="relative" href="/dashboard/profile?username=${user.username}" tooltip="${
+					user.username
+				}" flow="up">
 					<img class="player-avatar" src="${config.backend_domain}${user.avatar}" />
-					${this.tournament.organizer === user.id ? `<i class="fa-solid fa-star text-highlight text-sm absolute" style="bottom: 0; right: 0"></i>` : ""}
+					${
+						this.tournament.organizer === user.id
+							? `<i class="fa-solid fa-star text-highlight text-sm absolute" style="bottom: 0; right: 0"></i>`
+							: ""
+					}
 				</a>
 				`;
 			}
@@ -149,7 +180,7 @@ export default class Tournamentcard extends HTMLElement {
 
 		if (this.players > 4) {
 			avatars.push(/*html*/ `
-                <div class="player-avatar players-remaining" tooltip="${usernames.join(', ')}" flow="up">
+                <div class="player-avatar players-remaining" tooltip="${usernames.join(", ")}" flow="up">
                     <p>${this.players - 4}+</p>
                 </div>
             `);
