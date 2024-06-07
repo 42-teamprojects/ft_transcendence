@@ -2,6 +2,8 @@ import HttpClient from "../http/httpClient.js";
 import State from "./state.js";
 import Toast from "../components/comps/toast.js";
 import { userState } from "./userState.js";
+import WebSocketManager from "../socket/WebSocketManager.js";
+import { config } from "../config.js";
 
 class OnlineTournamentState extends State {
 	constructor() {
@@ -10,16 +12,35 @@ class OnlineTournamentState extends State {
             tournaments: [],
 			inProgressTournaments: [],
 			FinishedTournaments: [],
-            rounds: [],
 		});
-		this.isFetched = {
-			"NS" : false,
-			"IP" : false,
-			"F" : false,
-		}
+		this.webSocketManager = new WebSocketManager(config.websocket_url);
+		this.socketId = 'tournaments/';
 		this.httpClient = HttpClient.instance;
 	}
 	
+	// Sockets start
+	async setup(tournamentId) {
+		if (!tournamentId) {
+			throw new Error("tournamentId not provided");
+		}
+		this.socketId = "tournaments/" + tournamentId;
+        //check if the socket is already open
+        if (this.webSocketManager.sockets[this.socketId]) return;
+
+		// Setup the WebSocket connection
+		this.webSocketManager.setupWebSocket(
+			this.socketId,
+			// On message callback
+			async (event) => {
+				const message = JSON.parse(event.data); // Parse the message from the server
+				Toast.notify({ message: message.data, type: "info" });
+				await this.getNotStartedTournaments();
+				await this.getInProgressTournaments();
+			},
+			// Options
+			// {}
+		);
+	}
 
 	async createTournament(type) {
 		try {
@@ -157,7 +178,6 @@ class OnlineTournamentState extends State {
 		this.setState({
 			matches: [],
             tournament: {},
-            rounds: [],
 		});
 	}
 }

@@ -21,10 +21,10 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             return
 
         self.user_id = UntypedToken(self.access_token).payload['user_id']
-
-        if not await self.is_user_in_tournament(self.user_id, self.room_name):
-            await self.close()
-            return
+        print(self.user_id, flush=True)
+        # if not await self.is_user_in_tournament(self.user_id, self.room_name):
+        #     await self.close()
+        #     return
 
         await self.channel_layer.group_add(
             self.room_name,

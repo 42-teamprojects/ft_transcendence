@@ -63,7 +63,7 @@ class TournamentViewSet(viewsets.ModelViewSet):
     # Get the in-progress tournaments
     @action(detail=False)
     def in_progress(self, request):
-        return Response(TournamentSerializer(Tournament.objects.filter(status='IP'), many=True).data, status=status.HTTP_200_OK)
+        return Response(TournamentSerializer(Tournament.objects.filter(status='IP', participants=request.user), many=True).data, status=status.HTTP_200_OK)
     
     # Get the finished tournaments
     @action(detail=False)
