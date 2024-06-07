@@ -45,18 +45,18 @@ export default class Profile extends HTMLElement {
       this.getActions();
       this.addEventListeners();
     });
-    this.unsubscribeNotification = notificationState.subscribe(async () => {
-        this.user = await userState.fetchUser(this.username);
-        if (!this.user) return;
-        this.querySelector(".user-status-wrapper").innerHTML = this.insertUserStatus();
-    });
+    // this.unsubscribeNotification = notificationState.subscribe(async () => {
+    //     this.user = await userState.fetchUser(this.username);
+    //     if (!this.user) return;
+    //     this.querySelector(".user-status-wrapper").innerHTML = this.insertUserStatus();
+    // });
     this.addEventListeners();
   }
 
   disconnectedCallback() {
     if (this.unsubscribe) this.unsubscribe();
     if (this.unsubscribeFriends) this.unsubscribeFriends();
-    if (this.unsubscribeNotification) this.unsubscribeNotification();
+    // if (this.unsubscribeNotification) this.unsubscribeNotification();
   }
 
   render() {
@@ -207,16 +207,17 @@ export default class Profile extends HTMLElement {
       this.blockFriendFunc = async () => {
         const result = await friendState.blockFriend(this.user.id);
         if (result) {
+          Router.instance.navigate("/dashboard/profile");
           Toast.notify({
             message: "User blocked successfuly",
             type: "success",
           });
-          Router.instance.navigate("/dashboard/profile");
+          this.modal.removeEventListener(
+            "confirm",
+            this.removeFriendFunc.bind(this)
+          );
+          this.remove();
         }
-        this.modal.removeEventListener(
-          "confirm",
-          this.removeFriendFunc.bind(this)
-        );
       };
 
       blockFriend.addEventListener("click", () => {
@@ -242,7 +243,7 @@ export default class Profile extends HTMLElement {
             : ""
         }
         ${
-          !this.isMine && !friendState.alreadyFriends(this.user.id)
+          !this.isMine && !friendState.alreadyFriends(this.user?.id)
             ? /*html*/ `<p id="add-friend" href="" class="text-secondary btn-link"><i class="fa-solid fa-plus mr-2"></i>Add friend</p>`
             : ""
         }
@@ -252,12 +253,12 @@ export default class Profile extends HTMLElement {
             : ""
         }
         ${
-          !this.isMine && friendState.alreadyFriends(this.user.id)
+          !this.isMine && friendState.alreadyFriends(this.user?.id)
             ? /*html*/ `<p id="remove-friend" href="" class="text-warning btn-link"><i class="fa-solid fa-minus mr-2"></i>Remove friend</p>`
             : ""
         }
         ${
-          !this.isMine && friendState.alreadyFriends(this.user.id)
+          !this.isMine && friendState.alreadyFriends(this.user?.id)
             ? /*html*/ `<p id="block-friend" href="" class="text-danger btn-link"><i class="fa-solid fa-ban mr-2"></i>Block</p>`
             : ""
         }

@@ -157,6 +157,7 @@ class FriendState extends State {
 	}
 
 	alreadyFriends(userId) {
+		if (!userId) return false;
 		return this.state.friends.some((friendshipObject) => {
 			return friendshipObject.user1.id === userId || friendshipObject.user2.id === userId;
 		});
