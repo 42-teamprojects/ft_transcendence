@@ -49,6 +49,7 @@ export default class OnlinePongTable extends HTMLElement {
 				this.ball.y = this.matchData.ball_y;
 			}
 			if (this.matchData.type === "game_update" && this.matchData.sender !== this.user.id) {
+				this.frameCount = this.user.id !== +this.player1_id ? this.matchData.frameCount : this.frameCount;
                 if (this.matchData.sender === +this.player1_id) {
                     this.paddle1.y = this.matchData.y;
                 } else if (this.matchData.sender === +this.player2_id) {
@@ -119,7 +120,9 @@ export default class OnlinePongTable extends HTMLElement {
 	
 		this.updateObject(userId);
 		this.sendGameUpdates(userId, matchId);
-		this.updateFrameCount();
+		if (this.user.id === +this.player1_id) {
+			this.updateFrameCount();
+		}
 		this.updateScene();
 		this.checkBounce();
 		this.checkScore();
@@ -131,6 +134,7 @@ export default class OnlinePongTable extends HTMLElement {
 	updateObject = (userId) => {
 		this.obj['y'] = this.obj['sender'] === +this.player1_id ? this.paddle1.y : this.paddle2.y;
 		this.obj['sender'] = userId;
+		this.obj['frameCount'] = this.frameCount;
 	};
 	
 	sendGameUpdates = (userId, matchId) => {
@@ -209,8 +213,7 @@ export default class OnlinePongTable extends HTMLElement {
 		this.context.font = "100px MPlusRounded";
 		const textWidth = this.context.measureText(this.counter).width;
 		this.context.fillText(this.counter, this.tableWidth / 2 - textWidth / 2, this.tableHeight / 2);
-
-		if (this.frameCount % 60 === 0) {
+		if (this.frameCount % 55 === 0) {
 			this.counter--;
 		}
 		if (this.counter === 0) {
