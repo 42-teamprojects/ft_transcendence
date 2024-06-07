@@ -30,7 +30,7 @@ export default class OnlinePongTable extends HTMLElement {
 
 		this.paddle1 = new Paddle(1, this.paddleMove, "fire", this);
 		this.paddle2 = new Paddle(2, this.paddleMove, "ice", this);
-		this.ball = new Ball( this.tableWidth / 2, this.tableHeight / 2, 1, 1, "standard" );
+		this.ball = new Ball( this.tableWidth / 2, this.tableHeight / 2, 5, 5, "standard" );
 		this.middleCirlceRadius = 70;
 
 		this.scene = true;
@@ -167,7 +167,7 @@ export default class OnlinePongTable extends HTMLElement {
 
 		this.paddle1.update(this.tableHeight);
 		this.paddle2.update(this.tableHeight);
-		// this.ball.update();
+		this.ball.update();
 		this.draw();
 	};
 

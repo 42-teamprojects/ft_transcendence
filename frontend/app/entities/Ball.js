@@ -107,8 +107,8 @@ export default class Ball {
         // console.log("ydirection: ", ydirection)
         this.x = table.tableWidth / 2;
         this.y = table.tableHeight / 2;
-        this.moveX = 1;
-        this.moveY = 1;
+        this.moveX = 5;
+        this.moveY = 5;
     }
 }
 function getRandomInt(min, max) {
