@@ -41,10 +41,7 @@ class MatchState extends State {
 			{
 				onOpen: () => {
 					console.log("user connected");
-					// this.matchSocket.send("user_id", userState.state.user.id);
 				}
-				// shouldCloseOnTimeout: true,
-				// should timeout when game finishes
 			}
 		);
 	}

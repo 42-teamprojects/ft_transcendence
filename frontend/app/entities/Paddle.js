@@ -47,12 +47,11 @@ export default class Paddle {
         if (direction === "up") {
             this.speed = -7;
         } else if (direction === "down") {
-            this.speed = 7;
+            this.speed = 7  ;
         }
     }
 
     outOfBounds = (tableHeight) => {
-
         return (this.nextY + semiCircleDiameter / 3 < 0 || this.nextY + this.height > tableHeight);
     }
 

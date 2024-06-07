@@ -20,7 +20,7 @@ class GetTwoFactorAuthView(APIView):
         totp = pyotp.TOTP(user_secret_key)
         
         # Generate a URL for a QR code
-        otpauth_url = totp.provisioning_uri(name=request.user.email, issuer_name="Blitzpong")
+        otpauth_url = totp.provisioningame_updateri(name=request.user.email, issuer_name="Blitzpong")
         
         # check if the directory for storing the QR code exists
         if not os.path.exists(settings.MEDIA_ROOT + 'qrcodes'):
