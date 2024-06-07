@@ -48,7 +48,7 @@ class TournamentViewSet(viewsets.ModelViewSet):
         try:
             tournament.add_participant(request.user)
         except ValidationError as e:
-            raise serializers.ValidationError({'detail': e.message})
+            raise serializers.ValidationError({'detail': 'You are already a participant in this tournament.'})
         return Response({'detail': 'Participant added successfully.'}, status=status.HTTP_200_OK)
     
     # Get only NS tournaments
