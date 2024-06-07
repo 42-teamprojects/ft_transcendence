@@ -137,6 +137,23 @@ class Tournament(models.Model):
         self.status = 'C'
         self.save()
     
+    def leave(self, user):
+        if user == self.organizer:
+            # find a new organizer
+            new_organizer = self.participants.first()
+            if new_organizer:
+                self.organizer = new_organizer
+                self.save()
+            else:
+                self.cancel()
+                
+        if self.status != 'NS':
+            raise ValidationError('Cannot leave a tournament that has already started.')
+        if user not in self.participants.all():
+            raise ValidationError('You are not a participant in this tournament.')
+        self.participants.remove(user)
+        self.save()
+    
     def __str__(self):
         return f'Tournament {self.pk}'
 

@@ -93,6 +93,19 @@ class TournamentViewSet(viewsets.ModelViewSet):
             return Response({'detail': 'You are not the organizer of this tournament.'}, status=status.HTTP_403_FORBIDDEN)
         return super().destroy(request, *args, **kwargs)
     
+    # Leave the tournament
+    @action(detail=True, methods=['post'])
+    def leave(self, request, pk=None):
+        try:
+            tournament = self.get_object()
+        except serializers.ValidationError as e:
+            return Response(e, status=status.HTTP_404_NOT_FOUND)
+        try:
+            tournament.remove_participant(request.user)
+        except ValidationError as e:
+            raise serializers.ValidationError({'detail': e.message})
+        return Response({'detail': 'Participant removed successfully.'}, status=status.HTTP_200_OK)
+    
 class TournamentMatchViewSet(viewsets.ModelViewSet):
     queryset = TournamentMatch.objects.all()
     serializer_class = TournamentMatchSerializer
