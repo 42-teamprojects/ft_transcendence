@@ -11,8 +11,6 @@ export default class Friendslist extends HTMLElement {
 	connectedCallback() {
 		this.render();
 		this.unsubscribe = friendState.subscribe(() => {
-			console.log("DEBUG F:", friendState.state.friends);
-			console.log("DEBUG B:", friendState.state.blocked);
 			this.render();
 		});
 	}

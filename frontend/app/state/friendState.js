@@ -1,5 +1,6 @@
 import Toast from "../components/comps/toast.js";
 import HttpClient from "../http/httpClient.js";
+import Router from "../router/router.js";
 import { chatState } from "./chatState.js";
 import { notificationState } from "./notificationState.js";
 import State from "./state.js";
@@ -86,9 +87,9 @@ class FriendState extends State {
 				recipient: userId,
 			}
 			await notificationState.sendNotification(notification);
-
-			this.setState({ friends: this.state.friends.filter((friendshipObject) => friendshipObject.user1.id !== userId && friendshipObject.user2.id !== userId) });
-			return result;
+			Router.instance.navigate("/dashboard/profile");
+			// this.setState({ friends: this.state.friends.filter((friendshipObject) => friendshipObject.user1.id !== userId && friendshipObject.user2.id !== userId) });
+			// return result;
 		} catch (error) {
 			console.error(error);
 			Toast.notify({ message: "An error occurred", type: "error" });
@@ -100,17 +101,17 @@ class FriendState extends State {
 			const friendshipObject = this.getFriendshipObject(userId);
 			if (!friendshipObject) return;
 			const result = await this.httpClient.post(`friends/block/${friendshipObject.id}/`);
-			// const notification = {
-			// 	type: "FAL",
-			// 	data: {
-			// 		type: "BLOCK",
-			// 		sender_id: userState.state.user.id,
-			// 		sender_name: userState.state.user.username,
-			// 	},
-			// 	recipient: userId,
-			// }
+			const notification = {
+				type: "FAL",
+				data: {
+					type: "BLOCK",
+					sender_id: userState.state.user.id,
+					sender_name: userState.state.user.username,
+				},
+				recipient: userId,
+			}
 
-			// await notificationState.sendNotification(notification);
+			await notificationState.sendNotification(notification);
 
 			this.setState({ friends: this.state.friends.filter((friendshipObject) => friendshipObject.user1.id !== userId && friendshipObject.user2.id !== userId) });
 			this.setState({ blocked: [...this.state.blocked, friendshipObject] });
@@ -128,17 +129,17 @@ class FriendState extends State {
 			const friendshipObject = this.getFriendshipObject(+userId, true);
 			if (!friendshipObject) return;
 			const result = await this.httpClient.post(`friends/unblock/${friendshipObject.id}/`);
-			const notification = {
-				type: "FAL",
-				data: {
-					type: "UNBLOCK",
-					sender_id: userState.state.user.id,
-					sender_name: userState.state.user.username,
-				},
-				recipient: userId,
-			}
+			// const notification = {
+			// 	type: "FAL",
+			// 	data: {
+			// 		type: "UNBLOCK",
+			// 		sender_id: userState.state.user.id,
+			// 		sender_name: userState.state.user.username,
+			// 	},
+			// 	recipient: userId,
+			// }
 
-			await notificationState.sendNotification(notification);
+			// await notificationState.sendNotification(notification);
 			this.getBlocked();
 			this.setState({ friends: [...this.state.friends, friendshipObject] });
 			// this.setState({ blocked: this.state.blocked.filter((friendshipObject) => friendshipObject.user1.id !== userId && friendshipObject.user2.id !== userId) });
