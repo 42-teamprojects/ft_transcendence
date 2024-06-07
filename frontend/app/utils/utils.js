@@ -189,3 +189,9 @@ export function getTimePassed(date) {
 export function getKeyByValue(object, value) {
     return Object.keys(object).find(key => object[key].toLowerCase() === value.toLowerCase());
 }
+
+export function getRandomInt(min, max) {
+	min = Math.ceil(min);
+	max = Math.floor(max);
+	return Math.floor(Math.random() * (max - min + 1)) + min;
+}

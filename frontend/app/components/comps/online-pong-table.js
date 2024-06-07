@@ -4,31 +4,18 @@ import Paddle from "../../entities/Paddle.js";
 import { matchState } from "../../state/matchState.js";
 import { userState } from "../../state/userState.js";
 
-const player1PressedKeys = {
+const playerPressedKeys = {
 	KeyW: false,
 	KeyS: false,
 };
 
-const player2PressedKeys = {
-	ArrowUp: false,
-	ArrowDown: false,
-};
-
-function getRandomInt(min, max) {
-	min = Math.ceil(min);
-	max = Math.floor(max);
-	return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
 export default class OnlinePongTable extends HTMLElement {
 	constructor() {
 		super();
-		this.isPressed = false;
 		this.match_id = this.getAttribute("match_id");
 		this.player1_id = this.getAttribute("player1");
 		this.player2_id = this.getAttribute("player2");	
 
-		console.log("player in pong table : ", this.player1_id, this.player2_id);
 		this.match = {"player1": "hassan", "player2": "mouad", "score1": 0, "score2": 0};
 		// this.theme = this.match.theme;
 
@@ -41,34 +28,15 @@ export default class OnlinePongTable extends HTMLElement {
 		// this.paddleHeight = 110;
 		this.paddleMove = 0;
 
-		this.paddle1 = new Paddle(
-			1,
-			this.paddleMove,
-			"fire",
-			this
-		);
-		this.paddle2 = new Paddle(
-			2,
-			this.paddleMove,
-			"ice",
-			this
-		);
-		this.ball = new Ball(
-			this.tableWidth / 2,
-			this.tableHeight / 2,
-			1,
-			1,
-			"standard"
-		);
+		this.paddle1 = new Paddle(1, this.paddleMove, "fire", this);
+		this.paddle2 = new Paddle(2, this.paddleMove, "ice", this);
+		this.ball = new Ball( this.tableWidth / 2, this.tableHeight / 2, 1, 1, "standard" );
 		this.middleCirlceRadius = 70;
 
 		this.scene = true;
 		this.counter = 3;
 		this.frameCount = 0;
 		this.user = userState.state.user;
-		this.targetPaddle1Y = 0;
-		this.targetPaddle2Y = 0;
-		this.isSocketMove = false;
 		this.obj = {
 			"type": "game_update",
 		}
@@ -78,17 +46,13 @@ export default class OnlinePongTable extends HTMLElement {
 		this.render();
 		this.unsubscribe = matchState.subscribe(() => {
 			this.matchData = matchState.state.game;
-			if (this.matchData.type === "game_update") {
-				//update the player position if it's not the current user
-				if (this.matchData.sender !== this.user.id) {
-					if (this.matchData.sender === +this.player1_id){
-						this.paddle1.y = this.matchData.y;
-					}
-					else if (this.matchData.sender === +this.player2_id){
-						this.paddle2.y = this.matchData.y;
-					}
-				}
-			}
+			if (this.matchData.type === "game_update" && this.matchData.sender !== this.user.id) {
+                if (this.matchData.sender === +this.player1_id) {
+                    this.paddle1.y = this.matchData.y;
+                } else if (this.matchData.sender === +this.player2_id) {
+                    this.paddle2.y = this.matchData.y;
+                }
+            }
 			if (this.match.playerLeft) {
 				console.log("player left the match");
 				return ;
@@ -101,28 +65,19 @@ export default class OnlinePongTable extends HTMLElement {
 
 	handleKeyDown = (event) => {
 		if (event.code === "KeyW" || event.code === "KeyS") {
-			player1PressedKeys[event.code] = true;
-			player2PressedKeys[event.code] = true;
+			playerPressedKeys[event.code] = true;
+			const direction = event.code === "KeyW" ? "up" : event.code === "KeyS" ? "down" : "";
 			if (this.user.id === +this.player1_id)
-			{
-				this.paddle1.directionChange(
-					event.code === "KeyW" ? "up" : event.code === "KeyS" ? "down" : ""
-				);
-			}
+				this.paddle1.directionChange(direction);
 			else
-			{
-				this.paddle2.directionChange(
-					event.code === "KeyW" ? "up" : event.code === "KeyS" ? "down" : ""
-					);
-			}
+				this.paddle2.directionChange(direction);
 		}
 
 	};
 
 	handleKeyUp = (event) => {
 		if (event.code === "KeyW" || event.code === "KeyS") {
-			player1PressedKeys[event.code] = false;
-			player2PressedKeys[event.code] = false;
+			playerPressedKeys[event.code] = false;
 			if (this.user.id === +this.player1_id)
 				this.paddle1.stop(event);
 			else
@@ -130,17 +85,13 @@ export default class OnlinePongTable extends HTMLElement {
 		}
 	};
 
-	movePlayers = (	) => {
-		if (this.user.id === +this.player1_id) {
-			this.paddle1.directionChange(
-				ev.code === "KeyW" ? "up" : ev.code === "KeyS" ? "down" : ""
-			);
-		}
-		else if (this.user.id === +this.player2_id) {
-			this.paddle2.directionChange(
-				ev.code === "KeyW" ? "up" : ev.code === "KeyS" ? "down" : ""
-			);
-		}
+	movePlayers = () => {
+		const direction = ev.code === "KeyW" ? "up" : ev.code === "KeyS" ? "down" : "";
+
+		if (this.user.id === +this.player1_id)
+			this.paddle1.directionChange(direction);
+		else if (this.user.id === +this.player2_id)
+			this.paddle2.directionChange(direction);
 	};
 
 	stopPlayers = (ev) => {
@@ -158,19 +109,6 @@ export default class OnlinePongTable extends HTMLElement {
 		document.removeEventListener("keyup", this.handleKeyUp);
 	}
 
-	render() {
-		this.innerHTML = /*html*/ `
-        <div class="vh-full w-full flex-col-center">
-            <c-scoreboard class="mb-5"
-                        player1="${"hassan"}" 
-                        player2="${"mouad"}" 
-                        score1="${"1"}"
-                        score2="${"2"}">
-            </c-scoreboard>
-            <canvas id="table" class="pong-table pong-table-standard"></canvas>
-        </div>
-        `;
-	}
 	gameplay() {	
 		this.table = this.querySelector("#table");
 		this.table.height = this.tableHeight;
@@ -182,17 +120,16 @@ export default class OnlinePongTable extends HTMLElement {
 	update = () => {
 		this.obj['y'] = this.obj['sender'] === +this.player1_id ? this.paddle1.y : this.paddle2.y;
 		this.obj['sender'] = this.user.id;
-		// if (this.user.id === +this.player1_id)
-			matchState.sendGameUpdate(this.match_id, this.obj);
-		//draw paddles
+		this.obj['ball_x'] = this.ball.x;
+		this.obj['ball_y'] = this.ball.y;
+		matchState.sendGameUpdate(this.match_id, this.obj);
 		this.frameCount++;
-		// update paddle position
-		if (this.scene && matchState.is_ready) {
+
+		if (this.scene && matchState.is_ready)
 			this.drawScene();
-		}
 		else
 			this.drawForGame();
-		// this.drawScene();
+
 		this.ball.bounceOnPaddles(this.paddle1);
 		this.ball.bounceOnPaddles(this.paddle2);
 		this.ball.bounceOnWalls(this.tableHeight);
@@ -227,9 +164,9 @@ export default class OnlinePongTable extends HTMLElement {
 	};
 
 	drawForGame = () => {
-		// call the update only when the player is the current user
-			this.paddle1.update();
-			this.paddle2.update();
+
+		this.paddle1.update();
+		this.paddle2.update();
 		// this.ball.update();
 		this.draw();
 	};
@@ -337,4 +274,18 @@ export default class OnlinePongTable extends HTMLElement {
 			this.match.score2 === this.finalScore
 		);
 	}
+	render() {
+		this.innerHTML = /*html*/ `
+		<div class="vh-full w-full flex-col-center">
+			<c-scoreboard class="mb-5"
+						player1="${"hassan"}" 
+						player2="${"mouad"}" 
+						score1="${"1"}"
+						score2="${"2"}">
+			</c-scoreboard>
+			<canvas id="table" class="pong-table pong-table-standard"></canvas>
+		</div>
+		`;
+	}
 }
+
