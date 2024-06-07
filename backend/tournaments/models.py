@@ -150,7 +150,7 @@ class Tournament(models.Model):
                 self.delete()
                 return
                 
-        if self.status != 'NS' or self.status != 'C':
+        if self.status == 'IP':
             raise ValidationError('Cannot leave a tournament that has already started.')
         if user not in self.participants.all():
             raise ValidationError('You are not a participant in this tournament.')
