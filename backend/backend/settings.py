@@ -71,6 +71,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'djoser',
+    'celery',
     # Apps
     'chat',
     'accounts',
@@ -343,6 +344,14 @@ OAUTH2_PROVIDERS = {
 CRONJOBS = [
     # ('*/30 * * * * *', 'accounts.cron.delete_orphaned_avatars')
 ]
+
+# Celery
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
 
 # settings.py
 

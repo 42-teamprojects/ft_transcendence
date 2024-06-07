@@ -12,6 +12,10 @@ from django.utils import timezone
 from backend import settings
 import tournaments
 from django.core.mail import send_mail
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+
+from tournaments.tasks import start_tournament_matches
 
 class Tournament(models.Model):
     TYPE_CHOICES = [
@@ -60,6 +64,16 @@ class Tournament(models.Model):
         TournamentMatch.objects.bulk_create(matches)
         self.start_time = timezone.now() + timedelta(minutes=3)
         self.save()
+        
+        start_tournament_matches.apply_async((self,), eta=self.start_time)
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            str(self.id), 
+            {
+                'type': 'tournament_update',
+                'data': 'The tournament is starting soon.'
+            }
+        )
         # self.notify_participants()
 
     def validate_start_conditions(self):
@@ -111,6 +125,15 @@ class Tournament(models.Model):
             raise ValidationError('You are already a participant in another tournament.')
         self.participants.add(user)
         self.save()
+        
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            str(self.id), 
+            {
+                'type': 'tournament_update',
+                'data': f'{user.username} has joined the tournament.'
+            }
+        )
 
         if self.participants.count() == int(self.type):
             self.start()
@@ -156,6 +179,31 @@ class Tournament(models.Model):
             raise ValidationError('You are not a participant in this tournament.')
         self.participants.remove(user)
         self.save()
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            str(self.id), 
+            {
+                'type': 'tournament_update',
+                'data': f'{user.username} h as left the tournament.'
+            }
+        )
+    
+    def start_matches(self):
+        if self.status != 'IP':
+            raise ValidationError('The tournament has not started yet.')
+        if self.status == 'IP' and timezone.now() >= self.start_time:
+            for match in self.matches.filter(status='NS'):
+                if match.players.count() == 2:
+                    match.start()
+
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                str(self.id), 
+                {
+                    'type': 'tournament_update',
+                    'data': 'The tournament has started.'
+                }
+            )
     
     def __str__(self):
         return f'Tournament {self.pk}'
@@ -176,6 +224,11 @@ class TournamentMatch(models.Model):
     winner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     status = models.CharField(max_length=2, choices=STATUS_CHOICES, default='NS')
     start_time = models.DateTimeField(auto_now_add=False, null=True)
+    
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs) 
+        if self.player1 and self.player2 and self.status == 'NS' and self.tournament.status == 'IP':
+            self.start()
     
     def set_winner(self, winner):
         if winner not in [self.player1, self.player2]:
@@ -203,6 +256,28 @@ class TournamentMatch(models.Model):
             elif self.match_number == 1:
                 next_round_match.player2 = winner
             next_round_match.save()
+
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            str(self.id), 
+            {
+                'type': 'tournament_update',
+                'data': f'Match {self.pk} has finished.'
+            }
+        )
+    
+    def start(self):
+        self.start_time = timezone.now() + timedelta(seconds=30)
+        self.status = 'IP'
+        self.save()
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            str(self.id), 
+            {
+                'type': 'tournament_update',
+                'data': f'Match {self.pk} has started.'
+            }
+        )
                 
     def __str__(self):
         return f'R{self.round}-{"1" if self.match_number == 0 else "2"}G{self.group}: {self.player1} vs {self.player2}, W: {self.winner}'

@@ -9,6 +9,11 @@ export default class Tournamenteventscard extends HTMLElement {
         this.innerHTML = this.getLoading();
         this.upcomingTournaments = await onlineTournamentState.getUpcomingTournaments();
         this.render();
+        this.unsubscribe = onlineTournamentState.subscribe(async () => {
+            this.innerHTML = this.getLoading();
+            this.upcomingTournaments = await onlineTournamentState.getUpcomingTournaments();
+            this.render();
+        });
     }
 
     disconnectedCallback() {}
@@ -21,9 +26,9 @@ export default class Tournamenteventscard extends HTMLElement {
             </div>
             <div class="flex-col gap-8">
                 ${this.upcomingTournaments.length === 0 ? /*html*/`<p class="text-stroke text-center">No upcoming tournaments</p>` : ""}
-                ${this.upcomingTournaments.map(tournament => {
-                    console.log(tournament)
-                    return /*html*/`<c-tournament-event href="/dashboard/tournaments/qualifications/${tournament.id}" type="${tournament.type}" status="${tournament.status}" start-time="${tournament.start_time}"></c-tournament-event>`
+                ${this.upcomingTournaments.map((tournament) => {
+                    onlineTournamentState.setup(tournament.id)
+                    return /*html*/`<c-tournament-event href="${tournament.status === 'NS' ? '/dashboard/tournaments' : `/dashboard/tournaments/qualifications/${tournament.id}`}" type="${tournament.type}" status="${tournament.status}" start-time="${tournament.start_time}"></c-tournament-event>`
                 }).join("")}
             </div>
         </div>

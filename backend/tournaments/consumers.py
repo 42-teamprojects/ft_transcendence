@@ -1,15 +1,13 @@
 import json
-
 from channels.generic.websocket import AsyncWebsocketConsumer
 from rest_framework_simplejwt.tokens import UntypedToken
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
-from .models import Chat
+from .models import Tournament
 from channels.db import database_sync_to_async
 
-
-class ChatConsumer(AsyncWebsocketConsumer):
+class TournamentConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.room_name = self.scope["url_route"]["kwargs"]["chat_id"]
+        self.room_name = self.scope["url_route"]["kwargs"]["tournament_id"]
         if (self.scope["cookies"] is None) or ("access" not in self.scope["cookies"]):
             await self.close()
             return
@@ -23,10 +21,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
             return
 
         self.user_id = UntypedToken(self.access_token).payload['user_id']
-
-        if not await self.is_user_in_room(self.user_id, self.room_name):
-            await self.close()
-            return
+        print(self.user_id, flush=True)
+        # if not await self.is_user_in_tournament(self.user_id, self.room_name):
+        #     await self.close()
+        #     return
 
         await self.channel_layer.group_add(
             self.room_name,
@@ -42,33 +40,25 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        content = text_data_json["content"]
-        sender = text_data_json["sender"]
 
         await self.channel_layer.group_send(
             self.room_name,
             {
-                "type": "chat_message",
-                "content": content,
-                "sender": sender
+                "type": "tournament_update",
+                "data": text_data_json, 
             }
         )
 
-    async def chat_message(self, event):
-        content = event["content"]
-        sender = event["sender"]
+    async def tournament_update(self, event):
         await self.send(text_data=json.dumps({
-            "content": content,
-            "sender": sender,
+            "data": event["data"],
         }))
+        pass
 
     @database_sync_to_async
-    def is_user_in_room(self, user, chat_id):
+    def is_user_in_tournament(self, user, tournament_id):
         try:
-            chat = Chat.objects.get(id=chat_id)
-            if user == chat.user1.id or user == chat.user2.id:
-                return True
-            return False
-        except Chat.DoesNotExist:
+            tournament = Tournament.objects.get(id=tournament_id, participants=user)
+        except Tournament.DoesNotExist:
             return False
 

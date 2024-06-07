@@ -11,19 +11,20 @@ export default class Tournamentevent extends HTMLElement {
 
     connectedCallback() {
         this.render();
-        console.log(isTimePast(this.start_time))
         this.timeRemaining = this.querySelector("#time-remaining");
-        this.countdown = startCountdown(this.start_time, (output) => {
-            this.timeRemaining.innerHTML = output;
-        },
-        () => {
-            this.render();
+        if (this.timeRemaining && this.status === 'IP' && !isTimePast(this.start_time)) {
+            this.countdown = startCountdown(this.start_time, (output) => {
+                this.timeRemaining.innerHTML = output;
+            },
+            () => {
+                this.render();
+            }
+            );
         }
-        );
     }
 
     disconnectedCallback() {
-        clearInterval(this.countdown); // Clear the interval when the element is removed
+        if (this.countdown) clearInterval(this.countdown); // Clear the interval when the element is removed
     }
 
     render() {
