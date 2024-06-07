@@ -32,7 +32,7 @@ export default class Onlinetournamentmatch extends HTMLElement {
         this.findMatch();
         this.innerHTML = [this.match?.player1, this.match?.player2]
             .map((player, i) => /*html*/`
-            <div class="player ${this.match?.winner?.equals(player) ? 'winner' : ''}">
+            <div class="player ${this.match?.winner === player?.id ? 'winner' : ''}">
                 <div class="flex gap-3">
                     ${player ? `<img class="player-avatar" src="${config.backend_domain}${player?.avatar}" alt="avatar" class="avatar" />` : ""}
                     ${player?.username || ""}

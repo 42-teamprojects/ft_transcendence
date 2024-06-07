@@ -58,7 +58,7 @@ class Tournament(models.Model):
         participants = self.randomize_participants()
         matches = self.generate_matches(participants)
         TournamentMatch.objects.bulk_create(matches)
-        self.start_time = timezone.now() + timedelta(minutes=10)
+        self.start_time = timezone.now() + timedelta(minutes=3)
         self.save()
         # self.notify_participants()
 
@@ -112,8 +112,8 @@ class Tournament(models.Model):
         self.participants.add(user)
         self.save()
 
-        # if self.participants.count() == int(self.type):
-        #     tournament_full.send(sender=self.__class__, tournament=self)
+        if self.participants.count() == int(self.type):
+            self.start()
     
     # print tournament qualification brackets tree
     def print_tree(self):
