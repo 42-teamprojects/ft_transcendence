@@ -2,6 +2,7 @@
 from datetime import timedelta
 from email.message import EmailMessage
 from email.policy import default
+from timeit import Timer
 from django.db import models
 from accounts.models import User
 from django.forms import ValidationError
@@ -61,7 +62,6 @@ class Tournament(models.Model):
         self.start_time = timezone.now() + timedelta(minutes=3)
         self.save()
         
-        # start_tournament_matches.apply_async((self,), eta=self.start_time)
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
             str(self.id), 
@@ -70,6 +70,9 @@ class Tournament(models.Model):
                 'data': 'The tournament is starting soon.'
             }
         )
+        # Calculate the delay until the start_time
+        delay = (self.start_time - timezone.now()).total_seconds()
+        Timer(delay, self.start_matches).start()
         # self.notify_participants()
 
     def validate_start_conditions(self):
