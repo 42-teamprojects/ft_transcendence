@@ -1,3 +1,4 @@
+import Onlinescoreboard from "./components/comps/online-scoreboard.js";
 import Onlinepongtable from "./components/comps/online-pong-table.js";
 import Notification from "./components/comps/notification.js";
 import Notificationdropdown from "./components/comps/notification-dropdown.js";
@@ -114,4 +115,5 @@ export const components = [
 	{ tagName: 'c-notification-dropdown', component: Notificationdropdown },
 	{ tagName: 'c-notification', component: Notification },
 	{ tagName: 'c-online-pong-table', component: Onlinepongtable },
+	{ tagName: 'c-online-scoreboard', component: Onlinescoreboard },
 ];

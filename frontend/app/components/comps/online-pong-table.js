@@ -234,8 +234,8 @@ export default class OnlinePongTable extends HTMLElement {
 
 		if (scored) {
 			this.resetGame();
-			this.querySelector("c-scoreboard").setAttribute("score1", this.match.score1);
-			this.querySelector("c-scoreboard").setAttribute("score2", this.match.score2);
+			this.querySelector("c-online-scoreboard").setAttribute("score1", this.match.score1);
+			this.querySelector("c-online-scoreboard").setAttribute("score2", this.match.score2);
 			this.scene = true;
 		}
 	};
@@ -306,12 +306,12 @@ export default class OnlinePongTable extends HTMLElement {
 	render() {
 		this.innerHTML = /*html*/ `
 		<div class="vh-full w-full flex-col-center">
-			<c-scoreboard class="mb-5"
+			<c-online-scoreboard class="mb-5"
 						player1="${"hassan"}" 
 						player2="${"mouad"}" 
 						score1="${"0"}"
 						score2="${"0"}">
-			</c-scoreboard>
+			</c-online-scoreboard>
 			<canvas id="table" class="pong-table pong-table-standard"></canvas>
 		</div>
 		`;
