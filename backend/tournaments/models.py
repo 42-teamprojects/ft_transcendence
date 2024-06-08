@@ -72,8 +72,8 @@ class Tournament(models.Model):
             }
         )
         # Calculate the delay until the start_time
-        delay = (self.start_time - timezone.now()).total_seconds()
-        Timer(delay, self.start_matches).start()
+        # delay = (self.start_time - timezone.now()).total_seconds()
+        # Timer(delay, self.start_matches).start()
         # self.notify_participants()
 
     def validate_start_conditions(self):
