@@ -17,7 +17,9 @@ export default class Tournamenteventscard extends HTMLElement {
         });
     }
 
-    disconnectedCallback() {}
+    disconnectedCallback() {
+        this.unsubscribe();
+    }
 
     render() {
         this.innerHTML = /*html*/`

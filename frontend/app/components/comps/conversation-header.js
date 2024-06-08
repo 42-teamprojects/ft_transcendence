@@ -38,8 +38,10 @@ export default class Conversationheader extends HTMLElement {
             }
         })
     }
-    //comment
-    disconnectedCallback() {}
+
+    disconnectedCallback() {
+        this.unsubscribe();
+    }
 
     render() {
         this.innerHTML = /*html*/`

@@ -54,7 +54,10 @@ export default class OnlineQualifications extends HTMLElement {
 		// });
 	}
 
-	disconnectedCallback() {}
+	disconnectedCallback() {
+		// this.unsubscribe();
+		this.countdown && clearInterval(this.countdown);
+	}
 
 	render() {
 		// const currentMatch = this.tournamentState.currentMatch;

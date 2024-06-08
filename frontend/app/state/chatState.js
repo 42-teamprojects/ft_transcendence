@@ -59,7 +59,8 @@ class ChatState extends State {
 		if (force) await new Promise((resolve) => setTimeout(resolve, 100));
 		try {
 			let chat = this.state.chats.find((chat) => chat.id === parseInt(chatId));
-			if (chat && !force) return chat;
+			if (chat && !force)
+				return chat;
 			chat = await this.httpClient.get(`chats/${chatId}/`);
 			chat.friend = this.getFriend(chat);
 			return chat;

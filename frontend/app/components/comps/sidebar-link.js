@@ -37,6 +37,7 @@ export default class SidebarLink extends HTMLElement {
     }
 
     disconnectedCallback() {
+      this.unsubscribe();
     }
 
     render() {
