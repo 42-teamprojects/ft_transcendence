@@ -3,7 +3,7 @@ from datetime import timedelta
 from email.message import EmailMessage
 from email.policy import default
 from os import write
-from timeit import Timer
+from threading import Timer
 from django.db import models
 from accounts.models import User
 from django.forms import ValidationError
@@ -60,7 +60,7 @@ class Tournament(models.Model):
         participants = self.randomize_participants()
         matches = self.generate_matches(participants)
         TournamentMatch.objects.bulk_create(matches)
-        self.start_time = timezone.now() + timedelta(minutes=3)
+        self.start_time = timezone.now() + timedelta(minutes=1)
         self.save()
         
         channel_layer = get_channel_layer()
@@ -72,8 +72,9 @@ class Tournament(models.Model):
             }
         )
         # Calculate the delay until the start_time
-        # delay = (self.start_time - timezone.now()).total_seconds()
-        # Timer(delay, self.start_matches).start()
+        delay = (self.start_time - timezone.now()).total_seconds()
+        print("Delay: ", delay, flush=True)
+        Timer(delay, self.start_matches).start()
         # self.notify_participants()
 
     def validate_start_conditions(self):
@@ -201,7 +202,7 @@ class Tournament(models.Model):
             raise ValidationError('The tournament has not started yet.')
         if self.status == 'IP' and timezone.now() >= self.start_time:
             for match in self.matches.filter(status='NS'):
-                if match.players.count() == 2:
+                if match.player1 is not None and match.player1 is not None:
                     match.start()
 
             channel_layer = get_channel_layer()
@@ -212,8 +213,6 @@ class Tournament(models.Model):
                     'data': 'The tournament has started.'
                 }
             )
-            with open('tournament_tree.txt', 'w') as f:
-                f.write(self.print_tree())
     
     def __str__(self):
         return f'Tournament {self.pk}'

@@ -72,7 +72,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'djoser',
-    'celery',
+    # 'background_task',
     # Apps
     'chat',
     'accounts',

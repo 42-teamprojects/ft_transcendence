@@ -59,7 +59,7 @@ export default class OnlineQualifications extends HTMLElement {
 
 	disconnectedCallback() {
 		// this.unsubscribe();
-		this.countdown && clearInterval(this.countdown);
+		if (this.countdown) clearInterval(this.countdown);
 	}
 
 	render() {
