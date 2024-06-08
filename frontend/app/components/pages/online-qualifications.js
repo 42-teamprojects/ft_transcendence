@@ -40,12 +40,15 @@ export default class OnlineQualifications extends HTMLElement {
 		}
 		this.start_time = new Date(this.tournament.start_time)
 		this.render();
-		this.timeRemaining = this.querySelector("#countdown");
+		this.timeRemaining = this.querySelector("#countdown")
+		if (isTimePast(this.start_time)) return;
 		this.countdown = startCountdown(this.start_time, (output) => {
             this.timeRemaining.innerHTML = output;
         },
         () => {
-			this.querySelector(".countdown-container").remove();
+			setTimeout(() => {
+				this.querySelector(".countdown-container").remove();
+			}, 1000);
 		}
         );
 		// this.unsubscribe = tournamentState.subscribe(() => {

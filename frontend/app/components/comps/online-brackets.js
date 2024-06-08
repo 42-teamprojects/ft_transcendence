@@ -14,10 +14,9 @@ export default class Onlinebrackets extends HTMLElement {
 		this.render();
 
 		let matches = this.tournamentState.state.matches;
-		let matchElements = this.querySelectorAll(`.col c-online-tournament-match`);
-
+		let matchElements = Array.from(this.querySelectorAll(`.col c-online-tournament-match`));
 		matches.forEach((match, index) => {
-			matchElements[index].setAttribute("match-id", match.id);
+			matchElements[index]?.setAttribute("match-id", match.id);
 		});
 	}
 
