@@ -101,6 +101,7 @@ class FriendState extends State {
 			const friendshipObject = this.getFriendshipObject(userId);
 			if (!friendshipObject) return;
 			const result = await this.httpClient.post(`friends/block/${friendshipObject.id}/`);
+
 			const notification = {
 				type: "FAL",
 				data: {
@@ -112,7 +113,6 @@ class FriendState extends State {
 			}
 
 			await notificationState.sendNotification(notification);
-
 			this.setState({ friends: this.state.friends.filter((friendshipObject) => friendshipObject.user1.id !== userId && friendshipObject.user2.id !== userId) });
 			this.setState({ blocked: [...this.state.blocked, friendshipObject] });
 			chatState.reset();

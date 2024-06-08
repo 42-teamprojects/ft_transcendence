@@ -171,6 +171,14 @@ class Tournament(models.Model):
                 self.save()
             else:
                 self.delete()
+                channel_layer = get_channel_layer()
+                async_to_sync(channel_layer.group_send)(
+                    "all_users", 
+                    {
+                        'type': 'tournament_update',
+                        'data': f'Tournament has been cancelled.'
+                    }
+                )
                 return
                 
         if self.status == 'IP':
