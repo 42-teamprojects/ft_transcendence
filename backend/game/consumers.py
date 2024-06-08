@@ -12,18 +12,14 @@ def get_user_id(scope):
         return None
     access_token = scope["cookies"]["access"]
     try:
-        #! to replace with access token
         UntypedToken(access_token)
-    
     except (InvalidToken, TokenError):
         return None
-
     return UntypedToken(access_token).payload['user_id']
 
 class MatchMakingConsumer(AsyncWebsocketConsumer):
     loby = []
     async def connect(self):
-
         self.user_id = get_user_id(self.scope)
         if self.user_id is None:
             await self.close()
@@ -35,11 +31,8 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
         if len(self.loby) >= 2:
-            print("connected : ", self.loby, flush=True)
-    
             self.player1 = self.loby.pop(0)
             self.player2 = self.loby.pop(0)
-            print("loby full", flush=True)
         
             #creating a channel for the players
             player1_group = f"player_{self.player1}"
@@ -73,8 +66,6 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
     async def disconnect(self, close_code):
         if self.user_id in MatchMakingConsumer.loby:
             MatchMakingConsumer.loby.remove(self.user_id)
-        print("disco : ", self.loby, flush=True)
-        # print("disconnected : ", self.player.username)
     
     async def receive(self, text_data):
         pass
@@ -95,14 +86,12 @@ class GameConsumer(AsyncWebsocketConsumer):
         self.room_name = self.scope['url_route']['kwargs']['match_id']
         self.user_id = get_user_id(self.scope)
         if (self.user_id in GameConsumer.connected_users) or len(GameConsumer.connected_users) > 2:
-            print("room full")
             await self.close()
             return
         if self.user_id is None:
             await self.close()
             return
         GameConsumer.connected_users.append(self.user_id)
-        print(f"user {self.user_id} connected to room {self.room_name} , playing users = {GameConsumer.connected_users}", flush=True)
         self.room_group_name = f'game_{self.room_name}'
         await self.channel_layer.group_add(
             self.room_group_name,
@@ -123,7 +112,6 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def disconnect(self, close_code):
         if self.user_id in GameConsumer.connected_users:
             GameConsumer.connected_users.remove(self.user_id)
-        print(f"user {self.user_id} disconnected from room {self.room_name}", flush=True)
         #semd data to other user that the user has left
         await self.channel_layer.group_send(
             self.room_group_name,
@@ -137,16 +125,11 @@ class GameConsumer(AsyncWebsocketConsumer):
             self.room_group_name,
             self.channel_name
         )
-        print(f"users left = {GameConsumer.connected_users}", flush=True)
     
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        # print(text_data_json, flush=True)
         data = text_data_json
-        
-        # print(data, flush=True)
 
-        # print(data["type"], flush=True) 
         if (data["type"] == "game_update" or data["type"] == "ball_update") or data["type"] == "counter":
             # the data have a sender id send don't send 2 consecutive messages to the same user
             await self.channel_layer.group_send(
