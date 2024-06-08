@@ -20,6 +20,7 @@ export default class Onlinegameplay extends HTMLElement {
         const { winner } = e.detail;
         matchState.setWinner(winner);
         const modal = document.createElement('c-gameover-modal');
+        modal.setAttribute('online', true);
         modal.setAttribute('player', winner.username);
         this.appendChild(modal);
         setTimeout(() => {
