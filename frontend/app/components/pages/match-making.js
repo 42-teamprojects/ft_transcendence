@@ -44,7 +44,7 @@ export default class Matchmaking extends HTMLElement {
     }
     
     connectedCallback() {
-        matchState.setupMatchMaking("matchId");
+        matchState.setupMatchMaking("matchMakingId");
         this.user = userState.state.user;
         this.render();
  
@@ -72,7 +72,7 @@ export default class Matchmaking extends HTMLElement {
         btn.addEventListener('click', () => {
             //go back to the home page]
             Router.instance.navigate('/dashboard/home');
-            matchState.closeMatchMakingConnection('matchId');
+            matchState.closeMatchMakingConnection('matchMakingId');
             this.unsubscribe();
         });
         // console.log(this.user);
