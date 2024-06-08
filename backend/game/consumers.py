@@ -3,33 +3,35 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from rest_framework_simplejwt.tokens import UntypedToken
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
-# from channels.db import database_sync_to_async
+from channels.db import database_sync_to_async
 
 
 
 def get_user_id(scope):
-    if (scope["cookies"] is None) or ("access" not in scope["cookies"]):
+    if not scope["cookies"] or "access" not in scope["cookies"]:
         return None
     access_token = scope["cookies"]["access"]
     try:
-        UntypedToken(access_token)
+        token = UntypedToken(access_token)
+        return token.payload['user_id']
     except (InvalidToken, TokenError):
         return None
-    return UntypedToken(access_token).payload['user_id']
 
 class MatchMakingConsumer(AsyncWebsocketConsumer):
     loby = []
+
     async def connect(self):
         self.user_id = get_user_id(self.scope)
         if self.user_id is None:
             await self.close()
             return
+
+        matchmaking_type = self.scope['url_route']['kwargs']['matchmaking_type']
         self.loby.append(self.user_id)
+
         user_group = f"player_{self.user_id}"
-        await self.channel_layer.group_add(
-            user_group,
-            self.channel_name
-        )
+        await self.channel_layer.group_add(user_group, self.channel_name)
+
         if len(self.loby) >= 2:
             self.player1 = self.loby.pop(0)
             self.player2 = self.loby.pop(0)
@@ -44,23 +46,9 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
                 "match_id": f"{self.player1}_{self.player2}"
             }
             
-            await self.channel_layer.group_send(
-                player1_group,
-                {
-                    "type": "game_message",
-                    "data": data
-                }
-            )
-            
-            await self.channel_layer.group_send(
-                player2_group,
-                {
-                    "type": "game_message",
-                    "data": data
-                }
-            )
-                
-        
+            await self.channel_layer.group_send(player1_group, {"type": "game_message", "data": data})            
+            await self.channel_layer.group_send(player2_group, {"type": "game_message", "data": data})
+
         await self.accept()
     
     async def disconnect(self, close_code):
