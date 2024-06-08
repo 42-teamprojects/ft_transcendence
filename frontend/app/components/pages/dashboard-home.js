@@ -29,6 +29,7 @@ export default class Dashboard extends HTMLElement {
             <div class="widgets flex-col-center gap-5">
                 <c-playerresources></c-playerresources>
                 <c-friendscard></c-friendscard>
+                <c-tournament-events-card></c-tournament-events-card>
             </div>
         </div>
         `;

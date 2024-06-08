@@ -190,8 +190,26 @@ export function getKeyByValue(object, value) {
     return Object.keys(object).find(key => object[key].toLowerCase() === value.toLowerCase());
 }
 
-export function getRandomInt(min, max) {
-	min = Math.ceil(min);
-	max = Math.floor(max);
-	return Math.floor(Math.random() * (max - min + 1)) + min;
+export function startCountdown(time, onUpdateCallback = (output) => {console.log(output)}, onEndCallback = () => {}) {
+	const countdown = setInterval(() => {
+		const now = new Date();
+		const diff = time - now; // Difference in milliseconds
+
+		if (diff <= 0) {
+			clearInterval(countdown);
+			onEndCallback();
+		} else {
+			const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+			const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+			const output = (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+			onUpdateCallback(output);
+		}
+	}, 1000);
+
+	return countdown;
+}
+
+export function isTimePast(time) {
+	const now = new Date();
+	return time < now;
 }

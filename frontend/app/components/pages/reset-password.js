@@ -7,6 +7,7 @@ import { handleFormSubmitApi } from '../../utils/utils.js';
 export default class Resetpassword extends HTMLElement {
     constructor() {
         super();
+        this.classList.add('full-page');
         let params = new URL(document.location).searchParams;
         this.uid = params.get("uid");
         this.token = params.get("token");

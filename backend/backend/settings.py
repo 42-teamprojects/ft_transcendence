@@ -51,6 +51,7 @@ REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_CLASSES': [
         'accounts.custom_throttles.CustomAnonRateThrottle',
         'accounts.custom_throttles.ResendRateThrottle',
+        'accounts.custom_throttles.ResetPasswordRateThrottle',
     ],
     'DEFAULT_THROTTLE_RATES': {
         'anon': '3/h',
@@ -71,6 +72,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'djoser',
+    'celery',
     # Apps
     'chat',
     'accounts',
@@ -82,6 +84,8 @@ INSTALLED_APPS = [
     'notifications',
     'django_crontab',
     'stats',
+    'match',
+    'tournaments',
 ]
 
 ASGI_APPLICATION = 'backend.asgi.application'
@@ -141,6 +145,12 @@ DATABASES = {
         'PORT': env('POSTGRES_PORT'),
     }
 }
+
+
+
+
+#score winner
+SCORE_WINNER = 5
 
 
 # Password validation
@@ -233,7 +243,7 @@ SIMPLE_JWT = {
     # A string like "example.com", or None for standard domain cookie.
     'AUTH_COOKIE_DOMAIN': None,
     # Whether the auth cookies should be secure (https:// only).
-    'AUTH_COOKIE_SECURE': False, 
+    'AUTH_COOKIE_SECURE': False, # Change to True 
     # Http only cookie flag.It's not fetch by javascript.
     'AUTH_COOKIE_HTTP_ONLY': True,
     'AUTH_COOKIE_PATH': '/',        # The path of the auth cookie.
@@ -245,12 +255,17 @@ SIMPLE_JWT = {
     'TWO_FACTOR_AUTH_COOKIE': 'two-factor-auth',
 }
 
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+
 # CORS
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:8080",
     "http://10.11.3.1:8080",
     "http://10.11.3.3:8080",
+    "https://localhost:8443",
+    "https://127.0.0.1",
 ]
 CORS_ALLOW_HEADERS = (
     "accept",
@@ -261,7 +276,6 @@ CORS_ALLOW_HEADERS = (
     "x-requested-with",
 )
 
-CORS_ALLOW_CREDENTIALS = True
 
 # CSRF
 CSRF_COOKIE_SECURE = True
@@ -333,3 +347,37 @@ OAUTH2_PROVIDERS = {
 CRONJOBS = [
     # ('*/30 * * * * *', 'accounts.cron.delete_orphaned_avatars')
 ]
+
+# Celery
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
+
+# settings.py
+
+# Redirect all HTTP requests to HTTPS
+# SECURE_SSL_REDIRECT = True
+
+## Ensure the correct value for X-Forwarded-Proto header
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# # Additional security settings
+# SECURE_HSTS_SECONDS = 3600
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+# SECURE_HSTS_PRELOAD = True
+# SECURE_BROWSER_XSS_FILTER = True
+# SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# # Use secure cookies
+# SESSION_COOKIE_SECURE = True
+# CSRF_COOKIE_SECURE = True
+
+
+# # Define STATIC_ROOT
+# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# # Optionally, you can also define STATIC_URL if it's not already set
+# STATIC_URL = '/static/'

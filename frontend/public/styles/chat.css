@@ -12,17 +12,20 @@
     grid-template-rows: 100vh;
     gap: 0px 0px;
     grid-template-areas: "chat-list chat-conversation";
-
-    .conversation-header {
-        display: none;
-    }
-    .conversation-footer {
-        display: none;
-    }
-    .chat-match-history {
-        display: none;
-    }
 }
+
+.chat-page__empty .conversation-header {
+    display: none;
+}
+
+.chat-page__empty .conversation-footer {
+    display: none;
+}
+
+.chat-page__empty .chat-match-history {
+    display: none;
+}
+
 
 @media screen and (max-width: 1550px) {
     .chat-page {
@@ -174,22 +177,20 @@
     height: 10px;
     width: 10px;
     border-radius: 50%;
-
-    &.online 
-    {
-        background-color: var(--success-color);
-    }
-
-    &.offline 
-    {
-        background-color: var(--stroke-color);
-    }
-
-    &.playing 
-    {
-        background-color: var(--danger-color);
-    }
 }
+
+.conversation-header__status__dot.online {
+    background-color: var(--success-color);
+}
+
+.conversation-header__status__dot.offline {
+    background-color: var(--stroke-color);
+}
+
+.conversation-header__status__dot.playing {
+    background-color: var(--danger-color);
+}
+
 
 .conversation-header__status__text {
     font-size: 1rem;
@@ -230,18 +231,19 @@
     padding: 1rem;
     height: calc(100vh - 88px * 2);
     overflow-y: auto;
-
-    & .player-avatar {
-        opacity: 0;
-        align-self: flex-end;
-        margin-bottom: .25rem;
-    }
-    
-    & c-message-bubble:first-child .player-avatar,
-    c-message-bubble[type="out"] + c-message-bubble[type="in"] .player-avatar {
-        opacity: 1;
-    }
 }
+
+.conversation-body .player-avatar {
+    opacity: 0;
+    align-self: flex-end;
+    margin-bottom: 0.25rem;
+}
+
+.conversation-body c-message-bubble:first-child .player-avatar,
+.conversation-body c-message-bubble[type="out"] + c-message-bubble[type="in"] .player-avatar {
+    opacity: 1;
+}
+
 
 c-message-bubble {
     display: flex;
@@ -250,23 +252,44 @@ c-message-bubble {
 }
 
 .message-bubble {
-    padding: .75rem;
-    border-radius: .75rem;
+    padding: 0.75rem;
+    border-radius: 0.75rem;
     max-width: 55%;
-
-    &.in{
-        margin-right: auto;
-        background-color: var(--bg-color);
-    }
-    &.out{
-        margin-left: auto;
-        background-color: var(--primary-color);
-    }
 }
+
+.message-bubble.in {
+    margin-right: auto;
+    background-color: var(--bg-color);
+}
+
+.message-bubble.out {
+    margin-left: auto;
+    background-color: var(--primary-color);
+}
+
 
 .message-content {
     font-size: 1rem;
     color: var(--text-color);
     word-break: break-word;
     line-height: 1.6;
+}
+
+.dot{
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    border: 3px solid var(--bg-color);
+    background-color: var(--primary-color);
+    position: absolute;
+    right: -4px;
+    top: -4px;
+}
+
+/* styling for the seen message */
+.seen{
+    color: var(--stroke-color);
+    position: absolute;
+    right:40px;
+    bottom: 80px;
 }

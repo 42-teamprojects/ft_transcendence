@@ -6,9 +6,10 @@ COPY requirements.txt requirements.txt
 
 RUN pip install -r requirements.txt
 
+# Set the DJANGO_SETTINGS_MODULE environment variable
+ENV DJANGO_SETTINGS_MODULE=backend.settings
+
 ENTRYPOINT ["./backend-entrypoint.sh"]
 
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
-# CMD ["python", "manage.py", "runsslserver", "[::]:8443"]
-
-# EXPOSE 8443
+# CMD ["daphne", "-e", "ssl:8443:privateKey=/app/certs/yelaissa.key:certKey=/app/certs/yelaissa.crt", "backend.asgi:application"]

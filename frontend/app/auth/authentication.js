@@ -50,6 +50,7 @@ export default class Authentication {
 			userState.setState({ user: null, token_verified_at: null });
 			messageState.reset();
 			chatState.reset();
+			notificationState.closeSocket();
 			await this.authService.logout();
 		} catch (error) {
 			throw error;
@@ -74,6 +75,11 @@ export default class Authentication {
 			// Update the token_verified_at timestamp in the userState
 			userState.setState({ user: result, token_verified_at: now });
 			notificationState.setup();
+			await chatState.getChats();
+			// get all messages for all chats
+			chatState.state.chats.forEach((chat) => {
+				messageState.getMessages(chat.id);
+			});
 			return true;
 		} catch (error) {
 			throw error;

@@ -6,6 +6,7 @@ import WebSocketManager from "../socket/WebSocketManager.js";
 import { config } from "../config.js";
 import Router from "../router/router.js";
 import { notificationState } from "./notificationState.js";
+import Toast from "../components/comps/toast.js";
 
 const socketTimeout = 60000 * 5; // 5 minute
 
@@ -47,6 +48,10 @@ class MessageState extends State {
 			{
 				shouldCloseOnTimeout: true,
 				timeoutDuration: socketTimeout,
+				onErrorCallback: () => {
+					this.messagesFetched[chatId] = false;
+					Toast.notify("Failed to establish connection with the server. Please try again.", "error");
+				}
 			}
 		);
 
@@ -93,6 +98,7 @@ class MessageState extends State {
 					chat_id: chatId,
 					sender_id: userState.state.user.id,
 					sender_name: userState.state.user.username,
+					sender_avatar: userState.state.user.avatar,
 					message: content,
 				},
 				recipient: friend.id,
@@ -123,6 +129,43 @@ class MessageState extends State {
 		} catch (error) {
 			console.error(error);
 		}
+	}
+
+	// mark message as read all messages to seen
+	async markMessageAsRead(chatId) {
+		if (!this.state.messages[chatId]) return;
+		console.log(chatState.state.chats);
+		this.state.messages[chatId].forEach((message) => {
+			if (!message.is_seen && message.sender !== userState.state.user.id) {
+				message.is_seen = true;
+			}
+		})
+		try {
+			await this.httpClient.post(`chats/${chatId}/messages/mark_read/`);
+		} catch (error) {
+			console.error(error);
+		}
+	}
+	//check if the last message that not mine is read
+	isLastMessageSeen(chatId) {
+		// const messages = this.state.messages[chatId];
+		// if (!messages) return;
+		// const lastMessage = messages[0];
+		// if (lastMessage.sender === userState.state.user.id) return true;
+		// if (lastMessage.sender !== userState.state.user.id && !lastMessage.is_seen) return false;
+		return true;
+	}
+
+	isSomeMessageUnseen() {
+		// const chats = chatState.state.chats;
+		// for (const chat of chats) {
+		// 	const messages = this.state.messages[chat.id];
+		// 	if (!messages) continue;
+		// 	const lastMessage = messages[0];
+		// 	if (lastMessage.sender === userState.state.user.id) continue;
+		// 	if (lastMessage.sender !== userState.state.user.id && !lastMessage.is_seen) return true;
+		// }
+		return false;
 	}
 
 	// {content: string, sender: id}

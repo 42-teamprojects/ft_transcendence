@@ -4,7 +4,7 @@ from .views import UploadAvatarView, UpdateUserView
 
 urlpatterns = [
     path('me/', get_my_data, name='my-data'),
-    path('<str:keyword>', get_users_by_keyword_excluding_me, name='users-by-keyword'),
+    path('search/<str:keyword>', get_users_by_keyword_excluding_me, name='users-by-keyword'),
     path('all/', get_all_users_excluding_me, name='users-list'),
     path('set_password/', ChangePasswordView.as_view(), name='change-password'),
     path('avatar/', UploadAvatarView.as_view(), name='upload-avatar'),

@@ -31,7 +31,7 @@ input[name="theme-option"]:checked ~ .table-theme {
 	padding: 0.5rem;
 	overflow: hidden;
 	position: relative;
-	z-index: 1;
+	z-index: 0;
 }
 
 .match-history__wrapper .match-history__player {

@@ -29,4 +29,19 @@ class ResendRateThrottle(UserRateThrottle):
             return super().allow_request(request, view)
         # Allow all other requests without throttling
         return True
-    
+
+
+class ResetPasswordRateThrottle(UserRateThrottle):
+    scope = 'anon'
+
+    def get_cache_key(self, request, view):
+        return f'{self.scope}_{request.data.get("email")}'
+
+    def allow_request(self, request, view):
+        # Check if the request is for password reset
+        if view.__class__.__name__ in ['ResetPasswordConfirmView']:
+            # Throttle only password reset requests
+            return super().allow_request(request, view)
+        
+        # Allow all other requests without throttling
+        return True

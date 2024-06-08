@@ -64,8 +64,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def is_user_in_room(self, user, chat_id):
-        chat = Chat.objects.get(id=chat_id)
-        if user == chat.user1.id or user == chat.user2.id:
-            return True
-        return False
+        try:
+            chat = Chat.objects.get(id=chat_id)
+            if user == chat.user1.id or user == chat.user2.id:
+                return True
+            return False
+        except Chat.DoesNotExist:
+            return False
 

@@ -1,5 +1,6 @@
 import Toast from "../components/comps/toast.js";
 import HttpClient from "../http/httpClient.js";
+import Router from "../router/router.js";
 import { chatState } from "./chatState.js";
 import { notificationState } from "./notificationState.js";
 import State from "./state.js";
@@ -16,7 +17,7 @@ class FriendState extends State {
 		this.httpClient = HttpClient.instance;
 	}
 
-	async getFriends() {
+	async getFriends(force = false) {
         if (this.fetchedFriends) return this.state.friends;
 		try {
 			this.setState({ loading: true });
@@ -51,6 +52,8 @@ class FriendState extends State {
 				type: "FAL",
 				data: {
 					type: "ADD",
+					avatar: userState.state.user.avatar,
+					username: userState.state.user.username,
 					sender_id: userState.state.user.id,
 					sender_name: userState.state.user.username,
 				},
@@ -70,21 +73,23 @@ class FriendState extends State {
 	async removeFriend(userId) {
 		try {
 			const friendshipObject = this.getFriendshipObject(userId);
+			if (!friendshipObject) return;
 			const result = await this.httpClient.delete(`friends/${friendshipObject.id}/`);
 			const notification = {
 				type: "FAL",
 				data: {
 					type: "REMOVE",
+					userAvatar: userState.state.user.avatar,
+					avatar: userState.state.user.avatar,
 					sender_id: userState.state.user.id,
 					sender_name: userState.state.user.username,
 				},
 				recipient: userId,
 			}
-
 			await notificationState.sendNotification(notification);
-
-			this.setState({ friends: this.state.friends.filter((friendshipObject) => friendshipObject.user1.id !== userId && friendshipObject.user2.id !== userId) });
-			return result;
+			Router.instance.navigate("/dashboard/profile");
+			// this.setState({ friends: this.state.friends.filter((friendshipObject) => friendshipObject.user1.id !== userId && friendshipObject.user2.id !== userId) });
+			// return result;
 		} catch (error) {
 			console.error(error);
 			Toast.notify({ message: "An error occurred", type: "error" });
@@ -94,7 +99,9 @@ class FriendState extends State {
 	async blockFriend(userId) {
 		try {
 			const friendshipObject = this.getFriendshipObject(userId);
+			if (!friendshipObject) return;
 			const result = await this.httpClient.post(`friends/block/${friendshipObject.id}/`);
+
 			const notification = {
 				type: "FAL",
 				data: {
@@ -106,7 +113,6 @@ class FriendState extends State {
 			}
 
 			await notificationState.sendNotification(notification);
-
 			this.setState({ friends: this.state.friends.filter((friendshipObject) => friendshipObject.user1.id !== userId && friendshipObject.user2.id !== userId) });
 			this.setState({ blocked: [...this.state.blocked, friendshipObject] });
 			chatState.reset();
@@ -121,6 +127,7 @@ class FriendState extends State {
 	async unblockFriend(userId) {
 		try {
 			const friendshipObject = this.getFriendshipObject(+userId, true);
+			if (!friendshipObject) return;
 			const result = await this.httpClient.post(`friends/unblock/${friendshipObject.id}/`);
 			const notification = {
 				type: "FAL",
@@ -151,6 +158,7 @@ class FriendState extends State {
 	}
 
 	alreadyFriends(userId) {
+		if (!userId) return false;
 		return this.state.friends.some((friendshipObject) => {
 			return friendshipObject.user1.id === userId || friendshipObject.user2.id === userId;
 		});

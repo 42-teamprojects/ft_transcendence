@@ -1,4 +1,5 @@
 import HttpClient from "../http/httpClient.js";
+import { messageState } from "./messageState.js";
 import State from "./state.js";
 import { userState } from "./userState.js";
 
@@ -26,7 +27,7 @@ class ChatState extends State {
 			this.setState({ chats: [chat, ...this.state.chats], loading: false});
 			return chat;
 		} catch (error) {
-			this.setState({ chats, loading: false});
+			this.setState({ loading: false});
 			console.error(error);
 		}
 	}
@@ -41,6 +42,9 @@ class ChatState extends State {
 				chat.friend = this.getFriend(chat);
 				return chat;
 			});
+			chats.forEach(async (chat) => {
+				await messageState.getMessages(chat.id);
+			});
 			this.setState({ chats, loading: false});
 			console.log("Chats", chats)
 			this.chatsFetched = true;
@@ -50,10 +54,13 @@ class ChatState extends State {
 		}
 	}
 
-	async getChat(chatId) {
+	async getChat(chatId, force = false) {
+		// if the force flag is set to true, wait 1 second before fetching the chat
+		if (force) await new Promise((resolve) => setTimeout(resolve, 100));
 		try {
 			let chat = this.state.chats.find((chat) => chat.id === parseInt(chatId));
-			if (chat) return chat;
+			if (chat && !force)
+				return chat;
 			chat = await this.httpClient.get(`chats/${chatId}/`);
 			chat.friend = this.getFriend(chat);
 			return chat;

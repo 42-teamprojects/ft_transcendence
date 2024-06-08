@@ -48,7 +48,7 @@ ul {
 	width: fit-content;
 	row-gap: 2rem;
 	position: absolute;
-    z-index: 1000;
+    z-index: 10000;
 	background-color: var(--default-color);
 	padding: 1.25rem 1.75rem;
 	border-radius: 0.75rem;

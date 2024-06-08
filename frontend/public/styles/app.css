@@ -374,7 +374,7 @@ button:active:not([disabled]) {
 
 /* Switches & Radios & Checkbox */
 
-@supports (-webkit-appearance: none) or (-moz-appearance: none) {
+/* @supports (-webkit-appearance: none) or (-moz-appearance: none) {
 	input[type="checkbox"],
 	input[type="radio"] {
 		--active: var(--secondary-color);
@@ -509,7 +509,7 @@ button:active:not([disabled]) {
 			--s: 0.5;
 		}
 	}
-}
+} */
 
 /* background */
 

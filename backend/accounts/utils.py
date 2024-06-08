@@ -22,6 +22,10 @@ def send_verification(user):
     email_from = settings.EMAIL_HOST_USER
     recipient_list = [user.email]
 
+
+    # Delete old OTPs for the user
+    OneTimePassword.objects.filter(user=user).delete()
+
     # Create OneTimePassword record
     OneTimePassword.objects.create(user=user, 
                                 otp=otp,
