@@ -8,14 +8,10 @@ from django.forms import ValidationError
 import math
 import random
 from django.utils import timezone
-# from .signals import tournament_full
 from backend import settings
-import tournaments
 from django.core.mail import send_mail
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
-
-from tournaments.tasks import start_tournament_matches
 
 class Tournament(models.Model):
     TYPE_CHOICES = [
@@ -65,7 +61,7 @@ class Tournament(models.Model):
         self.start_time = timezone.now() + timedelta(minutes=3)
         self.save()
         
-        start_tournament_matches.apply_async((self,), eta=self.start_time)
+        # start_tournament_matches.apply_async((self,), eta=self.start_time)
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
             str(self.id), 
