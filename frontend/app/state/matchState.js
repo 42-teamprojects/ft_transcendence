@@ -115,6 +115,11 @@ class MatchState extends State {
 		this.setMatch(newMatch);
 	}
 
+	getOpponent(match) {
+		const user = userState.state.user;
+		return match.player1.id === user.id ? match.player2 : match.player1;
+	}
+
 	reset() {
 		this.setState({ 
 			match: null,

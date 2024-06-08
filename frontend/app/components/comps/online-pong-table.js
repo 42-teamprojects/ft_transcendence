@@ -1,6 +1,7 @@
 import { config } from "../../config.js";
 import Ball from "../../entities/Ball.js";
 import Paddle from "../../entities/Paddle.js";
+import { PaddleType, TableTheme } from "../../entities/enums.js";
 import { matchState } from "../../state/matchState.js";
 import { userState } from "../../state/userState.js";
 
@@ -13,6 +14,11 @@ const MIDDLE_CIRCLE_RADIUS = 70;
 export default class OnlinePongTable extends HTMLElement {
 	constructor() {
         super();
+		this.user = userState.state.user;
+		this.opponent = matchState.getOpponent(matchState.state.match);
+		this.theme = TableTheme[this.user.table_theme].toLowerCase();
+		this.myPaddle = PaddleType[this.user.paddle_type].toLowerCase();
+		this.opponentPaddle = PaddleType[this.opponent.paddle_type].toLowerCase();
 		this.canUpdate = true;
         this.match_id = this.getAttribute("match_id");
         this.player1_id = this.getAttribute("player1");
@@ -27,9 +33,9 @@ export default class OnlinePongTable extends HTMLElement {
         this.paddleWidth = PADDLE_WIDTH;
         this.paddleMove = 0;
 
-        this.paddle1 = new Paddle(1, this.paddleMove, "fire", this);
-        this.paddle2 = new Paddle(2, this.paddleMove, "ice", this);
-        this.ball = new Ball( this.tableWidth / 2, this.tableHeight / 2, 5, 5, "standard" );
+        this.paddle1 = new Paddle(1, this.paddleMove, this.user.id === +this.player1_id ? this.myPaddle : this.opponentPaddle, this);
+        this.paddle2 = new Paddle(2, this.paddleMove, this.user.id === +this.player2_id ? this.myPaddle : this.opponentPaddle, this);
+        this.ball = new Ball( this.tableWidth / 2, this.tableHeight / 2, 5, 5, this.theme);
         this.middleCirlceRadius = MIDDLE_CIRCLE_RADIUS;
 
         this.scene = true;
@@ -252,6 +258,7 @@ export default class OnlinePongTable extends HTMLElement {
 
 		if (this.theme !== "classic") {
 			this.context.fillStyle = this.theme === "standard" ? "#56646C" : "white";
+			console.log(this.context.fillStyle);
 			this.context.fillRect(
 				this.tableWidth / 2 - LINE_WIDTH / 2,
 				0,
@@ -307,7 +314,7 @@ export default class OnlinePongTable extends HTMLElement {
 		this.innerHTML = /*html*/ `
 		<div class="vh-full w-full flex-col-center">
 			<c-online-scoreboard class="mb-5"></c-online-scoreboard>
-			<canvas id="table" class="pong-table pong-table-standard"></canvas>
+			<canvas id="table" class="pong-table pong-table-${this.theme}"></canvas>
 		</div>
 		`;
 	}

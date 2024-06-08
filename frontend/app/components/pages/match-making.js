@@ -51,7 +51,7 @@ export default class Matchmaking extends HTMLElement {
         this.unsubscribe = matchState.subscribe(async () => {
             this.matchData = matchState.state.match;
             this.gameSession = matchState.state.session;
-            this.opponent = this.matchData.player1.id === this.user.id ? this.matchData.player2 : this.matchData.player1;
+            this.opponent = matchState.getOpponent(this.matchData)
             console.log("match data", this.matchData);
             this.render();
             this.text = document.querySelector('.starting');
