@@ -3,9 +3,11 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from rest_framework_simplejwt.tokens import UntypedToken
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
-# from channels.db import database_sync_to_async
-
-
+from channels.db import database_sync_to_async
+from .models import GameSession
+from match.models import Match
+from accounts.models import User
+from asgiref.sync import sync_to_async
 
 def get_user_id(scope):
     if (scope["cookies"] is None) or ("access" not in scope["cookies"]):
@@ -21,47 +23,67 @@ def get_user_id(scope):
     return UntypedToken(access_token).payload['user_id']
 
 class MatchMakingConsumer(AsyncWebsocketConsumer):
-    loby = []
     async def connect(self):
-
         self.user_id = get_user_id(self.scope)
         if self.user_id is None:
             await self.close()
             return
-        self.loby.append(self.user_id)
+
+        self.session = await self.get_or_create_game_session(self.user_id)
+        if self.session is None:
+            await self.close()
+            return
         user_group = f"player_{self.user_id}"
         await self.channel_layer.group_add(
             user_group,
             self.channel_name
         )
-        if len(self.loby) >= 2:
-            print("connected : ", self.loby, flush=True)
-    
-            self.player1 = self.loby.pop(0)
-            self.player2 = self.loby.pop(0)
-            print("loby full", flush=True)
-        
-            #creating a channel for the players
-            player1_group = f"player_{self.player1}"
-            player2_group = f"player_{self.player2}"
-            
+
+        if not self.session.vacant:
+            print("session is not vacant", flush=True)
+            player1_id = await sync_to_async(self.get_player1_id)()
+            player1_group = f"player_{player1_id}"
+            player2_id = await sync_to_async(self.get_player2_id)()
+            player2_group = f"player_{player2_id}"
+
             data = {
-                "player1": self.player1,
-                "player2": self.player2,
-                "match_id": f"{self.player1}_{self.player2}"
+                "game_session_id": f"{self.session.id}"
             }
-            
+
             await self.channel_layer.group_send(player1_group, {"type": "game_message", "data": data})
-            
             await self.channel_layer.group_send(player2_group, {"type": "game_message", "data": data})
-        
+
         await self.accept()
+
+    @database_sync_to_async
+    def get_or_create_game_session(self, user_id):
+        session = GameSession.objects.filter(vacant=True).exclude(match__player1_id=user_id).first()
+        if session is None:
+            match = Match.objects.create(player1_id=user_id)
+            session = GameSession.objects.create(match=match)
+        else:
+            session.match.player2_id = user_id
+            session.match.save()
+            session.vacant = False
+            session.save()
+        return session
+    
+    def get_player1_id(self):
+        return self.session.match.player1.id
+    def get_player2_id(self):
+        return self.session.match.player2.id
     
     async def disconnect(self, close_code):
-        if self.user_id in MatchMakingConsumer.loby:
-            MatchMakingConsumer.loby.remove(self.user_id)
-        print("disco : ", self.loby, flush=True)
-        # print("disconnected : ", self.player.username)
+        await self.delete_game_session()
+        await self.channel_layer.group_discard(
+            f"player_{self.user_id}",
+            self.channel_name
+        )
+        if not self.session.vacant:
+            player1_group = f"player_{self.session.match.player1.id}"
+            player2_group = f"player_{self.session.match.player2.id}"
+            await self.channel_layer.group_send(player1_group, {"type": "game_message", "data": {"type": "player_left"}})
+            await self.channel_layer.group_send(player2_group, {"type": "game_message", "data": {"type": "player_left"}})
     
     async def receive(self, text_data):
         pass
@@ -71,26 +93,32 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             "data": data
         }))
+    
+    @database_sync_to_async
+    def delete_game_session(self):
+        self.session.refresh_from_db()
+        if self.session is not None and self.session.vacant:
+            self.session.delete()
+    
 
 
 class GameConsumer(AsyncWebsocketConsumer):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
     async def connect(self):
-        self.room_name = self.scope['url_route']['kwargs']['match_id']
-        self.users = self.room_name.split("_")
+        self.session_id = self.scope['url_route']['kwargs']['session_id']
         self.user_id = get_user_id(self.scope)
-        if str(self.user_id) not in self.users:
-            await self.close()
-            return
+        self.session = await self.get_game_session(self.session_id)
+
+        # is_user_in_session = await self.is_user_in_session(self.user_id)
+        # if self.session is None or not is_user_in_session:
+        #     await self.close()
+        #     return
 
         await self.channel_layer.group_add(
-            self.room_name,
+            self.session_id,
             self.channel_name
         )
         await self.channel_layer.group_send(
-            self.room_name,
+            self.session_id,
             {
                 "type": "game_message",
                 "data": {"type": "game_started"},
@@ -98,31 +126,29 @@ class GameConsumer(AsyncWebsocketConsumer):
         )
         await self.accept()
 
-
     async def disconnect(self, close_code):
-        print(f"user {self.user_id} disconnected from room {self.room_name}", flush=True)
-        #semd data to other user that the user has left
+        print(f"user {self.user_id} disconnected from session {self.session_id}", flush=True)
         await self.channel_layer.group_send(
-            self.room_name,
+            self.session_id,
             {
                 "type": "game_message",
                 "data": {"type": "player_left"},
             }
         )
 
-        await self.channel_layer.group_discard( 
-            self.room_name,
+        await self.channel_layer.group_discard(
+            self.session_id,
             self.channel_name
         )
     
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         data = text_data_json
-
         if (data["type"] == "game_update" or data["type"] == "ball_update") or data["type"] == "counter":
-            # the data have a sender id send don't send 2 consecutive messages to the same user
+            # the data have a sender id send don't se
+            # nd 2 consecutive messages to the same user
             await self.channel_layer.group_send(
-                self.room_name,
+                self.session_id,
                 {
                     "type": "game_message",
                     "data": data,
@@ -132,4 +158,21 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def game_message(self, event):
         data = event["data"]
         await self.send(text_data=json.dumps(data))
+    
+    @database_sync_to_async
+    def get_game_session(self, session_id):
+        try:
+            return GameSession.objects.get(id=session_id)
+        except GameSession.DoesNotExist:
+            return None
+
+    async def is_user_in_session(self, user_id):
+        player1_id = await sync_to_async(self.get_player1_id)()
+        player2_id = await sync_to_async(self.get_player2_id)()
+        return player1_id == user_id or player2_id == user_id
+    
+    def get_player1_id(self):
+        return self.session.match.player1.id
+    def get_player2_id(self):
+        return self.session.match.player2.id
 

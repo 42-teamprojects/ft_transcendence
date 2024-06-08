@@ -9,8 +9,8 @@ class MatchStatus(models.TextChoices):
     FINISHED = 'F', _('Finished')
 
 class Match(models.Model):
-    player1 = models.ForeignKey(User, related_name='match_player1', on_delete=models.CASCADE)
-    player2 = models.ForeignKey(User, related_name='match_player2', on_delete=models.CASCADE)
+    player1 = models.ForeignKey(User, related_name='match_player1', on_delete=models.CASCADE, null=True)
+    player2 = models.ForeignKey(User, related_name='match_player2', on_delete=models.CASCADE, null=True)
     score1 = models.IntegerField(default=0)
     score2 = models.IntegerField(default=0)
     winner = models.ForeignKey(User, related_name='match_winner', on_delete=models.CASCADE, null=True, blank=True)

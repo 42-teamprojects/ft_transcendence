@@ -13,6 +13,7 @@ const MIDDLE_CIRCLE_RADIUS = 70;
 export default class OnlinePongTable extends HTMLElement {
 	constructor() {
         super();
+		this.canUpdate = true;
         this.match_id = this.getAttribute("match_id");
         this.player1_id = this.getAttribute("player1");
         this.player2_id = this.getAttribute("player2");	
@@ -101,9 +102,11 @@ export default class OnlinePongTable extends HTMLElement {
 	};
 
 	disconnectedCallback() {
+		this.canUpdate = false;
 		this.unsubscribe();
 		document.removeEventListener("keydown", this.handleKeyDown);
 		document.removeEventListener("keyup", this.handleKeyUp);
+		this.remove()
 	}
 
 	gameplay() {	
@@ -111,15 +114,15 @@ export default class OnlinePongTable extends HTMLElement {
 		this.table.height = this.tableHeight;
 		this.table.width = this.tableWidth;
 		this.context = this.table.getContext("2d");
-		requestAnimationFrame(this.update);
+		if (this.canUpdate)
+			requestAnimationFrame(this.update);
 	}
 
 	update = () => {
 		const userId = this.user.id;
-		const matchId = this.match_id;
 	
 		this.updateObject(userId);
-		this.sendGameUpdates(userId, matchId);
+		this.sendGameUpdates(userId);
 		if (this.user.id === +this.player1_id) {
 			this.updateFrameCount();
 		}
@@ -137,16 +140,16 @@ export default class OnlinePongTable extends HTMLElement {
 		this.obj['frameCount'] = this.frameCount;
 	};
 	
-	sendGameUpdates = (userId, matchId) => {
+	sendGameUpdates = (userId) => {
 		if (userId === +this.player1_id) {
 			let balldata = {
 				"type" : "ball_update",
 				"ball_x" :  this.ball.x,
 				"ball_y" : this.ball.y,
 			}
-			matchState.sendGameUpdate(matchId, balldata);
+			matchState.sendGameUpdate(balldata);
 		}
-		matchState.sendGameUpdate(matchId, this.obj);
+		matchState.sendGameUpdate(this.obj);
 	};
 	
 	updateFrameCount = () => {
@@ -306,12 +309,7 @@ export default class OnlinePongTable extends HTMLElement {
 	render() {
 		this.innerHTML = /*html*/ `
 		<div class="vh-full w-full flex-col-center">
-			<c-online-scoreboard class="mb-5"
-						player1="${"hassan"}" 
-						player2="${"mouad"}" 
-						score1="${"0"}"
-						score2="${"0"}">
-			</c-online-scoreboard>
+			<c-online-scoreboard class="mb-5"></c-online-scoreboard>
 			<canvas id="table" class="pong-table pong-table-standard"></canvas>
 		</div>
 		`;

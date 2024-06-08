@@ -5,21 +5,20 @@ export default class Onlinegameplay extends HTMLElement {
     constructor() {
         super();
         this.params = new URLSearchParams(window.location.search);
-        this.match_id = this.params.get('id');
-        this.player_1_id = this.params.get("player_1");
-        this.player_2_id = this.params.get("player_2");
-
-        matchState.matchSetup(this.match_id);
+        this.sessionId = this.params.get('id');
     }
+    
+    async connectedCallback() {
+        this.match = matchState.state.match
+        matchState.matchSetup();
 
-    connectedCallback() {
         this.render();
         // this.unsubscribe = matchState.subscribe(() => {
             // console.log("matchstate : ", this.match);
 
             if (matchState.playerLeft) {
                 Toast.notify({ type: "warning", message: "Opponent left the match" });
-                matchState.closeMatchConnection(this.match_id);
+                matchState.closeMatchConnection();
                 Router.instance.navigate('/dashboard/home');
             }
         //     this.render();
@@ -31,12 +30,12 @@ export default class Onlinegameplay extends HTMLElement {
     }
 
     disconnectedCallback() {
-        // this.unsubscribe();
+        matchState.closeMatchConnection();
     }
 
     render() {
         this.innerHTML = /*html*/`
-        <c-online-pong-table match_id="${this.match_id}" player1= ${this.player_1_id} player2=${this.player_2_id} id="table"></c-online-pong-table>
+        <c-online-pong-table match_id="${this.match.id}" player1= ${this.match.player1.id} player2=${this.match.player2.id} id="table"></c-online-pong-table>
         `;
     }
 }

@@ -1,4 +1,6 @@
 import { config } from "../config.js";
+import HttpClient from "../http/httpClient.js";
+import Router from "../router/router.js";
 import WebSocketManager from "../socket/WebSocketManager.js";
 import State from "./state.js";
 import { userState } from "./userState.js";
@@ -9,19 +11,22 @@ class MatchState extends State {
 		super({
             match: null,
 			game: null,
+			session: null,
         });
-		this.matchMakingSocket = new WebSocketManager(config.match_making_websocket_url);
+		this.matchMakingId = "match-making"
+		this.matchMakingSocket = new WebSocketManager(config.websocket_url);
 		this.matchSocket = new WebSocketManager(config.match_websocket_url);
+		this.playerLeft = false;
 	}
 
-	matchSetup(matchId)
+	matchSetup()
 	{
-		if (!matchId) {
-			throw new Error("Match id not provided");
-		}
+		if (!this.state.session) return;
+		const sessionId = this.state.session.id
+		if (this.matchSocket.sockets[sessionId]) return;
 
 		this.matchSocket.setupWebSocket(
-			matchId,
+			sessionId,
 			// On message callback
 			async (event) => {
 				const matchData = JSON.parse(event.data);
@@ -46,26 +51,20 @@ class MatchState extends State {
 		);
 	}
 
-	setupMatchMaking(matchId) {
-		if (!matchId) {
+	setupMatchMaking() {
+		if (!this.matchMakingId) {
 			throw new Error("Match id not provided");
 		}
 
-		if (this.matchMakingSocket.sockets[matchId]) return;
+		if (this.matchMakingSocket.sockets[this.matchMakingId]) return;
 
 		this.matchMakingSocket.setupWebSocket(
-			matchId,
+			this.matchMakingId,
 			// On message callback
 			async (event) => {
-				const matchData = JSON.parse(event.data);
-				// console.log(matchData);
-				// console.log(matchData.data.player1, matchData.data.player2);
-				let opponent = (matchData.data.player1 !== userState.state.user.id) ? matchData.data.player1 : matchData.data.player2;
-				matchData.opponent = opponent;
-				// console.log("my id is ", userState.state.user.id);
-				// console.log("my opponent is: ", opponent);
-				// console.log("match data: ", matchData);
-				this.setState({ match: matchData });
+				const gameSessionId = JSON.parse(event.data);
+				const sessionId = gameSessionId.data.game_session_id;
+				await this.getGameSession(sessionId);
 			},
 			{
 				// shouldCloseOnTimeout: true,
@@ -74,16 +73,30 @@ class MatchState extends State {
 		);
 	}
 
-	closeMatchConnection(matchId) {
-		this.matchSocket.closeConnection(matchId);
+	async getGameSession(sessionId) {
+		if (!sessionId) {
+			throw new Error("Session id not provided");
+		}
+		if (this.state.game || this.state.match) return
+		try {
+			const gameSession = await HttpClient.instance.get(`game/session/${sessionId}/`);
+			console.log("game session", gameSession);
+			this.setState({ match: gameSession.match, session: gameSession });
+		} catch (error) {
+			console.log(error);
+		}
 	}
 
-	closeMatchMakingConnection(matchId) {
-		this.matchMakingSocket.closeConnection(matchId);
+	closeMatchConnection() {
+		this.matchSocket.closeConnection(this.state.session.id);
 	}
 
-	sendGameUpdate(matchId, data) {
-		this.matchSocket.send(matchId, data);
+	closeMatchMakingConnection() {
+		this.matchMakingSocket.closeConnection(this.matchMakingId);
+	}
+
+	sendGameUpdate(data) {
+		this.matchSocket.send(this.state.session.id, data);
 	}
 
 	setMatch(match) {
