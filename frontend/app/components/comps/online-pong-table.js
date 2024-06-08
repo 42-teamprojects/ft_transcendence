@@ -119,6 +119,8 @@ export default class OnlinePongTable extends HTMLElement {
 	}
 
 	update = () => {
+		if (!this.canUpdate)	
+			return ;
 		const userId = this.user.id;
 	
 		this.updateObject(userId);
@@ -130,7 +132,6 @@ export default class OnlinePongTable extends HTMLElement {
 		this.checkBounce();
 		this.checkScore();
 		this.checkGameOver();
-	
 		requestAnimationFrame(this.update);
 	};
 	
