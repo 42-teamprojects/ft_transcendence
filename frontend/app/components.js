@@ -1,3 +1,5 @@
+import Onlinescoreboard from "./components/comps/online-scoreboard.js";
+import Onlinepongtable from "./components/comps/online-pong-table.js";
 import Onlinetournamentmatch from "./components/comps/online-tournament-match.js";
 import Onlinebrackets from "./components/comps/online-brackets.js";
 import Tournamentevent from "./components/comps/tournament-event.js";
@@ -116,8 +118,10 @@ export const components = [
 	{ tagName: 'c-friends-list-modal', component: Friendslistmodal },
 	{ tagName: 'c-notification-dropdown', component: Notificationdropdown },
 	{ tagName: 'c-notification', component: Notification },
+	{ tagName: 'c-online-pong-table', component: Onlinepongtable },
 	{ tagName: 'c-tournament-events-card', component: Tournamenteventscard },
 	{ tagName: 'c-tournament-event', component: Tournamentevent },
 	{ tagName: 'c-online-brackets', component: Onlinebrackets },
 	{ tagName: 'c-online-tournament-match', component: Onlinetournamentmatch },
+	{ tagName: 'c-online-scoreboard', component: Onlinescoreboard },
 ];

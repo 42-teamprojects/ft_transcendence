@@ -52,6 +52,23 @@ export const routes = [
 		],
 	},
 	{
+		path: "/online",
+		component: () => import("./components/pages/online.js"),
+		canActivate: [AuthGuard],
+		children: [
+			{
+				path: "/1v1",
+				component: () => import("./components/pages/match-making.js"),
+				children: [
+					{
+						path: "/game",
+						component: () => import("./components/pages/online-gameplay.js"),
+					},
+				],
+			},
+		],
+	},
+	{
 		path: "/dashboard",
 		canActivate: [AuthGuard],
 		children: [

@@ -9,7 +9,8 @@ def get_application():
     import chat.routing
     import notifications.routing
     import tournaments.routing
-    return chat.routing.websocket_urlpatterns + notifications.routing.websocket_urlpatterns + tournaments.routing.websocket_urlpatterns
+    import game.routing
+    return chat.routing.websocket_urlpatterns + notifications.routing.websocket_urlpatterns + tournaments.routing.websocket_urlpatterns + game.routing.websocket_urlpatterns
 
 application = ProtocolTypeRouter({
     'http': get_asgi_application(),

@@ -42,6 +42,23 @@ def get_user_data(request, username):
     serializer = UserSerializer(user)
     return Response(serializer.data)
 
+#get user data by userid
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_data_by_id(request, user_id):
+    try:
+        user = User.objects.get(id=user_id)
+        blocked_friendship_exists = Friendship.objects.filter(
+            Q(user1=request.user, user2=user, is_blocked=True) | 
+            Q(user1=user, user2=request.user, is_blocked=True)
+        ).exists()
+        if blocked_friendship_exists:
+            raise User.DoesNotExist
+    except User.DoesNotExist:
+        return Response({'detail': 'User not found or you have a blocked friendship with this user'}, status=status.HTTP_404_NOT_FOUND)
+    serializer = UserSerializer(user)
+    return Response(serializer.data)
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_all_users_excluding_me(request):

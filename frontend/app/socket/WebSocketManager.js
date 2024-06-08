@@ -54,6 +54,7 @@ export default class WebSocketManager {
         }
     }
 
+    
     closeConnection(id) {
         if (!this.sockets[id]) return;
         this.sockets[id].close();

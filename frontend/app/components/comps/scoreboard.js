@@ -1,4 +1,4 @@
-export default class Scoreboard extends HTMLElement {
+export default class Onlinescoreboard extends HTMLElement {
     constructor() {
         super();
         this.player1 = this.getAttribute("player1")
@@ -16,13 +16,10 @@ export default class Scoreboard extends HTMLElement {
             this.score2 = newValue;
             this.render()
         }
-        
 	}
-    
-	static get observedAttributes() {
+    static get observedAttributes() {
         return ["score1", "score2"];
 	}
-
     connectedCallback() {
         this.render();
     }
@@ -30,14 +27,16 @@ export default class Scoreboard extends HTMLElement {
     disconnectedCallback() {}
 
     render() {
+
         this.innerHTML = /*html*/`
         <div class="scoreboard">
+            <div class="middleBox"></div>
             <div class="leftBox"></div>
             <div class="rightBox"></div>
             <div class="middleBox"></div>
             <div class="text text1">${this.player1}</div>
             <div class="text text2">${this.player2}</div>
-            <div class="text text3">${this.score1}</div>
+            <div class="text text3">${this.score1}</div>    
             <div class="text text4">${this.score2}</div>
         </div>
         `;
