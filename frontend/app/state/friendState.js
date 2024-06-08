@@ -86,10 +86,10 @@ class FriendState extends State {
 				},
 				recipient: userId,
 			}
-			await notificationState.sendNotification(notification);
+			await notificationState.sendNotification(notification, false);
 			Router.instance.navigate("/dashboard/profile");
-			// this.setState({ friends: this.state.friends.filter((friendshipObject) => friendshipObject.user1.id !== userId && friendshipObject.user2.id !== userId) });
-			// return result;
+			this.setState({ friends: this.state.friends.filter((friendshipObject) => friendshipObject.user1.id !== userId && friendshipObject.user2.id !== userId) });
+			return result;
 		} catch (error) {
 			console.error(error);
 			Toast.notify({ message: "An error occurred", type: "error" });
@@ -112,7 +112,8 @@ class FriendState extends State {
 				recipient: userId,
 			}
 
-			await notificationState.sendNotification(notification);
+			await notificationState.sendNotification(notification, false);
+
 			this.setState({ friends: this.state.friends.filter((friendshipObject) => friendshipObject.user1.id !== userId && friendshipObject.user2.id !== userId) });
 			this.setState({ blocked: [...this.state.blocked, friendshipObject] });
 			chatState.reset();

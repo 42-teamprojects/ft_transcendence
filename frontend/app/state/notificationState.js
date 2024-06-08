@@ -43,7 +43,7 @@ class NotificationState extends State {
             //on message callback
             (event) => {
                 const notification = JSON.parse(event.data);
-                if (notification.type !== 'NEW_STATUS') {
+                if (notification.type !== 'NEW_STATUS' && notification.type !== 'TOURNAMENT_UPDATE') {
                     this.setState({ notifications: [notification, ...this.state.notifications] ,loading: false });
                 }
                 switch (notification.type) {
@@ -111,7 +111,7 @@ class NotificationState extends State {
         chatState.reset();
         chatState.getChats();
         if (notification.data.type === "BLOCK" || notification.data.type === "UNBLOCK") {
-            friendState.blockFriend();
+            friendState.getBlocked();
         }
     }
 
@@ -122,14 +122,14 @@ class NotificationState extends State {
         - recipient
         - read -> default false
     */
-    async sendNotification(notification) {
+    async sendNotification(notification, updateState = true) {
         try {
             this.resetLoading();
             const notif = await this.httpClient.post('notifications/', notification);
             notification.id = notif.id;
             // Send notification to the socket
             this.notificationSocket.send(this.socketId, notification);
-            this.setState({ notifications: [notification, ...this.state.notifications] ,loading: false });
+            if (updateState) this.setState({ notifications: [notification, ...this.state.notifications] ,loading: false });
         } catch (error) {
             console.error(error);
         }

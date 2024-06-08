@@ -13,7 +13,7 @@ export default class Profile extends HTMLElement {
     super();
     this.search = new URLSearchParams(window.location.search);
     this.username =
-    this.search.get("username") || userState.state.user.username;
+      this.search.get("username") || userState.state.user.username;
     document.title = `${this.username} | Blitzpong.`;
   }
 
@@ -33,7 +33,7 @@ export default class Profile extends HTMLElement {
     }
 
     this.render();
-    
+
     this.modal = document.querySelector("c-modal");
 
     this.unsubscribe = userState.subscribe(() => {
@@ -45,18 +45,18 @@ export default class Profile extends HTMLElement {
       this.getActions();
       this.addEventListeners();
     });
-    // this.unsubscribeNotification = notificationState.subscribe(async () => {
-    //     this.user = await userState.fetchUser(this.username);
-    //     if (!this.user) return;
-    //     this.querySelector(".user-status-wrapper").innerHTML = this.insertUserStatus();
-    // });
+    this.unsubscribeNotification = notificationState.subscribe(async () => {
+      this.user = await userState.fetchUser(this.username);
+      if (!this.user) return;
+      this.querySelector(".user-status-wrapper").innerHTML = this.insertUserStatus();
+    });
     this.addEventListeners();
   }
 
   disconnectedCallback() {
     if (this.unsubscribe) this.unsubscribe();
     if (this.unsubscribeFriends) this.unsubscribeFriends();
-    // if (this.unsubscribeNotification) this.unsubscribeNotification();
+    if (this.unsubscribeNotification) this.unsubscribeNotification();
   }
 
   render() {
@@ -71,7 +71,7 @@ export default class Profile extends HTMLElement {
         }
         ${!this.isMine ? /*html*/ `<c-modal></c-modal>` : ""} 
         <div class="dashboard-content">
-            <mains>
+            <main>
                 ${
                   !this.isMine
                     ? /*html*/ `<a is="c-link" href="/dashboard/profile" class="text-secondary btn-link"><i class="fa-solid fa-angle-left mr-2"></i> Back to my profile</a>`
@@ -141,7 +141,7 @@ export default class Profile extends HTMLElement {
                         <c-match-history me="yusufisawi" them="msodor" my-score="3" their-score="5" tooltip="14-06-2024" flow="right"></c-match-history>
                     </div>
                 </section>
-            </mains>
+            </main>
             <div class="widgets flex-col-center gap-5">
                 <c-playerresources></c-playerresources>
                 <c-friendscard></c-friendscard>
@@ -205,6 +205,7 @@ export default class Profile extends HTMLElement {
     const blockFriend = this.querySelector("#block-friend");
     if (blockFriend) {
       this.blockFriendFunc = async () => {
+        this.unsubscribeNotification();
         const result = await friendState.blockFriend(this.user.id);
         if (result) {
           Router.instance.navigate("/dashboard/profile");
@@ -216,7 +217,6 @@ export default class Profile extends HTMLElement {
             "confirm",
             this.removeFriendFunc.bind(this)
           );
-          this.remove();
         }
       };
 
@@ -291,7 +291,7 @@ export default class Profile extends HTMLElement {
   }
 
   insertUserStatus() {
-    if (this.isMine) this.user.status = "ON"
+    if (this.isMine) this.user.status = "ON";
     return /*html*/ `
         <div class="user-status w-2 h-2 bg-${
           this.user.status === "OF" ? "default" : "success"
@@ -299,7 +299,6 @@ export default class Profile extends HTMLElement {
         <p class="text-md text-stroke">${UserStatus[this.user.status]}</p>
         `;
   }
-  
 }
 
 customElements.define("p-profile", Profile);
