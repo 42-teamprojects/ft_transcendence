@@ -5,7 +5,7 @@ import { PaddleType, TableTheme } from "../../entities/enums.js";
 import { matchState } from "../../state/matchState.js";
 import { userState } from "../../state/userState.js";
 
-const FINAL_SCORE = 100;
+const FINAL_SCORE = 1; // from config file
 const TABLE_WIDTH = 1235;
 const TABLE_HEIGHT = 740;
 const PADDLE_WIDTH = 18;
@@ -24,7 +24,7 @@ export default class OnlinePongTable extends HTMLElement {
         this.player1_id = this.getAttribute("player1");
         this.player2_id = this.getAttribute("player2");	
 
-        this.match = {"player1": "hassan", "player2": "mouad", "score1": 0, "score2": 0};
+        this.match = matchState.state.match;
 
         this.finalScore = FINAL_SCORE;
         this.tableWidth = TABLE_WIDTH;
@@ -177,14 +177,16 @@ export default class OnlinePongTable extends HTMLElement {
 	
 	checkGameOver = () => {
 		if (this.isGameOver) {
+			console.log(this.isGameOver);
 			this.dispatchEvent(
 				new CustomEvent("game-over", {
 					detail: {
-						winner: this.match.score1 === this.finalScore
+						winner: this.match.score1 >= this.finalScore
 								? this.match.player1
 								: this.match.player2,},
 				})
 			);
+			this.canUpdate = false;
 			return;
 		}
 	};
@@ -239,6 +241,7 @@ export default class OnlinePongTable extends HTMLElement {
 		}
 
 		if (scored) {
+			console.log(this.match.score1, this.match.score2);
 			this.resetGame();
 			this.querySelector("c-online-scoreboard").setAttribute("score1", this.match.score1);
 			this.querySelector("c-online-scoreboard").setAttribute("score2", this.match.score2);

@@ -13,18 +13,18 @@ export default class Onlinegameplay extends HTMLElement {
         matchState.matchSetup();
 
         this.render();
-        // this.unsubscribe = matchState.subscribe(() => {
-            // console.log("matchstate : ", this.match);
+        this.querySelector('c-online-pong-table').addEventListener('game-over', this.handleGameOver.bind(this));
 
-            // if (matchState.playerLeft) {
-            
-            // }
-        //     this.render();
-        // })
-        // document.addEventListener('click', () => {
-        //     matchState.closeMatchConnection(this.match_id);
-        //     Router.instance.navigate('/dashboard/home');
-        // });
+    }
+    handleGameOver(e) {
+        const { winner } = e.detail;
+        matchState.setWinner(winner);
+        const modal = document.createElement('c-gameover-modal');
+        modal.setAttribute('player', winner.username);
+        this.appendChild(modal);
+        setTimeout(() => {
+            this.querySelector('c-gameover-modal').open();
+        }, 100);
     }
 
     disconnectedCallback() {

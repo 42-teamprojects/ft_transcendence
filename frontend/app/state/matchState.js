@@ -4,6 +4,7 @@ import Router from "../router/router.js";
 import WebSocketManager from "../socket/WebSocketManager.js";
 import State from "./state.js";
 import Toast from "../components/comps/toast.js";
+import { userState } from "./userState.js";
 class MatchState extends State {
 	constructor() {
 		super({
