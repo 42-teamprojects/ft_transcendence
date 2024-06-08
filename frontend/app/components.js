@@ -1,3 +1,4 @@
+import Onlinescoreboard from "./components/comps/online-scoreboard.js";
 import Onlinepongtable from "./components/comps/online-pong-table.js";
 import Onlinetournamentmatch from "./components/comps/online-tournament-match.js";
 import Onlinebrackets from "./components/comps/online-brackets.js";
@@ -122,4 +123,5 @@ export const components = [
 	{ tagName: 'c-tournament-event', component: Tournamentevent },
 	{ tagName: 'c-online-brackets', component: Onlinebrackets },
 	{ tagName: 'c-online-tournament-match', component: Onlinetournamentmatch },
+	{ tagName: 'c-online-scoreboard', component: Onlinescoreboard },
 ];
