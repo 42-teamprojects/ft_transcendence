@@ -44,14 +44,15 @@ export default class Matchmaking extends HTMLElement {
     }
     
     connectedCallback() {
-        matchState.setupMatchMaking("matchMakingId");
+        matchState.setupMatchMaking();
         this.user = userState.state.user;
         this.render();
  
         this.unsubscribe = matchState.subscribe(async () => {
             this.matchData = matchState.state.match;
+            this.gameSession = matchState.state.session;
+            this.opponent = matchState.getOpponent(this.matchData)
             console.log("match data", this.matchData);
-            this.opponent = await  userState.fetchUserById(this.matchData.opponent);
             this.render();
             this.text = document.querySelector('.starting');
             let countdown = 3;
@@ -61,7 +62,7 @@ export default class Matchmaking extends HTMLElement {
                     
                     if (countdown < 0) {
                         matchState.closeMatchMakingConnection();
-                        Router.instance.navigate(`/online/1v1/game?id=${this.matchData.data.match_id}&player_1=${this.matchData.data.player1}&player_2=${this.matchData.data.player2}`);
+                        Router.instance.navigate(`/online/1v1/game?id=${matchState.state.session.id}`);
                         clearInterval(intervalId);
                     }
             }, 1000);
@@ -70,10 +71,8 @@ export default class Matchmaking extends HTMLElement {
         });
         let btn = this.querySelector('.btn-primary');
         btn.addEventListener('click', () => {
-            //go back to the home page]
+            matchState.closeMatchMakingConnection();
             Router.instance.navigate('/dashboard/home');
-            matchState.closeMatchMakingConnection('matchMakingId');
-            this.unsubscribe();
         });
         // console.log(this.user);
 
@@ -81,6 +80,7 @@ export default class Matchmaking extends HTMLElement {
 
     disconnectedCallback() {
         this.unsubscribe();
+        matchState.closeMatchMakingConnection();
     }
 
     render() {
