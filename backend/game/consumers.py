@@ -5,8 +5,6 @@ from rest_framework_simplejwt.tokens import UntypedToken
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 # from channels.db import database_sync_to_async
 
-
-
 def get_user_id(scope):
     if (scope["cookies"] is None) or ("access" not in scope["cookies"]):
         return None

@@ -202,7 +202,7 @@ class Tournament(models.Model):
             raise ValidationError('The tournament has not started yet.')
         if self.status == 'IP' and timezone.now() >= self.start_time:
             for match in self.matches.filter(status='NS'):
-                if match.player1 is not None and match.player1 is not None:
+                if match.player1 is not None and match.player2 is not None:
                     match.start()
 
             channel_layer = get_channel_layer()
