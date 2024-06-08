@@ -30,6 +30,7 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
             return
 
         self.session = await self.get_or_create_game_session(self.user_id)
+
         if self.session is None:
             await self.close()
             return
@@ -39,7 +40,8 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
 
-        if not self.session.vacant:
+        is_vacant = await sync_to_async(self.get_vacant_session)()
+        if not is_vacant:
             print("session is not vacant", flush=True)
             player1_id = await sync_to_async(self.get_player1_id)()
             player1_group = f"player_{player1_id}"
@@ -54,6 +56,9 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
             await self.channel_layer.group_send(player2_group, {"type": "game_message", "data": data})
 
         await self.accept()
+    
+    def get_vacant_session(self):
+        return self.session.vacant
 
     @database_sync_to_async
     def get_or_create_game_session(self, user_id):

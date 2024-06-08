@@ -16,11 +16,9 @@ export default class Onlinegameplay extends HTMLElement {
         // this.unsubscribe = matchState.subscribe(() => {
             // console.log("matchstate : ", this.match);
 
-            if (matchState.playerLeft) {
-                Toast.notify({ type: "warning", message: "Opponent left the match" });
-                matchState.closeMatchConnection();
-                Router.instance.navigate('/dashboard/home');
-            }
+            // if (matchState.playerLeft) {
+            
+            // }
         //     this.render();
         // })
         // document.addEventListener('click', () => {

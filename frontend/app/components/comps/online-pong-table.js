@@ -57,10 +57,6 @@ export default class OnlinePongTable extends HTMLElement {
                     this.paddle2.y = this.matchData.y;
                 }
             }
-			if (this.match.playerLeft) {
-				console.log("player left the match");
-				return ;
-			}
 		});
 		this.gameplay();
 		document.addEventListener("keydown", this.handleKeyDown);

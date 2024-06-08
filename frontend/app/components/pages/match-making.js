@@ -63,6 +63,7 @@ export default class Matchmaking extends HTMLElement {
                     if (countdown < 0) {
                         matchState.closeMatchMakingConnection();
                         Router.instance.navigate(`/online/1v1/game?id=${matchState.state.session.id}`);
+                        window.history.go(-1);
                         clearInterval(intervalId);
                     }
             }, 1000);

@@ -3,9 +3,7 @@ import HttpClient from "../http/httpClient.js";
 import Router from "../router/router.js";
 import WebSocketManager from "../socket/WebSocketManager.js";
 import State from "./state.js";
-import { userState } from "./userState.js";
-
-
+import Toast from "../components/comps/toast.js";
 class MatchState extends State {
 	constructor() {
 		super({
@@ -38,7 +36,12 @@ class MatchState extends State {
 				}
 				if (matchData.type === "player_left") {
 					console.log("player left the match");
+					//SET THE PLAYER AS WINNER
+
 					this.playerLeft = true;
+					Toast.notify({ type: "warning", message: "Opponent left the match" });
+                	matchState.closeMatchConnection();
+                	Router.instance.navigate('/dashboard/home');
 				}
 
 				this.setState({ game: matchData });
@@ -62,6 +65,7 @@ class MatchState extends State {
 			this.matchMakingId,
 			// On message callback
 			async (event) => {
+				console.log("matchy matchy");
 				const gameSessionId = JSON.parse(event.data);
 				const sessionId = gameSessionId.data.game_session_id;
 				await this.getGameSession(sessionId);
