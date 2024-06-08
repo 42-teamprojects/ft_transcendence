@@ -9,6 +9,7 @@ import { truncate } from "../utils/utils.js";
 import { messageState } from "./messageState.js";
 import { friendState } from "./friendState.js";
 import { chatState } from "./chatState.js";
+import { onlineTournamentState } from "./onlineTournamentState.js";
 
 /* 
     Notification: 
@@ -63,6 +64,8 @@ class NotificationState extends State {
                         friendState.fetchedFriends = false;
                         friendState.getFriends();
                         break;
+                    case "TOURNAMENT_UPDATE":
+                        onlineTournamentState.getNotStartedTournaments();
                     default:
                         break;
             }

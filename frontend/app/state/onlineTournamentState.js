@@ -4,6 +4,7 @@ import Toast from "../components/comps/toast.js";
 import { userState } from "./userState.js";
 import WebSocketManager from "../socket/WebSocketManager.js";
 import { config } from "../config.js";
+import { notificationState } from "./notificationState.js";
 
 class OnlineTournamentState extends State {
 	constructor() {
@@ -46,6 +47,10 @@ class OnlineTournamentState extends State {
 		try {
 			const tournament = await this.httpClient.post("tournaments/", {
 				type,
+			});
+			notificationState.notificationSocket.send(notificationState.socketId, {
+				type: "TOURNAMENT_UPDATE",
+				data: "New tournament created",
 			});
 			this.setState({
 				tournaments: [...this.state.tournaments, tournament],

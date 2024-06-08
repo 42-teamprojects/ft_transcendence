@@ -33,7 +33,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         response = json.loads(text_data)
-        if response['type'] != 'NEW_STATUS':
+        if response['type'] != 'NEW_STATUS' and response['type'] != 'TOURNAMENT_UPDATE':
             self.group_name = f"notifications_{response['recipient']}"
             await self.channel_layer.group_send(
                 self.group_name,
@@ -42,6 +42,14 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                     'notification_type': response['type'] or None,
                     'data': response['data'] or None,
                     'recipient': response['recipient'] or None,
+                }
+            )
+        elif response['type'] == 'TOURNAMENT_UPDATE':
+            await self.channel_layer.group_send(
+                self.group_name_all,
+                {
+                    'type': 'tournament_update',
+                    'data': response['data'],
                 }
             )
         else:
@@ -68,6 +76,12 @@ class NotificationConsumer(AsyncWebsocketConsumer):
     async def new_status_update(self, event):
         await self.send(text_data=json.dumps({
             'type': 'NEW_STATUS',
+        }))
+    
+    async def tournament_update(self, event):
+        await self.send(text_data=json.dumps({
+            'type': 'TOURNAMENT_UPDATE',
+            'data': event['data'],
         }))
         
     @database_sync_to_async
