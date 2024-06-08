@@ -1,0 +1,43 @@
+/usr/local/lib/python3.9/site-packages/celery/platforms.py:829: SecurityWarning: You're running the worker with superuser privileges: this is
+absolutely not recommended!
+
+Please specify a different user using the --uid option.
+
+User information: uid=0 euid=0 gid=0 egid=0
+
+  warnings.warn(SecurityWarning(ROOT_DISCOURAGED.format(
+ 
+ -------------- celery@59c6582c478d v5.4.0 (opalescent)
+--- ***** ----- 
+-- ******* ---- Linux-5.10.104-linuxkit-x86_64-with-glibc2.28 2024-06-07 19:49:44
+- *** --- * --- 
+- ** ---------- [config]
+- ** ---------- .> app:         backend:0x7f8b3904b8b0
+- ** ---------- .> transport:   redis://redis:6379/0
+- ** ---------- .> results:     redis://redis:6379/0
+- *** --- * --- .> concurrency: 6 (prefork)
+-- ******* ---- .> task events: OFF (enable -E to monitor tasks in this worker)
+--- ***** ----- 
+ -------------- [queues]
+                .> celery           exchange=celery(direct) key=celery
+                
+
+[tasks]
+  . tournaments.tasks.start_tournament_matches
+
+[2024-06-07 19:49:44,859: WARNING/MainProcess] /usr/local/lib/python3.9/site-packages/celery/worker/consumer/consumer.py:508: CPendingDeprecationWarning: The broker_connection_retry configuration setting will no longer determine
+whether broker connection retries are made during startup in Celery 6.0 and above.
+If you wish to retain the existing behavior for retrying connections on startup,
+you should set broker_connection_retry_on_startup to True.
+  warnings.warn(
+
+[2024-06-07 19:49:44,887: INFO/MainProcess] Connected to redis://redis:6379/0
+[2024-06-07 19:49:44,888: WARNING/MainProcess] /usr/local/lib/python3.9/site-packages/celery/worker/consumer/consumer.py:508: CPendingDeprecationWarning: The broker_connection_retry configuration setting will no longer determine
+whether broker connection retries are made during startup in Celery 6.0 and above.
+If you wish to retain the existing behavior for retrying connections on startup,
+you should set broker_connection_retry_on_startup to True.
+  warnings.warn(
+
+[2024-06-07 19:49:44,891: INFO/MainProcess] mingle: searching for neighbors
+[2024-06-07 19:49:45,884: INFO/MainProcess] mingle: all alone
+[2024-06-07 19:49:45,907: INFO/MainProcess] celery@59c6582c478d ready.
