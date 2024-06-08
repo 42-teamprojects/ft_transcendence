@@ -2,6 +2,7 @@
 from datetime import timedelta
 from email.message import EmailMessage
 from email.policy import default
+from os import write
 from timeit import Timer
 from django.db import models
 from accounts.models import User
@@ -203,6 +204,8 @@ class Tournament(models.Model):
                     'data': 'The tournament has started.'
                 }
             )
+            with open('tournament_tree.txt', 'w') as f:
+                f.write(self.print_tree())
     
     def __str__(self):
         return f'Tournament {self.pk}'
