@@ -34,7 +34,7 @@ class MatchState extends State {
 					this.is_ready = true;
 					// matchData.player_1_paddle = matchData.data.player_1_paddle;
 				}
-				if (matchData.type === "player_left") {
+				if (matchData.type === "player_left" && matchData.winner_id === "") {
 					console.log("player left the match");
 					//SET THE PLAYER AS WINNER
 
