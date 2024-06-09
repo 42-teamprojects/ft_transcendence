@@ -29,7 +29,6 @@ class MatchState extends State {
 			// On message callback
 			async (event) => {
 				const matchData = JSON.parse(event.data);
-				// console.log("data i got from socket : ", matchData);
 				if (matchData.type === "game_started") {
 					console.log("game started");
 					this.is_ready = true;
@@ -45,6 +44,16 @@ class MatchState extends State {
                 	Router.instance.navigate('/dashboard/home');
 				}
 
+				// if (matchData.type === "score_update") {
+				// 	if (matchData.winner_id !== "") {
+				// 		matchState.closeMatchConnection();
+				// 		Router.instance.navigate('/dashboard/home');
+				// 	}
+				// }
+
+				if (matchData.type === "score_update") {
+				console.log("data i got from socket : ", matchData);	
+				}
 				this.setState({ game: matchData });
 			},
 			{

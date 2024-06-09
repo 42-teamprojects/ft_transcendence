@@ -1,5 +1,6 @@
 import Router from "../../router/router.js";
 import { matchState } from "../../state/matchState.js";
+import { userState } from "../../state/userState.js";
 import Toast from "../comps/toast.js";
 export default class Onlinegameplay extends HTMLElement {
     constructor() {
@@ -10,26 +11,36 @@ export default class Onlinegameplay extends HTMLElement {
     
     async connectedCallback() {
         this.match = matchState.state.match
+        if (!this.match) {
+            Router.instance.navigate('/dashboard/home');
+            Toast.instance.notify({ type: "error", message: "Action not allowed" });
+            return;
+        }
         matchState.matchSetup();
 
         this.render();
-        this.querySelector('c-online-pong-table').addEventListener('game-over', this.handleGameOver.bind(this));
+        this.handleGameOverFunc = this.handleGameOver.bind(this);
+        this.querySelector('c-online-pong-table').addEventListener('game-over', this.handleGameOverFunc);
 
     }
-    handleGameOver(e) {
+    async handleGameOver(e) {
         const { winner } = e.detail;
+        console.log(winner);
         matchState.setWinner(winner);
-        const modal = document.createElement('c-gameover-modal');
-        modal.setAttribute('online', true);
-        modal.setAttribute('player', winner.username);
+        const modal = document.createElement('c-online-gameover-modal');
+        //get winer name
+        const match = matchState.state.match;
+        const name = matchState.getOpponent(match).username;
+        modal.setAttribute('player', +userState.state.user.id === +winner ? 'You' : name);
         this.appendChild(modal);
         setTimeout(() => {
-            this.querySelector('c-gameover-modal').open();
+            this.querySelector('c-online-gameover-modal').open();
         }, 100);
     }
 
     disconnectedCallback() {
         matchState.closeMatchConnection();
+        this.removeEventListener('game-over', this.handleGameOverFunc);
     }
 
     render() {

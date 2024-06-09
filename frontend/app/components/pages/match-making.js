@@ -51,6 +51,9 @@ export default class Matchmaking extends HTMLElement {
         this.unsubscribe = matchState.subscribe(async () => {
             this.matchData = matchState.state.match;
             this.gameSession = matchState.state.session;
+            if (!this.gameSession) {
+                throw new Error("Game session not found");
+            }
             this.opponent = matchState.getOpponent(this.matchData)
             console.log("match data", this.matchData);
             this.render();
@@ -61,9 +64,8 @@ export default class Matchmaking extends HTMLElement {
                 countdown--;
                     
                     if (countdown < 0) {
-                        matchState.closeMatchMakingConnection();
                         Router.instance.navigate(`/online/1v1/game?id=${matchState.state.session.id}`);
-                        window.history.go(-1);
+                        matchState.closeMatchMakingConnection();
                         clearInterval(intervalId);
                     }
             }, 1000);

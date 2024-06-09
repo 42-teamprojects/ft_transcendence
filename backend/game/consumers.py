@@ -42,7 +42,6 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
 
         is_vacant = await sync_to_async(self.get_vacant_session)()
         if not is_vacant:
-            print("session is not vacant", flush=True)
             player1_id = await sync_to_async(self.get_player1_id)()
             player1_group = f"player_{player1_id}"
             player2_id = await sync_to_async(self.get_player2_id)()
@@ -84,9 +83,12 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
             f"player_{self.user_id}",
             self.channel_name
         )
-        if not self.session.vacant:
-            player1_group = f"player_{self.session.match.player1.id}"
-            player2_group = f"player_{self.session.match.player2.id}"
+        is_vacant = await sync_to_async(self.get_vacant_session)()
+        if not is_vacant:
+            player1_id = await sync_to_async(self.get_player1_id)()
+            player1_group = f"player_{player1_id}"
+            player2_id = await sync_to_async(self.get_player2_id)()
+            player2_group = f"player_{player2_id}"
             await self.channel_layer.group_send(player1_group, {"type": "game_message", "data": {"type": "player_left"}})
             await self.channel_layer.group_send(player2_group, {"type": "game_message", "data": {"type": "player_left"}})
     
@@ -132,7 +134,6 @@ class GameConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     async def disconnect(self, close_code):
-        print(f"user {self.user_id} disconnected from session {self.session_id}", flush=True)
         await self.channel_layer.group_send(
             self.session_id,
             {
@@ -149,6 +150,38 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         data = text_data_json
+        # get match from session and increase_score, if it returns a winnner then send a message to the group with the winner
+
+        if data["type"] == "increase_score":
+            match = await sync_to_async(self.get_match)()
+            winner_id = await sync_to_async(match.increase_score)(self.user_id)
+
+            # self.session = await self.get_game_session(self.session_id)
+            # if winner_id is None:
+            score1 = await sync_to_async(self.get_player1_score)()
+            score2 = await sync_to_async(self.get_player2_score)()
+            # print(score1, score2, flush=True)
+            await self.channel_layer.group_send(
+                self.session_id,
+                {
+                    "type": "game_message",
+                    "data": {
+                        "type": "score_update",
+                        "player1_score": await sync_to_async(self.get_player1_score)(),
+                        "player2_score": await sync_to_async(self.get_player2_score)(),
+                        "winner_id": winner_id if winner_id is not None else ""
+                    }
+                }
+            )
+            # if winner_id is not None:
+            #     await self.channel_layer.group_send(
+            #         self.session_id,
+            #         {
+            #             "type": "game_message",
+            #             "data": {"type": "game_over", "winner_id": winner_id},
+            #         }
+            #     )
+
         if (data["type"] == "game_update" or data["type"] == "ball_update") or data["type"] == "counter":
             # the data have a sender id send don't se
             # nd 2 consecutive messages to the same user
@@ -164,6 +197,13 @@ class GameConsumer(AsyncWebsocketConsumer):
         data = event["data"]
         await self.send(text_data=json.dumps(data))
     
+    # @database_sync_to_async
+    # def update_score(self):
+    #     try:
+    #         return GameSession.objects.get(id=session_id)
+    #     except GameSession.DoesNotExist:
+    #         return None
+        
     @database_sync_to_async
     def get_game_session(self, session_id):
         try:
@@ -180,4 +220,12 @@ class GameConsumer(AsyncWebsocketConsumer):
         return self.session.match.player1.id
     def get_player2_id(self):
         return self.session.match.player2.id
+    def get_match(self):
+        return self.session.match
+
+    def get_player1_score(self):
+        return self.session.match.score1
+    
+    def get_player2_score(self):
+        return self.session.match.score2
 

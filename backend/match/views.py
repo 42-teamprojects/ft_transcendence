@@ -83,12 +83,12 @@
 #             return Response({'detail': 'Score is not provided'}, status=status.HTTP_400_BAD_REQUEST)   
 #         if score1 is not None:
 #             match.score1 = score1
-#             if match.score1 >= settings.SCORE_WINNER:
+#             if match.score1 >= settings.FINAL_SCORE:
 #                 match.status = MatchStatus.FINISHED
 #                 match.winner = match.player1
 #         if score2 is not None:
 #             match.score2 = score2
-#             if match.score2 >= settings.SCORE_WINNER:
+#             if match.score2 >= settings.FINAL_SCORE:
 #                 match.status = MatchStatus.FINISHED
 #                 match.winner = match.player2
 #         match.winner.save()
@@ -103,10 +103,10 @@
 #             return Response({'detail': 'You are not part of this match'}, status=status.HTTP_400_BAD_REQUEST)
 #         if match.status != MatchStatus.FINISHED:
 #             return Response({'detail': 'match is not finished'}, status=status.HTTP_400_BAD_REQUEST)
-#         if match.score1 >= settings.SCORE_WINNER:
+#         if match.score1 >= settings.FINAL_SCORE:
 #                 match.status = MatchStatus.FINISHED
 #                 match.winner = match.player1
-#         elif match.score2 >= settings.SCORE_WINNER:
+#         elif match.score2 >= settings.FINAL_SCORE:
 #                 match.status = MatchStatus.FINISHED
 #                 match.winner = match.player2
 #         return Response(self.serializer_class(match).data, status=status.HTTP_200_OK)

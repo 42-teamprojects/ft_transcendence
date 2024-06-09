@@ -6,13 +6,12 @@ export default class Gameovermodal extends HTMLElement {
         super();
         this.player = '';
         this.tournament = this.getAttribute('tournament') || false;
-        this.isOnline = this.getAttribute('online') || false;
+        this.isOnline = this.getAttribute('is-online') || false;
         this.isOpen = false;
     }
 
     connectedCallback() {
         this.render();
-
         if (!this.tournament || !this.isOnline) {
             const backdrop = this.querySelector('#backdrop');
             const cancelButton = this.querySelector('#cancel-btn');
@@ -47,8 +46,8 @@ export default class Gameovermodal extends HTMLElement {
             this.isOpen = false;
         }
 
-        if (name === 'online') {
-            this.online = true;
+        if (name === 'is-online') {
+            this.isOnline = true;
         }
         if (name === 'tournament') {
             this.tournament = true;
@@ -61,7 +60,7 @@ export default class Gameovermodal extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ['opened', 'player', 'tournament', 'online'];
+        return ['opened', 'player', 'tournament', 'is-online'];
     }
 
     open() {
