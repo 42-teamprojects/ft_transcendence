@@ -1,4 +1,5 @@
 import Countdownmodal from "./components/comps/countdown-modal.js";
+import Threedots from "./components/comps/three-dots.js";
 import Onlinegameovermodal from "./components/comps/online-gameover-modal.js";
 import Onlinescoreboard from "./components/comps/online-scoreboard.js";
 import Onlinepongtable from "./components/comps/online-pong-table.js";
@@ -126,6 +127,7 @@ export const components = [
 	{ tagName: 'c-online-brackets', component: Onlinebrackets },
 	{ tagName: 'c-online-tournament-match', component: Onlinetournamentmatch },
 	{ tagName: 'c-online-scoreboard', component: Onlinescoreboard },
+	{ tagName: 'c-three-dots', component: Threedots },
 	{ tagName: 'c-online-gameover-modal', component: Onlinegameovermodal },
 	{ tagName: 'c-countdown-modal', component: Countdownmodal },
 ];

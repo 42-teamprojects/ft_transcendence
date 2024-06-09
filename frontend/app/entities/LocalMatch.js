@@ -54,6 +54,7 @@ export default class LocalMatch {
     }
 
     resetMatch() {
+        this.resetScore();
         this.winner = null;
         this.isStarted = false;
         this.isFinished = false;

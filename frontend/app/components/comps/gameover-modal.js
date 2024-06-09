@@ -1,3 +1,4 @@
+import LocalMatch from '../../entities/LocalMatch.js';
 import Router from '../../router/router.js';
 import { matchState } from '../../state/matchState.js';
 
@@ -83,8 +84,7 @@ export default class Gameovermodal extends HTMLElement {
 
     #confirm() {
         this.hide();
-        matchState.state.match.resetScore();
-        Router.instance.reload();
+        Router.instance.navigate('/local/1v1');
     }
 
     render() {

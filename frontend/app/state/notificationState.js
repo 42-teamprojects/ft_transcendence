@@ -43,8 +43,10 @@ class NotificationState extends State {
             //on message callback
             (event) => {
                 const notification = JSON.parse(event.data);
-                if (notification.type !== 'NEW_STATUS' && notification.type !== 'TOURNAMENT_UPDATE') {
-                    this.setState({ notifications: [notification, ...this.state.notifications] ,loading: false });
+                if (!['NEW_STATUS', 'TOURNAMENT_UPDATE', 'MSG', 'PRQ'].includes(notification.type) 
+                    && notification.recipient === userState.state.user.id 
+                    && notification.data && !['REMOVE', 'BLOCK', 'UNBLOCK'].includes(notification.data.type)) {
+                    this.setState({ notifications: [notification, ...this.state.notifications], loading: false });
                 }
                 switch (notification.type) {
                     case "MSG":
@@ -68,8 +70,8 @@ class NotificationState extends State {
                         onlineTournamentState.getNotStartedTournaments();
                     default:
                         break;
-            }
-        },
+                }
+            },
         {
             onOpen: () => {
                 console.log(`WebSocket connection opened for id: ${this.socketId}`);
@@ -94,25 +96,32 @@ class NotificationState extends State {
         if (!messageState.state.messages[notification.data.chat_id]) {
             messageState.getMessages(notification.data.chat_id);
         } 
-        messageState.updateCardLastMessage(notification.data.chat_id, notification.data.message);
+        // messageState.updateCardLastMessage(notification.data.chat_id, notification.data.message);
     }
 
     handleFriendAlertNotification(notification) {
-        const message = notification.data.type === "ADD" ? `${notification.data.sender_name} added you as a friend` : ``;
+        // ${notification.data.sender_name} added you as a friend
         if (notification.data.type === "ADD") {
             Toast.notify({
                 type: "info",
-                message: /*html*/ `<p>${message}</p><br/><a is="c-link" class="font-bold spacing-1 uppercase text-secondary mt-2 text-sm" href="/dashboard/profile?username=${notification.data.sender_name}" class="mt-2">View friend</a>`,
+                message: /*html*/ `<p>${notification.data.sender_name} added you as a friend</p><br/><a is="c-link" class="font-bold spacing-1 uppercase text-secondary mt-2 text-sm" href="/dashboard/profile?username=${notification.data.sender_name}" class="mt-2">View friend</a>`,
             });
         }
         
         friendState.reset();
         friendState.getFriends();
-        chatState.reset();
-        chatState.getChats();
-        if (notification.data.type === "BLOCK" || notification.data.type === "UNBLOCK") {
+        if (["BLOCK", "UNBLOCK"].includes(notification.data.type)) {
             friendState.getBlocked();
+            chatState.reset();
+            chatState.getChats();
         }
+    }
+
+    handlePlayRequestNotification(notification) {
+        Toast.notify({
+            type: "info",
+            message: /*html*/ `<p>${notification.data.sender_name} sent you a play request</p><br/><a is="c-link" class="font-bold spacing-1 uppercase text-secondary mt-2 text-sm" href="${notification.data.link}" class="mt-2">Play</a>`,
+        });
     }
 
     /* 
@@ -125,11 +134,18 @@ class NotificationState extends State {
     async sendNotification(notification, updateState = true) {
         try {
             this.resetLoading();
-            const notif = await this.httpClient.post('notifications/', notification);
-            notification.id = notif.id;
+            if (!["REMOVE", "BLOCK", "UNBLOCK"].includes(notification.data.type) && notification.type !== "MSG" && notification.type !== "PRQ") {
+                console.log("saving in database")
+                const notif = await this.httpClient.post('notifications/', notification);
+                notification.id = notif.id;
+            }
             // Send notification to the socket
             this.notificationSocket.send(this.socketId, notification);
-            if (updateState) this.setState({ notifications: [notification, ...this.state.notifications] ,loading: false });
+            if (updateState && !['NEW_STATUS', 'TOURNAMENT_UPDATE', 'MSG', 'PRQ'].includes(notification.type) 
+                && notification.recipient === userState.state.user.id 
+                && notification.data && !['REMOVE', 'BLOCK', 'UNBLOCK'].includes(notification.data.type)) {
+                this.setState({ notifications: [notification, ...this.state.notifications], loading: false });
+            }
         } catch (error) {
             console.error(error);
         }
