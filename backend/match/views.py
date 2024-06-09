@@ -1,17 +1,15 @@
-# from django.conf import settings
-# from rest_framework import viewsets, status
-# from rest_framework.response import Response
-# from rest_framework.permissions import IsAuthenticated
-# from django.db.models import Q
-# from .models import Match, MatchStatus
-# from .serializers import MatchSerializer
-# from accounts.models import User
+from rest_framework import viewsets, status
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from django.db.models import Q
+from .models import Match
+from .serializers import MatchSerializer
 
 
-# class MatchView(viewsets.ModelViewSet):
-#     permission_classes = [IsAuthenticated]
-#     serializer_class = MatchSerializer
-#     queryset = Match.objects.all()
+class MatchView(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = MatchSerializer
+    queryset = Match.objects.all()
 
 #     def create(self, request, *args, **kwargs):
 #         user = request.user
@@ -22,10 +20,10 @@
 #         return Response(self.serializer_class(match).data, status=status.HTTP_201_CREATED)
     
 
-#     def list(self, request, *args, **kwargs):
-#         user = request.user
-#         matches = Match.objects.filter(Q(player1=user) | Q(player2=user))
-#         return Response(self.serializer_class(matches, many=True).data, status=status.HTTP_200_OK)
+    def list(self, request, *args, **kwargs):
+        user = request.user
+        matches = Match.objects.filter(Q(player1=user) | Q(player2=user))
+        return Response(self.serializer_class(matches, many=True).data, status=status.HTTP_200_OK)
     
 
 #     def update_match_status(self, request, new_status, required_status, *args, **kwargs):

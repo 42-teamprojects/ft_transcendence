@@ -8,7 +8,6 @@ from datetime import timedelta
 
 PROJECT_NAME = "Blitzpong"
 FRONTEND_DOMAIN = "http://localhost:8080"
-FRONTEND_DOMAIN_S = "https://localhost"
 
 env = environ.Env(
     DEBUG=(bool, False)
@@ -58,7 +57,7 @@ REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_RATES': {
         'anon': '3/h',
         'resend': '3/h',
-        'register': '3/d',
+        'register': '10/d',
     }
 }
 
@@ -153,7 +152,7 @@ DATABASES = {
 
 
 #score winner
-SCORE_WINNER = 5
+FINAL_SCORE = 3
 
 
 # Password validation
