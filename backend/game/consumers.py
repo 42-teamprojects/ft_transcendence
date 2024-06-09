@@ -197,7 +197,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                         "type": "score_update",
                         "player1_score": await sync_to_async(self.get_player1_score)(),
                         "player2_score": await sync_to_async(self.get_player2_score)(),
-                        "winner_id": winner_id if winner_id is not None else ""
+                        "winner_id": winner_id if winner_id is not None else "null"
                     }
                 }
             )

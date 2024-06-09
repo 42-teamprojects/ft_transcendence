@@ -18,8 +18,6 @@ export default class Onlinegameovermodal extends HTMLElement {
             countdown--;
 
             if (countdown < 0) {
-                matchState.reset();
-                matchState.closeMatchConnection();
                 Router.instance.navigate('/dashboard/home');
                 clearInterval(intervalId);
             }
