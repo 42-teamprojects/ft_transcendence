@@ -51,9 +51,11 @@ class MatchState extends State {
 		);
 	}
 
-	setupMatchMaking() {
-		if (!this.matchMakingId) {
-			throw new Error("Match id not provided");
+	setupMatchMaking(p1 = null, p2 = null) {
+		if (p1 && p2) {
+			this.matchMakingId = `private-match-making/${p1}/${p2}`;
+		} else {
+			this.matchMakingId = `match-making`;
 		}
 
 		if (this.matchMakingSocket.sockets[this.matchMakingId]) return;

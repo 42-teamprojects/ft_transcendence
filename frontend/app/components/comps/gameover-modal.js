@@ -81,8 +81,7 @@ export default class Gameovermodal extends HTMLElement {
 
     #confirm() {
         this.hide();
-        matchState.setState({ match: new LocalMatch(matchState.state.match.player1, matchState.state.match.player2) });
-        Router.instance.reload();
+        Router.instance.navigate('/local/1v1');
     }
 
     render() {

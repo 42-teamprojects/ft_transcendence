@@ -3,15 +3,18 @@ import Router from "../../router/router.js";
 import { userState } from "../../state/userState.js";
 import { matchState } from "../../state/matchState.js";
 
-export default class Matchmaking extends HTMLElement {
+export default class Privatematchmaking extends HTMLElement {
     constructor() {
         super();
         this.user = userState.state.user;
-        this.opponent = {username: "Searching...", avatar: null};
+        this.opponent = {username: "Waiting...", avatar: null};
+        this.params = new URLSearchParams(window.location.search);
+        this.p1 = this.params.get('p1');
+        this.p2 = this.params.get('p2');
     }
     
     connectedCallback() {
-        matchState.setupMatchMaking();
+        matchState.setupMatchMaking(this.p1, this.p2);
         this.user = userState.state.user;
         this.render();
  
@@ -53,7 +56,7 @@ export default class Matchmaking extends HTMLElement {
     render() {
         this.innerHTML = /*html*/`
             <div class="match-making-container flex-col  flex-center gap-40">
-                <h1 class="starting">${(this.opponent.username == "Searching...") ? /*html*/`<c-three-dots text="Searching for opponent" color="white"></c-three-dots>`: "Starting in 3..."}</h1>
+                <h1 class="starting">${(this.opponent.username == "Waiting...") ? /*html*/`<c-three-dots text="Waiting for opponent" color="white"></c-three-dots>`: "Starting in 3..."}</h1>
                 <div class="flex flex-center gap-30">
                     <div class="flex flex-col gap-5">
                         <div class="img-box player-border">
@@ -63,10 +66,10 @@ export default class Matchmaking extends HTMLElement {
                     </div>
                     <h1 class="text-6xl font-black spacing-10">VS</h1>
                     <div class="flex flex-col gap-5">
-                        <div class="img-box ${this.opponent.username === "Searching..." ? 'loading' : 'player-border'}">
+                        <div class="img-box ${this.opponent.username === "Waiting..." ? 'loading' : 'player-border'}">
                             ${this.opponent.avatar ? `<img src="${config.backend_domain}${this.opponent.avatar}" alt="" class="player-img">` : ''}
                         </div>
-                        <h2 class="text-primary text-center text-3xl">${this.opponent.username === "Searching..." ? /*html*/`<c-three-dots text="" color="#D7524C"></c-three-dots>` : this.opponent.username }</h2>
+                        <h2 class="text-primary text-center text-3xl">${this.opponent.username === "Waiting..." ? /*html*/`<c-three-dots text="" color="#D7524C"></c-three-dots>` : this.opponent.username }</h2>
                     </div>
                 </div>
                 <button class="btn-primary">quit match</button>
@@ -75,4 +78,4 @@ export default class Matchmaking extends HTMLElement {
     }
 }
 
-customElements.define('p-matchmaking', Matchmaking);
+customElements.define('p-privatematchmaking', Privatematchmaking);

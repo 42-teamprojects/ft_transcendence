@@ -117,6 +117,13 @@ class NotificationState extends State {
         }
     }
 
+    handlePlayRequestNotification(notification) {
+        Toast.notify({
+            type: "info",
+            message: /*html*/ `<p>${notification.data.sender_name} sent you a play request</p><br/><a is="c-link" class="font-bold spacing-1 uppercase text-secondary mt-2 text-sm" href="${notification.data.link}" class="mt-2">Play</a>`,
+        });
+    }
+
     /* 
     Notification: 
         - type

@@ -8,6 +8,7 @@ from .models import GameSession
 from match.models import Match
 from accounts.models import User
 from asgiref.sync import sync_to_async
+from django.db.models import Q
 
 def get_user_id(scope):
     if (scope["cookies"] is None) or ("access" not in scope["cookies"]):
@@ -24,15 +25,29 @@ def get_user_id(scope):
 
 class MatchMakingConsumer(AsyncWebsocketConsumer):
     async def connect(self):
+        self.p1_id = self.scope['url_route']['kwargs'].get('p1_id')
+        self.p2_id = self.scope['url_route']['kwargs'].get('p2_id')
+        
         self.user_id = get_user_id(self.scope)
         if self.user_id is None:
             await self.close()
             return
-
-        self.session = await self.get_or_create_game_session(self.user_id)
+        
+        if self.p1_id is not None and self.p2_id is not None:
+            # if self.user_id != self.p1_id and self.user_id != self.p2_id:
+            #     await self.close()
+            #     return
+            # if self.p1_id == self.p2_id:
+            #     await self.close()
+            #     return
+            self.session = await self.get_or_create_private_game_session(self.p1_id, self.p2_id)
+        else:
+            self.session = await self.get_or_create_game_session(self.user_id)
+            
         if self.session is None:
             await self.close()
             return
+        
         user_group = f"player_{self.user_id}"
         await self.channel_layer.group_add(
             user_group,
@@ -57,13 +72,27 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def get_or_create_game_session(self, user_id):
-        session = GameSession.objects.filter(vacant=True).exclude(match__player1_id=user_id).first()
+        session = GameSession.objects.filter(vacant=True, private=False).exclude(match__player1_id=user_id).first()
         if session is None:
             match = Match.objects.create(player1_id=user_id)
             session = GameSession.objects.create(match=match)
         else:
             session.match.player2_id = user_id
             session.match.save()
+            session.vacant = False
+            session.save()
+        return session
+    
+    @database_sync_to_async
+    def get_or_create_private_game_session(self, p1_id, p2_id):
+        session = GameSession.objects.filter(vacant=True, private=True).filter(
+            Q(match__player1_id=p1_id, match__player2_id=p2_id) |
+            Q(match__player1_id=p2_id, match__player2_id=p1_id)
+        ).first()
+        if session is None:
+            match = Match.objects.create(player1_id=p1_id, player2_id=p2_id)
+            session = GameSession.objects.create(match=match, private=True)
+        else:
             session.vacant = False
             session.save()
         return session
