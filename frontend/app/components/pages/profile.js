@@ -19,6 +19,10 @@ export default class Profile extends HTMLElement {
 
   async connectedCallback() {
     this.user = userState.state.user;
+    this.matchHistory = await userState.getMatches();
+			console.log("matche history", this.matchHistory);
+
+    this.myMatches = this.matchHistory.map((match) => /*html*/ `<c-match-history me="${match.player1.username}" my-avatar=${match.player1.avatar} them="${match.player2.username}" their-avatar=${match.player2.avatar} my-score="${match.score1}" their-score="${match.score2}" tooltip="${formatDate(match.created_at)}" flow="right"></c-match-history>`).join("");
     this.isMine = true;
     if (this.user.username !== this.username) {
       this.innerHTML = /*html*/ `<c-loader></c-loader>`;
@@ -135,10 +139,7 @@ export default class Profile extends HTMLElement {
                         <h2 class="mb-3">Matches history</h2>
                     </div>
                     <div class="matches flex-col gap-4">
-                        <c-match-history me="yusufisawi" them="msodor" my-score="3" their-score="5" tooltip="14-06-2024" flow="right"></c-match-history>
-                        <c-match-history me="yusufisawi" them="msodor" my-score="5" their-score="2" tooltip="14-06-2024" flow="right"></c-match-history>
-                        <c-match-history me="yusufisawi" them="msodor" my-score="5" their-score="1" tooltip="14-06-2024" flow="right"></c-match-history>
-                        <c-match-history me="yusufisawi" them="msodor" my-score="3" their-score="5" tooltip="14-06-2024" flow="right"></c-match-history>
+                        ${this.myMatches}
                     </div>
                 </section>
             </main>

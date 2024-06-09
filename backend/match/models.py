@@ -122,3 +122,9 @@ class Match(models.Model):
             return f'R{self.round}-{"1" if self.match_number == 0 else "2"}G{self.group}: {self.player1} vs {self.player2}, W: {self.winner}'
         else:
             return f'{self.player1} vs {self.player2}'
+        
+
+    # #get all the matches of user
+    # def get_user_matches(self, user):
+    #     matches = Match.objects.filter(Q(player1=user) | Q(player2=user))
+    #     return matches

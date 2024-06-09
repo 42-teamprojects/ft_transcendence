@@ -1,31 +1,35 @@
 # from django.conf import settings
-# from rest_framework import viewsets, status
-# from rest_framework.response import Response
-# from rest_framework.permissions import IsAuthenticated
-# from django.db.models import Q
+from rest_framework import viewsets, status
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from django.db.models import Q
 # from .models import Match, MatchStatus
-# from .serializers import MatchSerializer
+from .serializers import MatchSerializer
 # from accounts.models import User
+#import models
+from .models import Match
+
+class MatchView(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = MatchSerializer
+    queryset = Match.objects.all()
 
 
-# class MatchView(viewsets.ModelViewSet):
-#     permission_classes = [IsAuthenticated]
-#     serializer_class = MatchSerializer
-#     queryset = Match.objects.all()
-
-#     def create(self, request, *args, **kwargs):
-#         user = request.user
-#         user2 = User.objects.filter(~Q(id=user.id)).first()
-#         if not user2:
-#             return Response({'detail': 'No other user available for match'}, status=status.HTTP_400_BAD_REQUEST)
-#         match = Match.objects.create(player1=user, player2=user2)
-#         return Response(self.serializer_class(match).data, status=status.HTTP_201_CREATED)
+    # def create(self, request, *args, **kwargs):
+    #     user = request.user
+    #     user2 = User.objects.filter(~Q(id=user.id)).first()
+    #     if not user2:
+    #         return Response({'detail': 'No other user available for match'}, status=status.HTTP_400_BAD_REQUEST)
+    #     match = Match.objects.create(player1=user, player2=user2)
+    #     return Response(self.serializer_class(match).data, status=status.HTTP_201_CREATED)
     
 
-#     def list(self, request, *args, **kwargs):
-#         user = request.user
-#         matches = Match.objects.filter(Q(player1=user) | Q(player2=user))
-#         return Response(self.serializer_class(matches, many=True).data, status=status.HTTP_200_OK)
+    def list(self, request, *args, **kwargs):   
+        user = request.user
+        matches = Match.objects.filter(Q(player1=user) | Q(player2=user))
+        #sort list by status
+        matches = sorted(matches, key=lambda x: x.created_at, reverse=True)
+        return Response(self.serializer_class(matches, many=True).data, status=status.HTTP_200_OK)
     
 
 #     def update_match_status(self, request, new_status, required_status, *args, **kwargs):

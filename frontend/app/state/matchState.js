@@ -68,6 +68,7 @@ class MatchState extends State {
 			async (event) => {
 				const gameSessionId = JSON.parse(event.data);
 				const sessionId = gameSessionId.data.game_session_id;
+				console.log("session id", sessionId);
 				await this.getGameSession(sessionId);
 			},
 			{

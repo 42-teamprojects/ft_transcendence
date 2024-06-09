@@ -11,6 +11,17 @@ class UserState extends State {
 		this.httpClient = HttpClient.instance;
 	}
 
+
+	async getMatches() {
+		try {
+			const response = await this.httpClient.get("match/");
+			return response;
+		} catch (error) {
+			console.error(error);
+		}
+	
+	}
+
 	async fetchMe() {
 		try {
 			const response = await this.httpClient.get("users/me/");
