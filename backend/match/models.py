@@ -39,6 +39,15 @@ class Match(models.Model):
         if self.tournament and self.player1 and self.player2 and self.status == 'NS' and self.tournament.status == 'IP' and self.round != 1:
             self.start()
     
+    def set_winner_by_id(self, winner_id):
+        if winner_id not in [self.player1.id, self.player2.id]:
+            raise ValidationError('The provided user is not a player in this match.')
+        winner = User.objects.get(id=winner_id)
+        self.set_winner(winner)
+
+    def get_winner(self):
+        return self.winner
+
     def set_winner(self, winner):
         if winner not in [self.player1, self.player2]:
             raise ValidationError('The provided user is not a player in this match.')

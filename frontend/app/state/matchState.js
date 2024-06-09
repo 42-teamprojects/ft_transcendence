@@ -41,7 +41,7 @@ class MatchState extends State {
                 	Router.instance.navigate('/dashboard/home');
 				}
 				if (matchData.type === "score_update") {
-				console.log("data i got from socket : ", matchData);	
+					console.log("data i got from socket : ", matchData);	
 				}
 				this.setState({ game: matchData });
 			},

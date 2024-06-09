@@ -162,6 +162,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     async def disconnect(self, close_code):
+        #the other player
         await self.channel_layer.group_send(
             self.session_id,
             {
@@ -174,6 +175,29 @@ class GameConsumer(AsyncWebsocketConsumer):
             self.session_id,
             self.channel_name
         )
+        player1_id = await sync_to_async(self.get_player1_id)()
+        player2_id = await sync_to_async(self.get_player2_id)()
+        match = await sync_to_async(self.get_match)()
+
+        winner_from_db = await sync_to_async(match.get_winner)()
+
+        print("is there a winner: ", winner_from_db, flush=True)
+
+        if player1_id == self.user_id:
+            winner_id = player2_id
+        elif player2_id == self.user_id:
+            winner_id = player1_id
+
+        if winner_from_db is None:
+            try:
+                await sync_to_async(match.set_winner_by_id)(winner_id)
+            except Exception as e:
+                print("eroorr: ", e, flush=True)
+        else:
+            print("winner_id", winner_id, flush=True)
+
+
+      
     
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
@@ -249,6 +273,7 @@ class GameConsumer(AsyncWebsocketConsumer):
     def get_player2_id(self):
         return self.session.match.player2.id
     def get_match(self):
+        self.session.refresh_from_db()
         return self.session.match
 
     def get_player1_score(self):
@@ -256,4 +281,4 @@ class GameConsumer(AsyncWebsocketConsumer):
     
     def get_player2_score(self):
         return self.session.match.score2
-
+    
