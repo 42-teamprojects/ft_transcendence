@@ -38,6 +38,7 @@ export default class OnlineQualifications extends HTMLElement {
 			Router.instance.navigate("/dashboard/tournaments");
 			return;
 		}
+		console.log(this.tournamentState.state.matches)
 		this.start_time = new Date(this.tournament.start_time)
 		this.render();
 		this.timeRemaining = this.querySelector("#countdown")
