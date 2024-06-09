@@ -59,10 +59,10 @@ export default class Countdownmodel extends HTMLElement {
 	render() {
 		this.innerHTML = /*html*/ `
             <div id="backdrop"></div>
-            <div class="modal">
+            <div class="modal" style="background: none;">
                 <header class="text-center">
-                    <h1 id="title" class="text-xl text-stroke font-normal mb-2">Round starts in</h1>
-                    <h2 id="subtitle" class="text-5xl font-bold spacing-2">3</h2>
+                    <h1 id="title" class="text-3xl font-normal mb-2">Round starts in</h1>
+                    <h2 id="subtitle" class="text-6xl font-bold spacing-2">3</h2>
                 </header>
             </div>
         `;
