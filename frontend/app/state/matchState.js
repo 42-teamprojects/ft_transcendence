@@ -41,7 +41,7 @@ class MatchState extends State {
                 	Router.instance.navigate('/dashboard/home');
 				}
 				if (matchData.type === "score_update") {
-				console.log("data i got from socket : ", matchData);	
+					console.log("data i got from socket : ", matchData);	
 				}
 				this.setState({ game: matchData });
 			},
@@ -75,6 +75,7 @@ class MatchState extends State {
 				}
 				const gameSessionId = JSON.parse(event.data);
 				const sessionId = gameSessionId.data.game_session_id;
+				console.log("session id", sessionId);
 				await this.getGameSession(sessionId);
 			},
 			{

@@ -53,6 +53,16 @@ class Match(models.Model):
             }
         )
         
+    
+    def set_winner_by_id(self, winner_id):
+        if winner_id not in [self.player1.id, self.player2.id]:
+            raise ValidationError('The provided user is not a player in this match.')
+        winner = User.objects.get(id=winner_id)
+        self.set_winner(winner)
+
+    def get_winner(self):
+        return self.winner
+
     def set_winner(self, winner):
         if winner not in [self.player1, self.player2]:
             raise ValidationError('The provided user is not a player in this match.')
@@ -126,3 +136,9 @@ class Match(models.Model):
             return f'R{self.round}-{"1" if self.match_number == 0 else "2"}G{self.group}: {self.player1} vs {self.player2}, W: {self.winner}'
         else:
             return f'{self.player1} vs {self.player2}'
+        
+
+    # #get all the matches of user
+    # def get_user_matches(self, user):
+    #     matches = Match.objects.filter(Q(player1=user) | Q(player2=user))
+    #     return matches
