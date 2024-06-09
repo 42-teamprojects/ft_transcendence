@@ -129,11 +129,10 @@ class Match(models.Model):
             loser = self.player1.id
             self.set_winner(self.player2)
         self.save()
-        return winner
+        return {"winner": winner, "loser" :loser}
     
     def is_player(self, user_id):
         return self.player1_id == user_id or self.player2_id == user_id
-        return {"winner": winner, "loser" :loser}
                 
     def __str__(self):
         if self.is_tournament_match():
