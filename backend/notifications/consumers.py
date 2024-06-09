@@ -39,6 +39,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                 self.group_name,
                 {
                     'type': 'notification_message',
+                    'id' : response['id'] if 'id' in response else None,
                     'notification_type': response['type'] or None,
                     'data': response['data'] or None,
                     'recipient': response['recipient'] or None,
@@ -69,6 +70,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
         await self.send(text_data=json.dumps({
             'type': type,
+            'id' : event['id'] if 'id' in event else None,
             'data': data,
             'recipient': recipient,
         }))

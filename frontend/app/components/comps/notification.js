@@ -1,3 +1,4 @@
+import { config } from "../../config.js";
 import { notificationState } from "../../state/notificationState.js";
 
 export default class Notification extends HTMLElement {

@@ -52,10 +52,10 @@ class FriendState extends State {
 				type: "FAL",
 				data: {
 					type: "ADD",
-					avatar: userState.state.user.avatar,
 					username: userState.state.user.username,
 					sender_id: userState.state.user.id,
 					sender_name: userState.state.user.username,
+					sender_avatar: userState.state.user.avatar,
 				},
 				recipient: userId,
 			}
@@ -79,8 +79,6 @@ class FriendState extends State {
 				type: "FAL",
 				data: {
 					type: "REMOVE",
-					userAvatar: userState.state.user.avatar,
-					avatar: userState.state.user.avatar,
 					sender_id: userState.state.user.id,
 					sender_name: userState.state.user.username,
 				},
