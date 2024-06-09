@@ -70,12 +70,11 @@ class Tournament(models.Model):
             str(self.id), 
             {
                 'type': 'tournament_update',
-                'data': 'The tournament is starting soon.'
+                'data': 'The tournament is starting in 1 minute.'
             }
         )
         # Calculate the delay until the start_time
         delay = (self.start_time - timezone.now()).total_seconds()
-        print("Delay: ", delay, flush=True)
         Timer(delay, self.start_matches).start()
         # self.notify_participants()
 

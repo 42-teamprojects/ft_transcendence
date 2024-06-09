@@ -34,15 +34,7 @@ export default class Dashboardtournament extends HTMLElement {
                         ${this.getTournamentsCards()}
                     </div>
                 </section>
-                <section class="leaderboard">
-                    <div class="mb-9">
-                        <h2 class="mb-3">Leaderboard</h2>
-                        <h4 class="font-normal text-stroke line-3"></h4>
-                    </div>
-                    <div class="leaderboard-table">
-                        <c-leaderboard-table></c-leaderboard-table>
-                    </div>
-                </section>
+                
 
             </main>
             <div class="widgets flex-col-center gap-5">
@@ -67,3 +59,13 @@ export default class Dashboardtournament extends HTMLElement {
 }
 
 customElements.define("p-dashboardtournament", Dashboardtournament);
+
+{/* <section class="leaderboard">
+    <div class="mb-9">
+        <h2 class="mb-3">Leaderboard</h2>
+        <h4 class="font-normal text-stroke line-3"></h4>
+    </div>
+    <div class="leaderboard-table">
+        <c-leaderboard-table></c-leaderboard-table>
+    </div>
+</section> */}
