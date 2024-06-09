@@ -43,7 +43,7 @@ class NotificationState extends State {
             //on message callback
             (event) => {
                 const notification = JSON.parse(event.data);
-                if (!['NEW_STATUS', 'TOURNAMENT_UPDATE', 'MSG'].includes(notification.type) 
+                if (!['NEW_STATUS', 'TOURNAMENT_UPDATE', 'MSG', 'PRQ'].includes(notification.type) 
                     && notification.recipient === userState.state.user.id 
                     && notification.data && !['REMOVE', 'BLOCK', 'UNBLOCK'].includes(notification.data.type)) {
                     this.setState({ notifications: [notification, ...this.state.notifications], loading: false });
@@ -134,7 +134,8 @@ class NotificationState extends State {
     async sendNotification(notification, updateState = true) {
         try {
             this.resetLoading();
-            if (!["REMOVE", "BLOCK", "UNBLOCK"].includes(notification.data.type) || notification.type !== "MSG" || notification.type !== "PRQ") {
+            if (!["REMOVE", "BLOCK", "UNBLOCK"].includes(notification.data.type) && notification.type !== "MSG" && notification.type !== "PRQ") {
+                console.log("saving in database")
                 const notif = await this.httpClient.post('notifications/', notification);
                 notification.id = notif.id;
             }
