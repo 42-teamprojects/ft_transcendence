@@ -1,8 +1,8 @@
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 from accounts.models import User
-import match
-from .models import Tournament, TournamentMatch
+from match.models import Match
+from .models import Tournament
 
 class TournamentModelTest(TestCase):
     def setUp(self):
@@ -125,55 +125,55 @@ class TournamentMatchModelTest(TestCase):
 
     def test_create_match(self):
         print("Test: create_match")
-        match = TournamentMatch.objects.create(tournament=self.tournament_4, round=1, group=1, player1=self.users[0], player2=self.users[1])
+        match = Match.objects.create(tournament=self.tournament_4, round=1, group=1, player1=self.users[0], player2=self.users[1])
         self.assertEqual(match.status, 'NS')
         self.assertEqual(match.winner, None)
 
     def test_set_winner(self):
         print("Test: set_winner")
-        match = TournamentMatch.objects.create(tournament=self.tournament_4, round=1, group=1, player1=self.users[0], player2=self.users[1])
+        match = Match.objects.create(tournament=self.tournament_4, round=1, group=1, player1=self.users[0], player2=self.users[1])
         match.set_winner(self.users[0])
         self.assertEqual(match.winner, self.users[0])
         self.assertEqual(match.status, 'F')
     
     def test_assign_winner_to_next_round_same_group(self):
         print("Test: assign_winner_to_next_round_same_group")
-        match1 = TournamentMatch.objects.get(tournament=self.tournament_4, round=1, group=1, match_number=0)
-        match2 = TournamentMatch.objects.get(tournament=self.tournament_4, round=1, group=1, match_number=1)
+        match1 = Match.objects.get(tournament=self.tournament_4, round=1, group=1, match_number=0)
+        match2 = Match.objects.get(tournament=self.tournament_4, round=1, group=1, match_number=1)
         match1.set_winner(match1.player1)
         match2.set_winner(match2.player2)
-        next_round_match = TournamentMatch.objects.filter(tournament=self.tournament_4, round=2, group=1, match_number=0).first()
+        next_round_match = Match.objects.filter(tournament=self.tournament_4, round=2, group=1, match_number=0).first()
         self.assertEqual(next_round_match.player1, match1.player1)
         self.assertEqual(next_round_match.player2, match2.player2)
 
     def test_assign_winner_to_next_round_different_group(self):
         print("Test: assign_winner_to_next_round_different_group")
-        match1 = TournamentMatch.objects.get(tournament=self.tournament_8, round=1, group=1, match_number=0)
-        match2 = TournamentMatch.objects.get(tournament=self.tournament_8, round=1, group=2, match_number=0)
+        match1 = Match.objects.get(tournament=self.tournament_8, round=1, group=1, match_number=0)
+        match2 = Match.objects.get(tournament=self.tournament_8, round=1, group=2, match_number=0)
         match1.set_winner(match1.player1)
         match2.set_winner(match2.player2)
-        next_round_match1 = TournamentMatch.objects.filter(tournament=self.tournament_8, round=2, group=1, match_number=0).first()
-        next_round_match2 = TournamentMatch.objects.filter(tournament=self.tournament_8, round=2, group=1, match_number=1).first()
+        next_round_match1 = Match.objects.filter(tournament=self.tournament_8, round=2, group=1, match_number=0).first()
+        next_round_match2 = Match.objects.filter(tournament=self.tournament_8, round=2, group=1, match_number=1).first()
         self.assertEqual(next_round_match1.player1, match1.player1)
         self.assertEqual(next_round_match2.player1, match2.player2)
     
     def test_assign_winner_to_next_round_to_final(self):
         print("Test: assign_winner_to_next_round_to_final")
-        match1_group1 = TournamentMatch.objects.get(tournament=self.tournament_8, round=1, group=1, match_number=0)
-        match2_group1 = TournamentMatch.objects.get(tournament=self.tournament_8, round=1, group=1, match_number=1)
-        match1_group2 = TournamentMatch.objects.get(tournament=self.tournament_8, round=1, group=2, match_number=0)
-        match2_group2 = TournamentMatch.objects.get(tournament=self.tournament_8, round=1, group=2, match_number=1)
+        match1_group1 = Match.objects.get(tournament=self.tournament_8, round=1, group=1, match_number=0)
+        match2_group1 = Match.objects.get(tournament=self.tournament_8, round=1, group=1, match_number=1)
+        match1_group2 = Match.objects.get(tournament=self.tournament_8, round=1, group=2, match_number=0)
+        match2_group2 = Match.objects.get(tournament=self.tournament_8, round=1, group=2, match_number=1)
         match1_group1.set_winner(match1_group1.player1)
         match2_group1.set_winner(match2_group1.player1)
         match1_group2.set_winner(match1_group2.player1)
         match2_group2.set_winner(match2_group2.player1)
         # self.tournament_8.print_tree()
-        next_round_match1 = TournamentMatch.objects.filter(tournament=self.tournament_8, round=2, group=1, match_number=0).first()
-        next_round_match2 = TournamentMatch.objects.filter(tournament=self.tournament_8, round=2, group=1, match_number=1).first()
+        next_round_match1 = Match.objects.filter(tournament=self.tournament_8, round=2, group=1, match_number=0).first()
+        next_round_match2 = Match.objects.filter(tournament=self.tournament_8, round=2, group=1, match_number=1).first()
         next_round_match1.set_winner(next_round_match1.player1)
         next_round_match2.set_winner(next_round_match2.player1)
         # self.tournament_8.print_tree()
-        final_match = TournamentMatch.objects.filter(tournament=self.tournament_8, round=3, group=1, match_number=0).first()
+        final_match = Match.objects.filter(tournament=self.tournament_8, round=3, group=1, match_number=0).first()
         final_match.set_winner(final_match.player1)
         self.tournament_8.refresh_from_db()
         # self.tournament_8.print_tree()
@@ -187,14 +187,14 @@ class TournamentMatchModelTest(TestCase):
         tournament_16.participants.add(self.users[1], self.users[2], self.users[3], self.users[4], self.users[5], self.users[6], self.users[7], self.users[8], self.users[9], self.users[10], self.users[11], self.users[12], self.users[13], self.users[14], self.users[15])
         tournament_16.start()
         
-        match1_group1 = TournamentMatch.objects.get(tournament=tournament_16, round=1, group=1, match_number=0)
-        match2_group1 = TournamentMatch.objects.get(tournament=tournament_16, round=1, group=1, match_number=1)
-        match1_group2 = TournamentMatch.objects.get(tournament=tournament_16, round=1, group=2, match_number=0)
-        match2_group2 = TournamentMatch.objects.get(tournament=tournament_16, round=1, group=2, match_number=1)
-        match1_group3 = TournamentMatch.objects.get(tournament=tournament_16, round=1, group=3, match_number=0)
-        match2_group3 = TournamentMatch.objects.get(tournament=tournament_16, round=1, group=3, match_number=1)
-        match1_group4 = TournamentMatch.objects.get(tournament=tournament_16, round=1, group=4, match_number=0)
-        match2_group4 = TournamentMatch.objects.get(tournament=tournament_16, round=1, group=4, match_number=1)
+        match1_group1 = Match.objects.get(tournament=tournament_16, round=1, group=1, match_number=0)
+        match2_group1 = Match.objects.get(tournament=tournament_16, round=1, group=1, match_number=1)
+        match1_group2 = Match.objects.get(tournament=tournament_16, round=1, group=2, match_number=0)
+        match2_group2 = Match.objects.get(tournament=tournament_16, round=1, group=2, match_number=1)
+        match1_group3 = Match.objects.get(tournament=tournament_16, round=1, group=3, match_number=0)
+        match2_group3 = Match.objects.get(tournament=tournament_16, round=1, group=3, match_number=1)
+        match1_group4 = Match.objects.get(tournament=tournament_16, round=1, group=4, match_number=0)
+        match2_group4 = Match.objects.get(tournament=tournament_16, round=1, group=4, match_number=1)
         
         match1_group1.set_winner(match1_group1.player1)
         match2_group1.set_winner(match2_group1.player1)
@@ -205,36 +205,36 @@ class TournamentMatchModelTest(TestCase):
         match1_group4.set_winner(match1_group4.player1)
         match2_group4.set_winner(match2_group4.player1)
         # tournament_16.print_tree()
-        next_round_match1 = TournamentMatch.objects.filter(tournament=tournament_16, round=2, group=1, match_number=0).first()
-        next_round_match2 = TournamentMatch.objects.filter(tournament=tournament_16, round=2, group=1, match_number=1).first()
-        next_round_match3 = TournamentMatch.objects.filter(tournament=tournament_16, round=2, group=2, match_number=0).first()
-        next_round_match4 = TournamentMatch.objects.filter(tournament=tournament_16, round=2, group=2, match_number=1).first()
+        next_round_match1 = Match.objects.filter(tournament=tournament_16, round=2, group=1, match_number=0).first()
+        next_round_match2 = Match.objects.filter(tournament=tournament_16, round=2, group=1, match_number=1).first()
+        next_round_match3 = Match.objects.filter(tournament=tournament_16, round=2, group=2, match_number=0).first()
+        next_round_match4 = Match.objects.filter(tournament=tournament_16, round=2, group=2, match_number=1).first()
         next_round_match1.set_winner(next_round_match1.player1)
         next_round_match2.set_winner(next_round_match2.player1)
         next_round_match3.set_winner(next_round_match3.player1)
         next_round_match4.set_winner(next_round_match4.player1)
         # tournament_16.print_tree() 
-        next_round_match5 = TournamentMatch.objects.filter(tournament=tournament_16, round=3, group=1, match_number=0).first()
-        next_round_match6 = TournamentMatch.objects.filter(tournament=tournament_16, round=3, group=1, match_number=1).first()
+        next_round_match5 = Match.objects.filter(tournament=tournament_16, round=3, group=1, match_number=0).first()
+        next_round_match6 = Match.objects.filter(tournament=tournament_16, round=3, group=1, match_number=1).first()
         next_round_match5.set_winner(next_round_match5.player1)
         next_round_match6.set_winner(next_round_match6.player1)
         # tournament_16.print_tree() 
-        final_match = TournamentMatch.objects.filter(tournament=tournament_16, round=4, group=1, match_number=0).first()
+        final_match = Match.objects.filter(tournament=tournament_16, round=4, group=1, match_number=0).first()
         final_match.set_winner(final_match.player1)
         self.assertEqual(final_match.player1, next_round_match5.player1)
         self.assertEqual(final_match.player2, next_round_match6.player1)
         self.assertEqual(final_match.winner, final_match.player1)
     
     def test_set_invalid_winner(self):
-        match = TournamentMatch.objects.create(tournament=self.tournament_4, round=1, group=1, player1=self.users[0], player2=self.users[1])
+        match = Match.objects.create(tournament=self.tournament_4, round=1, group=1, player1=self.users[0], player2=self.users[1])
         with self.assertRaises(ValidationError):
             match.set_winner(self.users[4])
 
     def test_assign_winner_to_next_round(self):
-        match1 = TournamentMatch.objects.create(tournament=self.tournament_4, round=1, group=1, match_number=0, player1=self.users[0], player2=self.users[1])
-        match2 = TournamentMatch.objects.create(tournament=self.tournament_4, round=1, group=1, match_number=1, player1=self.users[2], player2=self.users[4])
+        match1 = Match.objects.create(tournament=self.tournament_4, round=1, group=1, match_number=0, player1=self.users[0], player2=self.users[1])
+        match2 = Match.objects.create(tournament=self.tournament_4, round=1, group=1, match_number=1, player1=self.users[2], player2=self.users[4])
         match1.set_winner(match1.player1)
         match2.set_winner(match2.player1)
-        next_round_match = TournamentMatch.objects.get(tournament=self.tournament_4, round=2, group=1)
+        next_round_match = Match.objects.get(tournament=self.tournament_4, round=2, group=1)
         self.assertEqual(next_round_match.player1, match1.player1)
         self.assertEqual(next_round_match.player2, match2.player1)

@@ -1,8 +1,11 @@
 from django.forms import ValidationError
 from django.shortcuts import render
 from rest_framework import viewsets
-from .models import Tournament, TournamentMatch
-from .serializers import TournamentSerializer, TournamentMatchSerializer
+
+from match.serializers import MatchSerializer
+from .models import Tournament
+from match.models import Match
+from .serializers import TournamentSerializer
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import serializers
@@ -79,7 +82,7 @@ class TournamentViewSet(viewsets.ModelViewSet):
                 return Response({'detail': 'Tournament not started yet.'}, status=status.HTTP_400_BAD_REQUEST)
         except serializers.ValidationError as e:
             return Response(e, status=status.HTTP_404_NOT_FOUND)
-        return Response(TournamentMatchSerializer(tournament.matches.all(), many=True).data, status=status.HTTP_200_OK)
+        return Response(MatchSerializer(tournament.matches.all(), many=True).data, status=status.HTTP_200_OK)
     
     def update(self, request, *args, **kwargs):
         tournament = self.get_object()
@@ -107,13 +110,13 @@ class TournamentViewSet(viewsets.ModelViewSet):
         return Response({'detail': 'Participant removed successfully.'}, status=status.HTTP_200_OK)
     
 class TournamentMatchViewSet(viewsets.ModelViewSet):
-    queryset = TournamentMatch.objects.all()
-    serializer_class = TournamentMatchSerializer
+    queryset = Match.objects.all()
+    serializer_class = MatchSerializer
 
     def get_object(self):
         try:
-            return TournamentMatch.objects.get(pk=self.kwargs['pk'])
-        except TournamentMatch.DoesNotExist:
+            return Match.objects.get(pk=self.kwargs['pk'])
+        except Match.DoesNotExist:
             raise serializers.ValidationError({'detail': 'Match not found.'})
     
     @action(detail=True, methods=['post'])

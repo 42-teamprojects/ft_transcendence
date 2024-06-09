@@ -14,6 +14,7 @@ from backend import settings
 from django.core.mail import send_mail
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
+from django.apps import apps
 
 class Tournament(models.Model):
     TYPE_CHOICES = [
@@ -56,10 +57,11 @@ class Tournament(models.Model):
         self.status = 'IP'
         self.calculate_rounds()
         self.save()
+        Match = apps.get_model('match', 'Match')
 
         participants = self.randomize_participants()
         matches = self.generate_matches(participants)
-        TournamentMatch.objects.bulk_create(matches)
+        Match.objects.bulk_create(matches)
         self.start_time = timezone.now() + timedelta(minutes=1)
         self.save()
         
@@ -95,6 +97,7 @@ class Tournament(models.Model):
         return participants
 
     def generate_matches(self, participants):
+        Match = apps.get_model('match', 'Match')
         matches = []
         match_number = 0  # Initialize match_number
         for round in range(1, self.total_rounds + 1):
@@ -104,10 +107,10 @@ class Tournament(models.Model):
                 player1 = participants.pop() if round == 1 and participants else None
                 player2 = participants.pop() if round == 1 and participants else None
                 if player1 and player2:
-                    match = TournamentMatch(tournament=self, round=round, group=group, match_number=match_number, player1=player1, player2=player2)
+                    match = Match(tournament=self, round=round, group=group, match_number=match_number, player1=player1, player2=player2)
                     matches.append(match)
                 else:
-                    matches.append(TournamentMatch(tournament=self, round=round, group=group, match_number=match_number, player1=None, player2=None))
+                    matches.append(Match(tournament=self, round=round, group=group, match_number=match_number, player1=None, player2=None))
                 if i % 2 == 1:  # Increment the group number and reset match_number every two matches
                     group += 1
                     match_number = 0
@@ -218,75 +221,75 @@ class Tournament(models.Model):
         return f'Tournament {self.pk}'
 
 
-class TournamentMatch(models.Model):
-    STATUS_CHOICES = [
-        ('NS', 'Not Started'),
-        ('IP', 'In Progress'),
-        ('F', 'Finished'),
-    ]
-    match_number = models.IntegerField(null=True)
-    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE, related_name='matches', null=True)
-    round = models.IntegerField()
-    group = models.IntegerField()
-    player1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tournament_player1', null=True)
-    player2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tournament_player2', null=True)
-    winner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    status = models.CharField(max_length=2, choices=STATUS_CHOICES, default='NS')
-    start_time = models.DateTimeField(auto_now_add=False, null=True)
+# class TournamentMatch(models.Model):
+#     STATUS_CHOICES = [
+#         ('NS', 'Not Started'),
+#         ('IP', 'In Progress'),
+#         ('F', 'Finished'),
+#     ]
+#     match_number = models.IntegerField(null=True)
+#     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE, related_name='matches', null=True)
+#     round = models.IntegerField()
+#     group = models.IntegerField()
+#     player1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tournament_player1', null=True)
+#     player2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tournament_player2', null=True)
+#     winner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+#     status = models.CharField(max_length=2, choices=STATUS_CHOICES, default='NS')
+#     start_time = models.DateTimeField(auto_now_add=False, null=True)
     
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs) 
-        if self.player1 and self.player2 and self.status == 'NS' and self.tournament.status == 'IP':
-            self.start()
+#     def save(self, *args, **kwargs):
+#         super().save(*args, **kwargs) 
+#         if self.player1 and self.player2 and self.status == 'NS' and self.tournament.status == 'IP':
+#             self.start()
     
-    def set_winner(self, winner):
-        if winner not in [self.player1, self.player2]:
-            raise ValidationError('The provided user is not a player in this match.')
-        self.winner = winner
-        self.status = 'F'
-        if self.round < self.tournament.total_rounds:
-            self.assign_winner_to_next_round(winner)
-        elif self.round == self.tournament.total_rounds:
-            self.tournament.winner = winner
-            self.tournament.status = 'F'
-            self.tournament.save()
-        self.save()
+#     def set_winner(self, winner):
+#         if winner not in [self.player1, self.player2]:
+#             raise ValidationError('The provided user is not a player in this match.')
+#         self.winner = winner
+#         self.status = 'F'
+#         if self.round < self.tournament.total_rounds:
+#             self.assign_winner_to_next_round(winner)
+#         elif self.round == self.tournament.total_rounds:
+#             self.tournament.winner = winner
+#             self.tournament.status = 'F'
+#             self.tournament.save()
+#         self.save()
 
-    def assign_winner_to_next_round(self, winner):
-        # Get all the matches in the next round
-        next_round_group = math.ceil(self.group / 2)
-        next_round_match = 0 if self.group % 2 == 1 else 1
-        next_round_match = TournamentMatch.objects.select_for_update().filter(
-            tournament=self.tournament, round=self.round + 1, group=next_round_group, match_number=next_round_match).first()
+#     def assign_winner_to_next_round(self, winner):
+#         # Get all the matches in the next round
+#         next_round_group = math.ceil(self.group / 2)
+#         next_round_match = 0 if self.group % 2 == 1 else 1
+#         next_round_match = TournamentMatch.objects.select_for_update().filter(
+#             tournament=self.tournament, round=self.round + 1, group=next_round_group, match_number=next_round_match).first()
 
-        if next_round_match:
-            if self.match_number == 0:
-                next_round_match.player1 = winner
-            elif self.match_number == 1:
-                next_round_match.player2 = winner
-            next_round_match.save()
+#         if next_round_match:
+#             if self.match_number == 0:
+#                 next_round_match.player1 = winner
+#             elif self.match_number == 1:
+#                 next_round_match.player2 = winner
+#             next_round_match.save()
 
-        channel_layer = get_channel_layer()
-        async_to_sync(channel_layer.group_send)(
-            str(self.id), 
-            {
-                'type': 'tournament_update',
-                'data': f'Match {self.pk} has finished.'
-            }
-        )
+#         channel_layer = get_channel_layer()
+#         async_to_sync(channel_layer.group_send)(
+#             str(self.id), 
+#             {
+#                 'type': 'tournament_update',
+#                 'data': f'Match {self.pk} has finished.'
+#             }
+#         )
     
-    def start(self):
-        self.start_time = timezone.now() + timedelta(seconds=30)
-        self.status = 'IP'
-        self.save()
-        channel_layer = get_channel_layer()
-        async_to_sync(channel_layer.group_send)(
-            str(self.id), 
-            {
-                'type': 'tournament_update',
-                'data': f'Match {self.pk} has started.'
-            }
-        )
+#     def start(self):
+#         self.start_time = timezone.now() + timedelta(seconds=30)
+#         self.status = 'IP'
+#         self.save()
+#         channel_layer = get_channel_layer()
+#         async_to_sync(channel_layer.group_send)(
+#             str(self.id), 
+#             {
+#                 'type': 'tournament_update',
+#                 'data': f'Match {self.pk} has started.'
+#             }
+#         )
                 
-    def __str__(self):
-        return f'R{self.round}-{"1" if self.match_number == 0 else "2"}G{self.group}: {self.player1} vs {self.player2}, W: {self.winner}'
+#     def __str__(self):
+#         return f'R{self.round}-{"1" if self.match_number == 0 else "2"}G{self.group}: {self.player1} vs {self.player2}, W: {self.winner}'
