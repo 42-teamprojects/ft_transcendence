@@ -103,8 +103,6 @@ class MatchState extends State {
 		this.setState({ match });
 	}
 
-
-
 	setWinner(winner) {
 		const newMatch = this.state.match;
 		newMatch.winner = winner;

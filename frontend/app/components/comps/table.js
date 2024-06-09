@@ -1,9 +1,8 @@
 import { config } from "../../config.js";
 import Ball from "../../entities/Ball.js";
 import Paddle from "../../entities/Paddle.js";
+import Router from "../../router/router.js";
 import { matchState } from "../../state/matchState.js";
-
-// const mouse = {x: 0, y: 0};
 
 const player1PressedKeys = {
 	KeyW: false,
@@ -24,19 +23,23 @@ function getRandomInt(min, max) {
 export default class Table extends HTMLElement {
 	constructor() {
 		super();
+		this.canUpdate = true;
 		this.handleKeyDownF = this.handleKeyDown.bind(this);
 		this.handleKeyUpF = this.handleKeyUp.bind(this);
 
 		this.match = matchState.state.match;
+		if (!this.match) {
+			Router.instance.navigate("/local/1v1");
+			throw new Error("Match not found");
+		}
 		this.theme = this.match.theme;
 
 		this.finalScore = config.finalScore;
-
-		//table
+		
 		this.tableWidth = 1235;
 		this.tableHeight = 740;
 		this.context = null;
-		// paddle
+		
 		this.paddleWidth = 18;
 		this.paddleHeight = 110;
 		this.paddleMove = 0;
@@ -60,7 +63,6 @@ export default class Table extends HTMLElement {
 			getRandomInt(5, 7),
 			this.theme
 		);
-		console.log(this.paddle1);
 		this.middleCirlceRadius = 70;
 
 		this.scene = true;
@@ -129,8 +131,10 @@ export default class Table extends HTMLElement {
 	};
 
 	disconnectedCallback() {
+		this.canUpdate = false;
 		document.removeEventListener("keydown", this.handleKeyDownF);
 		document.removeEventListener("keyup", this.handleKeyUpF);
+		this.remove()
 	}
 
 	render() {
@@ -148,30 +152,25 @@ export default class Table extends HTMLElement {
 	}
 
 	gameplay() {
-
-
 		this.table = this.querySelector("#table");
 		this.table.height = this.tableHeight;
 		this.table.width = this.tableWidth;
 		this.context = this.table.getContext("2d");
-		// this.table.addEventListener("mousemove", (e) => {
-		// 	mouse.x = e.clientX - this.table.getBoundingClientRect().left;
-		// 	mouse.y = e.clientY - this.table.getBoundingClientRect().top;
-		// });
-		requestAnimationFrame(this.update);
+		
+		if (this.canUpdate) requestAnimationFrame(this.update);
 	}
 
 	update = () => {
-		// console.log(mouse);
-		//draw paddles
+		if (!this.canUpdate) return;
+		
 		this.frameCount++;
-		// update paddle position
+		
 		if (this.scene) {
 			this.drawScene();
 		}
 		else
 			this.drawForGame();
-		// this.drawScene();
+		
 		this.ball.bounceOnPaddles(this.paddle1);
 		this.ball.bounceOnPaddles(this.paddle2);
 		this.ball.bounceOnWalls(this.tableHeight);
@@ -179,7 +178,7 @@ export default class Table extends HTMLElement {
 		if (this.scored()) {
 			this.scene = true;
 		}
-		//check if scores
+		
 		if (this.isGameOver) {
 			this.dispatchEvent(
 				new CustomEvent("game-over", {
@@ -207,7 +206,6 @@ export default class Table extends HTMLElement {
 		this.paddle2.update(this.tableHeight);
 		this.ball.update();
 		this.draw();
-		console.log(this.counter);
 	};
 
 	drawScene = () => {
@@ -274,7 +272,7 @@ export default class Table extends HTMLElement {
 				this.context.stroke();
 
 				this.context.beginPath();
-				var rectY = (this.tableHeight - STROKE_HEIGHT) / 2; // This positions the rectangle vertically in the middle
+				var rectY = (this.tableHeight - STROKE_HEIGHT) / 2; 
 
 				this.context.rect(
 					RECT_X - LINE_WIDTH,
@@ -292,7 +290,7 @@ export default class Table extends HTMLElement {
 				this.context.stroke();
 			}
 		} else {
-			this.context.setLineDash([10, 10]); // Set the dash style as [dashLength, spaceLength]
+			this.context.setLineDash([10, 10]); 
 			this.context.beginPath();
 			this.context.moveTo(this.tableWidth / 2, 0);
 			this.context.lineTo(this.tableWidth / 2, this.tableHeight);
