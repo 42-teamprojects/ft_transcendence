@@ -96,7 +96,7 @@ class NotificationState extends State {
         if (!messageState.state.messages[notification.data.chat_id]) {
             messageState.getMessages(notification.data.chat_id);
         } 
-        messageState.updateCardLastMessage(notification.data.chat_id, notification.data.message);
+        // messageState.updateCardLastMessage(notification.data.chat_id, notification.data.message);
     }
 
     handleFriendAlertNotification(notification) {
