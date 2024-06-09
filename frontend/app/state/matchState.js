@@ -119,6 +119,8 @@ class MatchState extends State {
 	reset() {
 		this.setState({ 
 			match: null,
+			game: null,
+			session: null,
 		});
 	}
 }
