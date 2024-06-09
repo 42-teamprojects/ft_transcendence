@@ -102,6 +102,7 @@ class Match(models.Model):
     
     def increase_score(self, user_id):
         winner = None
+        loser = None
         if self.status == 'F':
             return self.winner.id
         if user_id == self.player1.id:
@@ -110,12 +111,14 @@ class Match(models.Model):
             self.score2 += 1
         if self.score1 == settings.FINAL_SCORE:
             winner = self.player1.id
+            loser = self.player2.id
             self.set_winner(self.player1)
         elif self.score2 == settings.FINAL_SCORE:
             winner = self.player2.id
+            loser = self.player1.id
             self.set_winner(self.player2)
         self.save()
-        return winner
+        return {"winner": winner, "loser" :loser}
                 
     def __str__(self):
         if self.is_tournament_match():

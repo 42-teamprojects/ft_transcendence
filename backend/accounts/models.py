@@ -73,6 +73,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_user_name(self):
         return self.username
     
+    @property
+    def get_user_stats(self):
+        return self.user_stats
+    
     def tokens(self):
         refresh = RefreshToken.for_user(self)
         access_token = refresh.access_token
