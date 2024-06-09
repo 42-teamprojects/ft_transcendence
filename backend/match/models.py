@@ -8,6 +8,7 @@ from tournaments.models import Tournament
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from datetime import timedelta
+from backend import settings
 
 class Match(models.Model):
     STATUS_CHOICES = [
@@ -89,6 +90,23 @@ class Match(models.Model):
                 'data': f'Match {self.pk} has started.'
             }
         )
+    
+    def increase_score(self, user_id):
+        winner = None
+        if self.status == 'F':
+            return self.winner.id
+        if user_id == self.player1.id:
+            self.score1 += 1
+        elif user_id == self.player2.id:
+            self.score2 += 1
+        if self.score1 == settings.FINAL_SCORE:
+            winner = self.player1.id
+            self.set_winner(self.player1)
+        elif self.score2 == settings.FINAL_SCORE:
+            winner = self.player2.id
+            self.set_winner(self.player2)
+        self.save()
+        return winner
                 
     def __str__(self):
         if self.is_tournament_match():

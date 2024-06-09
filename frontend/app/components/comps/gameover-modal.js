@@ -7,13 +7,13 @@ export default class Gameovermodal extends HTMLElement {
         super();
         this.player = '';
         this.tournament = this.getAttribute('tournament') || false;
+        this.isOnline = this.getAttribute('is-online') || false;
         this.isOpen = false;
     }
 
     connectedCallback() {
         this.render();
-
-        if (!this.tournament) {
+        if (!this.tournament || !this.isOnline) {
             const backdrop = this.querySelector('#backdrop');
             const cancelButton = this.querySelector('#cancel-btn');
             const confirmButton = this.querySelector('#confirm-btn');
@@ -32,7 +32,7 @@ export default class Gameovermodal extends HTMLElement {
 
             if (countdown < 0) {
                 matchState.reset();
-                Router.instance.navigate('/local/tournament/qualifications');
+                Router.instance.navigate(this.tournament ? '/local/tournament/qualifications' : '/dashboard/home');
                 clearInterval(intervalId);
             }
         }, 1000);
@@ -46,7 +46,10 @@ export default class Gameovermodal extends HTMLElement {
         } else {
             this.isOpen = false;
         }
-        
+
+        if (name === 'is-online') {
+            this.isOnline = true;
+        }
         if (name === 'tournament') {
             this.tournament = true;
         }
@@ -58,7 +61,7 @@ export default class Gameovermodal extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ['opened', 'player', 'tournament'];
+        return ['opened', 'player', 'tournament', 'is-online'];
     }
 
     open() {

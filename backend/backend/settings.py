@@ -150,7 +150,7 @@ DATABASES = {
 
 
 #score winner
-SCORE_WINNER = 5
+FINAL_SCORE = 3
 
 
 # Password validation

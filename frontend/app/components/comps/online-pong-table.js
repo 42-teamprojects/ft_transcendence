@@ -5,7 +5,7 @@ import { PaddleType, TableTheme } from "../../entities/enums.js";
 import { matchState } from "../../state/matchState.js";
 import { userState } from "../../state/userState.js";
 
-const FINAL_SCORE = 100;
+const FINAL_SCORE = 3; // from config file
 const TABLE_WIDTH = 1235;
 const TABLE_HEIGHT = 740;
 const PADDLE_WIDTH = 18;
@@ -24,7 +24,7 @@ export default class OnlinePongTable extends HTMLElement {
         this.player1_id = this.getAttribute("player1");
         this.player2_id = this.getAttribute("player2");	
 
-        this.match = {"player1": "hassan", "player2": "mouad", "score1": 0, "score2": 0};
+        this.match = matchState.state.match;
 
         this.finalScore = FINAL_SCORE;
         this.tableWidth = TABLE_WIDTH;
@@ -32,7 +32,8 @@ export default class OnlinePongTable extends HTMLElement {
         this.context = null;
         this.paddleWidth = PADDLE_WIDTH;
         this.paddleMove = 0;
-
+		this.score1 = 0;
+		this.score2 = 0;
         this.paddle1 = new Paddle(1, this.paddleMove, this.user.id === +this.player1_id ? this.myPaddle : this.opponentPaddle, this);
         this.paddle2 = new Paddle(2, this.paddleMove, this.user.id === +this.player2_id ? this.myPaddle : this.opponentPaddle, this);
         this.ball = new Ball( this.tableWidth / 2, this.tableHeight / 2, 5, 5, this.theme);
@@ -51,6 +52,12 @@ export default class OnlinePongTable extends HTMLElement {
 		this.render();
 		this.unsubscribe = matchState.subscribe(() => {
 			this.matchData = matchState.state.game;
+			if (this.matchData.type === "score_update") {
+				this.score1 = this.matchData.player1_score;
+				this.score2 = this.matchData.player2_score;
+				this.querySelector("c-online-scoreboard").setAttribute("score1", this.score1);
+				this.querySelector("c-online-scoreboard").setAttribute("score2", this.score2);
+			}
 			if (this.user.id !== +this.player1_id && this.matchData.type === "ball_update") {
 				this.ball.x = this.matchData.ball_x;
 				this.ball.y = this.matchData.ball_y;
@@ -63,10 +70,6 @@ export default class OnlinePongTable extends HTMLElement {
                     this.paddle2.y = this.matchData.y;
                 }
             }
-			if (this.match.playerLeft) {
-				console.log("player left the match");
-				return ;
-			}
 		});
 		this.gameplay();
 		document.addEventListener("keydown", this.handleKeyDown);
@@ -128,7 +131,6 @@ export default class OnlinePongTable extends HTMLElement {
 		if (!this.canUpdate)	
 			return ;
 		const userId = this.user.id;
-	
 		this.updateObject(userId);
 		this.sendGameUpdates(userId);
 		if (this.user.id === +this.player1_id) {
@@ -184,11 +186,10 @@ export default class OnlinePongTable extends HTMLElement {
 			this.dispatchEvent(
 				new CustomEvent("game-over", {
 					detail: {
-						winner: this.match.score1 === this.finalScore
-								? this.match.player1
-								: this.match.player2,},
+						winner: this.matchData.winner_id,},
 				})
 			);
+			this.canUpdate = false;
 			return;
 		}
 	};
@@ -235,17 +236,18 @@ export default class OnlinePongTable extends HTMLElement {
 	scored = () => {
 		let scored = false;
 		if (this.ball.x - this.ball.size <= 0) {
-			this.match.score2++;
+			if (this.user.id === +this.player2_id)
+				matchState.sendGameUpdate({ type: "increase_score", sender_id: +this.player2_id });
 			scored = true;
 		} else if (this.ball.x + this.ball.size >= this.tableWidth) {
-			this.match.score1++;
+			if (this.user.id === +this.player1_id)
+				matchState.sendGameUpdate({ type: "increase_score", sender_id: +this.player_id });
 			scored = true;
 		}
 
 		if (scored) {
+			console.log("resseting game", this.user.id);
 			this.resetGame();
-			this.querySelector("c-online-scoreboard").setAttribute("score1", this.match.score1);
-			this.querySelector("c-online-scoreboard").setAttribute("score2", this.match.score2);
 			this.scene = true;
 		}
 	};
@@ -262,7 +264,6 @@ export default class OnlinePongTable extends HTMLElement {
 
 		if (this.theme !== "classic") {
 			this.context.fillStyle = this.theme === "standard" ? "#56646C" : "white";
-			console.log(this.context.fillStyle);
 			this.context.fillRect(
 				this.tableWidth / 2 - LINE_WIDTH / 2,
 				0,
@@ -310,8 +311,8 @@ export default class OnlinePongTable extends HTMLElement {
 
 	get isGameOver() {
 		return (
-			this.match.score1 === this.finalScore ||
-			this.match.score2 === this.finalScore
+			this.score1 === this.finalScore ||
+			this.score2 === this.finalScore
 		);
 	}
 	render() {

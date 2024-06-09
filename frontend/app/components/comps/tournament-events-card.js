@@ -18,7 +18,7 @@ export default class Tournamenteventscard extends HTMLElement {
     }
 
     disconnectedCallback() {
-        this.unsubscribe();
+        if (this.unsubscribe) this.unsubscribe();
     }
 
     render() {
