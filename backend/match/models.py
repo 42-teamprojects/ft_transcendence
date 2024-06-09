@@ -9,6 +9,8 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from datetime import timedelta
 from backend import settings
+from django.db import transaction
+from threading import Timer
 
 class Match(models.Model):
     STATUS_CHOICES = [
@@ -38,7 +40,19 @@ class Match(models.Model):
         super().save(*args, **kwargs) 
         if self.tournament and self.player1 and self.player2 and self.status == 'NS' and self.tournament.status == 'IP' and self.round != 1:
             self.start()
-    
+            delay = (self.start_time - timezone.now()).total_seconds()
+            Timer(delay, self.start_final).start()
+            
+    def start_final(self):
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            str(self.tournament.id), 
+            {
+                'type': 'tournament_update',
+                'data': 'The final has started.'
+            }
+        )
+        
     def set_winner(self, winner):
         if winner not in [self.player1, self.player2]:
             raise ValidationError('The provided user is not a player in this match.')
@@ -56,26 +70,18 @@ class Match(models.Model):
     def assign_winner_to_next_round(self, winner):
         # Get all the matches in the next round
         next_round_group = math.ceil(self.group / 2)
-        next_round_match = 0 if self.group % 2 == 1 else 1
-        next_round_match = Match.objects.select_for_update().filter(
-            tournament=self.tournament, round=self.round + 1, group=next_round_group, match_number=next_round_match).first()
+        next_round_match_number = self.match_number // 2
 
-        if next_round_match:
+        next_match = Match.objects.filter(
+            tournament=self.tournament, round=self.round + 1, group=next_round_group, match_number=next_round_match_number).first()
+
+        if next_match:
             if self.match_number == 0:
-                next_round_match.player1 = winner
+                next_match.player1 = winner
             elif self.match_number == 1:
-                next_round_match.player2 = winner
-            next_round_match.save()
+                next_match.player2 = winner
+            next_match.save()
 
-        channel_layer = get_channel_layer()
-        async_to_sync(channel_layer.group_send)(
-            str(self.id), 
-            {
-                'type': 'tournament_update',
-                'data': f'Match {self.pk} has finished.'
-            }
-        )
-    
     def start(self):
         if not self.tournament:
             return
@@ -84,10 +90,14 @@ class Match(models.Model):
         self.save()
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
-            str(self.id), 
+            'tournament_match_' + str(self.id),
             {
-                'type': 'tournament_update',
-                'data': f'Match {self.pk} has started.'
+                'type': 'game_message',
+                'data': {
+                    'message': 'Match has started.',
+                    'match_id': self.id,
+                    'start_time': self.start_time,
+                }
             }
         )
     
@@ -107,6 +117,9 @@ class Match(models.Model):
             self.set_winner(self.player2)
         self.save()
         return winner
+    
+    def is_player(self, user_id):
+        return self.player1_id == user_id or self.player2_id == user_id
                 
     def __str__(self):
         if self.is_tournament_match():

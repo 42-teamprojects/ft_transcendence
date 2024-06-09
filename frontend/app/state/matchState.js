@@ -53,8 +53,11 @@ class MatchState extends State {
 		);
 	}
 
-	setupMatchMaking(p1 = null, p2 = null) {
-		if (p1 && p2) {
+	setupMatchMaking(p1 = null, p2 = null, matchId = null) {
+		if (matchId) {
+			this.matchMakingId = `tournament-match-making/${matchId}`;
+		}
+		else if (p1 && p2) {
 			this.matchMakingId = `private-match-making/${p1}/${p2}`;
 		} else {
 			this.matchMakingId = `match-making`;
@@ -66,6 +69,10 @@ class MatchState extends State {
 			this.matchMakingId,
 			// On message callback
 			async (event) => {
+				if (this.matchMakingId.startsWith('tournament-match-making/')) {
+					const data = JSON.parse(event.data);
+					console.log(data)
+				}
 				const gameSessionId = JSON.parse(event.data);
 				const sessionId = gameSessionId.data.game_session_id;
 				await this.getGameSession(sessionId);

@@ -5,6 +5,8 @@ import { userState } from "./userState.js";
 import WebSocketManager from "../socket/WebSocketManager.js";
 import { config } from "../config.js";
 import { notificationState } from "./notificationState.js";
+import { matchState } from "./matchState.js";
+import Router from "../router/router.js";
 
 class OnlineTournamentState extends State {
 	constructor() {
@@ -34,6 +36,25 @@ class OnlineTournamentState extends State {
 			// On message callback
 			async (event) => {
 				const message = JSON.parse(event.data); // Parse the message from the server
+				if (message.data.startsWith("The final has started")) {
+					await this.getMatches(tournamentId);
+					// find the matche that im part of and in the second round, match = (player1, player2)
+					const match = this.state.matches.find(m => (m?.player1?.id === userState.state.user.id || m?.player2?.id === userState.state.user.id) && m.round === 2);
+					if (match) {
+						console.log(match)
+						Router.instance.navigate(`/online/tournament?tournamentId=${tournamentId}&matchId=${match.id}`);
+					}
+				}
+				if (message.data.startsWith("The tournament has started")) {
+					await this.getMatches(tournamentId);
+					// find the matches that im part of, match = (player1, player2)
+					const match = this.state.matches.find(m => m?.player1?.id === userState.state.user.id || m?.player2?.id === userState.state.user.id);
+					if (match) {
+						console.log(match)
+						Router.instance.navigate(`/online/tournament?tournamentId=${tournamentId}&matchId=${match.id}`);
+					}
+				}
+				console.log(message)
 				Toast.notify({ message: message.data, type: "info" });
 				await this.getNotStartedTournaments();
 				await this.getInProgressTournaments();

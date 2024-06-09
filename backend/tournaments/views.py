@@ -82,7 +82,9 @@ class TournamentViewSet(viewsets.ModelViewSet):
                 return Response({'detail': 'Tournament not started yet.'}, status=status.HTTP_400_BAD_REQUEST)
         except serializers.ValidationError as e:
             return Response(e, status=status.HTTP_404_NOT_FOUND)
-        return Response(MatchSerializer(tournament.matches.all(), many=True).data, status=status.HTTP_200_OK)
+        
+        matches = tournament.matches.all().order_by('round', 'group')
+        return Response(MatchSerializer(matches, many=True).data, status=status.HTTP_200_OK)
     
     def update(self, request, *args, **kwargs):
         tournament = self.get_object()

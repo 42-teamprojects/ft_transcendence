@@ -27,6 +27,7 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.p1_id = self.scope['url_route']['kwargs'].get('p1_id')
         self.p2_id = self.scope['url_route']['kwargs'].get('p2_id')
+        self.match_id = self.scope['url_route']['kwargs'].get('match_id')
         
         self.user_id = get_user_id(self.scope)
         if self.user_id is None:
@@ -34,16 +35,27 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
             return
         
         if self.p1_id is not None and self.p2_id is not None:
-            # if self.user_id != self.p1_id and self.user_id != self.p2_id:
+            # if int(self.user_id) != int(self.p1_id) and int(self.user_id) != int(self.p2_id):
             #     await self.close()
             #     return
             # if self.p1_id == self.p2_id:
             #     await self.close()
             #     return
             self.session = await self.get_or_create_private_game_session(self.p1_id, self.p2_id)
-        else:
-            self.session = await self.get_or_create_game_session(self.user_id)
+        elif self.match_id is not None:
+            print(f"Starting match ${self.match_id}", flush=True)
+            match = await sync_to_async(Match.objects.get)(pk=self.match_id)
+            if not match.is_player(self.user_id):
+                await self.close()
+                return
+            await self.channel_layer.group_add(
+                'tournament_match_' + self.match_id,
+                self.channel_name
+            ) 
+            self.session = await self.get_or_create_tournament_game_session(self.match_id)
             
+        elif self.p1_id is None and self.p2_id is None:
+            self.session = await self.get_or_create_game_session(self.user_id)
         if self.session is None:
             await self.close()
             return
@@ -72,6 +84,8 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
     
     def get_vacant_session(self):
         return self.session.vacant
+    
+
 
     @database_sync_to_async
     def get_or_create_game_session(self, user_id):
@@ -94,6 +108,17 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
         ).first()
         if session is None:
             match = Match.objects.create(player1_id=p1_id, player2_id=p2_id)
+            session = GameSession.objects.create(match=match, private=True)
+        else:
+            session.vacant = False
+            session.save()
+        return session
+    
+    @database_sync_to_async
+    def get_or_create_tournament_game_session(self, match_id):
+        session = GameSession.objects.filter(vacant=True, private=True).filter(match_id=match_id).first()
+        if session is None:
+            match = Match.objects.get(id=match_id)
             session = GameSession.objects.create(match=match, private=True)
         else:
             session.vacant = False

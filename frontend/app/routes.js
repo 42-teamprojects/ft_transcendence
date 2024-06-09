@@ -57,6 +57,10 @@ export const routes = [
 		canActivate: [AuthGuard],
 		children: [
 			{
+				path: "/tournament",
+				component: () => import("./components/pages/tournament-match-making.js"),
+			},
+			{
 				path: "/1v1",
 				component: () => import("./components/pages/match-making.js"),
 				children: [

@@ -12,5 +12,6 @@ class GameSession(models.Model):
         return f"GameSession {self.id} for match {self.match.id}"
 
     def delete(self, *args, **kwargs):
-        self.match.delete()
+        if not self.match.tournament:
+            self.match.delete()
         super().delete(*args, **kwargs)

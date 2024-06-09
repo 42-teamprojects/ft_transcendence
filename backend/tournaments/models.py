@@ -62,7 +62,7 @@ class Tournament(models.Model):
         participants = self.randomize_participants()
         matches = self.generate_matches(participants)
         Match.objects.bulk_create(matches)
-        self.start_time = timezone.now() + timedelta(minutes=1)
+        self.start_time = timezone.now() + timedelta(seconds=20)
         self.save()
         
         channel_layer = get_channel_layer()
