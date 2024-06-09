@@ -59,6 +59,9 @@ export default class OnlinePongTable extends HTMLElement {
 		}, 4000);
 
 		this.unsubscribe = matchState.subscribe(() => {
+			// if (matchState.state.game === null || matchState.state.game === undefined || matchState.state.match === null || matchState.state.match === undefined) {
+			// 	return;
+			// }
 			this.matchData = matchState.state.game;
 			if (this.matchData.type === "score_update") {
 				this.score1 = this.matchData.player1_score;
@@ -126,8 +129,10 @@ export default class OnlinePongTable extends HTMLElement {
 	};
 
 	disconnectedCallback() {
-		this.canUpdate = false;
 		this.unsubscribe();
+		this.canUpdate = false;
+		matchState.closeMatchConnection();
+		matchState.reset();
 		document.removeEventListener("keydown", this.handleKeyDown);
 		document.removeEventListener("keyup", this.handleKeyUp);
 		this.remove()
