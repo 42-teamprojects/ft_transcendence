@@ -19,13 +19,16 @@ from ..utils import add_cookies, generate_2fa_token, get_default_avatar, send_ve
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.tokens import UntypedToken
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
-from ..models import User
+from ..models import User 
+from accounts.custom_throttles import RegisterRateThrottle
 
 # Register View
 class RegisterView(GenericAPIView):
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
+    throttle_classes = [RegisterRateThrottle]
 
+    
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
         try:

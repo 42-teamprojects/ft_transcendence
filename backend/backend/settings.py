@@ -53,10 +53,12 @@ REST_FRAMEWORK = {
         'accounts.custom_throttles.CustomAnonRateThrottle',
         'accounts.custom_throttles.ResendRateThrottle',
         'accounts.custom_throttles.ResetPasswordRateThrottle',
+        'accounts.custom_throttles.RegisterRateThrottle',
     ],
     'DEFAULT_THROTTLE_RATES': {
         'anon': '3/h',
         'resend': '3/h',
+        'register': '3/d',
     }
 }
 
@@ -151,7 +153,7 @@ DATABASES = {
 
 
 #score winner
-FINAL_SCORE = 3
+SCORE_WINNER = 5
 
 
 # Password validation

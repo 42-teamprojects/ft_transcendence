@@ -122,7 +122,7 @@ class OAuth2CallbackView(APIView):
                 f.write(image.content)
         
             user = User.objects.create(username=username, email=email, full_name=full_name, is_verified=True, avatar=avatar_path)
-            user.provider = provider
+            user.provider = provider 
             user.last_login = datetime.now()
             user.set_unusable_password()
             user.save()

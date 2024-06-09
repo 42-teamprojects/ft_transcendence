@@ -50,7 +50,6 @@ class FriendshipViewSet(ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         # Retrieve the friendship_id from kwargs
         friendship_id = kwargs.get('pk')
-        
         try:
             friendship = Friendship.objects.get(pk=friendship_id)
             if friendship.user1 != request.user and friendship.user2 != request.user:
