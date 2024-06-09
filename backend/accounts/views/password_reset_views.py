@@ -31,7 +31,7 @@ class ResetPasswordRequestView(APIView):
         token = default_token_generator.make_token(user)
         PasswordResetToken.objects.create(user=user, token=token)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
-        password_reset_url = f"{settings.FRONTEND_DOMAIN}/reset-password?uid={uid}&token={token}"
+        password_reset_url = f"{settings.FRONTEND_DOMAIN_S}/reset-password?uid={uid}&token={token}"
 
         subject = 'Reset Password'
         message = f'Hi {user.username},\n\nClick the link below to reset your password:\n\n{password_reset_url}'
