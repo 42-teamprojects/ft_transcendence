@@ -37,6 +37,7 @@ export default class Gameplay extends HTMLElement {
 
     disconnectedCallback() {
         this.cTable.removeEventListener('game-over', this.handleGameOver.bind(this));
+        matchState.reset();
     }
 
     render() {

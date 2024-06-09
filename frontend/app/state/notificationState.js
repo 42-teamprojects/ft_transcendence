@@ -43,7 +43,7 @@ class NotificationState extends State {
             //on message callback
             (event) => {
                 const notification = JSON.parse(event.data);
-                if (!['NEW_STATUS', 'TOURNAMENT_UPDATE'].includes(notification.type) 
+                if (!['NEW_STATUS', 'TOURNAMENT_UPDATE', 'MSG'].includes(notification.type) 
                     && notification.recipient === userState.state.user.id 
                     && notification.data && !['REMOVE', 'BLOCK', 'UNBLOCK'].includes(notification.data.type)) {
                     this.setState({ notifications: [notification, ...this.state.notifications], loading: false });
@@ -96,7 +96,7 @@ class NotificationState extends State {
         if (!messageState.state.messages[notification.data.chat_id]) {
             messageState.getMessages(notification.data.chat_id);
         } 
-        messageState.updateCardLastMessage(notification.data.chat_id, notification.data.message);
+        // messageState.updateCardLastMessage(notification.data.chat_id, notification.data.message);
     }
 
     handleFriendAlertNotification(notification) {
@@ -127,13 +127,13 @@ class NotificationState extends State {
     async sendNotification(notification, updateState = true) {
         try {
             this.resetLoading();
-            if (!["REMOVE", "BLOCK", "UNBLOCK"].includes(notification.data.type)) {
+            if (!["REMOVE", "BLOCK", "UNBLOCK"].includes(notification.data.type) || notification.type !== "MSG") {
                 const notif = await this.httpClient.post('notifications/', notification);
                 notification.id = notif.id;
             }
             // Send notification to the socket
             this.notificationSocket.send(this.socketId, notification);
-            if (updateState && !['NEW_STATUS', 'TOURNAMENT_UPDATE'].includes(notification.type) 
+            if (updateState && !['NEW_STATUS', 'TOURNAMENT_UPDATE', 'MSG'].includes(notification.type) 
                 && notification.recipient === userState.state.user.id 
                 && notification.data && !['REMOVE', 'BLOCK', 'UNBLOCK'].includes(notification.data.type)) {
                 this.setState({ notifications: [notification, ...this.state.notifications], loading: false });
