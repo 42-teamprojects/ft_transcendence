@@ -39,7 +39,8 @@ export default class OnlinePongTable extends HTMLElement {
         this.ball = new Ball( this.tableWidth / 2, this.tableHeight / 2, 5, 5, this.theme);
         this.middleCirlceRadius = MIDDLE_CIRCLE_RADIUS;
 
-        this.scene = true;
+        // this.scene = true;
+		this.reDraw = true;
         this.counter = 3;
         this.frameCount = 0;
         this.user = userState.state.user;
@@ -50,6 +51,13 @@ export default class OnlinePongTable extends HTMLElement {
 	
 	connectedCallback() {
 		this.render();
+		this.countdownModal = this.querySelector("c-countdown-modal");
+		this.reDraw = false;
+		this.countdownModal.open();
+		setTimeout(() => {
+			this.reDraw = true;
+		}, 4000);
+
 		this.unsubscribe = matchState.subscribe(() => {
 			this.matchData = matchState.state.game;
 			if (this.matchData.type === "score_update") {
@@ -74,6 +82,13 @@ export default class OnlinePongTable extends HTMLElement {
 		this.gameplay();
 		document.addEventListener("keydown", this.handleKeyDown);
 		document.addEventListener("keyup", this.handleKeyUp);
+		this.addEventListener("scored", () => {
+			this.reDraw = false;
+			this.countdownModal.open();
+			setTimeout(() => {
+				this.reDraw = true;
+			}, 4000);
+		})
 	}
 
 	handleKey = (event, action) => {
@@ -138,7 +153,7 @@ export default class OnlinePongTable extends HTMLElement {
 		}
 		this.updateScene();
 		this.checkBounce();
-		this.checkScore();
+		this.scored();
 		this.checkGameOver();
 		requestAnimationFrame(this.update);
 	};
@@ -166,7 +181,7 @@ export default class OnlinePongTable extends HTMLElement {
 	};
 	
 	updateScene = () => {
-		(this.scene && matchState.is_ready) ? this.drawScene() : this.drawForGame();
+		this.reDraw && matchState.is_ready && this.drawForGame();
 	};
 	
 	checkBounce = () => {
@@ -175,11 +190,11 @@ export default class OnlinePongTable extends HTMLElement {
 		this.ball.bounceOnWalls(this.tableHeight);
 	};
 	
-	checkScore = () => {
-		if (this.scored()) {
-			this.scene = true;
-		}
-	};
+	// checkScore = () => {
+	// 	if (this.scored()) {
+	// 		this.scene = true;
+	// 	}
+	// };
 	
 	checkGameOver = () => {
 		if (this.isGameOver) {
@@ -190,8 +205,9 @@ export default class OnlinePongTable extends HTMLElement {
 				})
 			);
 			this.canUpdate = false;
-			return;
+			return true;
 		}
+		return false;
 	};
 
 	draw = () => {
@@ -213,24 +229,31 @@ export default class OnlinePongTable extends HTMLElement {
 	};
 
 	drawScene = () => {
-		this.draw();
-		this.context.fillStyle = "black";
-		this.context.globalAlpha = 0.7;
-		this.context.fillRect(0, 0, this.tableWidth, this.tableHeight);
-		this.context.globalAlpha = 1;
-		this.context.fillStyle = "white";
-		this.context.font = "30px MPlusRounded";
-		this.context.fillText('Round starts in', this.tableWidth / 2 - 120, this.tableHeight / 3);
-		this.context.font = "100px MPlusRounded";
-		const textWidth = this.context.measureText(this.counter).width;
-		this.context.fillText(this.counter, this.tableWidth / 2 - textWidth / 2, this.tableHeight / 2);
-		if (this.frameCount % 55 === 0) {
-			this.counter--;
-		}
-		if (this.counter === 0) {
-			this.scene = false;
-			this.counter = 3;
-		}
+        // modal.setAttribute('player', +userState.state.user.id === +winner ? 'You' : name);
+        // this.countdownModal.open();
+		// setTimeout(() => {
+		// 	this.countdownModal.hide();
+		// 	this.countdownModal.countdown = 3;
+		// }, 4000);
+			
+		// this.draw();
+		// this.context.fillStyle = "black";
+		// this.context.globalAlpha = 0.7;
+		// this.context.fillRect(0, 0, this.tableWidth, this.tableHeight);
+		// this.context.globalAlpha = 1;
+		// this.context.fillStyle = "white";
+		// this.context.font = "30px MPlusRounded";
+		// this.context.fillText('Round starts in', this.tableWidth / 2 - 120, this.tableHeight / 3);
+		// this.context.font = "100px MPlusRounded";
+		// const textWidth = this.context.measureText(this.counter).width;
+		// this.context.fillText(this.counter, this.tableWidth / 2 - textWidth / 2, this.tableHeight / 2);
+		// if (this.frameCount % 55 === 0) {
+		// 	this.counter--;
+		// }
+		// if (this.counter === 0) {
+		// 	this.scene = false;
+		// 	this.counter = 3;
+		// }
 	};
 
 	scored = () => {
@@ -248,7 +271,9 @@ export default class OnlinePongTable extends HTMLElement {
 		if (scored) {
 			console.log("resseting game", this.user.id);
 			this.resetGame();
-			this.scene = true;
+			if (!this.isGameOver) {
+				this.dispatchEvent(new CustomEvent("scored"));
+			}
 		}
 	};
 
@@ -318,6 +343,7 @@ export default class OnlinePongTable extends HTMLElement {
 	render() {
 		this.innerHTML = /*html*/ `
 		<div class="vh-full w-full flex-col-center">
+			<c-countdown-modal></c-countdown-modal>
 			<c-online-scoreboard class="mb-5"></c-online-scoreboard>
 			<canvas id="table" class="pong-table pong-table-${this.theme}"></canvas>
 		</div>
