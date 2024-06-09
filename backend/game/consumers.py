@@ -206,7 +206,6 @@ class GameConsumer(AsyncWebsocketConsumer):
 
         winner_from_db = await sync_to_async(match.get_winner)()
 
-        print("is there a winner: ", winner_from_db, flush=True)
 
         if player1_id == self.user_id:
             winner_id = player2_id
@@ -228,16 +227,12 @@ class GameConsumer(AsyncWebsocketConsumer):
         text_data_json = json.loads(text_data)
         data = text_data_json
         # get match from session and increase_score, if it returns a winnner then send a message to the group with the winner
-
         if data["type"] == "increase_score":
             match = await sync_to_async(self.get_match)()
-            winner_id = await sync_to_async(match.increase_score)(self.user_id)
+            users = await sync_to_async(match.increase_score)(self.user_id)
+            winner_id = users.get("winner")
+            loser_id = users.get("loser")
 
-            # self.session = await self.get_game_session(self.session_id)
-            # if winner_id is None:
-            score1 = await sync_to_async(self.get_player1_score)()
-            score2 = await sync_to_async(self.get_player2_score)()
-            # print(score1, score2, flush=True)
             await self.channel_layer.group_send(
                 self.session_id,
                 {
@@ -250,18 +245,15 @@ class GameConsumer(AsyncWebsocketConsumer):
                     }
                 }
             )
-            # if winner_id is not None:
-            #     await self.channel_layer.group_send(
-            #         self.session_id,
-            #         {
-            #             "type": "game_message",
-            #             "data": {"type": "game_over", "winner_id": winner_id},
-            #         }
-            #     )
+            if winner_id is not None:
+                winner = await sync_to_async(User.objects.get)(id=winner_id)
+                loser = await sync_to_async(User.objects.get)(id=loser_id)
+                await self.update_winner_stats(winner)
+                await self.update_loser_stats(loser)
 
         if (data["type"] == "game_update" or data["type"] == "ball_update") or data["type"] == "counter":
             # the data have a sender id send don't se
-            # nd 2 consecutive messages to the same user
+            # nd 2 consecutive messages to the same user    
             await self.channel_layer.group_send(
                 self.session_id,
                 {
@@ -307,3 +299,19 @@ class GameConsumer(AsyncWebsocketConsumer):
     def get_player2_score(self):
         return self.session.match.score2
     
+    def get_winner(self):
+        return self.session.match.winner
+    
+    @sync_to_async
+    def update_winner_stats(self, winner):
+        winner.user_stats.matches_played += 1
+        winner.user_stats.matches_won += 1
+        winner.user_stats.current_win_streak += 1
+        winner.user_stats.save()
+
+    @sync_to_async
+    def update_loser_stats(self, loser):
+        loser.user_stats.matches_played += 1
+        loser.user_stats.matches_lost += 1
+        loser.user_stats.current_win_streak = 0
+        loser.user_stats.save()
