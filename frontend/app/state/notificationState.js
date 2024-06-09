@@ -134,13 +134,13 @@ class NotificationState extends State {
     async sendNotification(notification, updateState = true) {
         try {
             this.resetLoading();
-            if (!["REMOVE", "BLOCK", "UNBLOCK"].includes(notification.data.type) || notification.type !== "MSG") {
+            if (!["REMOVE", "BLOCK", "UNBLOCK"].includes(notification.data.type) || notification.type !== "MSG" || notification.type !== "PRQ") {
                 const notif = await this.httpClient.post('notifications/', notification);
                 notification.id = notif.id;
             }
             // Send notification to the socket
             this.notificationSocket.send(this.socketId, notification);
-            if (updateState && !['NEW_STATUS', 'TOURNAMENT_UPDATE', 'MSG'].includes(notification.type) 
+            if (updateState && !['NEW_STATUS', 'TOURNAMENT_UPDATE', 'MSG', 'PRQ'].includes(notification.type) 
                 && notification.recipient === userState.state.user.id 
                 && notification.data && !['REMOVE', 'BLOCK', 'UNBLOCK'].includes(notification.data.type)) {
                 this.setState({ notifications: [notification, ...this.state.notifications], loading: false });
