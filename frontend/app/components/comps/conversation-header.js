@@ -4,6 +4,7 @@ import HttpClient from "../../http/httpClient.js";
 import Router from "../../router/router.js";
 import { chatState } from "../../state/chatState.js";
 import { notificationState } from "../../state/notificationState.js";
+import { userState } from "../../state/userState.js";
 import { getMatchUrl } from "../../utils/utils.js";
 export default class Conversationheader extends HTMLElement {
     constructor() {
@@ -37,6 +38,22 @@ export default class Conversationheader extends HTMLElement {
                 console.error(error);
             }
         })
+
+        this.inviteFriend = this.querySelector(".invite-friend");
+
+        this.inviteFriend.addEventListener("click", () => {
+            Router.instance.navigate(`/online/1v1/private?p1=${userState.state.user.id}&p2=${this.friend.id}`);
+            const notification = {
+				type: "PRQ",
+				data: {
+					link: `/online/1v1/private?p1=${userState.state.user.id}&p2=${this.friend.id}`,
+                    sender_name: userState.state.user.username,
+                    sender_id: userState.state.user.id,
+				},
+				recipient: this.friend.id,
+			}
+			notificationState.sendNotification(notification);
+        });
     }
 
     disconnectedCallback() {
@@ -62,7 +79,7 @@ export default class Conversationheader extends HTMLElement {
                 </div>
             </div>
             <div class="flex gap-2">
-                <button is="c-button" class="btn-secondary gap-3">
+                <button is="c-button" class="btn-secondary gap-3 invite-friend">
                     <i class="fa-solid fa-gamepad text-xl"></i>
                     play
                 </button>

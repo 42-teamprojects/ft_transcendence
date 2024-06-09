@@ -3,9 +3,8 @@ import HttpClient from "../http/httpClient.js";
 import Router from "../router/router.js";
 import WebSocketManager from "../socket/WebSocketManager.js";
 import State from "./state.js";
+import Toast from "../components/comps/toast.js";
 import { userState } from "./userState.js";
-
-
 class MatchState extends State {
 	constructor() {
 		super({
@@ -30,17 +29,31 @@ class MatchState extends State {
 			// On message callback
 			async (event) => {
 				const matchData = JSON.parse(event.data);
-				// console.log("data i got from socket : ", matchData);
 				if (matchData.type === "game_started") {
 					console.log("game started");
 					this.is_ready = true;
 					// matchData.player_1_paddle = matchData.data.player_1_paddle;
 				}
-				if (matchData.type === "player_left") {
+				if (matchData.type === "player_left" && matchData.winner_id === "") {
 					console.log("player left the match");
+					//SET THE PLAYER AS WINNER
+
 					this.playerLeft = true;
+					Toast.notify({ type: "warning", message: "Opponent left the match" });
+                	matchState.closeMatchConnection();
+                	Router.instance.navigate('/dashboard/home');
 				}
 
+				// if (matchData.type === "score_update") {
+				// 	if (matchData.winner_id !== "") {
+				// 		matchState.closeMatchConnection();
+				// 		Router.instance.navigate('/dashboard/home');
+				// 	}
+				// }
+
+				if (matchData.type === "score_update") {
+				console.log("data i got from socket : ", matchData);	
+				}
 				this.setState({ game: matchData });
 			},
 			{
@@ -51,9 +64,11 @@ class MatchState extends State {
 		);
 	}
 
-	setupMatchMaking() {
-		if (!this.matchMakingId) {
-			throw new Error("Match id not provided");
+	setupMatchMaking(p1 = null, p2 = null) {
+		if (p1 && p2) {
+			this.matchMakingId = `private-match-making/${p1}/${p2}`;
+		} else {
+			this.matchMakingId = `match-making`;
 		}
 
 		if (this.matchMakingSocket.sockets[this.matchMakingId]) return;
@@ -62,6 +77,7 @@ class MatchState extends State {
 			this.matchMakingId,
 			// On message callback
 			async (event) => {
+				console.log("matchy matchy");
 				const gameSessionId = JSON.parse(event.data);
 				const sessionId = gameSessionId.data.game_session_id;
 				await this.getGameSession(sessionId);
@@ -102,8 +118,6 @@ class MatchState extends State {
 	setMatch(match) {
 		this.setState({ match });
 	}
-
-
 
 	setWinner(winner) {
 		const newMatch = this.state.match;

@@ -64,6 +64,10 @@ export const routes = [
 						path: "/game",
 						component: () => import("./components/pages/online-gameplay.js"),
 					},
+					{
+						path: "/private",
+						component: () => import("./components/pages/private-match-making.js"),
+					},
 				],
 			},
 		],
