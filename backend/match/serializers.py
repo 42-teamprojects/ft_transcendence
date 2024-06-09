@@ -9,8 +9,8 @@ class MatchSerializer(serializers.ModelSerializer):
     
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        player1 = UserSerializer(instance.player1)
-        player2 = UserSerializer(instance.player2)
-        representation['player1'] = player1.data
-        representation['player2'] = player2.data
+        player1 = UserSerializer(instance.player1) if instance.player1 is not None else None
+        player2 = UserSerializer(instance.player2) if instance.player2 is not None else None
+        representation['player1'] = player1.data if instance.player1 is not None else None
+        representation['player2'] = player2.data if instance.player1 is not None else None
         return representation

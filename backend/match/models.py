@@ -1,18 +1,97 @@
+import math
 from django.db import models
+from django.forms import ValidationError
 from accounts.models import User
 from django.utils.translation import gettext_lazy as _
-
-class MatchStatus(models.TextChoices):
-    STARTING = 'S', _('Starting')
-    WAITING = 'W', _('Waiting')
-    ONGOING = 'O', _('Ongoing')
-    FINISHED = 'F', _('Finished')
+from django.utils import timezone
+from tournaments.models import Tournament
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+from datetime import timedelta
 
 class Match(models.Model):
+    STATUS_CHOICES = [
+        ('NS', 'Not Started'),
+        ('IP', 'In Progress'),
+        ('F', 'Finished'),
+    ]
     player1 = models.ForeignKey(User, related_name='match_player1', on_delete=models.CASCADE, null=True)
     player2 = models.ForeignKey(User, related_name='match_player2', on_delete=models.CASCADE, null=True)
     score1 = models.IntegerField(default=0)
     score2 = models.IntegerField(default=0)
     winner = models.ForeignKey(User, related_name='match_winner', on_delete=models.CASCADE, null=True, blank=True)
-    status = models.CharField(_('Status'), max_length=1, choices=MatchStatus.choices, default=MatchStatus.WAITING)
+    status = models.CharField(max_length=2, choices=STATUS_CHOICES, default='NS')
     created_at = models.DateTimeField(auto_now_add=True, null=True)
+
+    # Fields from TournamentMatch
+    match_number = models.IntegerField(null=True, blank=True)
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE, related_name='matches', null=True, blank=True)
+    round = models.IntegerField(null=True, blank=True)
+    group = models.IntegerField(null=True, blank=True)
+    start_time = models.DateTimeField(auto_now_add=False, null=True, blank=True)
+
+    def is_tournament_match(self):
+        return self.tournament is not None
+    
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs) 
+        if self.tournament and self.player1 and self.player2 and self.status == 'NS' and self.tournament.status == 'IP' and self.round != 1:
+            self.start()
+    
+    def set_winner(self, winner):
+        if winner not in [self.player1, self.player2]:
+            raise ValidationError('The provided user is not a player in this match.')
+        self.winner = winner
+        self.status = 'F'
+        if self.tournament:
+            if self.round < self.tournament.total_rounds:
+                self.assign_winner_to_next_round(winner)
+            elif self.round == self.tournament.total_rounds:
+                self.tournament.winner = winner
+                self.tournament.status = 'F'
+                self.tournament.save()
+        self.save()
+
+    def assign_winner_to_next_round(self, winner):
+        # Get all the matches in the next round
+        next_round_group = math.ceil(self.group / 2)
+        next_round_match = 0 if self.group % 2 == 1 else 1
+        next_round_match = Match.objects.select_for_update().filter(
+            tournament=self.tournament, round=self.round + 1, group=next_round_group, match_number=next_round_match).first()
+
+        if next_round_match:
+            if self.match_number == 0:
+                next_round_match.player1 = winner
+            elif self.match_number == 1:
+                next_round_match.player2 = winner
+            next_round_match.save()
+
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            str(self.id), 
+            {
+                'type': 'tournament_update',
+                'data': f'Match {self.pk} has finished.'
+            }
+        )
+    
+    def start(self):
+        if not self.tournament:
+            return
+        self.start_time = timezone.now() + timedelta(seconds=30)
+        self.status = 'IP'
+        self.save()
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            str(self.id), 
+            {
+                'type': 'tournament_update',
+                'data': f'Match {self.pk} has started.'
+            }
+        )
+                
+    def __str__(self):
+        if self.is_tournament_match():
+            return f'R{self.round}-{"1" if self.match_number == 0 else "2"}G{self.group}: {self.player1} vs {self.player2}, W: {self.winner}'
+        else:
+            return f'{self.player1} vs {self.player2}'
