@@ -100,14 +100,17 @@ export default class Playersetup extends HTMLElement {
 
 	checkAlias(alias, e) {
 		const errorMsg = this.querySelector(".input-error");
+		let taken = false;
 		if (this.isTournament) {
-			const taken = document.querySelector("c-add-players").players.some((player) => player.alias === alias);
-			if (taken) {
-				e.classList.add("error");
-				errorMsg.textContent = "Alias already taken";
-				errorMsg.classList.remove("hidden");
-				return false;
-			}
+			taken = document.querySelector("c-add-players")?.players.some((player) => player.alias === alias);
+		} else {
+			taken = document.querySelector("p-one-vs-one").players.some((player) => player.alias === alias);
+		}
+		if (taken) {
+			e.classList.add("error");
+			errorMsg.textContent = "Alias already taken";
+			errorMsg.classList.remove("hidden");
+			return false;
 		}
 		if (alias.length < 3 || alias.length > 20) {
 			e.classList.add("error");

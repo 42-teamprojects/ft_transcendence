@@ -5,57 +5,57 @@ import { matchState } from "../../state/matchState.js";
 import LocalMatch from "../../entities/LocalMatch.js";
 
 export default class Onevsone extends HTMLElement {
-    constructor() {
-        super();
-        document.title = "1 v 1 | Blitzpong.";
-        this.players = [];
-        this.player1;
-        this.player2;
-        this.game;
-    }
+	constructor() {
+		super();
+		document.title = "1 v 1 | Blitzpong.";
+		this.players = [];
+		this.player1;
+		this.player2;
+		this.game;
+	}
 
-    connectedCallback() {
-        this.render();
-        this.player1 = this.querySelector('#player1');
-        this.player2 = this.querySelector('#player2');
-        this.game = this.querySelector('#game');
+	connectedCallback() {
+		this.render();
+		this.player1 = this.querySelector("#player1");
+		this.player2 = this.querySelector("#player2");
+		this.game = this.querySelector("#game");
 
-        this.player1.addEventListener('player-ready', this.playerReadyHandler.bind(this));
-        this.player2.addEventListener('player-ready', this.playerReadyHandler.bind(this));
+		this.player1.addEventListener("player-ready", this.playerReadyHandler.bind(this));
+		this.player2.addEventListener("player-ready", this.playerReadyHandler.bind(this));
 
-        this.game.addEventListener('submit', this.startGameHandler.bind(this));
-    }
+		this.game.addEventListener("submit", this.startGameHandler.bind(this));
+	}
 
-    playerReadyHandler = (e) => {
-        this.players.push(e.detail.player);
-        if (this.players.length === 2) {
-            Toast.notify({ type: "success", message: "Players are ready, Choose a theme and start the game" });
-        }
-    };
+	playerReadyHandler = (e) => {
+		this.players.push(e.detail.player);
+		if (this.players.length === 2) {
+			Toast.notify({ type: "success", message: "Players are ready, Choose a theme and start the game" });
+		}
+	};
 
-    startGameHandler(e) {
-        e.preventDefault();
-        const selectedTheme = useFormData(e.target).getObject()["theme-option"];
-        if (this.players.length < 2) {
-            Toast.notify({ type: "error", message: "Please make sure all the players are ready" });
-            return;
-        }
-        // Sort players by player id
-        this.players.sort((a, b) => a.playerId - b.playerId);
+	startGameHandler(e) {
+		e.preventDefault();
+		const selectedTheme = useFormData(e.target).getObject()["theme-option"];
+		if (this.players.length < 2) {
+			Toast.notify({ type: "error", message: "Please make sure all the players are ready" });
+			return;
+		}
+		// Sort players by player id
+		this.players.sort((a, b) => a.playerId - b.playerId);
 
-        const p1 = this.players.find(p => p.id === 1);
-        const p2 = this.players.find(p => p.id === 2);
-        
-        const localMatch = new LocalMatch(p1, p2);
-        localMatch.setTheme(selectedTheme);
+		const p1 = this.players.find((p) => p.id === 1);
+		const p2 = this.players.find((p) => p.id === 2);
 
-        matchState.setMatch(localMatch);
+		const localMatch = new LocalMatch(p1, p2);
+		localMatch.setTheme(selectedTheme);
 
-        Router.instance.navigate(`/local/1v1/game`);
-    }
+		matchState.setMatch(localMatch);
 
-    render() {
-        this.innerHTML = /*html*/`
+		Router.instance.navigate(`/local/1v1/game`);
+	}
+
+	render() {
+		this.innerHTML = /*html*/ `
         <div class="flex-col-center my-10 gap-9">
             <c-logo href="/"></c-logo>
             <div>
@@ -82,14 +82,14 @@ export default class Onevsone extends HTMLElement {
             </div>
         </div>
         `;
-    }
+	}
 
-    disconnectedCallback() {
-        this.players = [];
-        this.player1.removeEventListener('player-ready', this.playerReadyHandler);
-        this.player2.removeEventListener('player-ready', this.playerReadyHandler);
-        this.game.removeEventListener('submit', this.startGameHandler);
-    }
+	disconnectedCallback() {
+		this.players = [];
+		this.player1.removeEventListener("player-ready", this.playerReadyHandler);
+		this.player2.removeEventListener("player-ready", this.playerReadyHandler);
+		this.game.removeEventListener("submit", this.startGameHandler);
+	}
 }
 
-customElements.define('p-one-vs-one', Onevsone);
+customElements.define("p-one-vs-one", Onevsone);
