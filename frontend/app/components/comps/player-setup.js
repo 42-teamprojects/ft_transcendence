@@ -100,8 +100,18 @@ export default class Playersetup extends HTMLElement {
 
 	checkAlias(alias, e) {
 		const errorMsg = this.querySelector(".input-error");
+		if (this.isTournament) {
+			const taken = document.querySelector("c-add-players").players.some((player) => player.alias === alias);
+			if (taken) {
+				e.classList.add("error");
+				errorMsg.textContent = "Alias already taken";
+				errorMsg.classList.remove("hidden");
+				return false;
+			}
+		}
 		if (alias.length < 3 || alias.length > 20) {
 			e.classList.add("error");
+			errorMsg.textContent = "Must be 3-20 characters";
 			errorMsg.classList.remove("hidden");
 			return false;
 		} else {
