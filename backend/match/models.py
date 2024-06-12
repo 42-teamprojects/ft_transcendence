@@ -73,6 +73,8 @@ class Match(models.Model):
                 self.assign_winner_to_next_round(winner)
             elif self.round == self.tournament.total_rounds:
                 self.tournament.winner = winner
+                self.tournament.winner.user_stats.tournaments_won += 1
+                self.tournament.winner.user_stats.save()
                 self.tournament.status = 'F'
                 self.tournament.save()
         self.save()
@@ -80,7 +82,7 @@ class Match(models.Model):
     def assign_winner_to_next_round(self, winner):
         # Get all the matches in the next round
         next_round_group = math.ceil(self.group / 2)
-        next_round_match_number = self.match_number // 2
+        next_round_match_number = 0 if self.round + 1 == self.tournament.total_rounds else self.match_number
 
         next_match = Match.objects.filter(
             tournament=self.tournament, round=self.round + 1, group=next_round_group, match_number=next_round_match_number).first()

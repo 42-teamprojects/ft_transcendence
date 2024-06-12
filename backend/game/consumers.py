@@ -31,27 +31,19 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
         
         self.user_id = get_user_id(self.scope)
         if self.user_id is None:
-            await self.close()
+            await self.close(code=401, reason="Unauthorized")
             return
         
         if self.p1_id is not None and self.p2_id is not None:
-            # if int(self.user_id) != int(self.p1_id) and int(self.user_id) != int(self.p2_id):
-            #     await self.close()
-            #     return
-            # if self.p1_id == self.p2_id:
-            #     await self.close()
-            #     return
+            if int(self.user_id) != int(self.p1_id) and int(self.user_id) != int(self.p2_id):
+                await self.close(code=401, reason="Unauthorized")
+                return
             self.session = await self.get_or_create_private_game_session(self.p1_id, self.p2_id)
         elif self.match_id is not None:
-            print(f"Starting match ${self.match_id}", flush=True)
             match = await sync_to_async(Match.objects.get)(pk=self.match_id)
-            if not match.is_player(self.user_id):
-                await self.close()
+            if not match.is_player(self.user_id) and not match.status == "IP":
+                await self.close(code=401, reason="Unauthorized")
                 return
-            await self.channel_layer.group_add(
-                'tournament_match_' + self.match_id,
-                self.channel_name
-            ) 
             self.session = await self.get_or_create_tournament_game_session(self.match_id)
             
         elif self.p1_id is None and self.p2_id is None:
@@ -85,8 +77,6 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
     def get_vacant_session(self):
         return self.session.vacant
     
-
-
     @database_sync_to_async
     def get_or_create_game_session(self, user_id):
         session = GameSession.objects.filter(vacant=True, private=False).exclude(match__player1_id=user_id).first()
@@ -169,9 +159,9 @@ class GameConsumer(AsyncWebsocketConsumer):
         self.session = await self.get_game_session(self.session_id)
 
         # is_user_in_session = await self.is_user_in_session(self.user_id)
-        # if self.session is None or not is_user_in_session:
-        #     await self.close()
-        #     return
+        if self.session is None:
+            await self.close()
+            return
 
         await self.channel_layer.group_add(
             self.session_id,
@@ -219,9 +209,6 @@ class GameConsumer(AsyncWebsocketConsumer):
                 print("eroorr: ", e, flush=True)
         else:
             print("winner_id", winner_id, flush=True)
-
-
-      
     
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
@@ -307,6 +294,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         winner.user_stats.matches_played += 1
         winner.user_stats.matches_won += 1
         winner.user_stats.current_win_streak += 1
+        winner.user_stats.longest_win_streak = max(winner.user_stats.longest_win_streak, winner.user_stats.current_win_streak)
         winner.user_stats.save()
 
     @sync_to_async
