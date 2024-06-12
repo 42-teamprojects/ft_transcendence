@@ -29,6 +29,10 @@ export default class Matchhistory extends HTMLElement {
                     <h4 class="${this.isWinner ? 'text-success' : 'text-danger'}">${this.score1}</h4>
                 </div>
             </div>
+            <div class="match-history__state ${this.isWinner ? 'isWinner' : 'isLoser'}">
+                <i class="fa fa-times text-danger"></i>
+                <i class="fa fa-check text-success"></i>
+            </div>
             <div class="match-history__player">
                 <img src="${config.backend_domain}${this.theirAvatar}" alt="" />
                 <div class="match-history__player-details">

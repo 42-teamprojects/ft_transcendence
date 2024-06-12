@@ -41,16 +41,14 @@ export default class Profile extends HTMLElement {
 		}
 
 		this.matchElements = this.matchHistory
-			.map(
-				(match) =>
-					/*html*/ `<c-match-history me="${match.player1.username}" my-avatar=${match.player1.avatar} them="${
-						match.player2.username
-					}" their-avatar=${match.player2.avatar} my-score="${match.score1}" their-score="${
-						match.score2
-					}" tooltip="${formatDate(match.created_at)}" flow="right"></c-match-history>`
-			)
-			.join("");
-
+			.map((match) => {
+        const me = [match.player1, match.player2].find(p => p.id === this.user.id);
+        const them = [match.player1, match.player2].find(p => p.id !== this.user.id);
+        const myScore = match.player1.id === this.user.id ? match.score1 : match.score2;
+        const theirScore = match.player1.id !== this.user.id ? match.score1 : match.score2;
+        return /*html*/ `<c-match-history me="${me.username}" my-avatar=${me.avatar} them="${them.username}" their-avatar=${them.avatar} my-score="${myScore}" their-score="${theirScore}" tooltip="${formatDate(match.created_at)}" flow="right"></c-match-history>`
+      }).join("");
+          
 		this.render();
 
 		this.modal = document.querySelector("c-modal");

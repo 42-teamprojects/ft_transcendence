@@ -22,7 +22,8 @@ input[name="theme-option"]:checked ~ .table-theme {
 
 .match-history__wrapper {
 	width: minmax(450px, 100%);
-	display: flex;
+	display: grid;
+	grid-template-columns: 1fr 50px 1fr;
 	align-items: center;
 	justify-content: space-between;
 	border: 2px solid var(--border-color);
@@ -50,13 +51,20 @@ input[name="theme-option"]:checked ~ .table-theme {
 	border-radius: 50%;
 }
 
-.match-history__player-details {
+.match-history__player:first-child .match-history__player-details {
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
-	align-items: center;
+	align-items: start;
 	gap: 0.25rem;
 }
+
+.match-history__player:last-child .match-history__player-details {
+	display: flex;
+	flex-direction: column;
+	align-items: end;
+	gap: 0.25rem;
+}
+
 
 .match-history__state {
 	width: 50px;
