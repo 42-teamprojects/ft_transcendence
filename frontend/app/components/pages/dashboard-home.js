@@ -21,7 +21,7 @@ export default class Dashboard extends HTMLElement {
                     <a is="c-link" href="/local/">
                         <c-card action='Play' title='Local Match' type="primary"></c-card>
                     </a>
-                    <a is="c-link" href="/online/">
+                    <a is="c-link" href="/online/1v1/">
                         <c-card action='Play' title='Online Match' type="secondary"></c-card>
                     </a>
                 </div>

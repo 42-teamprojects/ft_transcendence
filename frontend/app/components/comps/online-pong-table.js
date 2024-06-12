@@ -86,11 +86,13 @@ export default class OnlinePongTable extends HTMLElement {
 		document.addEventListener("keydown", this.handleKeyDown);
 		document.addEventListener("keyup", this.handleKeyUp);
 		this.addEventListener("scored", () => {
-			this.reDraw = false;
-			this.countdownModal.open();
-			setTimeout(() => {
-				this.reDraw = true;
-			}, 4000);
+			if (!this.isGameOver) {
+				this.reDraw = false;
+					this.countdownModal.open();
+				setTimeout(() => {
+					this.reDraw = true;
+				}, 4000);
+			}
 		})
 	}
 
@@ -203,6 +205,7 @@ export default class OnlinePongTable extends HTMLElement {
 	
 	checkGameOver = () => {
 		if (this.isGameOver) {
+			document.querySelector('c-countdown-modal')?.remove();
 			if (!this.matchData.winner_id || this.matchData.winner_id === "null") {
 				this.matchData.winner_id = this.score1 >= FINAL_SCORE ? +this.player1_id : +this.player2_id;
 			}
