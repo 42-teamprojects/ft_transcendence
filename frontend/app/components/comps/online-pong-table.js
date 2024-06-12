@@ -5,7 +5,7 @@ import { PaddleType, TableTheme } from "../../entities/enums.js";
 import { matchState } from "../../state/matchState.js";
 import { userState } from "../../state/userState.js";
 
-const FINAL_SCORE = 3; // from config file
+const FINAL_SCORE = config.finalScore; // from config file
 const TABLE_WIDTH = 1235;
 const TABLE_HEIGHT = 740;
 const PADDLE_WIDTH = 18;
@@ -203,6 +203,9 @@ export default class OnlinePongTable extends HTMLElement {
 	
 	checkGameOver = () => {
 		if (this.isGameOver) {
+			if (!this.matchData.winner_id || this.matchData.winner_id === "null") {
+				this.matchData.winner_id = this.score1 >= FINAL_SCORE ? +this.player1_id : +this.player2_id;
+			}
 			this.dispatchEvent(
 				new CustomEvent("game-over", {
 					detail: {

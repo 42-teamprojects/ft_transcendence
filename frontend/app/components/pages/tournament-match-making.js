@@ -39,11 +39,11 @@ export default class Privatematchmaking extends HTMLElement {
             let btn = this.querySelector('.btn-primary');
             btn.disabled = true;
         });
-        let btn = this.querySelector('.btn-primary');
-        btn.addEventListener('click', () => {
-            matchState.closeMatchMakingConnection();
-            Router.instance.navigate('/dashboard/home');
-        });
+        // let btn = this.querySelector('.btn-primary');
+        // btn.addEventListener('click', () => {
+        //     matchState.closeMatchMakingConnection();
+        //     Router.instance.navigate('/dashboard/home');
+        // });
         // console.log(this.user);
 
     }
@@ -72,7 +72,6 @@ export default class Privatematchmaking extends HTMLElement {
                         <h2 class="text-primary text-center text-3xl">${this.opponent.username === "Waiting..." ? /*html*/`<c-three-dots text="" color="#D7524C"></c-three-dots>` : this.opponent.username }</h2>
                     </div>
                 </div>
-                <button class="btn-primary">quit match</button>
             </div>
         `;
     }
