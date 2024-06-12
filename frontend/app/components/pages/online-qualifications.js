@@ -21,7 +21,9 @@ export default class OnlineQualifications extends HTMLElement {
 		this.tournamentState = onlineTournamentState;
 		this.innerHTML = /*html*/ `<c-loader></c-loader>`;
 		await this.tournamentState.getInProgressTournaments();
-		this.tournament = this.tournamentState.state.inProgressTournaments.find(tournament => tournament.id === this.tournamentId)
+		await this.tournamentState.getFinishedTournaments();
+		this.tournament = this.tournamentState.state.inProgressTournaments.find(tournament => tournament.id === this.tournamentId) 
+							|| this.tournamentState.state.FinishedTournaments.find(tournament => tournament.id === this.tournamentId)
 		if (!this.tournament) {
 			Toast.notify({ message: "Tournament not found", type: "error" });
 			Router.instance.navigate("/dashboard/tournaments");
@@ -51,24 +53,13 @@ export default class OnlineQualifications extends HTMLElement {
 			}, 1000);
 		}
         );
-		// this.unsubscribe = tournamentState.subscribe(() => {
-		// 	this.tournamentState = tournamentState.state;
-		// 	this.update();
-		// });
 	}
 
 	disconnectedCallback() {
-		// this.unsubscribe();
 		if (this.countdown) clearInterval(this.countdown);
 	}
 
 	render() {
-		// const currentMatch = this.tournamentState.currentMatch;
-		// let formButton = `<button is="c-button" type="submit" id="start-match" class="btn-primary mt-9">Start Match ${currentMatch ? currentMatch.id + 2 : 1}</button>`
-		// if (this.tournamentState.currentRound >= this.tournamentState.rounds.length) {
-		// 	formButton = `<button is="c-button" type="submit" id="end-tournament" class="btn-primary mt-9">End Tournament</button>`
-		// }
-
 		this.innerHTML = /*html*/ `
 		<div class="flex-col-center my-10 gap-10 w-full">
             <div class="">
@@ -81,7 +72,7 @@ export default class OnlineQualifications extends HTMLElement {
 			${!isTimePast(this.start_time) ? /*html*/`
 			<div class="countdown-container w-full flex-col-center gap-5">
 				<p class="text-stroke">Starting matches in</p>
-				<h2 id="countdown">00:00</h2>
+				<h2 id="countdown">--:--</h2>
 			</div>` : ''}
 		</div>
 		`;
