@@ -12,14 +12,23 @@ class UserState extends State {
 	}
 
 
-	async getMatches() {
+	async getMyMatchesHistory() {
 		try {
-			const response = await this.httpClient.get("match/");
+			const response = await this.httpClient.get("matches/");
 			return response;
 		} catch (error) {
 			console.error(error);
 		}
 	
+	}
+
+	async getUserMatchesHistory(userId) {
+		try {
+			const response = await this.httpClient.get(`matches/${userId}/`);
+			return response;
+		} catch (error) {
+			console.error(error);
+		}
 	}
 
 	async fetchMe() {

@@ -205,6 +205,10 @@ class Tournament(models.Model):
         if self.status == 'IP' and timezone.now() >= self.start_time:
             for match in self.matches.filter(status='NS'):
                 if match.player1 is not None and match.player2 is not None:
+                    match.player1.user_stats.tournaments_played += 1
+                    match.player1.user_stats.save()
+                    match.player2.user_stats.tournaments_played += 1
+                    match.player2.user_stats.save()
                     match.start()
 
             channel_layer = get_channel_layer()

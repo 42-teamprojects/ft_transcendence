@@ -34,7 +34,7 @@ export default class Playerresources extends HTMLElement {
                 </div>
                 <c-notification-dropdown></c-notification-dropdown>
             </div>
-            <div class="flex-center gap-2 resource-count text-xs font-medium text-highlight">
+            <div class="flex-center gap-2 resource-count text-xs font-medium text-highlight" tooltip="Current streak" flow="down">
                 <img src="/public/assets/icons/streak.svg" alt="streak"/>
                 <h3 class="streak-count">${userState.state.user.user_stats.current_win_streak}</h3>
             </div>
