@@ -41,5 +41,9 @@ export default class VerificationService {
 		return this.httpClient.post("security/reset-2fa/", data)
 	}
 
+	async disableTwoFactorAuth(data) {
+		return this.httpClient.post("security/disable-2fa/", data);
+	}
+
 	// Todo: Add other verification-related methods
 }

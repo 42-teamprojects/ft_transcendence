@@ -1,3 +1,4 @@
+import Authentication from "../../auth/authentication.js";
 import { userState } from "../../state/userState.js";
 import Toast from "../comps/toast.js";
 
@@ -12,9 +13,32 @@ export default class Settingsprivacy extends HTMLElement {
 		this.render();
 
 		this.btnEnable2FA = this.querySelector("#enable-2fa");
+		this.btnDisable2FA = this.querySelector("#disable-2fa");
 		this.twoFactorModal = this.querySelector("c-enable-2fa-modal");
-		this.btnEnable2FA.addEventListener("click", this.handle2FAEnable.bind(this));
+        this.confirmModal = this.querySelector("c-modal");
+
+		this.btnEnable2FA?.addEventListener("click", this.handle2FAEnable.bind(this));
+        this.btnDisable2FA?.addEventListener("click", () => {
+            this.confirmModal.open();
+        });
+        this.confirmModal?.addEventListener("confirm", this.handle2FADisable.bind(this));
 	}
+
+    async handle2FADisable() {
+        if (!userState.is2FAEnabled()) {
+            Toast.notify({ type: "warning", message: "2FA is already disabled" });
+            return;
+        }
+        try {
+            await Authentication.instance.disableTwoFactorAuth({});
+            userState.setEnable2FA(false);
+            this.render();
+        } catch (error) {
+            console.error(error);
+            Toast.notify({ type: "error", message: "An error occurred, Please try again" });
+        }
+    }
+
 
 	handle2FAEnable() {
 		if (!userState.isVerified()) {
@@ -28,7 +52,7 @@ export default class Settingsprivacy extends HTMLElement {
 	}
 
 	disconnectedCallback() {
-        this.btnEnable2FA.removeEventListener("click", this.handle2FAEnable.bind(this));
+        this.btnEnable2FA?.removeEventListener("click", this.handle2FAEnable.bind(this));
     }
 
 	render() {
@@ -45,6 +69,7 @@ export default class Settingsprivacy extends HTMLElement {
 
 		this.innerHTML = /*html*/ `
         ${userState.isVerified() && !userState.is2FAEnabled() ? `<c-enable-2fa-modal></c-enable-2fa-modal>` : ""}
+        ${userState.isVerified() && userState.is2FAEnabled() ? `<c-modal id="disable-2fa-confirm"></c-modal>` : ""}
         <div class="dashboard-content">
             <main class="flex-col gap-16 mb-12">
                 <div class="settings-header">
@@ -62,7 +87,10 @@ export default class Settingsprivacy extends HTMLElement {
                             <h3 class="font-normal mb-4">Secure your account</h3>
                             <p class="text-stroke">Enable 2FA to add an extra layer of security</p>
                         </div>
-                        <button id="enable-2fa" class="btn-secondary">Enable 2FA</button>
+                        ${userState.is2FAEnabled() 
+                            ? /*html*/`<button id="disable-2fa" class="btn-secondary">Disable 2FA</button>` 
+                            : /*html*/`<button id="enable-2fa" class="btn-secondary">Enable 2FA</button>`
+                        }
                     </div>
                 </section>
             </main>

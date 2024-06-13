@@ -97,6 +97,10 @@ class UserState extends State {
 		return this.state.user.two_factor_enabled;
 	}
 
+	setEnable2FA(value) {
+		this.updateUser("two_factor_enabled", value);
+	}
+
 	reset() {
 		this.setState({
 			user: {},

@@ -153,6 +153,14 @@ export default class Authentication {
 		}
 	}
 
+	async disableTwoFactorAuth(data) {
+		try {
+			return await this.verificationService.disableTwoFactorAuth(data);
+		} catch (error) {
+			throw error;
+		}
+	}
+
 	// User
 	async changePassword(data) {
 		try {
