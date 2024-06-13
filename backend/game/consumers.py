@@ -133,37 +133,37 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
     
     @database_sync_to_async
     def get_or_create_tournament_game_session(self, match_id):
-        session = GameSession.objects.filter(vacant=True, private=True, match_id=match_id, created_at__gte=timezone.now() - timedelta(minutes=5)).first()
+        session = GameSession.objects.filter(Q(match_player1_id=int(self.user_id)) | Q(match_player2_id=int(self.user_id)), vacant=True, private=True, match_id=match_id, created_at__gte=timezone.now() - timedelta(minutes=5)).first()
         if session is None:
             match = Match.objects.get(id=match_id)
             session = GameSession.objects.create(match=match, private=True)
-            # Notifiy the other player that the match is ready to start
-            if match.player1.id == self.user_id:
-                opponent_id = match.player2.id
-            else:
-                opponent_id = match.player1.id
-            notification_data = {
-                'type': 'MATCH_STARTED',
-                'message': 'Your opponent is ready to play.',
-                'match_id': match.id,
-                'tournament_id': match.tournament.id,
-                'start_time': self.start_time,
-            }
-            Notification.objects.create(
-                recipient_id=opponent_id,
-                type='TRN',
-                data=notification_data
-            )
-            async_to_sync(self.channel_layer.group_send)(
-                f'notifications_{opponent_id}',
-                {
-                    'type': 'tournament_update',
-                    'data': notification_data
-                }
-            )
         else:
             session.vacant = False
             session.save()
+        # Notifiy the other player that the match is ready to start
+        if match.player1.id == self.user_id:
+            opponent_id = match.player2.id
+        else:
+            opponent_id = match.player1.id
+        notification_data = {
+            'type': 'MATCH_STARTED',
+            'message': 'Your opponent is ready to play.',
+            'match_id': match.id,
+            'tournament_id': match.tournament.id,
+            'start_time': self.start_time,
+        }
+        Notification.objects.create(
+            recipient_id=opponent_id,
+            type='TRN',
+            data=notification_data
+        )
+        async_to_sync(self.channel_layer.group_send)(
+            f'notifications_{opponent_id}',
+            {
+                'type': 'tournament_update',
+                'data': notification_data
+            }
+        )
         return session
     
     def get_player1_id(self):
