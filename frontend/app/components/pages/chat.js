@@ -19,8 +19,7 @@ export default class Chat extends HTMLElement {
             ${
 				!this.isEmpty
 					? /*html*/ ` 
-            <c-conversation></c-conversation>
-            <c-chat-match-history></c-chat-match-history>`
+            <c-conversation></c-conversation>`
 					: /*html*/ `
             <div class="conversation w-full vh-full">
                 <div class="flex-center vh-full">
