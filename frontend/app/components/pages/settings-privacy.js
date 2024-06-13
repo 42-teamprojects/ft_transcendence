@@ -53,10 +53,13 @@ export default class Settingsprivacy extends HTMLElement {
 
 	disconnectedCallback() {
         this.btnEnable2FA?.removeEventListener("click", this.handle2FAEnable.bind(this));
+        this.btnDisable2FA?.removeEventListener("click", () => {
+            this.confirmModal.open();
+        });
+        this.confirmModal?.removeEventListener("confirm", this.handle2FADisable.bind(this));
     }
 
 	render() {
-
         const changePasswordSection = /*html*/ `
         <section class="change-password">
             <div class="settings-header mb-9">
