@@ -19,8 +19,10 @@ export default class Dashboard extends HTMLElement {
             const theirScore = match.player1.id !== this.user.id ? match.score1 : match.score2;
             return /*html*/ `<c-match-history me="${me.username}" my-avatar=${me.avatar} them="${them.username}" their-avatar=${them.avatar} my-score="${myScore}" their-score="${theirScore}" tooltip="${formatDate(match.created_at)}" flow="right"></c-match-history>`
         });
-        this.querySelector(".history-header").innerHTML = `Last ${this.matchElements.length} matches`;
-        this.querySelector(".match-history-container").innerHTML = this.matchElements.join("");
+        if (this.matchElements.length > 0) {
+            this.querySelector(".history-header").innerHTML = `Last ${this.matchElements.length} matches`;
+            this.querySelector(".match-history-container").innerHTML = this.matchElements.join("");
+        }
 	}
 
 	disconnectedCallback() {}
