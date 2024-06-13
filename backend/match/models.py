@@ -40,19 +40,24 @@ class Match(models.Model):
         super().save(*args, **kwargs) 
         if self.tournament and self.player1 and self.player2 and self.status == 'NS' and self.tournament.status == 'IP' and self.round != 1:
             self.start()
-            delay = (self.start_time - timezone.now()).total_seconds()
-            Timer(delay, self.start_final).start()
+            Timer(5, self.start_next_match).start()
             
-    def start_final(self):
+    def start_next_match(self):
         channel_layer = get_channel_layer()
-        async_to_sync(channel_layer.group_send)(
-            str(self.tournament.id), 
-            {
-                'type': 'tournament_update',
-                'data': 'The final has started.'
-            }
-        )
-        
+        for user_id in [self.player1.id, self.player2.id]:
+            async_to_sync(channel_layer.group_send)(
+                f'notifications_{user_id}',
+                {
+                    'type': 'tournament_update',
+                    'data': {
+                        'type': 'MATCH_STARTED',
+                        'message': 'Your opponent is ready. Match is starting...',
+                        'match_id': self.id,
+                        'tournament_id': self.tournament.id,
+                        'start_time': self.start_time,
+                    }
+                } 
+            )
     
     def set_winner_by_id(self, winner_id):
         if winner_id not in [self.player1.id, self.player2.id]:
@@ -82,7 +87,7 @@ class Match(models.Model):
     def assign_winner_to_next_round(self, winner):
         # Get all the matches in the next round
         next_round_group = math.ceil(self.group / 2)
-        next_round_match_number = 0 if self.round + 1 == self.tournament.total_rounds else self.match_number
+        next_round_match_number = 0 if self.round + 1 == self.tournament.total_rounds else (0 if self.group % 2 == 1 else 1)
 
         next_match = Match.objects.filter(
             tournament=self.tournament, round=self.round + 1, group=next_round_group, match_number=next_round_match_number).first()
@@ -100,18 +105,6 @@ class Match(models.Model):
         self.start_time = timezone.now() + timedelta(seconds=30)
         self.status = 'IP'
         self.save()
-        channel_layer = get_channel_layer()
-        async_to_sync(channel_layer.group_send)(
-            'tournament_match_' + str(self.id),
-            {
-                'type': 'game_message',
-                'data': {
-                    'message': 'Match has started.',
-                    'match_id': self.id,
-                    'start_time': self.start_time,
-                }
-            }
-        )
     
     def increase_score(self, user_id):
         winner = None

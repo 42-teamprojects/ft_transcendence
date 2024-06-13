@@ -10,10 +10,15 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework.decorators import action
+
 # Create your views here.
 class TournamentViewSet(viewsets.ModelViewSet):
     queryset = Tournament.objects.all()
     serializer_class = TournamentSerializer
+
+    @action(detail=False)
+    def my_tournaments(self, request):
+        return Response(TournamentSerializer(Tournament.objects.filter(participants=request.user, status='IP'), many=True).data, status=status.HTTP_200_OK)
 
     def get_object(self):
         try:
@@ -83,7 +88,7 @@ class TournamentViewSet(viewsets.ModelViewSet):
         except serializers.ValidationError as e:
             return Response(e, status=status.HTTP_404_NOT_FOUND)
         
-        matches = tournament.matches.all().order_by('round', 'group')
+        matches = tournament.matches.all().order_by('round', 'group', 'match_number')
         return Response(MatchSerializer(matches, many=True).data, status=status.HTTP_200_OK)
     
     def update(self, request, *args, **kwargs):
@@ -112,7 +117,7 @@ class TournamentViewSet(viewsets.ModelViewSet):
         return Response({'detail': 'Participant removed successfully.'}, status=status.HTTP_200_OK)
     
 class TournamentMatchViewSet(viewsets.ModelViewSet):
-    queryset = Match.objects.all()
+    queryset = Match.objects.all().order_by('group', 'match_number')
     serializer_class = MatchSerializer
 
     def get_object(self):

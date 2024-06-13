@@ -22,7 +22,6 @@ export default class Privatematchmaking extends HTMLElement {
             this.matchData = matchState.state.match;
             this.gameSession = matchState.state.session;
             this.opponent = matchState.getOpponent(this.matchData)
-            console.log("match data", this.matchData);
             this.render();
             this.text = document.querySelector('.starting');
             let countdown = 3;
@@ -36,8 +35,8 @@ export default class Privatematchmaking extends HTMLElement {
                         clearInterval(intervalId);
                     }
             }, 1000);
-            let btn = this.querySelector('.btn-primary');
-            btn.disabled = true;
+            // let btn = this.querySelector('.btn-primary');
+            // btn.disabled = true;
         });
         // let btn = this.querySelector('.btn-primary');
         // btn.addEventListener('click', () => {

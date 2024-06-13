@@ -2,6 +2,7 @@ import { chatState } from "../state/chatState.js";
 import { friendState } from "../state/friendState.js";
 import { messageState } from "../state/messageState.js";
 import { notificationState } from "../state/notificationState.js";
+import { onlineTournamentState } from "../state/onlineTournamentState.js";
 import { userState as userState } from "../state/userState.js";
 import AuthService from "./authService.js";
 import OAuthService from "./oAuthService.js";
@@ -72,7 +73,7 @@ export default class Authentication {
 				return false;
 			}
 
-			// Update the token_verified_at timestamp in the userState
+			// Initialize the user state and sockets
 			userState.setState({ user: result, token_verified_at: now });
 			notificationState.setup();
 			await chatState.getChats();
@@ -80,6 +81,7 @@ export default class Authentication {
 			chatState.state.chats.forEach((chat) => {
 				messageState.getMessages(chat.id);
 			});
+			await onlineTournamentState.getMyInProgressMatch();
 			return true;
 		} catch (error) {
 			throw error;

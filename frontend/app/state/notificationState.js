@@ -52,9 +52,9 @@ class NotificationState extends State {
                     case "MSG":
                         this.handleMessageNotification(notification);
                         break;
-                    case "TRN":
-                        this.handleTournamentNotification(notification);
-                        break;
+                    // case "TRN":
+                    //     this.handleTournamentNotification(notification);
+                    //     break;
                     case "PRQ":
                         this.handlePlayRequestNotification(notification);
                         break;
@@ -67,6 +67,17 @@ class NotificationState extends State {
                         friendState.getFriends();
                         break;
                     case "TOURNAMENT_UPDATE":
+                        if (notification.data.type === 'MATCH_STARTED') {
+                            const { tournament_id, match_id, message } = notification.data
+                            Toast.notify({
+                                type: "info",
+                                message: /*html*/ `
+                                    <p>${message}</p>
+                                    <br/>
+                                    <a is="c-link" class="font-bold spacing-1 uppercase text-secondary mt-2 text-sm" 
+                                    href="/online/tournament?tournamentId=${tournament_id}&matchId=${match_id}">Play</a>`,
+                            });
+                        }
                         onlineTournamentState.getNotStartedTournaments();
                     default:
                         break;

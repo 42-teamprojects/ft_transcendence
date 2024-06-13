@@ -71,19 +71,15 @@ class MatchState extends State {
 			this.matchMakingId,
 			// On message callback
 			async (event) => {
-				if (this.matchMakingId.startsWith('tournament-match-making/')) {
-					const data = JSON.parse(event.data);
-					console.log(data)
-				}
-				const gameSessionId = JSON.parse(event.data);
-				const sessionId = gameSessionId.data.game_session_id;
+				// Parse the event data once and use it throughout
+				const eventData = JSON.parse(event.data);
+
+				// if (eventData && eventData.data && eventData.data.game_session_id) {
+				const sessionId = eventData.data.game_session_id;
 				console.log("session id", sessionId);
 				await this.getGameSession(sessionId);
+				// }
 			},
-			{
-				// shouldCloseOnTimeout: true,
-				// should timeout when game finishes
-			}
 		);
 	}
 

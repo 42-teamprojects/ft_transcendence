@@ -4,11 +4,17 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from rest_framework_simplejwt.tokens import UntypedToken
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from channels.db import database_sync_to_async
+
+from notifications.models import Notification
 from .models import GameSession
 from match.models import Match
 from accounts.models import User
 from asgiref.sync import sync_to_async
 from django.db.models import Q
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+from django.utils import timezone
+from datetime import timedelta
 
 def get_user_id(scope):
     if (scope["cookies"] is None) or ("access" not in scope["cookies"]):
@@ -23,31 +29,25 @@ def get_user_id(scope):
 
     return UntypedToken(access_token).payload['user_id']
 
+
+""" 
+    MatchMakingConsumer
+"""
 class MatchMakingConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.p1_id = self.scope['url_route']['kwargs'].get('p1_id')
-        self.p2_id = self.scope['url_route']['kwargs'].get('p2_id')
-        self.match_id = self.scope['url_route']['kwargs'].get('match_id')
+        self.initialize_match_variables()
         
-        self.user_id = get_user_id(self.scope)
-        if self.user_id is None:
+        if not await self.authorize_user():
             await self.close(code=401, reason="Unauthorized")
             return
         
-        if self.p1_id is not None and self.p2_id is not None:
-            if int(self.user_id) != int(self.p1_id) and int(self.user_id) != int(self.p2_id):
-                await self.close(code=401, reason="Unauthorized")
-                return
+        if self.is_friendly:
             self.session = await self.get_or_create_private_game_session(self.p1_id, self.p2_id)
-        elif self.match_id is not None:
-            match = await sync_to_async(Match.objects.get)(pk=self.match_id)
-            if not match.is_player(self.user_id) and not match.status == "IP":
-                await self.close(code=401, reason="Unauthorized")
-                return
-            self.session = await self.get_or_create_tournament_game_session(self.match_id)
-            
-        elif self.p1_id is None and self.p2_id is None:
+        elif self.is_tournament:
+            self.session = await self.get_or_create_tournament_game_session(self.match_id) 
+        else:
             self.session = await self.get_or_create_game_session(self.user_id)
+
         if self.session is None:
             await self.close()
             return
@@ -73,6 +73,33 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
             await self.channel_layer.group_send(player2_group, {"type": "game_message", "data": data})
 
         await self.accept()
+    
+    def initialize_match_variables(self):
+        self.p1_id = self.scope['url_route']['kwargs'].get('p1_id')
+        self.p2_id = self.scope['url_route']['kwargs'].get('p2_id')
+        self.match_id = self.scope['url_route']['kwargs'].get('match_id')
+        self.user_id = get_user_id(self.scope)
+        
+        self.is_friendly = False
+        self.is_random = False
+        self.is_tournament = False
+        if self.p1_id is not None and self.p2_id is not None:
+            self.is_friendly = True
+        elif self.match_id is not None:
+            self.is_tournament = True
+        else:
+            self.is_random = True
+    
+    async def authorize_user(self):
+        if self.user_id is None:
+            return False
+        elif self.is_friendly and (int(self.user_id) != int(self.p1_id) and int(self.user_id) != int(self.p2_id)):
+            return False
+        elif self.is_tournament:
+            match = await sync_to_async(Match.objects.get)(pk=self.match_id)
+            if not match.is_player(self.user_id) and not match.status == "IP":            
+                return False
+        return True
     
     def get_vacant_session(self):
         return self.session.vacant
@@ -106,10 +133,34 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
     
     @database_sync_to_async
     def get_or_create_tournament_game_session(self, match_id):
-        session = GameSession.objects.filter(vacant=True, private=True).filter(match_id=match_id).first()
+        session = GameSession.objects.filter(vacant=True, private=True, match_id=match_id, created_at__gte=timezone.now() - timedelta(minutes=5)).first()
         if session is None:
             match = Match.objects.get(id=match_id)
             session = GameSession.objects.create(match=match, private=True)
+            # Notifiy the other player that the match is ready to start
+            if match.player1.id == self.user_id:
+                opponent_id = match.player2.id
+            else:
+                opponent_id = match.player1.id
+            notification_data = {
+                'type': 'MATCH_STARTED',
+                'message': 'Your opponent is ready to play.',
+                'match_id': match.id,
+                'tournament_id': match.tournament.id,
+                'start_time': self.start_time,
+            }
+            Notification.objects.create(
+                recipient_id=opponent_id,
+                type='TRN',
+                data=notification_data
+            )
+            async_to_sync(self.channel_layer.group_send)(
+                f'notifications_{opponent_id}',
+                {
+                    'type': 'tournament_update',
+                    'data': notification_data
+                }
+            )
         else:
             session.vacant = False
             session.save()
@@ -149,9 +200,10 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
         self.session.refresh_from_db()
         if self.session is not None and self.session.vacant:
             self.session.delete()
-    
 
-
+""" 
+    GameConsumer
+"""
 class GameConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.session_id = self.scope['url_route']['kwargs']['session_id']

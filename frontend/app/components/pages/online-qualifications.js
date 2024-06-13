@@ -74,6 +74,15 @@ export default class OnlineQualifications extends HTMLElement {
 				<p class="text-stroke">Starting matches in</p>
 				<h2 id="countdown">--:--</h2>
 			</div>` : ''}
+			${
+				onlineTournamentState.state.inProgressMatch ? /*html*/`
+				<div class="flex-col-center gap-5">
+					<h2 class="text-center">Your match is in progress</h2>
+					<button is="c-button" href="/online/tournament?tournamentId=${this.tournamentId}&matchId=${onlineTournamentState.state.inProgressMatch.id}" class="btn-primary">
+						Join match
+					</button>
+				</div>` : ''
+			}
 		</div>
 		`;
 	}

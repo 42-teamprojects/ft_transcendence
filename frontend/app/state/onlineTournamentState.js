@@ -15,6 +15,7 @@ class OnlineTournamentState extends State {
             tournaments: [],
 			inProgressTournaments: [],
 			FinishedTournaments: [],
+			inProgressMatch: null,
 		});
 		this.webSocketManager = new WebSocketManager(config.websocket_url);
 		this.socketId = 'tournaments/';
@@ -35,33 +36,28 @@ class OnlineTournamentState extends State {
 			this.socketId,
 			// On message callback
 			async (event) => {
-				const message = JSON.parse(event.data); // Parse the message from the server
-				if (message.data.startsWith("The final has started")) {
-					await this.getMatches(tournamentId);
-					// find the matche that im part of and in the second round, match = (player1, player2)
-					const match = this.state.matches.find(m => (m?.player1?.id === userState.state.user.id || m?.player2?.id === userState.state.user.id) && m.round === 2);
-					if (match) {
-						console.log(match)
-						Router.instance.navigate(`/online/tournament?tournamentId=${tournamentId}&matchId=${match.id}`);
-					}
+				const recieved = JSON.parse(event.data);
+				if (recieved.data.type === "TOURNAMENT_STARTED") {
+					await this.start_match(tournamentId)
 				}
-				if (message.data.startsWith("The tournament has started")) {
-					await this.getMatches(tournamentId);
-					// find the matches that im part of, match = (player1, player2)
-					const match = this.state.matches.find(m => m?.player1?.id === userState.state.user.id || m?.player2?.id === userState.state.user.id);
-					if (match) {
-						console.log(match)
-						Router.instance.navigate(`/online/tournament?tournamentId=${tournamentId}&matchId=${match.id}`);
-					}
-				}
-				console.log(message)
-				Toast.notify({ message: message.data, type: "info" });
+				Toast.notify({ message: recieved.data.message, type: "info" });
 				await this.getNotStartedTournaments();
 				await this.getInProgressTournaments();
 			},
-			// Options
-			// {}
 		);
+	}
+
+	async start_match(tournamentId, matchId = null) {
+		await this.getMatches(tournamentId);
+		let match = null;
+		if (matchId) {
+			match = this.state.matches.find(m => +m.id === +matchId);
+		} else {
+			match = this.state.matches.find(m => (m?.player1?.id === userState.state.user.id || m?.player2?.id === userState.state.user.id) && m.status === 'IP');
+		}
+		if (match) {
+			Router.instance.navigate(`/online/tournament?tournamentId=${tournamentId}&matchId=${match.id}`);
+		}
 	}
 
 	async createTournament(type) {
@@ -188,6 +184,24 @@ class OnlineTournamentState extends State {
 		catch (error) {
 			console.log(error);
 			Toast.notify({ message: error.detail, type: "error" })
+		}
+	}
+
+	async getMyInProgressMatch() {
+		try {
+			const myTournaments = await this.httpClient.get(`tournaments/my_tournaments/`)
+			if (myTournaments.length > 0) {
+				const matches = await this.httpClient.get(`tournaments/${myTournaments[0].id}/matches/`)
+				// find the match that im a player in and is status is IP
+				const match = matches.find(m => (m?.player1?.id === userState.state.user.id || m?.player2?.id === userState.state.user.id) && m.status === 'IP');
+				this.setState({
+					inProgressMatch: match,
+				});
+				return match;
+			}
+			return null;
+		} catch (error) {
+			console.log(error)
 		}
 	}
 

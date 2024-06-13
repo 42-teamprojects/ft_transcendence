@@ -28,8 +28,8 @@ export default class Tournamenteventscard extends HTMLElement {
                 <h1>Your Tournament Events</h1>
             </div>
             <div class="flex-col gap-8">
-                ${this.upcomingTournaments.length === 0 ? /*html*/`<p class="text-stroke text-center">No upcoming tournaments</p>` : ""}
-                ${this.upcomingTournaments.map((tournament) => {
+                ${this.upcomingTournaments?.length === 0 ? /*html*/`<p class="text-stroke text-center">No upcoming tournaments</p>` : ""}
+                ${this.upcomingTournaments?.map((tournament) => {
                     onlineTournamentState.setup(tournament.id)
                     return /*html*/`<c-tournament-event href="${tournament.status === 'NS' ? '/dashboard/tournaments' : `/dashboard/tournaments/qualifications/${tournament.id}`}" type="${tournament.type}" status="${tournament.status}" start-time="${tournament.start_time}"></c-tournament-event>`
                 }).join("")}
