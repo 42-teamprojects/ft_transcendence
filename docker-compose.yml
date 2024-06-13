@@ -1,0 +1,78 @@
+version: "3"
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: blitzpong-frontend
+    ports:
+      - "443:443"
+    restart: on-failure
+    networks:
+      - BlitzpongNetwork
+
+  backend:
+    container_name: blitzpong-backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: on-failure
+    ports:
+      - "8000:8000"
+      - "8443:8443"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+    networks:
+      - BlitzpongNetwork
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+
+  db:
+    container_name: postgres
+    image: postgres:13.15
+    restart: on-failure
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: blitzpong
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - BlitzpongNetwork
+
+  adminer:
+    container_name: adminer
+    image: adminer
+    restart: on-failure
+    ports:
+      - "8081:8080"
+    volumes:
+      - adminer-data:/var/www/html/adminer
+    depends_on:
+      - db
+    networks:
+      - BlitzpongNetwork
+
+  redis:
+    container_name: redis
+    image: redis:5
+    restart: on-failure
+    ports:
+      - "6379:6379"
+    networks:
+      - BlitzpongNetwork
+
+volumes:
+  adminer-data:
+  postgres-data:
+
+networks:
+  BlitzpongNetwork:
+    driver: bridge
