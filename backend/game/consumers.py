@@ -157,6 +157,7 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
             type='TRN',
             data=notification_data
         )
+        print("notification_data", notification_data, flush=True)
         async_to_sync(self.channel_layer.group_send)(
             f'notifications_{opponent_id}',
             {
