@@ -5,8 +5,6 @@ import { userState } from "./userState.js";
 import WebSocketManager from "../socket/WebSocketManager.js";
 import { config } from "../config.js";
 import { notificationState } from "./notificationState.js";
-import { matchState } from "./matchState.js";
-import Router from "../router/router.js";
 
 class OnlineTournamentState extends State {
 	constructor() {
@@ -54,14 +52,10 @@ class OnlineTournamentState extends State {
 	}
 
 	async start_match(tournamentId, matchId = null) {
-		let match = await this.getMyInProgressMatch();
-		if (match) {
-			Toast.notify({
-				type: "info",
-				message: /*html*/ `<p>Tournament match started, join now!!!</p><br/><a is="c-link" class="font-bold spacing-1 uppercase text-secondary mt-2 text-sm" href="/dashboard/tournaments/qualifications/${tournamentId}" class="mt-2">Join match</a>`,
-			});
-			// Router.instance.navigate(`/online/tournament?tournamentId=${tournamentId}&matchId=${match.id}`);
-		}
+		Toast.notify({
+			type: "info",
+			message: /*html*/ `<p>Tournament match started, join now!!!</p><br/><a is="c-link" class="font-bold spacing-1 uppercase text-secondary mt-2 text-sm" href="/dashboard/tournaments/qualifications/${tournamentId}" class="mt-2">Join match</a>`,
+		});
 	}
 
 	async createTournament(type) {
