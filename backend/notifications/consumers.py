@@ -58,6 +58,8 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                 self.group_name_all,
                 {
                     'type': 'new_status_update',
+                    'user_id': self.user_id,
+                    'status': response['status'],
                 }
             )
         
@@ -76,9 +78,8 @@ class NotificationConsumer(AsyncWebsocketConsumer):
     async def new_status_update(self, event):
         await self.send(text_data=json.dumps({
             'type': 'NEW_STATUS',
-            'data' : {
-                'user_id': self.user_id,
-            }
+            'user_id': event['user_id'],
+            'status': event['status']
         }))
     
     async def tournament_update(self, event):

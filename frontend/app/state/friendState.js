@@ -18,7 +18,7 @@ class FriendState extends State {
 	}
 
 	async getFriends(force = false) {
-        if (this.fetchedFriends) return this.state.friends;
+        if (!force && this.fetchedFriends) return this.state.friends;
 		try {
 			this.setState({ loading: true });
 			const result = await this.httpClient.get(`friends/`);
@@ -174,10 +174,16 @@ class FriendState extends State {
 		});
 	}
 
-	updateFriend(field, value) {
+	updateStatus(friendId, status) {
 		const friends = this.state.friends;
-		friends[field] = value;
-		this.setState({ friends });
+		if (friends.length === 0) return;
+		const friendShip = friends.find((friend) => +friend.user1.id === +friendId || +friend.user2.id === +friendId);
+		if (!friendShip) return;
+		const friend = this.getFriend(friendShip);
+		if (friend) {
+			friend.status = status;
+			this.setState({ friends: friends });
+		}
 	}
 
 	reset() {

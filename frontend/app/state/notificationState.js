@@ -63,8 +63,7 @@ class NotificationState extends State {
                         break;
                     case "NEW_STATUS":
                         this.setState({ newStatus: true });
-                        friendState.fetchedFriends = false;
-                        friendState.getFriends();
+                        friendState.updateStatus(notification.user_id, notification.status);
                         break;
                     case "TOURNAMENT_UPDATE":
                         this.handleTournamentUpdates(notification);
@@ -77,6 +76,7 @@ class NotificationState extends State {
                 console.log(`WebSocket connection opened for id: ${this.socketId}`);
                 this.notificationSocket.send(this.socketId, {
                     type: "NEW_STATUS",
+                    status: 'ON'
                 });
             },
         }
@@ -182,11 +182,6 @@ class NotificationState extends State {
             }
             // Send notification to the socket
             this.notificationSocket.send(this.socketId, notification);
-            // if (updateState && !['NEW_STATUS', 'TOURNAMENT_UPDATE', 'MSG', 'PRQ'].includes(notification.type) 
-            //     && notification.recipient === userState.state.user.id 
-            //     && notification.data && !['REMOVE', 'BLOCK', 'UNBLOCK'].includes(notification.data.type)) {
-            //     this.setState({ notifications: [notification, ...this.state.notifications], loading: false });
-            // }
         } catch (error) {
             console.error(error);
         }
@@ -258,6 +253,7 @@ class NotificationState extends State {
         this.setState({ newStatus: true });
         this.notificationSocket.send(this.socketId, {
             type: "NEW_STATUS",
+            status: 'OF'
         });
         this.notificationSocket.closeConnection(this.socketId);
     }
