@@ -42,6 +42,10 @@ export default class Notificationdropdown extends HTMLElement {
 		this.querySelector("#cancel-btn").addEventListener("click", async () => {
 			this.dropdownContent.classList.remove("show-dropdown");
 		});
+
+		this.querySelector(".mark-all-as-read").addEventListener("click", async () => {
+			await notificationState.markAllAsRead();
+		});
 	}
 
 	disconnectedCallback() {
@@ -60,7 +64,7 @@ export default class Notificationdropdown extends HTMLElement {
                     <div class="notification__list flex-col" style="margin-top: -1rem">
                     </div> 
                     <div class="notification__footer flex-center">
-                        <p class="btn-link text-primary">View all</p>
+                        <p class="btn-link text-primary mark-all-as-read">Mark all as read</p>
                     </div>
                 </div>
             </div>
@@ -95,7 +99,7 @@ export default class Notificationdropdown extends HTMLElement {
 				`;
 			} else if (notification.type === "TRN") {
 				return /*html*/ `
-					<c-notification notification-id="${notification.id}" type="TRN" tournament-detail="${notification.data.tournament_detail}"></c-notification>
+					<c-notification notification-id="${notification.id}" type="TRN" tournament-id="${notification.data.tournament_id}" message="${notification.data.message}"></c-notification>
 				`;
 			} else if (notification.type === "PRQ") {
 				return /*html*/ `

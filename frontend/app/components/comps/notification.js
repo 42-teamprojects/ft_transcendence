@@ -18,9 +18,10 @@ export default class Notification extends HTMLElement {
         if ((this.type === 'FAL' && !this.username && !this.userAvatar) || (this.type === 'MSG' && !this.username && !this.userAvatar)) {
             throw new Error('username and user-avatar is required for type FAL and MSG');
         }
-        this.tournamentDetail = this.getAttribute('tournament-detail') || null;
-        if (this.type === 'TRN' && !this.tournamentDetail) {
-            throw new Error('tournament-detail is required for type TRN');
+        this.tournamentId = this.getAttribute('tournament-id') || null;
+        this.tournamentMessage = this.getAttribute('message') || null;
+        if (this.type === 'TRN' && !this.tournamentId && !this.tournamentMessage) {
+            throw new Error('tournament-id and message is required for type TRN');
         }
         this.playRequestUser = this.getAttribute('play-request-user') || null;
         if (this.type === 'PRQ' && !this.playRequestUser) {
@@ -44,8 +45,8 @@ export default class Notification extends HTMLElement {
             case 'TRN':
                 this.icon = /*html*/`<div class="bg-secondary w-10 h-10 flex-col-center rounded-full"><i class="fa-solid fa-trophy"></i></div>`
                 this.detailsTitle = 'Tournament'
-                this.detailsSubtitle = this.tournamentDetail
-                this.actions = /*html*/`<a is="c-link" href="/dashboard/tournaments" class="btn-link text-secondary">View</a>`
+                this.detailsSubtitle = this.tournamentMessage
+                this.actions = /*html*/`<a is="c-link" href="/dashboard/tournaments/qualifications/${this.tournamentId}" class="btn-link text-secondary">View</a>`
                 break;
             case 'PRQ':
                 this.icon = /*html*/`<div class="bg-primary w-10 h-10 flex-col-center rounded-full"><i class="fa-solid fa-gamepad"></i></div>`
@@ -69,7 +70,6 @@ export default class Notification extends HTMLElement {
         this.querySelector('a').addEventListener('click', async (e) => {
             e.preventDefault();
             await notificationState.markAsRead(+this.id);
-            console.log('View notification', this.id);
         });
     }
 

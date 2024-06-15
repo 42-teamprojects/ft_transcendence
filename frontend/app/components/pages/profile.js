@@ -119,7 +119,9 @@ export default class Profile extends HTMLElement {
 			const them = [match.player1, match.player2].find(p => p.id !== this.user.id);
 			const myScore = match.player1.id === this.user.id ? match.score1 : match.score2;
 			const theirScore = match.player1.id !== this.user.id ? match.score1 : match.score2;
-			return /*html*/ `<c-match-history me="${me.username}" my-avatar=${me.avatar} them="${them.username}" their-avatar=${them.avatar} my-score="${myScore}" their-score="${theirScore}" tooltip="${formatDate(match.created_at)}" flow="right"></c-match-history>`;
+			if (me && them) {
+				return /*html*/ `<c-match-history me="${me.username}" my-avatar=${me.avatar} them="${them.username}" their-avatar=${them.avatar} my-score="${myScore}" their-score="${theirScore}" tooltip="${formatDate(match.created_at)}" flow="right"></c-match-history>`;
+			}
 		}).join("");
 		return /*html*/ `
 			<section class="matches-history my-8">

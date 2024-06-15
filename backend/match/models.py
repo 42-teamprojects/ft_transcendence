@@ -1,9 +1,11 @@
 import math
+import re
 from django.db import models
 from django.forms import ValidationError
 from accounts.models import User
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
+from notifications.models import Notification
 from tournaments.models import Tournament
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
@@ -45,18 +47,26 @@ class Match(models.Model):
     def start_next_match(self):
         channel_layer = get_channel_layer()
         for user_id in [self.player1.id, self.player2.id]:
+            
+            notification_data = {
+                'type': 'notification_message',
+                'data': {
+                    'type': 'MATCH_STARTED',
+                    'link': '/online/tournament?tournamentId=' + str(self.tournament.id) + '&matchId=' + str(self.id),
+                    'message': 'Your opponent is ready. Join match now',
+                    'match_id': self.id,
+                    'tournament_id': self.tournament.id,
+                },
+                'recipient': user_id,
+            } 
+            Notification.objects.create(
+                recipient=User.objects.get(id=user_id),
+                type='TRN',
+                data=notification_data['data']
+            )
             async_to_sync(channel_layer.group_send)(
                 f'notifications_{user_id}',
-                {
-                    'type': 'tournament_update',
-                    'data': {
-                        'type': 'MATCH_STARTED',
-                        'message': 'Your opponent is ready. Match is starting...',
-                        'match_id': self.id,
-                        'tournament_id': self.tournament.id,
-                        'start_time': self.start_time,
-                    }
-                } 
+                notification_data
             )
     
     def set_winner_by_id(self, winner_id):

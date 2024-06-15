@@ -5,6 +5,8 @@ import WebSocketManager from "../socket/WebSocketManager.js";
 import State from "./state.js";
 import Toast from "../components/comps/toast.js";
 import { userState } from "./userState.js";
+import { notificationState } from "./notificationState.js";
+import { onlineTournamentState } from "./onlineTournamentState.js";
 class MatchState extends State {
 	constructor() {
 		super({
@@ -90,7 +92,6 @@ class MatchState extends State {
 		if (this.state.game || this.state.match) return
 		try {
 			const gameSession = await HttpClient.instance.get(`game/session/${sessionId}/`);
-			console.log("game session", gameSession);
 			this.setState({ match: gameSession.match, session: gameSession });
 		} catch (error) {
 			console.log(error);

@@ -39,8 +39,14 @@ class OnlineTournamentState extends State {
 				const recieved = JSON.parse(event.data);
 				if (recieved.data.type === "TOURNAMENT_STARTED") {
 					await this.start_match(tournamentId)
+				} else if (recieved.data.type === "TOURNAMENT_FULL") { 
+					Toast.notify({
+						type: "info",
+						message: /*html*/ `<p>${recieved.data.message}</p><br/><a is="c-link" class="font-bold spacing-1 uppercase text-secondary mt-2 text-sm" href="/dashboard/tournaments/qualifications/${tournamentId}" class="mt-2">View brackets</a>`,
+					});
+				} else {
+					Toast.notify({ message: recieved.data.message, type: "info" });
 				}
-				Toast.notify({ message: recieved.data.message, type: "info" });
 				await this.getNotStartedTournaments();
 				await this.getInProgressTournaments();
 			},
@@ -48,15 +54,13 @@ class OnlineTournamentState extends State {
 	}
 
 	async start_match(tournamentId, matchId = null) {
-		await this.getMatches(tournamentId);
-		let match = null;
-		if (matchId) {
-			match = this.state.matches.find(m => +m.id === +matchId);
-		} else {
-			match = this.state.matches.find(m => (m?.player1?.id === userState.state.user.id || m?.player2?.id === userState.state.user.id) && m.status === 'IP');
-		}
+		let match = await this.getMyInProgressMatch();
 		if (match) {
-			Router.instance.navigate(`/online/tournament?tournamentId=${tournamentId}&matchId=${match.id}`);
+			Toast.notify({
+				type: "info",
+				message: /*html*/ `<p>Tournament match started, join now!!!</p><br/><a is="c-link" class="font-bold spacing-1 uppercase text-secondary mt-2 text-sm" href="/dashboard/tournaments/qualifications/${tournamentId}" class="mt-2">Join match</a>`,
+			});
+			// Router.instance.navigate(`/online/tournament?tournamentId=${tournamentId}&matchId=${match.id}`);
 		}
 	}
 
@@ -65,10 +69,13 @@ class OnlineTournamentState extends State {
 			const tournament = await this.httpClient.post("tournaments/", {
 				type,
 			});
-			notificationState.notificationSocket.send(notificationState.socketId, {
+			notificationState.sendNotification({
 				type: "TOURNAMENT_UPDATE",
-				data: "New tournament created",
-			});
+				data: {
+					type: "TOURNAMENT_CREATED",
+					message: "New tournament created"
+				},
+			}, false, false);
 			this.setState({
 				tournaments: [...this.state.tournaments, tournament],
 			});
@@ -202,6 +209,17 @@ class OnlineTournamentState extends State {
 			return null;
 		} catch (error) {
 			console.log(error)
+			return null;
+		}
+	}
+	
+	async getMyPastTournaments() {
+		try {
+			const myTournaments = await this.httpClient.get(`tournaments/my_past_tournaments/`)
+			return myTournaments;
+		} catch (error) {
+			console.log(error)
+			return [];
 		}
 	}
 

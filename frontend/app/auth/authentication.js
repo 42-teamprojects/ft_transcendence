@@ -67,21 +67,20 @@ export default class Authentication {
 			if (userState.state.token_verified_at && now - userState.state.token_verified_at < fiveMinutes) {
 				return true;
 			}
-
+			
 			const result = await this.authService.isAuthenticated();
 			if (!result) {
-				return false;
+				throw new Error("User not authenticated");
 			}
 
 			// Initialize the user state and sockets
 			userState.setState({ user: result, token_verified_at: now });
 			notificationState.setup();
-			await chatState.getChats();
 			// get all messages for all chats
+			await chatState.getChats();
 			chatState.state.chats.forEach((chat) => {
 				messageState.getMessages(chat.id);
 			});
-			await onlineTournamentState.getMyInProgressMatch();
 			return true;
 		} catch (error) {
 			throw error;

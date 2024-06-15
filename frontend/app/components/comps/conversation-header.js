@@ -42,11 +42,12 @@ export default class Conversationheader extends HTMLElement {
         this.inviteFriend = this.querySelector(".invite-friend");
 
         this.inviteFriend.addEventListener("click", () => {
-            Router.instance.navigate(`/online/1v1/private?p1=${userState.state.user.id}&p2=${this.friend.id}`);
+            const inviteLink = `/online/1v1/private?p1=${userState.state.user.id}&p2=${this.friend.id}`
+            Router.instance.navigate(inviteLink);
             const notification = {
 				type: "PRQ",
 				data: {
-					link: `/online/1v1/private?p1=${userState.state.user.id}&p2=${this.friend.id}`,
+					link: inviteLink,
                     sender_name: userState.state.user.username,
                     sender_id: userState.state.user.id,
 				},

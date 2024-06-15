@@ -1,4 +1,6 @@
 import Router from "../../router/router.js";
+import { matchState } from "../../state/matchState.js";
+import { notificationState } from "../../state/notificationState.js";
 import { onlineTournamentState } from "../../state/onlineTournamentState.js";
 import { userState } from "../../state/userState.js";
 import { getMatchUrl, isTimePast, startCountdown } from "../../utils/utils.js";
@@ -22,8 +24,7 @@ export default class OnlineQualifications extends HTMLElement {
 		this.innerHTML = /*html*/ `<c-loader></c-loader>`;
 		await this.tournamentState.getInProgressTournaments();
 		await this.tournamentState.getFinishedTournaments();
-		this.tournament = this.tournamentState.state.inProgressTournaments.find(tournament => tournament.id === this.tournamentId) 
-							|| this.tournamentState.state.FinishedTournaments.find(tournament => tournament.id === this.tournamentId)
+		this.tournament = this.tournamentState.state.inProgressTournaments.find(tournament => tournament.id === this.tournamentId) || this.tournamentState.state.FinishedTournaments.find(tournament => tournament.id === this.tournamentId)
 		if (!this.tournament) {
 			Toast.notify({ message: "Tournament not found", type: "error" });
 			Router.instance.navigate("/dashboard/tournaments");
@@ -40,19 +41,55 @@ export default class OnlineQualifications extends HTMLElement {
 			Router.instance.navigate("/dashboard/tournaments");
 			return;
 		}
+		
 		this.start_time = new Date(this.tournament.start_time)
+
+		await onlineTournamentState.getMyInProgressMatch();
+		
 		this.render();
+
 		this.timeRemaining = this.querySelector("#countdown")
-		if (isTimePast(this.start_time)) return;
-		this.countdown = startCountdown(this.start_time, (output) => {
-            this.timeRemaining.innerHTML = output;
-        },
-        () => {
-			setTimeout(() => {
-				this.querySelector(".countdown-container").remove();
-			}, 1000);
-		}
-        );
+		if (!isTimePast(this.start_time)) {
+			this.countdown = startCountdown(this.start_time, (output) => {
+				this.timeRemaining.innerHTML = output;
+			},
+			() => {
+				setTimeout(() => {
+					this.querySelector(".countdown-container").remove();
+				}, 1000);
+			}
+			);
+		};
+
+		this.unsubscribe = this.tournamentState.subscribe(() => {
+			if (!onlineTournamentState.state.inProgressMatch) return
+			this.querySelector(".in-progress-match").innerHTML = this.getInProgressMatch();
+			this.addInviteListener();
+		});
+		this.addInviteListener();
+	}
+
+	addInviteListener() {
+		const match = onlineTournamentState.state.inProgressMatch;
+		if (!match) return;
+		this.querySelector(".invite-play")?.addEventListener("click", () => {
+			const inviteLink = `/online/tournament?tournamentId=${this.tournamentId}&matchId=${match.id}`
+			Router.instance.navigate(inviteLink);
+			const notification = {
+				type: "TRN",
+				data: {
+					type: "MATCH_STARTED",
+					match_id : match.id,
+					tournament_id: this.tournamentId,
+					link: inviteLink,
+					message: `Match started against ${userState.state.user.username}`,
+					sender_name: userState.state.user.username,
+					sender_id: userState.state.user.id,
+				},
+				recipient: matchState.getOpponent(match).id,
+			}
+			notificationState.sendNotification(notification);
+		});
 	}
 
 	disconnectedCallback() {
@@ -74,17 +111,23 @@ export default class OnlineQualifications extends HTMLElement {
 				<p class="text-stroke">Starting matches in</p>
 				<h2 id="countdown">--:--</h2>
 			</div>` : ''}
-			${
-				onlineTournamentState.state.inProgressMatch ? /*html*/`
-				<div class="flex-col-center gap-5">
-					<h2 class="text-center">Your match is in progress</h2>
-					<button is="c-button" href="/online/tournament?tournamentId=${this.tournamentId}&matchId=${onlineTournamentState.state.inProgressMatch.id}" class="btn-primary">
-						Join match
-					</button>
-				</div>` : ''
-			}
+			<div class="in-progress-match flex-col-center gap-5">
+				${this.getInProgressMatch()}
+			</div>
 		</div>
 		`;
+	}
+
+	getInProgressMatch() {
+		return /*html*/`
+		${
+		onlineTournamentState.state.inProgressMatch ? /*html*/`
+			<h2 class="text-center">Your match is in progress</h2>
+			<button is="c-button" class="btn-primary invite-play">
+				Join match
+			</button>
+			` : ''
+			}`;
 	}
 }
 

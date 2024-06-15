@@ -14,7 +14,7 @@ import json
 
 class NotificationViewSet(viewsets.ModelViewSet):
     serializer_class = NotificationSerializer
-    queryset = Notification.objects.all()
+    queryset = Notification.objects.all().order_by('-timestamp')
     permission_classes = [IsAuthenticated, IsNotificationRecipient]
 
     #get notifications for the current user

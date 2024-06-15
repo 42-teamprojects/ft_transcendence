@@ -2,6 +2,8 @@ import { config } from "../../config.js";
 import Router from "../../router/router.js";
 import { userState } from "../../state/userState.js";
 import { matchState } from "../../state/matchState.js";
+import { notificationState } from "../../state/notificationState.js";
+import { onlineTournamentState } from "../../state/onlineTournamentState.js";
 
 export default class Privatematchmaking extends HTMLElement {
     constructor() {
@@ -13,7 +15,7 @@ export default class Privatematchmaking extends HTMLElement {
         this.matchId = this.params.get('matchId');
     }
     
-    connectedCallback() {
+    async connectedCallback() {
         matchState.setupMatchMaking(null, null, this.matchId);
         this.user = userState.state.user;
         this.render();
@@ -28,12 +30,11 @@ export default class Privatematchmaking extends HTMLElement {
             let intervalId = setInterval(() => {    
                 this.text.textContent = `Starting in ${countdown}...`;
                 countdown--;
-                    
-                    if (countdown < 0) {
-                        matchState.closeMatchMakingConnection();
-                        Router.instance.navigate(`/online/1v1/game?id=${matchState.state.session.id}`);
-                        clearInterval(intervalId);
-                    }
+                if (countdown < 0) {
+                    matchState.closeMatchMakingConnection();
+                    Router.instance.navigate(`/online/1v1/game?id=${matchState.state.session.id}`);
+                    clearInterval(intervalId);
+                }
             }, 1000);
             // let btn = this.querySelector('.btn-primary');
             // btn.disabled = true;

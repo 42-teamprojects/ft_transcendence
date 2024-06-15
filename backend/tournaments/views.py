@@ -19,6 +19,10 @@ class TournamentViewSet(viewsets.ModelViewSet):
     @action(detail=False)
     def my_tournaments(self, request):
         return Response(TournamentSerializer(Tournament.objects.filter(participants=request.user, status='IP'), many=True).data, status=status.HTTP_200_OK)
+    
+    @action(detail=False) 
+    def my_past_tournaments(self, request):
+        return Response(TournamentSerializer(Tournament.objects.filter(participants=request.user, status='F'), many=True).data, status=status.HTTP_200_OK)
 
     def get_object(self):
         try:

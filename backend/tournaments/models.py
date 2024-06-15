@@ -72,7 +72,8 @@ class Tournament(models.Model):
                 'type': 'tournament_update',
                 'data': {
                     'type': 'TOURNAMENT_FULL',
-                    'message': 'All players have joined the tournament. Starting soon'
+                    'message': 'All players have joined the tournament. Starting soon',
+                    'tournament_id': self.id,
                 }
             }
         )
@@ -230,7 +231,8 @@ class Tournament(models.Model):
                     'type': 'tournament_update',
                     'data': {
                         'type': 'TOURNAMENT_STARTED',
-                        'message': 'Tournament has started.'
+                        'message': 'Tournament has started.',
+                        'tournament_id': self.id,
                     }
                 }
             )

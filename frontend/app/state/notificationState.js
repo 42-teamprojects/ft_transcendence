@@ -52,9 +52,9 @@ class NotificationState extends State {
                     case "MSG":
                         this.handleMessageNotification(notification);
                         break;
-                    // case "TRN":
-                    //     this.handleTournamentNotification(notification);
-                    //     break;
+                    case "TRN":
+                        this.handleTournamentNotification(notification);
+                        break;
                     case "PRQ":
                         this.handlePlayRequestNotification(notification);
                         break;
@@ -67,18 +67,7 @@ class NotificationState extends State {
                         friendState.getFriends();
                         break;
                     case "TOURNAMENT_UPDATE":
-                        if (notification.data.type === 'MATCH_STARTED') {
-                            const { tournament_id, match_id, message } = notification.data
-                            Toast.notify({
-                                type: "info",
-                                message: /*html*/ `
-                                    <p>${message}</p>
-                                    <br/>
-                                    <a is="c-link" class="font-bold spacing-1 uppercase text-secondary mt-2 text-sm" 
-                                    href="/online/tournament?tournamentId=${tournament_id}&matchId=${match_id}">Play</a>`,
-                            });
-                        }
-                        onlineTournamentState.getNotStartedTournaments();
+                        this.handleTournamentUpdates(notification);
                     default:
                         break;
                 }
@@ -135,6 +124,47 @@ class NotificationState extends State {
         });
     }
 
+    handleTournamentNotification(notification) {
+        if (notification.data.type === 'MATCH_STARTED') {
+            const { tournament_id, match_id, message } = notification.data
+            Toast.notify({
+                type: "info",
+                message: /*html*/ `
+                    <p>${message}</p>
+                    <br/>
+                    <a is="c-link" class="font-bold spacing-1 uppercase text-secondary mt-2 text-sm" 
+                    href="/online/tournament?tournamentId=${tournament_id}&matchId=${match_id}">Play</a>`,
+            });
+        }
+        else {
+            Toast.notify({
+                type: "info",
+                message: notification.data.message,
+            });
+        }
+    }
+
+    handleTournamentUpdates(notification) {
+        if (notification.data.type === 'MATCH_STARTED') {
+            const { tournament_id, match_id, message } = notification.data
+            Toast.notify({
+                type: "info",
+                message: /*html*/ `
+                    <p>${message}</p>
+                    <br/>
+                    <a is="c-link" class="font-bold spacing-1 uppercase text-secondary mt-2 text-sm" 
+                    href="/online/tournament?tournamentId=${tournament_id}&matchId=${match_id}">Play</a>`,
+            });
+        }
+        else if (notification.data.type === 'TOURNAMENT_CREATED') {
+            Toast.notify({
+                type: "info",
+                message: notification.data.message,
+            });
+        }
+        onlineTournamentState.getNotStartedTournaments();
+    }
+
     /* 
     Notification: 
         - type
@@ -142,21 +172,21 @@ class NotificationState extends State {
         - recipient
         - read -> default false
     */
-    async sendNotification(notification, updateState = true) {
+    async sendNotification(notification, updateState = true, saveInDatabase = true) {
         try {
             this.resetLoading();
-            if (!["REMOVE", "BLOCK", "UNBLOCK"].includes(notification.data.type) && notification.type !== "MSG" && notification.type !== "PRQ") {
+            if (saveInDatabase && !["REMOVE", "BLOCK", "UNBLOCK"].includes(notification.data.type) && notification.type !== "MSG" && notification.type !== "PRQ") {
                 console.log("saving in database")
                 const notif = await this.httpClient.post('notifications/', notification);
                 notification.id = notif.id;
             }
             // Send notification to the socket
             this.notificationSocket.send(this.socketId, notification);
-            if (updateState && !['NEW_STATUS', 'TOURNAMENT_UPDATE', 'MSG', 'PRQ'].includes(notification.type) 
-                && notification.recipient === userState.state.user.id 
-                && notification.data && !['REMOVE', 'BLOCK', 'UNBLOCK'].includes(notification.data.type)) {
-                this.setState({ notifications: [notification, ...this.state.notifications], loading: false });
-            }
+            // if (updateState && !['NEW_STATUS', 'TOURNAMENT_UPDATE', 'MSG', 'PRQ'].includes(notification.type) 
+            //     && notification.recipient === userState.state.user.id 
+            //     && notification.data && !['REMOVE', 'BLOCK', 'UNBLOCK'].includes(notification.data.type)) {
+            //     this.setState({ notifications: [notification, ...this.state.notifications], loading: false });
+            // }
         } catch (error) {
             console.error(error);
         }
@@ -193,7 +223,7 @@ class NotificationState extends State {
     async markAllAsRead() {
         try {
             this.resetLoading();
-            await this.httpClient.put('notifications/mark_all_as_read/');
+            await this.httpClient.post('notifications/mark_all_read/');
             const notifications = this.state.notifications.map((n) => {
                 n.read = true;
                 return n;

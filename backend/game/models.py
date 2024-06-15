@@ -10,7 +10,7 @@ class GameSession(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
-        return f"GameSession {self.id} for match {self.match.id}"
+        return f"GameSession {self.id} for match {self.match.id} tournament {self.match.tournament}"
 
     def delete(self, *args, **kwargs):
         if not self.match.tournament:
