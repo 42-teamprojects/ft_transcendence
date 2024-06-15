@@ -146,27 +146,6 @@ class MessageState extends State {
 			console.error(error);
 		}
 	}
-	//check if the last message that not mine is read
-	isLastMessageSeen(chatId) {
-		// const messages = this.state.messages[chatId];
-		// if (!messages) return;
-		// const lastMessage = messages[0];
-		// if (lastMessage.sender === userState.state.user.id) return true;
-		// if (lastMessage.sender !== userState.state.user.id && !lastMessage.is_seen) return false;
-		return true;
-	}
-
-	isSomeMessageUnseen() {
-		// const chats = chatState.state.chats;
-		// for (const chat of chats) {
-		// 	const messages = this.state.messages[chat.id];
-		// 	if (!messages) continue;
-		// 	const lastMessage = messages[0];
-		// 	if (lastMessage.sender === userState.state.user.id) continue;
-		// 	if (lastMessage.sender !== userState.state.user.id && !lastMessage.is_seen) return true;
-		// }
-		return false;
-	}
 
 	// {content: string, sender: id}
 	appendMessage(chatId, messageObject) {

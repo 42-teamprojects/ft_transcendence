@@ -5,8 +5,7 @@ import WebSocketManager from "../socket/WebSocketManager.js";
 import State from "./state.js";
 import Toast from "../components/comps/toast.js";
 import { userState } from "./userState.js";
-import { notificationState } from "./notificationState.js";
-import { onlineTournamentState } from "./onlineTournamentState.js";
+
 class MatchState extends State {
 	constructor() {
 		super({
@@ -39,8 +38,9 @@ class MatchState extends State {
 					this.playerLeft = true;
 
 					console.log("data i go  from socket : ", matchData);
-					if (matchData.winner_id === undefined || matchData.winner_id === "null")
+					if (matchData.winner_id === undefined || matchData.winner_id === "null") {
 						Toast.notify({ type: "warning", message: "Opponent left the match" });
+					}
                 	matchState.closeMatchConnection();
                 	Router.instance.navigate('/dashboard/home');
 				}

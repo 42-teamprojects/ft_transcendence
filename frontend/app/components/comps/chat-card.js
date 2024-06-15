@@ -46,15 +46,14 @@ export default class Chatcard extends HTMLElement {
 		this.render();
 	}
 	
-	disconnectedCallback() {}
+	disconnectedCallback() {
+		// Nothing to do here
+	}
 	
 	render() {
-		
-		this.isSeen = this.focus ? true : messageState.isLastMessageSeen(this.idAtt);
 		this.innerHTML = /*html*/ `
         <a is="c-link" href="/dashboard/chat/${this.idAtt}">
-		<div class="message-card ${this.isActive || this.isSeen === false ? "active" : ""}" style="position: relative">
-				${(this.isSeen === false) ? /*html*/`<div class="dot"></div>` : '' }
+		<div class="message-card ${this.isActive ? "active" : ""}" style="position: relative">
                 <img class="message-card__img" src="${this.imgAtt}" alt="user">
                 <div class="flex-col gap-2">
                     <div class="font-bold">${this.usernameAtt}</div>

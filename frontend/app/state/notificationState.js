@@ -5,7 +5,6 @@ import State from "./state.js"
 import { userState } from "./userState.js";
 import { config } from "../config.js";
 import Toast from "../components/comps/toast.js";
-import { truncate } from "../utils/utils.js";
 import { messageState } from "./messageState.js";
 import { friendState } from "./friendState.js";
 import { chatState } from "./chatState.js";
@@ -67,6 +66,7 @@ class NotificationState extends State {
                         break;
                     case "TOURNAMENT_UPDATE":
                         this.handleTournamentUpdates(notification);
+                        break;
                     default:
                         break;
                 }
@@ -96,7 +96,6 @@ class NotificationState extends State {
         if (!messageState.state.messages[notification.data.chat_id]) {
             messageState.getMessages(notification.data.chat_id);
         } 
-        // messageState.updateCardLastMessage(notification.data.chat_id, notification.data.message);
     }
 
     handleFriendAlertNotification(notification) {

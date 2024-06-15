@@ -144,7 +144,7 @@ class OnlineTournamentState extends State {
 
 	async startTournament(id) {
 		try {
-			const result = await this.httpClient.post(`tournaments/${id}/start/`);
+			await this.httpClient.post(`tournaments/${id}/start/`);
 			await this.getInProgressTournaments();
 			this.state = {
 				tournaments: this.state.tournaments.filter(tournament => tournament.id !== id),
@@ -158,7 +158,7 @@ class OnlineTournamentState extends State {
 
 	async joinTournament(id) {
 		try {
-			const result = await this.httpClient.post(`tournaments/${id}/join/`);
+			await this.httpClient.post(`tournaments/${id}/join/`);
 			await this.getNotStartedTournaments();
 		}
 		catch (error) {
@@ -179,7 +179,7 @@ class OnlineTournamentState extends State {
 
 	async leaveTournament(id) {
 		try {
-			const result = await this.httpClient.post(`tournaments/${id}/leave/`);
+			await this.httpClient.post(`tournaments/${id}/leave/`);
 			await this.getNotStartedTournaments();
 		}
 		catch (error) {
