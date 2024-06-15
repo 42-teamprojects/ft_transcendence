@@ -64,12 +64,12 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             )
         
     async def notification_message(self, event):
-        type = event['notification_type']
+        notification_type = event['notification_type']
         data = event['data']
         recipient = event['recipient']
 
         await self.send(text_data=json.dumps({
-            'type': type,
+            'type': notification_type,
             'id' : event['id'] if 'id' in event else None,
             'data': data,
             'recipient': recipient,

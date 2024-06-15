@@ -41,7 +41,7 @@ class RegisterView(GenericAPIView):
         user.avatar = avatar_path
         user.save()
         # Pass the user instance to send_verification
-        is_sent = send_verification(user)
+        send_verification(user)
         refresh_token, access_token = user.tokens().values()
 
         user.last_login = datetime.now()
@@ -67,7 +67,6 @@ class LoginView(TokenObtainPairView):
             access_token = response.data.get('access')
             refresh_token = response.data.get('refresh')
             two_factor_enabled = response.data.get('two_factor_auth_required')
-            last_2fa_login = response.data.get('last_2fa_login')
             username = response.data.get('username')
             
             if two_factor_enabled: #and (last_2fa_login is None or last_2fa_login < timezone.now() - timezone.timedelta(days=1)): # Delete access and refresh cookies

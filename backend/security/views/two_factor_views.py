@@ -27,7 +27,7 @@ class GetTwoFactorAuthView(APIView):
             os.makedirs(settings.MEDIA_ROOT + 'qrcodes')
         
         # Generate the QR code
-        qr = qrcode.make(otpauth_url).save(settings.MEDIA_ROOT + f'qrcodes/{request.user.username}-qr.png')        
+        qrcode.make(otpauth_url).save(settings.MEDIA_ROOT + f'qrcodes/{request.user.username}-qr.png')        
 
         return Response({
             'qr_code': f'{settings.MEDIA_URL}qrcodes/{request.user.username}-qr.png',
@@ -88,15 +88,7 @@ class DisableTwoFactorAuthView(APIView):
     permission_classes = [IsAuthenticated]
     
     def post(self, request):
-        # if not request.data.get('otp'):
-        #     return Response({'detail': 'OTP is required'}, status=status.HTTP_400_BAD_REQUEST)
-        
-        # totp = pyotp.TOTP(request.user.secret_key)
-
-        # if totp.verify(request.data['otp']):
         request.user.two_factor_enabled = False
         request.user.secret_key = ''
         request.user.save()
         return Response({'detail': 'Two-factor authentication is disabled'}, status=status.HTTP_200_OK)
-        # else:
-        #     return Response({'detail': 'Invalid OTP'}, status=status.HTTP_401_UNAUTHORIZED)

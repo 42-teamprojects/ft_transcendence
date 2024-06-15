@@ -97,8 +97,13 @@ class Match(models.Model):
     def assign_winner_to_next_round(self, winner):
         # Get all the matches in the next round
         next_round_group = math.ceil(self.group / 2)
-        next_round_match_number = 0 if self.round + 1 == self.tournament.total_rounds else (0 if self.group % 2 == 1 else 1)
-
+        if self.round + 1 == self.tournament.total_rounds:
+            next_round_match_number = 0  
+        elif self.group % 2 == 1:
+            next_round_match_number = 0  
+        else:
+            next_round_match_number = 1
+            
         next_match = Match.objects.filter(
             tournament=self.tournament, round=self.round + 1, group=next_round_group, match_number=next_round_match_number).first()
 

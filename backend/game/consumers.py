@@ -97,7 +97,7 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
             return False
         elif self.is_tournament:
             match = await sync_to_async(Match.objects.get)(pk=self.match_id)
-            if not match.is_player(self.user_id) and not match.status == "IP":
+            if not match.is_player(self.user_id) and match.status != "IP":
                 return False
         return True
     
@@ -163,6 +163,7 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
             await self.channel_layer.group_send(player2_group, {"type": "game_message", "data": {"type": "player_left"}})
     
     async def receive(self, text_data):
+        # No need for a recieve method in this consumer, so we just pass
         pass
 
     async def game_message(self, event):
@@ -281,13 +282,6 @@ class GameConsumer(AsyncWebsocketConsumer):
         data = event["data"]
         await self.send(text_data=json.dumps(data))
     
-    # @database_sync_to_async
-    # def update_score(self):
-    #     try:
-    #         return GameSession.objects.get(id=session_id)
-    #     except GameSession.DoesNotExist:
-    #         return None
-        
     @database_sync_to_async
     def get_game_session(self, session_id):
         try:
