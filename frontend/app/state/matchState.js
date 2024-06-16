@@ -24,7 +24,6 @@ class MatchState extends State {
 		if (!this.state.session) return;
 		const sessionId = this.state.session.id
 		if (this.matchSocket.sockets[sessionId]) return;
-
 		this.matchSocket.setupWebSocket(
 			sessionId,
 			// On message callback
@@ -73,6 +72,7 @@ class MatchState extends State {
 			this.matchMakingId,
 			// On message callback
 			async (event) => {
+				if (this.state.session) return;
 				// Parse the event data once and use it throughout
 				const eventData = JSON.parse(event.data);
 

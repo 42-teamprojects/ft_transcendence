@@ -7,7 +7,7 @@ export default class OAuthService {
     }
 
     async continueWithOAuth(provider) {
-        window.location.replace(config.rest_url + `oauth/login/${provider}/`);
+        window.location.replace(config.rest_url + `oauth/login/${provider}`);
     }
 
     async callbackOAuth(provider, code, state) {

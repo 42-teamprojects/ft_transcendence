@@ -13,7 +13,7 @@ export default class Onlinegameplay extends HTMLElement {
         this.match = matchState.state.match
         if (!this.match) {
             Router.instance.navigate('/dashboard/home');
-            Toast.instance.notify({ type: "error", message: "Action not allowed" }); 
+            Toast.notify({ type: "error", message: "Action not allowed" }); 
             return;
         }
         matchState.matchSetup();

@@ -3,7 +3,7 @@ version: "3"
 services:
   frontend:
     build:
-      context: .
+      context: ./frontend
       dockerfile: Dockerfile
     container_name: blitzpong-frontend
     ports:
@@ -15,14 +15,14 @@ services:
   backend:
     container_name: blitzpong-backend
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile
     restart: on-failure
     ports:
       - "8000:8000"
       - "8443:8443"
     volumes:
-      - .:/app
+      - ./backend/storage/:/app/storage/
     depends_on:
       - db
       - redis

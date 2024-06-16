@@ -39,7 +39,7 @@ export default class WebSocketManager {
         } = options;
 
         if (this.sockets[id]) return;
-
+        
         this.sockets[id] = new WebSocket(`${this.socketUrl}${id}/`);
         this.messageQueues[id] = []; // Initialize message queue
         this.sockets[id].onmessage = onMessage;

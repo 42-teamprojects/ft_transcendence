@@ -7,7 +7,7 @@ from pathlib import Path
 from datetime import timedelta
 
 PROJECT_NAME = "Blitzpong"
-FRONTEND_DOMAIN = "http://localhost:8080"
+FRONTEND_DOMAIN = "https://localhost"
 
 env = environ.Env(
     DEBUG=(bool, False)
@@ -243,7 +243,7 @@ SIMPLE_JWT = {
     # A string like "example.com", or None for standard domain cookie.
     'AUTH_COOKIE_DOMAIN': None,
     # Whether the auth cookies should be secure (https:// only).
-    'AUTH_COOKIE_SECURE': False, # Change to True 
+    'AUTH_COOKIE_SECURE': True, # Change to True 
     # Http only cookie flag.It's not fetch by javascript.
     'AUTH_COOKIE_HTTP_ONLY': True,
     'AUTH_COOKIE_PATH': '/',        # The path of the auth cookie.

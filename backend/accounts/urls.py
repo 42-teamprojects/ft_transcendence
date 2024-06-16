@@ -2,7 +2,7 @@ from django.urls import path
 from accounts.views.auth_views import JWTRefreshView, JWTVerifyView, LoginView, LogoutView, RegisterView
 from accounts.views.email_views import EmailVerificationResendView, EmailVerificationView
 from accounts.views.password_reset_views import ResetPasswordConfirmView, ResetPasswordRequestView
-from accounts.views.costum_views import CustomPaddleTypeView, CustomTableThemeView
+from accounts.views.custom_views import CustomPaddleTypeView, CustomTableThemeView
 
 urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
