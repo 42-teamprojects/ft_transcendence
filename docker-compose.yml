@@ -2,10 +2,10 @@ version: "3"
 
 services:
   frontend:
+    container_name: blitzpong-frontend
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: blitzpong-frontend
     ports:
       - "443:443"
     restart: on-failure
