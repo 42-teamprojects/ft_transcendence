@@ -18,9 +18,19 @@ export default class Onlinebrackets extends HTMLElement {
 		matches.forEach((match, index) => {
 			matchElements[index]?.setAttribute("match-id", match.id);
 		});
+
+		this.unsubscribe = this.tournamentState.subscribe(() => {
+			let matches = this.tournamentState.state.matches;
+			let matchElements = Array.from(this.querySelectorAll(`.col c-online-tournament-match`));
+			matches.forEach((match, index) => {
+				matchElements[index]?.setAttribute("match-id", match.id);
+			});
+		});
 	}
 
-	disconnectedCallback() {}
+	disconnectedCallback() {
+		this.unsubscribe();
+	}
 
 	render() {
 		let rounds = this.tournament.total_rounds; // Number of rounds is log2 of number of players

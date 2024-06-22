@@ -92,6 +92,18 @@ class Match(models.Model):
                 self.tournament.winner.user_stats.save()
                 self.tournament.status = 'F'
                 self.tournament.save()
+                channel_layer = get_channel_layer()
+                async_to_sync(channel_layer.group_send)(
+                    str(self.tournament.id), 
+                    {
+                        'type': 'tournament_update',
+                        'data': {
+                            'type': 'TOURNAMENT_UPDATE',
+                            'message': f'{winner.username} have won the tournament.',
+                            'tournament_id': self.tournament.id,
+                        }
+                    }
+                )
         self.save()
 
     def assign_winner_to_next_round(self, winner):
@@ -113,6 +125,18 @@ class Match(models.Model):
             elif self.match_number == 1:
                 next_match.player2 = winner
             next_match.save()
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                str(self.tournament.id), 
+                {
+                    'type': 'tournament_update',
+                    'data': {
+                        'type': 'TOURNAMENT_UPDATE',
+                        'message': 'Winner has been assigned to the next round',
+                        'tournament_id': self.tournament.id,
+                    }
+                }
+            )
 
     def start(self):
         if not self.tournament:

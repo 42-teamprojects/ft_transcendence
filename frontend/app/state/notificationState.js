@@ -162,6 +162,8 @@ class NotificationState extends State {
             });
         }
         onlineTournamentState.getNotStartedTournaments();
+        // onlineTournamentState.getInProgressTournaments();
+        // onlineTournamentState.getMyInProgressMatch();
     }
 
     /* 

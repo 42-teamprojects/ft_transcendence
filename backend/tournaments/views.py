@@ -44,7 +44,7 @@ class TournamentViewSet(viewsets.ModelViewSet):
             if request.user != tournament.organizer:
                 return Response({'detail': 'You are not the organizer of this tournament.'}, status=status.HTTP_403_FORBIDDEN)
         except serializers.ValidationError as e:
-            return Response(e, status=status.HTTP_404_NOT_FOUND)
+            return Response({'detail' : 'Tournament not found'}, status=status.HTTP_404_NOT_FOUND)
         try:
             tournament.start()
         except ValidationError as e:
@@ -56,7 +56,7 @@ class TournamentViewSet(viewsets.ModelViewSet):
         try:
             tournament = self.get_object()
         except serializers.ValidationError as e:
-            return Response(e, status=status.HTTP_404_NOT_FOUND)
+            return Response({'detail' : 'Tournament not found'}, status=status.HTTP_404_NOT_FOUND)
         try:
             tournament.add_participant(request.user)
         except ValidationError as e:
@@ -90,7 +90,7 @@ class TournamentViewSet(viewsets.ModelViewSet):
             if tournament.status == 'NS':
                 return Response({'detail': 'Tournament not started yet.'}, status=status.HTTP_400_BAD_REQUEST)
         except serializers.ValidationError as e:
-            return Response(e, status=status.HTTP_404_NOT_FOUND)
+            return Response({'detail' : 'Tournament not found'}, status=status.HTTP_404_NOT_FOUND)
         
         matches = tournament.matches.all().order_by('round', 'group', 'match_number')
         return Response(MatchSerializer(matches, many=True).data, status=status.HTTP_200_OK)
@@ -113,7 +113,7 @@ class TournamentViewSet(viewsets.ModelViewSet):
         try:
             tournament = self.get_object()
         except serializers.ValidationError as e:
-            return Response(e, status=status.HTTP_404_NOT_FOUND)
+            return Response({'detail' : 'Tournament not found'}, status=status.HTTP_404_NOT_FOUND)
         try:
             tournament.remove_participant(request.user)
         except ValidationError as e:
@@ -135,7 +135,7 @@ class TournamentMatchViewSet(viewsets.ModelViewSet):
         try:
             match = self.get_object()
         except serializers.ValidationError as e:
-            return Response(e, status=status.HTTP_404_NOT_FOUND)
+            return Response({'detail' : 'Tournament not found'}, status=status.HTTP_404_NOT_FOUND)
         try:
             match.set_winner(request.user)
         except ValidationError as e:

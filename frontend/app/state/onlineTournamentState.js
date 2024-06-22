@@ -42,6 +42,12 @@ class OnlineTournamentState extends State {
 						type: "info",
 						message: /*html*/ `<p>${recieved.data.message}</p><br/><a is="c-link" class="font-bold spacing-1 uppercase text-secondary mt-2 text-sm" href="/dashboard/tournaments/qualifications/${tournamentId}" class="mt-2">View brackets</a>`,
 					});
+				} else if (recieved.data.type === "TOURNAMENT_UPDATE") {
+					Toast.notify({
+						type: "info",
+						message: recieved.data.message,
+					});
+					await this.getMatches(recieved.data.tournament_id);
 				} else {
 					Toast.notify({ message: recieved.data.message, type: "info" });
 				}
@@ -56,6 +62,7 @@ class OnlineTournamentState extends State {
 			type: "info",
 			message: /*html*/ `<p>Tournament match started, join now!!!</p><br/><a is="c-link" class="font-bold spacing-1 uppercase text-secondary mt-2 text-sm" href="/dashboard/tournaments/qualifications/${tournamentId}" class="mt-2">Join match</a>`,
 		});
+		this.getMyInProgressMatch();
 	}
 
 	async createTournament(type) {
