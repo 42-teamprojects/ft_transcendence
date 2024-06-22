@@ -21,11 +21,6 @@ export default class Notificationdropdown extends HTMLElement {
 	}
 
 	addEventListeners() {
-		// this.dropdownButton.addEventListener("mouseleave", () => {
-		// 	setTimeout(() => {
-        //         this.dropdownContent.classList.remove("show-dropdown");
-        //     }, 800);
-		// });
 		this.dropdownButton.addEventListener("mouseover", async () => {
 			await notificationState.getNotifications();
 			this.instertNotifications();
@@ -75,14 +70,6 @@ export default class Notificationdropdown extends HTMLElement {
 		const notificationList = this.querySelector(".notification__list");
 		notificationList.innerHTML = "";
 		const unreadNotifications = notificationState.state.notifications.filter((n) => !n.read);
-		// prevent duplicates from the same type and the same sender
-		const uniqueNotifications = [];
-		unreadNotifications.forEach((notification) => {
-			const isUnique = uniqueNotifications.find((n) => n.type === notification.type && n.data.sender_name === notification.data.sender_name);
-			if (!isUnique) {
-				uniqueNotifications.push(notification);
-			}
-		});
 
 		if (unreadNotifications.length === 0) {
 			notificationList.innerHTML = /*html*/ `
@@ -92,7 +79,7 @@ export default class Notificationdropdown extends HTMLElement {
 			`;
 			return;
 		}
-		const notifications = uniqueNotifications.slice(0, 4).map((notification) => {
+		const notifications = unreadNotifications.slice(0, 4).map((notification) => {
 			if (notification.type === "MSG") {
 				return /*html*/ `
 					<c-notification notification-id="${notification.id}" type="MSG" username="${notification.data.sender_name}" user-avatar="${config.backend_domain}${notification.data.sender_avatar}" chat-id="${notification.data.chat_id}"></c-notification>
