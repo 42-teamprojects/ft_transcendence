@@ -161,6 +161,12 @@ class NotificationState extends State {
                 message: notification.data.message,
             });
         }
+        else if (notification.data.type === 'TOURNAMENT_CANCELLED') {
+            Toast.notify({
+                type: "info",
+                message: notification.data.message,
+            });
+        }
         onlineTournamentState.getNotStartedTournaments();
         // onlineTournamentState.getInProgressTournaments();
         // onlineTournamentState.getMyInProgressMatch();

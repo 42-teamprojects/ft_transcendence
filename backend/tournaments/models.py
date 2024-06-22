@@ -144,6 +144,16 @@ class Tournament(models.Model):
                 }
             }
         )
+        async_to_sync(channel_layer.group_send)(
+            "all_users", 
+            {
+                'type': 'tournament_update',
+                'data': {
+                    'type': 'TOURNAMENT_UPDATE',
+                    'message': 'A new player has joined a tournament.',
+                }
+            }
+        )
 
         if self.participants.count() == int(self.type):
             self.start()
@@ -208,6 +218,16 @@ class Tournament(models.Model):
                 'data': {
                     'type': 'PARTICIPANT_LEFT',
                     'message': f'{user.username} has left the tournament.',
+                }
+            }
+        )
+        async_to_sync(channel_layer.group_send)(
+            "all_users", 
+            {
+                'type': 'tournament_update',
+                'data': {
+                    'type': 'TOURNAMENT_UPDATE',
+                    'message': 'A player has left a tournament.',
                 }
             }
         )

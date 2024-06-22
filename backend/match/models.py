@@ -42,7 +42,7 @@ class Match(models.Model):
         super().save(*args, **kwargs) 
         if self.tournament and self.player1 and self.player2 and self.status == 'NS' and self.tournament.status == 'IP' and self.round != 1:
             self.start()
-            Timer(5, self.start_next_match).start()
+            self.start_next_match()
             
     def start_next_match(self):
         channel_layer = get_channel_layer()
@@ -50,6 +50,7 @@ class Match(models.Model):
             
             notification_data = {
                 'type': 'notification_message',
+                'notification_type': 'TRN',
                 'data': {
                     'type': 'MATCH_STARTED',
                     'link': '/online/tournament?tournamentId=' + str(self.tournament.id) + '&matchId=' + str(self.id),
