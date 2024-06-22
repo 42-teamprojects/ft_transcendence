@@ -73,7 +73,7 @@ class NotificationState extends State {
             },
         {
             onOpen: () => {
-                console.log(`WebSocket connection opened for id: ${this.socketId}`);
+                // console.log(`WebSocket connection opened for id: ${this.socketId}`);
                 this.notificationSocket.send(this.socketId, {
                     type: "NEW_STATUS",
                     status: 'ON'
@@ -175,7 +175,6 @@ class NotificationState extends State {
         try {
             this.resetLoading();
             if (saveInDatabase && !["REMOVE", "BLOCK", "UNBLOCK"].includes(notification.data.type) && notification.type !== "MSG" && notification.type !== "PRQ") {
-                console.log("saving in database")
                 const notif = await this.httpClient.post('notifications/', notification);
                 notification.id = notif.id;
             }

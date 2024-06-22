@@ -235,9 +235,9 @@ class GameConsumer(AsyncWebsocketConsumer):
             try:
                 await sync_to_async(match.set_winner_by_id)(winner_id)
             except Exception as e:
-                print("eroorr: ", e, flush=True)
+                print("erorr: ", e, flush=True)
         else:
-            print("winner_id", winner_id, flush=True)
+            pass
     
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)

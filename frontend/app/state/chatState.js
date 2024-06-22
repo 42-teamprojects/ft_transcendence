@@ -46,7 +46,7 @@ class ChatState extends State {
 				await messageState.getMessages(chat.id);
 			});
 			this.setState({ chats, loading: false});
-			console.log("Chats", chats)
+			// console.log("Chats", chats)
 			this.chatsFetched = true;
 		} catch (error) {
 			this.setState({ loading: false});

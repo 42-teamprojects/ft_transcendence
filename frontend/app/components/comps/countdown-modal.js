@@ -15,7 +15,6 @@ export default class Countdownmodel extends HTMLElement {
 	}
 
 	disconnectedCallback() {
-        console.log("deleting modal");
         clearInterval(this.intervalId);
     }
 

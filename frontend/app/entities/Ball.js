@@ -90,8 +90,7 @@ export default class Ball {
     increaseSpeed = () => {
         if (this.moveX > MAX_SPEED || this.moveY > MAX_SPEED) return;
         this.moveX < 0 ? this.moveX -= SPEED_INCREASE_FACTOR : this.moveX += SPEED_INCREASE_FACTOR;
-        this.moveY < 0 ? this.moveY -= SPEED_INCREASE_FACTOR : this.moveY += SPEED_INCREASE_FACTOR;
-        console.log(this.moveX, this.moveY)
+        this.moveY < 0 ? this.moveY -= SPEED_INCREASE_FACTOR : this.moveY += SPEED_INCREASE_FACTOR; 
     }
     
     reset = (table) => {

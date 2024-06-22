@@ -54,11 +54,6 @@ export default class Friendslistmodal extends HTMLElement {
 
     this.unsubscribe = friendState.subscribe(() => {
       this.querySelector(".friends-list").innerHTML = this.getFriendsList();
-      this.querySelectorAll(".btn-link").forEach((btn) => {
-        btn.addEventListener("click", async (e) => {
-          await this.unblockFriend(e);
-        });
-      });
     });
 
     await friendState.getFriends();

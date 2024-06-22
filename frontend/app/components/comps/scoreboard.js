@@ -29,6 +29,16 @@ export default class Onlinescoreboard extends HTMLElement {
     render() {
 
         this.innerHTML = /*html*/`
+        <div class="flex justify-between px-8 py-4 text-stroke">
+            <p>
+                <span><span class="font-bold">W</span> move up</span>,
+                <span><span class="font-bold">S</span> move down</span>
+            </p>
+            <p>
+                <span><span class="font-bold">&#8593;</span> move up</span>,
+                <span><span class="font-bold">&#8595;</span> move down</span>
+            </p>
+        </div>
         <div class="scoreboard">
             <div class="middleBox"></div>
             <div class="leftBox"></div>

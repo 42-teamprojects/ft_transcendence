@@ -19,10 +19,11 @@ export default class Matchmaking extends HTMLElement {
             this.matchData = matchState.state.match;
             this.gameSession = matchState.state.session;
             if (!this.gameSession) {
+                Router.instance.navigate('/dashboard/home');
                 throw new Error("Game session not found");
             }
             this.opponent = matchState.getOpponent(this.matchData)
-            console.log("match data", this.matchData);
+            // console.log("match data", this.matchData);
             this.render();
             this.text = document.querySelector('.starting');
             let countdown = 3;

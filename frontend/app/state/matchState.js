@@ -30,13 +30,13 @@ class MatchState extends State {
 			async (event) => {
 				const matchData = JSON.parse(event.data);
 				if (matchData.type === "game_started") {
-					console.log("game started");
+					// console.log("game started");
 					this.is_ready = true;
 				}
 				if (matchData.type === "player_left") {
 					this.playerLeft = true;
 
-					console.log("data i go  from socket : ", matchData);
+					// console.log("data i go  from socket : ", matchData);
 					if (matchData.winner_id === undefined || matchData.winner_id === "null") {
 						Toast.notify({ type: "warning", message: "Opponent left the match" });
 					}
@@ -44,13 +44,13 @@ class MatchState extends State {
                 	Router.instance.navigate('/dashboard/home');
 				}
 				if (matchData.type === "score_update") {
-					console.log("data i got from socket : ", matchData);	
+					// console.log("data i got from socket : ", matchData);	
 				}
 				this.setState({ game: matchData });
 			},
 			{
 				onOpen: () => {
-					console.log("user connected");
+					// console.log("user connected");
 				}
 			}
 		);
@@ -78,7 +78,7 @@ class MatchState extends State {
 
 				// if (eventData && eventData.data && eventData.data.game_session_id) {
 				const sessionId = eventData.data.game_session_id;
-				console.log("session id", sessionId);
+				// console.log("session id", sessionId);
 				await this.getGameSession(sessionId);
 				// }
 			},

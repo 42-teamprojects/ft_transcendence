@@ -14,7 +14,7 @@ export default class Tournamentgame extends HTMLElement {
             Router.instance.navigate('/local/tournament')
             return;
         }
-        console.log(this.match)
+        // console.log(this.match)
     }
 
     connectedCallback() {

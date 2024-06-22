@@ -134,7 +134,7 @@ class MessageState extends State {
 	// mark message as read all messages to seen
 	async markMessageAsRead(chatId) {
 		if (!this.state.messages[chatId]) return;
-		console.log(chatState.state.chats);
+		// console.log(chatState.state.chats);
 		this.state.messages[chatId].forEach((message) => {
 			if (!message.is_seen && message.sender !== userState.state.user.id) {
 				message.is_seen = true;

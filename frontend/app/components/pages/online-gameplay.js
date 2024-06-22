@@ -25,7 +25,7 @@ export default class Onlinegameplay extends HTMLElement {
     }
     async handleGameOver(e) {
         const { winner } = e.detail;
-        console.log(winner);
+        // console.log(winner);
         matchState.setWinner(winner);
         const modal = document.createElement('c-online-gameover-modal');
         //get winer name

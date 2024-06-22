@@ -13,7 +13,7 @@ export default class Gameplay extends HTMLElement {
             Router.instance.navigate('/local/1v1')
             return;
         }
-        console.log(this.match)
+        // console.log(this.match)
     }
 
     connectedCallback() {

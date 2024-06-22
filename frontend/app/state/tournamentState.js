@@ -28,7 +28,6 @@ class TournamentState extends State {
 	}
 
 	finishTournament(winner) {
-		console.log("Tournament finished with winner: ", winner);
 		this.setState({ tournamentFinished: true, tournamentWinner: winner });
 	}
 

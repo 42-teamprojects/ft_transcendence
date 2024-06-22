@@ -280,7 +280,6 @@ export default class OnlinePongTable extends HTMLElement {
 		}
 
 		if (scored) {
-			console.log("resseting game", this.user.id);
 			this.resetGame();
 			if (!this.isGameOver) {
 				this.dispatchEvent(new CustomEvent("scored"));

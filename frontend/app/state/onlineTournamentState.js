@@ -75,7 +75,6 @@ class OnlineTournamentState extends State {
 			});
 		}
 		catch (error) {
-			console.log(error)
 			Toast.notify({ message: error.detail, type: "error" })
 		}
 	
@@ -151,7 +150,6 @@ class OnlineTournamentState extends State {
 			};
 		}
 		catch (error) {
-			console.log(error);
 			Toast.notify({ message: error.detail, type: "error" })
 		}
 	}
@@ -183,7 +181,6 @@ class OnlineTournamentState extends State {
 			await this.getNotStartedTournaments();
 		}
 		catch (error) {
-			console.log(error);
 			Toast.notify({ message: error.detail, type: "error" })
 		}
 	}
@@ -212,7 +209,6 @@ class OnlineTournamentState extends State {
 			const myTournaments = await this.httpClient.get(`tournaments/my_past_tournaments/`)
 			return myTournaments;
 		} catch (error) {
-			console.log(error)
 			return [];
 		}
 	}
