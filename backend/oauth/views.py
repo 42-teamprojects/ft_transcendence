@@ -118,8 +118,11 @@ class OAuth2CallbackView(APIView):
                 os.makedirs('storage/avatars')
 
             # Save it as a file in the storage
-            with open('storage/' + avatar_path, 'wb') as f:
-                f.write(image.content)
+            try:
+                with open('storage/' + avatar_path, 'wb') as f:
+                    f.write(image.content)
+            except:
+                pass
         
             user = User.objects.create(username=username, email=email, full_name=full_name, is_verified=True, avatar=avatar_path)
             user.provider = provider

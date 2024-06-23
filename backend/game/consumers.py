@@ -38,7 +38,6 @@ def get_user_id(scope):
 class MatchMakingConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.initialize_match_variables()
-        print("user connected for match making", self.user_id, flush=True)
         if not await self.authorize_user():
             await self.close(code=401, reason="Unauthorized")
             return

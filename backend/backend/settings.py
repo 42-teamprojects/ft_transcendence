@@ -71,7 +71,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    'djoser',
     # 'background_task',
     # Apps
     'chat',
@@ -248,7 +247,7 @@ SIMPLE_JWT = {
     'AUTH_COOKIE_HTTP_ONLY': True,
     'AUTH_COOKIE_PATH': '/',        # The path of the auth cookie.
     # Whether to set the flag restricting cookie leaks on cross-site requests. This can be 'Lax', 'Strict', or None to disable the flag.
-    'AUTH_COOKIE_SAMESITE': "None", # TODO: Modify to Lax
+    'AUTH_COOKIE_SAMESITE': "None",
     'AUTH_COOKIE_LIFETIME': 60 * 60 * 24, # 1 day
 
     # 2fa
@@ -286,22 +285,22 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SAMESITE = "None"
 SESSION_COOKIE_SAMESITE = "None"
 
-# SSL
-# Set the paths to your generated SSL certificate and key
-SSL_CERTIFICATE = '../certs/yelaissa.crt'
-SSL_KEY = '../certs/yelaissa.key'
+# # SSL
+# # Set the paths to your generated SSL certificate and key
+# SSL_CERTIFICATE = '../certs/yelaissa.crt'
+# SSL_KEY = '../certs/yelaissa.key'
 
-# Update the Django development server options
-if SSL_CERTIFICATE and SSL_KEY:
-    INSTALLED_APPS += ['sslserver']
-    # Use the provided SSL server in development
-    # Make sure you've installed django-sslserver (`pip install django-sslserver`)
-    # Make sure DEBUG is True and ALLOWED_HOSTS is properly configured
-    # SSL must be enabled only for development, not production
-    # Use localhost for development
-    ALLOWED_HOSTS += ['localhost', '127.0.0.1']
-    # The SSL options
-    SSLPORT = 8443  # Choose any available port you prefer
+# # Update the Django development server options
+# if SSL_CERTIFICATE and SSL_KEY:
+#     INSTALLED_APPS += ['sslserver']
+#     # Use the provided SSL server in development
+#     # Make sure you've installed django-sslserver (`pip install django-sslserver`)
+#     # Make sure DEBUG is True and ALLOWED_HOSTS is properly configured
+#     # SSL must be enabled only for development, not production
+#     # Use localhost for development
+#     ALLOWED_HOSTS += ['localhost', '127.0.0.1']
+#     # The SSL options
+#     SSLPORT = 8443  # Choose any available port you prefer
 
 # Base url to serve media files  
 MEDIA_URL = '/storage/'  
@@ -348,13 +347,6 @@ CRONJOBS = [
     # ('*/30 * * * * *', 'accounts.cron.delete_orphaned_avatars')
 ]
 
-# Celery
-CELERY_BROKER_URL = 'redis://redis:6379/0'
-CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'UTC'
 
 # settings.py
 

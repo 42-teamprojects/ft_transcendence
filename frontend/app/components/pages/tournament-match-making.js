@@ -5,7 +5,7 @@ import { matchState } from "../../state/matchState.js";
 import { notificationState } from "../../state/notificationState.js";
 import { onlineTournamentState } from "../../state/onlineTournamentState.js";
 
-export default class Privatematchmaking extends HTMLElement {
+export default class Tournamentmatchmaking extends HTMLElement {
     constructor() {
         super();
         this.user = userState.state.user;
@@ -77,4 +77,4 @@ export default class Privatematchmaking extends HTMLElement {
     }
 }
 
-customElements.define('p-privatematchmaking', Privatematchmaking);
+customElements.define('p-tournament-match-making', Tournamentmatchmaking);

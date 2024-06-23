@@ -9,7 +9,6 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from djoser.social.views import ProviderAuthView
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -20,6 +19,8 @@ from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.tokens import UntypedToken
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from ..models import User
+from datetime import timedelta
+from django.conf import settings
 
 # Register View
 class RegisterView(GenericAPIView):
@@ -135,20 +136,18 @@ class LogoutView(APIView):
     permission_classes = [AllowAny]
     def post(self, request, *args, **kwargs):
         response = Response(status=status.HTTP_204_NO_CONTENT)
-        response.delete_cookie('access')
-        response.delete_cookie('refresh')
-
+        response.delete_cookie(settings.SIMPLE_JWT['AUTH_COOKIE'])
+        response.delete_cookie(settings.SIMPLE_JWT['AUTH_COOKIE_REFRESH'])
+        past_date = datetime.now() - timedelta(days=1)
+        
+        response.set_cookie(
+            key=settings.SIMPLE_JWT['AUTH_COOKIE'],
+            value='',
+            expires=past_date)
+        response.set_cookie(
+            key=settings.SIMPLE_JWT['AUTH_COOKIE_REFRESH'],
+            value='',
+            expires=past_date)
         return response
 
-class CustomProviderAuthView(ProviderAuthView):
-    def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
-
-        if response.status_code == 201:
-            access_token = response.data.get('access')
-            refresh_token = response.data.get('refresh')
-
-            response = add_cookies(response, access=access_token, refresh=refresh_token)
-
-        return response
 

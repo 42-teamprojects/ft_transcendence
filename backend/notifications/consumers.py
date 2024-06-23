@@ -27,7 +27,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             self.group_name,
             self.channel_name
         )
-        print('disconnected', flush=True)
         await self.set_offline_status()
 
 

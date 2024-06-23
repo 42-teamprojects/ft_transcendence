@@ -62,7 +62,6 @@ export default class Profile extends HTMLElement {
 				</div>
 			</div>
 		`;
-		this.getActions();
 	}
 
 	getProfileData() {
@@ -93,7 +92,7 @@ export default class Profile extends HTMLElement {
 						</h3>
 					</div>
 					<p>Joined ${formatDate(this.user?.date_joined)}</p>
-					<div class="profile-user-actions flex gap-6"></div>
+					<div class="profile-user-actions flex gap-6">${this.getActions()}</div>
 				</div>
 			</section>
 		`;
@@ -180,7 +179,9 @@ export default class Profile extends HTMLElement {
 			}
 		});
 		this.unsubscribeFriends = friendState.subscribe(() => {
-			this.getActions();
+			if (this.querySelector(".profile-user-actions")) {
+				this.querySelector(".profile-user-actions").innerHTML = this.getActions();
+			}
 			this.addEventListeners();
 		});
 		this.unsubscribeNotification = notificationState.subscribe(async () => {
@@ -192,9 +193,7 @@ export default class Profile extends HTMLElement {
 	}
 
 	getActions() {
-		const actions = this.querySelector(".profile-user-actions");
-		if (!actions) return;
-		actions.innerHTML = /*html*/ `
+		return /*html*/ `
 			${this.isMine ? `<a is="c-link" href="/dashboard/settings" class="text-secondary btn-link">Edit Profile</a>` : ""}
 			${!this.isMine && !friendState.alreadyFriends(this.user?.id) ? `<p id="add-friend" class="text-secondary btn-link"><i class="fa-solid fa-plus mr-2"></i>Add friend</p>` : "" }
 			${!this.isMine ? `<p id="chat-friend" class="cursor-pointer text-secondary btn-link"><i class="fa-regular fa-comment mr-2"></i>Chat</p>` : "" }

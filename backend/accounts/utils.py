@@ -80,6 +80,10 @@ def get_default_avatar(username):
     image_url = f'https://api.dicebear.com/8.x/thumbs/svg?seed={username}'
     image = requests.get(image_url)
     avatar_path = f'avatars/{username}.svg'
-    with open('storage/' + avatar_path, 'wb') as f:
-        f.write(image.content)
+
+    try:
+        with open('storage/' + avatar_path, 'wb') as f:
+            f.write(image.content)
+    except:
+        pass
     return avatar_path
