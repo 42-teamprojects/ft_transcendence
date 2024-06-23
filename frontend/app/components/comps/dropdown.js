@@ -1,6 +1,8 @@
 import HttpClient from "../../http/httpClient.js";
 import Router from "../../router/router.js";
 import { chatState } from "../../state/chatState.js";
+import { notificationState } from "../../state/notificationState.js";
+import { userState } from "../../state/userState.js";
 
 export default class Dropdown extends HTMLElement {
 	constructor() {
@@ -23,6 +25,10 @@ export default class Dropdown extends HTMLElement {
 		this.dropdownChat = this.querySelector("#dropdown-chat");
 
 		this.dropdownChat.addEventListener("click", this.handleChatClick.bind(this));
+
+		this.dropdownPlay = this.querySelector("#dropdown-play");
+
+		this.dropdownPlay.addEventListener("click", this.handlePlayClick.bind(this));
 	}
 
 	async handleChatClick() {
@@ -45,6 +51,21 @@ export default class Dropdown extends HTMLElement {
 				searchModal.hide();
 			}
 		}, 100);
+	}
+
+	handlePlayClick() {
+		const inviteLink = `/online/1v1/private?p1=${userState.state.user.id}&p2=${this.userId}`
+		Router.instance.navigate(inviteLink);
+		const notification = {
+			type: "PRQ",
+			data: {
+				link: inviteLink,
+				sender_name: userState.state.user.username,
+				sender_id: userState.state.user.id,
+			},
+			recipient: +this.userId,
+		}
+		notificationState.sendNotification(notification);
 	}
 
 	addEventListeners() {
@@ -83,7 +104,7 @@ export default class Dropdown extends HTMLElement {
 						<span class="dropdown__name">Chat</span>
 					</li>
 
-					<li class="dropdown__item">
+					<li class="dropdown__item" id="dropdown-play">
 						<i class="fa-solid fa-gamepad dropdown__icon"></i>
 						<span class="dropdown__name">Play</span>
 					</li>

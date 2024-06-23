@@ -24,7 +24,7 @@ export default class Matchhistory extends HTMLElement {
         this.innerHTML = /*html*/`
         <div class="match-history__wrapper">
             <div class="match-history__player">
-                <img src="${config.backend_domain}${this.myAvatar}" alt="" />
+                <img src="${config.backend_domain}${this.myAvatar}" alt="" class="object-cover"/>
                 <div class="match-history__player-details">
                     <h3>${truncate(this.player1, 30)}</h3>
                     <h4 class="${this.isWinner ? 'text-success' : 'text-danger'}">${this.score1}</h4>
@@ -35,7 +35,7 @@ export default class Matchhistory extends HTMLElement {
                 <i class="fa fa-check text-success"></i>
             </div>
             <div class="match-history__player">
-                <img src="${config.backend_domain}${this.theirAvatar}" alt="" />
+                <img src="${config.backend_domain}${this.theirAvatar}" alt="" class="object-cover"/>
                 <div class="match-history__player-details">
                     <h3>${truncate(this.player2, 30)}</h3>
                     <h4 class="${this.isWinner ? 'text-danger' : 'text-success'}">${this.score2}</h4>

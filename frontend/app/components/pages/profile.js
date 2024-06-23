@@ -49,20 +49,12 @@ export default class Profile extends HTMLElement {
 	}
 
 	render() {
-		const avatar = this.user.avatar
-			? config.backend_domain + this.user.avatar
-			: `https://api.dicebear.com/8.x/thumbs/svg?seed=${this.user.username}`;
-
 		this.innerHTML = /*html*/ `
 			${this.isMine ? `<c-upload-avatar-modal></c-upload-avatar-modal>` : ""}
 			<c-modal></c-modal>
 			<div class="dashboard-content">
-				<main>
-					${!this.isMine ? `<a is="c-link" href="/dashboard/profile" class="text-secondary btn-link"><i class="fa-solid fa-angle-left mr-2"></i> Back to my profile</a>` : "" }
-					${this.renderProfileInfo(avatar)}
-					<hr class="divider">
-					${this.renderProfileStats()}
-					${this.renderMatchesHistory()}
+				<main id="profile-content">
+					${this.getProfileData()}
 				</main>
 				<div class="widgets flex-col-center gap-5">
 					<c-playerresources></c-playerresources>
@@ -71,6 +63,19 @@ export default class Profile extends HTMLElement {
 			</div>
 		`;
 		this.getActions();
+	}
+
+	getProfileData() {
+		const avatar = this.user.avatar
+			? config.backend_domain + this.user.avatar
+			: `https://api.dicebear.com/8.x/thumbs/svg?seed=${this.user.username}`;
+		return /*html*/`
+		${!this.isMine ? `<a is="c-link" href="/dashboard/profile" class="text-secondary btn-link"><i class="fa-solid fa-angle-left mr-2"></i> Back to my profile</a>` : "" }
+		${this.renderProfileInfo(avatar)}
+		<hr class="divider">
+		${this.renderProfileStats()}
+		${this.renderMatchesHistory()}
+		`
 	}
 
 	renderProfileInfo(avatar) {
@@ -170,7 +175,9 @@ export default class Profile extends HTMLElement {
 	setupSubscriptions() {
 		this.unsubscribe = userState.subscribe(() => {
 			this.user = userState.state.user;
-			if (this.user) this.render();
+			if (this.user) {
+				this.querySelector("#profile-content").innerHTML = this.getProfileData();
+			}
 		});
 		this.unsubscribeFriends = friendState.subscribe(() => {
 			this.getActions();
