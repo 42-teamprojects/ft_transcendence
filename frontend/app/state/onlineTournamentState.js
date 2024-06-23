@@ -48,6 +48,7 @@ class OnlineTournamentState extends State {
 						message: recieved.data.message,
 					});
 					await this.getMatches(recieved.data.tournament_id);
+					await this.getMyInProgressMatch();
 				} else {
 					Toast.notify({ message: recieved.data.message, type: "info" });
 				}
@@ -186,6 +187,7 @@ class OnlineTournamentState extends State {
 		try {
 			await this.httpClient.post(`tournaments/${id}/leave/`);
 			await this.getNotStartedTournaments();
+			this.webSocketManager.closeConnection(this.socketId);
 		}
 		catch (error) {
 			Toast.notify({ message: error.detail, type: "error" })

@@ -30,13 +30,15 @@ def get_user_id(scope):
     return UntypedToken(access_token).payload['user_id']
 
 
+
+
 """ 
     MatchMakingConsumer
 """
 class MatchMakingConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.initialize_match_variables()
-        
+        print("user connected for match making", self.user_id, flush=True)
         if not await self.authorize_user():
             await self.close(code=401, reason="Unauthorized")
             return
@@ -149,10 +151,6 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
     
     async def disconnect(self, close_code):
         await self.delete_game_session()
-        await self.channel_layer.group_discard(
-            f"player_{self.user_id}",
-            self.channel_name
-        )
         is_vacant = await sync_to_async(self.get_vacant_session)()
         if not is_vacant:
             player1_id = await sync_to_async(self.get_player1_id)()
@@ -161,6 +159,10 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
             player2_group = f"player_{player2_id}"
             await self.channel_layer.group_send(player1_group, {"type": "game_message", "data": {"type": "player_left"}})
             await self.channel_layer.group_send(player2_group, {"type": "game_message", "data": {"type": "player_left"}})
+        await self.channel_layer.group_discard(
+            f"player_{self.user_id}",
+            self.channel_name
+        )
     
     async def receive(self, text_data):
         # No need for a recieve method in this consumer, so we just pass
@@ -174,7 +176,8 @@ class MatchMakingConsumer(AsyncWebsocketConsumer):
     
     @database_sync_to_async
     def delete_game_session(self):
-        self.session.refresh_from_db()
+        if self.session is not None:
+            self.session.refresh_from_db()
         if self.session is not None and self.session.vacant:
             self.session.delete()
 
@@ -186,7 +189,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         self.session_id = self.scope['url_route']['kwargs']['session_id']
         self.user_id = get_user_id(self.scope)
         self.session = await self.get_game_session(self.session_id)
-
+        print("user connected for game", self.user_id, flush=True)
         # is_user_in_session = await self.is_user_in_session(self.user_id)
         if self.session is None:
             await self.close()
@@ -202,7 +205,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                 "type": "game_message",
                 "data": {"type": "game_started"},
             }
-        )
+        ) 
         await self.accept()
 
     async def disconnect(self, close_code):
@@ -280,7 +283,10 @@ class GameConsumer(AsyncWebsocketConsumer):
 
     async def game_message(self, event):
         data = event["data"]
-        await self.send(text_data=json.dumps(data))
+        try:
+            await self.send(text_data=json.dumps(data))
+        except Exception as e:
+            print("Error: ", e, flush=True)
     
     @database_sync_to_async
     def get_game_session(self, session_id):

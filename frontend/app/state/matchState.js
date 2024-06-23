@@ -36,7 +36,6 @@ class MatchState extends State {
 				if (matchData.type === "player_left") {
 					this.playerLeft = true;
 
-					// console.log("data i go  from socket : ", matchData);
 					if (matchData.winner_id === undefined || matchData.winner_id === "null") {
 						Toast.notify({ type: "warning", message: "Opponent left the match" });
 					}
@@ -47,11 +46,6 @@ class MatchState extends State {
 					// console.log("data i got from socket : ", matchData);	
 				}
 				this.setState({ game: matchData });
-			},
-			{
-				onOpen: () => {
-					// console.log("user connected");
-				}
 			}
 		);
 	}
@@ -81,7 +75,7 @@ class MatchState extends State {
 				// console.log("session id", sessionId);
 				await this.getGameSession(sessionId);
 				// }
-			},
+			}
 		);
 	}
 

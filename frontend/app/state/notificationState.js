@@ -73,7 +73,7 @@ class NotificationState extends State {
             },
         {
             onOpen: () => {
-                // console.log(`WebSocket connection opened for id: ${this.socketId}`);
+                console.log(`WebSocket connection opened for id: ${this.socketId}`);
                 this.notificationSocket.send(this.socketId, {
                     type: "NEW_STATUS",
                     status: 'ON'

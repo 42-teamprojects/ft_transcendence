@@ -31,7 +31,7 @@ DEBUG = env('DEBUG')
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    '10.11.3.1'
+    '10.11.2.4'
 ]
 
 AUTH_USER_MODEL = 'accounts.User'
@@ -262,7 +262,7 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:8080",
-    "http://10.11.3.1:8080",
+    "http://10.11.2.4:8080",
     "http://10.11.3.3:8080",
     "https://localhost:8443",
     "https://127.0.0.1",

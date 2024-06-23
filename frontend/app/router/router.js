@@ -179,7 +179,9 @@ export default class Router {
 			if (Object.keys(matchedRoute.params).length > 0) componentInstance = new Component(matchedRoute.params);
 			else componentInstance = new Component();
 
-			outlet.innerHTML = "";
+			while (outlet.firstChild) {
+				outlet.removeChild(outlet.firstChild);
+			}
 			outlet.appendChild(componentInstance);
 			this.#subscribers.forEach((callback) => callback());
 		} catch (err) {
