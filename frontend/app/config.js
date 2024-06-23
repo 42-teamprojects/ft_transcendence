@@ -1,20 +1,3 @@
-// export const config = {
-//     backend_domain: 'http://localhost:8000',
-//     rest_url: 'http://localhost:8000/api/',
-//     chat_websocket_url: 'ws://localhost:8000/ws/chat/',
-//     match_websocket_url: 'ws://localhost:8000/ws/match/',
-//     websocket_url: 'ws://localhost:8000/ws/',
-//     finalScore: 3
-// };
-
-// export const config = {
-//     backend_domain: 'https://10.11.2.4:8443',
-//     rest_url: 'https://10.11.2.4:8443/api/',
-//     chat_websocket_url: 'wss://10.11.2.4:8443/ws/chat/',
-//     match_websocket_url: 'wss://10.11.2.4:8443/ws/match/',
-//     websocket_url: 'wss://10.11.2.4:8443/ws/',
-//     finalScore: 3
-// };
 export const config = {
     backend_domain: 'https://localhost:8443',
     rest_url: 'https://localhost:8443/api/',

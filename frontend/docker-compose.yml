@@ -1,9 +1,0 @@
-version: '3'
-
-services:
-  frontend:
-    build: .
-    container_name: blitzpong-frontend
-    ports:
-      - "443:443"
-    restart: on-failure
